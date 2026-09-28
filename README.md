@@ -69,17 +69,53 @@ If a write reports an uncertain result or loses its response, read back the resu
 
 ## Available tools
 
-The server returns the tools allowed by your connection and current store permissions.
+The server returns tools allowed by your approved connection and current permissions. Read and write access are separate.
 
-| Tool | Action | Required scope |
+| Resource | Read tools | Write tools |
 | --- | --- | --- |
-| `list_tags` | Search and page through tags | `store:products:read` |
-| `get_tag` | Read one tag | `store:products:read` |
-| `create_tag` | Create a tag | `store:products:write` |
-| `update_tag` | Change supplied fields on a tag | `store:products:write` |
-| `delete_tag` | Delete a tag, with impact confirmation when required | `store:products:write` |
+| Tags | `list_tags`, `get_tag` | `create_tag`, `update_tag`, `delete_tag` |
+| Brands | `list_brands`, `get_brand` | `create_brand`, `update_brand`, `delete_brand` |
+| Vendors | `list_vendors`, `get_vendor` | `create_vendor`, `update_vendor`, `delete_vendor` |
+| Attributes | `list_attributes`, `get_attribute` | `create_attribute`, `update_attribute`, `delete_attribute` |
+| Files | `list_files`, `get_file`, `get_file_limits`, `get_storage_quota` | `update_file`, `delete_file`, `create_file_uploads`, `finalize_file_uploads`, `get_file_upload_status` |
 
-`connection:read` permits the connection itself. It does not grant access to store data. Read and write permissions are separate. The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes tool arguments, pagination, errors, and deletion confirmation.
+Catalog reads require `store:products:read`; catalog writes require `store:products:write`. Binding new catalog images also requires `store:files:read`. `connection:read` permits the connection itself and grants no store-data access.
+
+For Files, choose `library: "media"` or `library: "site_assets"` on every call. Media requires `store:files:read` or `store:files:write`. Site Assets requires `store:online_store.site_assets:read` or `store:online_store.site_assets:write`. Upload status is a read of an upload operation and, like preparation and finalization, requires that library's **write** permission. A file ID from another library cannot bypass these permissions.
+
+Existing Products permissions cover the Brand, Vendor and Attribute tools. Refresh the tool list in your client to discover new tools. To add file permissions, reconnect and approve the additional access; refreshing a token cannot enlarge its grant.
+
+The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation.
+
+## Work with brands and vendors
+
+Start with reads:
+
+> Use Tringify to list five brands and five vendors in my connected store.
+
+Create and update tools support names, slugs, descriptions, SEO fields, an existing Media image, and a storefront template. Updates change only supplied fields. A slug change creates a redirect unless you explicitly turn that off with `create_redirect: false`. Deletion preserves the related products and can require confirmation of the returned impact.
+
+## Edit attributes
+
+Read an attribute first. An update requires its exact current `revision` as `expected_revision`, its unchanged `sub_type`, and its **complete option set**. Keep the IDs and values of options you want to preserve. Options left out request removal; the service blocks removal while they are in use.
+
+> Get attribute [ID] and show me its current options. Do not change anything yet.
+
+After reviewing the result, describe the change you want. If another edit made the revision stale, read again and review the new state. Do not automatically overwrite it. Existing images on the same options can be preserved without Files read permission; adding or replacing an option image requires that permission.
+
+## Upload a file
+
+Codex needs a way to read the local file and make the upload request from the computer running it. The MCP tools handle upload preparation, validation and the resulting library record.
+
+1. Read `get_file_limits` and `get_storage_quota` for the intended library.
+2. Call `create_file_uploads` with that library and the file's exact `original_filename`, `mime_type`, and `size_bytes`. `alt_text` is optional.
+3. The result contains `data.intents`. PUT the file bytes to the returned `url`, using its returned `headers`, before `expires_in` elapses. Treat that signed URL as a temporary credential; do not publish it.
+4. Call `finalize_file_uploads` with the same library and returned `intent_ids`.
+5. Check `get_file_upload_status` while processing. Attach the file only after its status is `ready` and the result includes the validated `file`.
+
+Do not put binary data or base64 into MCP arguments. Starting an upload does not mean it has passed validation. Do not restart an upload just because validation is still processing.
+
+Files can be renamed or have their alt text changed with `update_file`. Clearing a catalog image reference does not delete its library file. `delete_file` checks use and may require impact confirmation; a file required by another record can block deletion.
 
 ## Manage or remove the connection
 
