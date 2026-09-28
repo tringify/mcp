@@ -1,0 +1,4 @@
+# Merge this entry into your Codex configuration; preserve other settings.
+# Authenticate through Codex after saving. Do not add a bearer token or secret.
+[mcp_servers.tringify]
+url = "https://api.tringify.com/mcp/store"
