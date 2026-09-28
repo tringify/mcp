@@ -2,8 +2,10 @@
 
 Connect [Codex](https://developers.openai.com/codex/) to your Tringify store. Sign in with your Tringify account, choose a store, and approve access.
 
-**Server URL:** `https://api.tringify.com/mcp/store`  
-**Transport:** Streamable HTTP  
+**Server URL:** `https://api.tringify.com/mcp/store`
+
+**Transport:** Streamable HTTP
+
 **Authentication:** OAuth with PKCE
 
 Tringify hosts the server. You do not need to clone this repository, run a server, install a Tringify package, or create an API key.
