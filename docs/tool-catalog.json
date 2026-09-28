@@ -1,0 +1,4836 @@
+[
+  {
+    "description": "List or search tags in the connected store. Returns one cursor-paginated page with totals and available next/previous cursors. Defaults to name ascending and the service's page size. Reset the cursor when search or sorting changes.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Exact next_cursor or previous_cursor from this tool. Omit for the first page.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size. Values above the service limit are rejected.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "search": {
+          "type": "string"
+        },
+        "sort_by": {
+          "enum": [
+            "name",
+            "product_count",
+            "created_at",
+            "updated_at"
+          ],
+          "type": "string"
+        },
+        "sort_direction": {
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_tags",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "description": "Get a tag by ID from the connected store, including its product count and ISO timestamps.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "tag ID in the connected store.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_tag",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "description": "Create a tag in the connected store. Name is required. Omit slug or leave it empty to generate it in the store's default language. Existing validation, uniqueness and store limits apply. This does not assign it to products.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_tag",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "description": "Update only supplied fields of a tag in the connected store. Include id and at least one editable field. Omitted fields remain unchanged. Null is not accepted. Normal source-translation guards apply.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "tag ID in the connected store.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_tag",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "description": "Permanently delete a tag. First call with only id. If in use, the service returns CONFIRMATION_REQUIRED with impact warnings and a confirmation token. Show that impact and obtain approval before calling again with confirmed=true and the exact token. Never confirm automatically. Related products are retained.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Exact token returned in a confirmation-required result, only after the user approves the impact.",
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "id": {
+          "description": "tag ID in the connected store.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_tag",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "description": "List or search brands in the connected store. Returns one cursor-paginated page with totals and available next/previous cursors. Defaults to name ascending and the service's page size. Reset the cursor when search or sorting changes.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Exact next_cursor or previous_cursor from this tool. Omit for the first page.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size. Values above the service limit are rejected.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "search": {
+          "type": "string"
+        },
+        "sort_by": {
+          "enum": [
+            "name",
+            "product_count",
+            "created_at",
+            "updated_at"
+          ],
+          "type": "string"
+        },
+        "sort_direction": {
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_brands",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "description": "Get a brand by ID from the connected store, including its product count and ISO timestamps.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "brand ID in the connected store.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_brand",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "description": "Create a brand in the connected store. Name is required. Omit slug or leave it empty to generate it in the store's default language. Existing validation, uniqueness and store limits apply. This does not assign it to products.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "image_id": {
+          "description": "Existing Media image ID. A non-empty reference requires store:files:read. On update, an empty string clears the image; omission preserves it. No upload or external URL.",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "seo_description": {
+          "type": "string"
+        },
+        "seo_title": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "template_handle": {
+          "description": "Existing storefront template handle. Use default_brand for the default. Omission preserves the current value on update.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_brand",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "description": "Update only supplied fields of a brand in the connected store. Include id and at least one editable field. Omitted fields remain unchanged. Null is not accepted. Normal source-translation guards apply. Empty description or SEO fields clear them; empty image_id clears the image. Slug changes create a redirect unless create_redirect is false.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "create_redirect": {
+          "description": "Create a redirect when the slug changes. Defaults to true. Only meaningful with a slug change.",
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "description": "brand ID in the connected store.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "image_id": {
+          "description": "Existing Media image ID. A non-empty reference requires store:files:read. On update, an empty string clears the image; omission preserves it. No upload or external URL.",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "seo_description": {
+          "type": "string"
+        },
+        "seo_title": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "template_handle": {
+          "description": "Existing storefront template handle. Use default_brand for the default. Omission preserves the current value on update.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_brand",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "description": "Permanently delete a brand. First call with only id. If in use, the service returns CONFIRMATION_REQUIRED with impact warnings and a confirmation token. Show that impact and obtain approval before calling again with confirmed=true and the exact token. Never confirm automatically. Related products are retained.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Exact token returned in a confirmation-required result, only after the user approves the impact.",
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "id": {
+          "description": "brand ID in the connected store.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_brand",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "description": "List or search vendors in the connected store. Returns one cursor-paginated page with totals and available next/previous cursors. Defaults to name ascending and the service's page size. Reset the cursor when search or sorting changes.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Exact next_cursor or previous_cursor from this tool. Omit for the first page.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size. Values above the service limit are rejected.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "search": {
+          "type": "string"
+        },
+        "sort_by": {
+          "enum": [
+            "name",
+            "product_count",
+            "created_at",
+            "updated_at"
+          ],
+          "type": "string"
+        },
+        "sort_direction": {
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_vendors",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "description": "Get a vendor by ID from the connected store, including its product count and ISO timestamps.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "vendor ID in the connected store.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_vendor",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "description": "Create a vendor in the connected store. Name is required. Omit slug or leave it empty to generate it in the store's default language. Existing validation, uniqueness and store limits apply. This does not assign it to products.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "image_id": {
+          "description": "Existing Media image ID. A non-empty reference requires store:files:read. On update, an empty string clears the image; omission preserves it. No upload or external URL.",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "seo_description": {
+          "type": "string"
+        },
+        "seo_title": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "template_handle": {
+          "description": "Existing storefront template handle. Use default_vendor for the default. Omission preserves the current value on update.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_vendor",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "description": "Update only supplied fields of a vendor in the connected store. Include id and at least one editable field. Omitted fields remain unchanged. Null is not accepted. Normal source-translation guards apply. Empty description or SEO fields clear them; empty image_id clears the image. Slug changes create a redirect unless create_redirect is false.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "create_redirect": {
+          "description": "Create a redirect when the slug changes. Defaults to true. Only meaningful with a slug change.",
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "description": "vendor ID in the connected store.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "image_id": {
+          "description": "Existing Media image ID. A non-empty reference requires store:files:read. On update, an empty string clears the image; omission preserves it. No upload or external URL.",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "seo_description": {
+          "type": "string"
+        },
+        "seo_title": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "template_handle": {
+          "description": "Existing storefront template handle. Use default_vendor for the default. Omission preserves the current value on update.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_vendor",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "description": "Permanently delete a vendor. First call with only id. If in use, the service returns CONFIRMATION_REQUIRED with impact warnings and a confirmation token. Show that impact and obtain approval before calling again with confirmed=true and the exact token. Never confirm automatically. Related products are retained.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Exact token returned in a confirmation-required result, only after the user approves the impact.",
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "id": {
+          "description": "vendor ID in the connected store.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_vendor",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/limits",
+    "description": "Fetch product limits and field constraints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_product_limits",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "products.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products",
+    "description": "List store products. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "brand_id": {
+          "description": "Filter by assigned brand ID.",
+          "type": "integer"
+        },
+        "brand_ids": {
+          "description": "Comma-separated brand IDs; matches any listed brand.",
+          "type": "string"
+        },
+        "category_id": {
+          "description": "Filter by assigned category ID.",
+          "type": "integer"
+        },
+        "category_ids": {
+          "description": "Comma-separated category IDs; matches products in any listed category.",
+          "type": "string"
+        },
+        "collection_id": {
+          "description": "Filter by manual or automatic collection membership.",
+          "type": "string"
+        },
+        "collection_ids": {
+          "description": "Comma-separated collection UUIDs; matches membership in any listed collection.",
+          "type": "string"
+        },
+        "cursor": {
+          "description": "Opaque cursor from a previous `products.list` response. Omit for the first page; reset when search, filters, or sorting changes.",
+          "type": "string"
+        },
+        "gift_only": {
+          "description": "Set `true` to return only gift-only products or `false` to exclude gift-only products. Omit to include both.",
+          "type": "boolean"
+        },
+        "is_gift_card": {
+          "description": "Filter Gift Card products. Omit to include both ordinary and Gift Card products; gift_only is a different, free-gift classification.",
+          "type": "boolean"
+        },
+        "limit": {
+          "description": "Page size from 1 to `list_max_limit`. Omit to use `list_default_limit` from Product limits. Values above the maximum are rejected.",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Filter to products with inventory at this location.",
+          "type": "string"
+        },
+        "location_ids": {
+          "description": "Comma-separated location UUIDs; matches inventory at any listed location.",
+          "type": "string"
+        },
+        "low_stock_only": {
+          "description": "Return products at or below a configured low-stock threshold.",
+          "type": "boolean"
+        },
+        "price_max": {
+          "description": "Maximum regular price in the store currency.",
+          "type": "string"
+        },
+        "price_min": {
+          "description": "Minimum regular price in the store currency.",
+          "type": "string"
+        },
+        "search": {
+          "description": "Search text; surrounding whitespace is removed. Text exceeding `search_max_length` is rejected.",
+          "type": "string"
+        },
+        "search_field": {
+          "description": "Defaults to `all`: matches product titles, product/variant SKUs and barcodes, tags, and full-text matches in titles, descriptions, vendor names and brand names. Choose `title`, `sku`, `barcode`, `vendor`, `brand`, `tag`, or `variant_sku` to narrow the search. `sku` searches product SKUs; `variant_sku` searches variant SKUs. `barcode` searches both product and variant barcodes.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "A value from `sort_columns` in Product limits. Defaults to `created_at`. Price sorts use the store currency; variable products sort by their minimum variant price. Equal values use ascending product ID as a tie-breaker; missing values sort last.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "`asc` or `desc`; defaults to `desc`.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Filter: active, scheduled, draft, or archived.",
+          "type": "string"
+        },
+        "stock_max": {
+          "description": "Maximum displayed available stock. Untracked products do not match.",
+          "type": "integer"
+        },
+        "stock_min": {
+          "description": "Minimum displayed available stock. Untracked products do not match.",
+          "type": "integer"
+        },
+        "tag_id": {
+          "description": "Filter by assigned tag ID.",
+          "type": "integer"
+        },
+        "tag_ids": {
+          "description": "Comma-separated assigned tag IDs. Use `tag_match` to choose whether any or all IDs must match.",
+          "type": "string"
+        },
+        "tag_match": {
+          "description": "How `tag_ids` compose: `any` (default) or `all`.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Filter: simple or variable.",
+          "type": "string"
+        },
+        "vendor_id": {
+          "description": "Filter by assigned vendor ID.",
+          "type": "integer"
+        },
+        "vendor_ids": {
+          "description": "Comma-separated vendor IDs; matches any listed vendor.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_products",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "products.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/{id}",
+    "description": "Fetch one product by id. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_product",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "products.quantity-pricing.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/{id}/quantity-pricing",
+    "description": "Fetch a product's quantity-pricing ladders. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/quantity-pricing. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_product_quantity_pricing",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "products.variants.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/{id}/variants",
+    "description": "List a product's variants. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/variants. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "limit": {
+          "description": "Positive page size. Omit to use `variant_list_page_size` from Product limits. Values above `variant_list_max_limit` are capped; the response reports the effective size as `per_page`.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number, starting at 1. Omit to use page 1.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_product_variants",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "products.variants.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/{id}/variants/{variantId}",
+    "description": "Fetch one variant by id. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/variants/{variantId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "variant_id": {
+          "description": "Variant ID.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "variant_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_product_variant",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "products.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products",
+    "description": "Create a product. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_ids": {
+          "description": "Attribute IDs that define the variant combinations. Required for variable products. Each variant must provide one value per declared attribute. On update, replaces the declaration, subject to the surviving variants and store limits. Variable products only.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "barcode": {
+          "description": "Optional Barcode/GTIN for a simple product; variable products use variant barcodes. ASCII letters, digits, and hyphens are accepted. Must be unique across products and variants. See barcode_max_length. Simple products only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "brand_id": {
+          "description": "Brand ID in this store. On create, omit if unassigned. On update, omit or send null to keep the assignment; send 0 to clear it.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "category_ids": {
+          "description": "Category IDs in this store, up to max_categories. Duplicates are removed. On update, replaces the assignment set; [] clears it and omission keeps it.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "channel_ids": {
+          "description": "Sales-channel IDs in this store. Omission on create leaves the product unassigned. On update, replaces the assignment set; [] clears it and omission keeps it.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "condition": {
+          "description": "Merchandise condition. Defaults to new. Variants may override the parent condition. Allowed values: `new`, `used`, `refurbished`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "country_of_origin": {
+          "description": "Two-letter ISO country code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "Rich HTML description. Unsafe HTML is removed. The sanitized HTML, including markup, must fit description_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dimension_unit": {
+          "description": "Dimension unit; required when any dimension is supplied. Allowed values: `cm`, `mm`, `m`, `in`, `ft`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "gift_only": {
+          "description": "Defaults to false. When true, direct cart additions are rejected with CART_GIFT_ONLY; the product can be added only as an eligible free gift. This flag does not hide the product from listings.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "height": {
+          "description": "Positive package height within the store’s limit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "hide_from_listings": {
+          "description": "Defaults to false. Excludes the product from storefront search and browse listings while keeping its assigned-channel product page accessible by direct link. Does not change gift_only or channel assignments.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "hs_code": {
+          "description": "Customs HS code. See hs_code_max_length and the field constraints in GET /products/limits.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "images": {
+          "description": "Gallery entries: {file_id, alt_text?, sort_order?}. Files may be images, videos, or 3D models. Non-empty file_id values require read_files. On update, the array replaces the gallery; [] clears it. The store’s max_images limit applies.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "inventory": {
+          "description": "Simple products with inventory_source=track. Rows are {location_id, quantity, low_stock_threshold?, expected_quantity?}. Quantities are non-negative integers within the store’s limits. On update, only named locations change. expected_quantity is the on-hand value previously read (0 for a missing row); a mismatch returns 409 PRODUCT_VERSION_STALE. You may use merchant-managed locations or locations owned by your app’s active installation.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "inventory_group_id": {
+          "description": "Inventory-group UUID. Required with inventory_source=group. The group must belong to this store. Simple products only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inventory_source": {
+          "description": "Simple-product inventory mode: track for per-location stock, none for untracked stock, or group for an inventory-group link. Defaults to track. Changing modes on update may require confirmation. Allowed values: `track`, `none`, `group`. Simple products only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "length": {
+          "description": "Positive package length within the store’s limit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_order_quantity": {
+          "description": "Optional per-order quantity cap, independent of inventory mode. On update, 0 clears the explicit cap; omission or null leaves it unchanged. Without an explicit cap, the store’s default order cap may still apply.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "metafields": {
+          "description": "Values as {definition_id, value}. Definitions must target products and permit your app to write them. On update, this array replaces the set your app can write; [] clears that set. Use the dedicated metafield endpoint for writes addressed by namespace and key.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "mpn": {
+          "description": "Optional manufacturer part number. Not required to be unique. See mpn_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "no_manufacturer_identifiers": {
+          "description": "Set true only if the product has no manufacturer identifiers. Cannot be true with a barcode or MPN. The response’s identifier_status is provided when identifiers exist, not_applicable when this flag is true, and unknown otherwise.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "overall_low_stock_threshold": {
+          "description": "Overall low-stock threshold for directly tracked simple products. Uses total available stock across locations. Zero is valid. On update, null disables the alert and omission keeps it. Not available for untracked or group-backed stock. Simple products only.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "prices": {
+          "description": "Simple products only. Rows are {currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}. Amounts are JSON decimal strings with the currency’s permitted precision. Include the base currency. On update, supplying this array replaces the complete price set. A sale price may be zero but must be below the regular price. The base-currency sale schedule applies to all currency sale prices; a non-base sale requires a base sale. Omit sale prices from the replacement set to remove them.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "publish_at": {
+          "description": "Publication time, required when the resulting status is scheduled. Accepts an ISO 8601 timestamp; include an offset for an explicit instant, or use the store timezone for a local timestamp. Stay within publish_max_days_ahead from GET /products/limits. Invalid local times during a daylight-saving change are rejected; a repeated local time uses its first occurrence. Changing to another status clears the schedule.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "requires_shipping": {
+          "description": "Defaults to true. Choose the shipping classification on create; it cannot be changed afterwards. A product that does not require shipping cannot have weight, dimensions, customs fields, or per-item shipping prices.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Search-engine description. Whitespace is trimmed and control characters are rejected. See seo_description_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Search-engine title. Whitespace is trimmed and control characters are rejected. See seo_title_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shipping_prices": {
+          "description": "Simple products only. Per-currency flat shipping overrides: {currency_code, price}. Send price as an exact decimal string using that currency's precision.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "short_description": {
+          "description": "Plain-text summary. Surrounding whitespace is removed and control characters are rejected. See short_description_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sku": {
+          "description": "Required product SKU, including for a variable parent. ASCII letters, digits, hyphens, underscores, periods, and slashes are accepted. Trimmed, case-sensitive, and unique across products, variants, and inventory groups in the store. Case-only matches produce warnings. See sku_max_length.",
+          "type": "string"
+        },
+        "slug": {
+          "description": "URL slug. Omit on create to generate it from the title. A source slug must use lowercase, hyphen-separated words and stay within slug_max_length. A duplicate source slug receives a suffix. On update, omit to keep it; changing it creates a redirect unless create_redirect is false.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "Product status: draft, active, scheduled, or archived. Defaults to draft. Scheduled products require publish_at. Active products are available only through their assigned sales channels. Allowed values: `active`, `scheduled`, `draft`, `archived`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tag_ids": {
+          "description": "Tag IDs in this store, up to max_tags. Duplicates are removed. On update, replaces the assignment set; [] clears it and omission keeps it.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "tax_classes": {
+          "description": "Per-market tax assignment: {market_id, tax_class_id}. Supplied array replaces the full set.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Existing product template handle for this store. Use default_product for the default template. Omit on update to keep the assignment; an empty string is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "description": "Product title. Required on create; cannot be empty on update. Normalized to NFC. Control characters are rejected. See title_max_length in GET /products/limits.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Required on create: simple or variable. Cannot be changed after creation. Allowed values: `simple`, `variable`.",
+          "type": "string"
+        },
+        "variants": {
+          "description": "Variable products only; required (at least one variant). The initial variant set, validated together: combination uniqueness against the declared attributes, attribute coverage, at least one variant, and store-wide SKU uniqueness. Each entry:\n\n- `sku` (string, required) — unique across the entire store.\n- `attribute_values` (array, required) — One entry per declared attribute: `{attribute_id, option_id}` for an option choice, or `{attribute_id, value_text}` for a text value. Attribute and option ids come from `GET /attributes` (the product's `attribute_ids` must cover every `attribute_id` used). Two variants can never share the same combination.\n- `prices` (array, required) — per-currency rows `{currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}`; the base currency row is required. Amounts are decimal strings.\n- `title` (string, optional) — auto-composed from option labels (\"Red / M\") unless supplied.\n- `barcode` is variant-specific. `condition`, `mpn`, and `no_manufacturer_identifiers` can override the parent’s values. `identifier_status` describes whether identifiers are provided, unknown, or not applicable; use the identifier fields and declaration consistently.\n- `weight`, `weight_unit`, `length`, `width`, `height`, `dimension_unit`, `hs_code`, `country_of_origin`, `requires_shipping` — physical overrides.\n- `inventory_source` (`track` | `none` | `group`), `inventory` (per-location rows `{location_id, quantity, low_stock_threshold?, expected_quantity?}` when tracking), `inventory_group_id` (when `group`).\n- `image_file_id` (string, optional) — Media-library upload UUID; non-empty values require `read_files` in addition to `write_products`. `image_id` selects an existing product gallery row and does not require `read_files`.\n- `max_order_quantity` is an optional per-order cap; `overall_low_stock_threshold` applies only to directly tracked stock.\n\nCreate supplies the initial set here. Later edits use the delta fields on Product update; read operations use the paginated Variant endpoints.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "vendor_id": {
+          "description": "Vendor ID in this store. On create, omit if unassigned. On update, omit or send null to keep the assignment; send 0 to clear it.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "weight": {
+          "description": "Positive weight within the store’s limit. Requires weight_unit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "weight_unit": {
+          "description": "Weight unit; required with weight. Allowed values: `kg`, `g`, `lb`, `oz`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "width": {
+          "description": "Positive package width within the store’s limit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "type"
+      ],
+      "type": "object"
+    },
+    "name": "create_product",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/products/{id}",
+    "description": "Update selected product fields. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_ids": {
+          "description": "Attribute IDs that define the variant combinations. Required for variable products. Each variant must provide one value per declared attribute. On update, replaces the declaration, subject to the surviving variants and store limits. Variable products only.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "barcode": {
+          "description": "Optional Barcode/GTIN for a simple product; variable products use variant barcodes. ASCII letters, digits, and hyphens are accepted. Must be unique across products and variants. See barcode_max_length. Simple products only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "brand_id": {
+          "description": "Brand ID in this store. On create, omit if unassigned. On update, omit or send null to keep the assignment; send 0 to clear it.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "catalog_position": {
+          "description": "Merchant-curated position for the storefront featured listing sort. Sparse, NON-unique positive integers — ties order deterministically by product id, gaps are encouraged (10, 20, 30) so products slot between without renumbering. Nil/cleared products trail the positioned set.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "category_ids": {
+          "description": "Category IDs in this store, up to max_categories. Duplicates are removed. On update, replaces the assignment set; [] clears it and omission keeps it.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "channel_ids": {
+          "description": "Sales-channel IDs in this store. Omission on create leaves the product unassigned. On update, replaces the assignment set; [] clears it and omission keeps it.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "condition": {
+          "description": "Merchandise condition. Defaults to new. Variants may override the parent condition. Allowed values: `new`, `used`, `refurbished`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmation_token": {
+          "description": "Token returned with the impact details for this update.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true when repeating a request after CONFIRMATION_REQUIRED.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "country_of_origin": {
+          "description": "Two-letter ISO country code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "create_redirect": {
+          "description": "When changing the slug, create a redirect from the old URL. Defaults to true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "Rich HTML description. Unsafe HTML is removed. The sanitized HTML, including markup, must fit description_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dimension_unit": {
+          "description": "Dimension unit; required when any dimension is supplied. Allowed values: `cm`, `mm`, `m`, `in`, `ft`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "gift_only": {
+          "description": "Defaults to false. When true, direct cart additions are rejected with CART_GIFT_ONLY; the product can be added only as an eligible free gift. This flag does not hide the product from listings.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "height": {
+          "description": "Positive package height within the store’s limit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "hide_from_listings": {
+          "description": "Defaults to false. Excludes the product from storefront search and browse listings while keeping its assigned-channel product page accessible by direct link. Does not change gift_only or channel assignments.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "hs_code": {
+          "description": "Customs HS code. See hs_code_max_length and the field constraints in GET /products/limits.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "images": {
+          "description": "Gallery entries: {file_id, alt_text?, sort_order?}. Files may be images, videos, or 3D models. Non-empty file_id values require read_files. On update, the array replaces the gallery; [] clears it. The store’s max_images limit applies.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "inventory": {
+          "description": "Simple products with inventory_source=track. Rows are {location_id, quantity, low_stock_threshold?, expected_quantity?}. Quantities are non-negative integers within the store’s limits. On update, only named locations change. expected_quantity is the on-hand value previously read (0 for a missing row); a mismatch returns 409 PRODUCT_VERSION_STALE. You may use merchant-managed locations or locations owned by your app’s active installation.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "inventory_group_id": {
+          "description": "Inventory-group UUID. Required with inventory_source=group. The group must belong to this store. Simple products only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inventory_source": {
+          "description": "Simple-product inventory mode: track for per-location stock, none for untracked stock, or group for an inventory-group link. Defaults to track. Changing modes on update may require confirmation. Allowed values: `track`, `none`, `group`. Simple products only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "length": {
+          "description": "Positive package length within the store’s limit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_order_quantity": {
+          "description": "Optional per-order quantity cap, independent of inventory mode. On update, 0 clears the explicit cap; omission or null leaves it unchanged. Without an explicit cap, the store’s default order cap may still apply.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "metafields": {
+          "description": "Values as {definition_id, value}. Definitions must target products and permit your app to write them. On update, this array replaces the set your app can write; [] clears that set. Use the dedicated metafield endpoint for writes addressed by namespace and key.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "mpn": {
+          "description": "Optional manufacturer part number. Not required to be unique. See mpn_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "new_variants": {
+          "description": "Variable products only. Brand-new variants to add alongside the existing set — same entry shape as create's variants array. Combination uniqueness is validated against the surviving existing variants and within the batch.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "no_manufacturer_identifiers": {
+          "description": "Set true only if the product has no manufacturer identifiers. Cannot be true with a barcode or MPN. The response’s identifier_status is provided when identifiers exist, not_applicable when this flag is true, and unknown otherwise.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "overall_low_stock_threshold": {
+          "description": "Overall low-stock threshold for directly tracked simple products. Uses total available stock across locations. Zero is valid. On update, null disables the alert and omission keeps it. Not available for untracked or group-backed stock. Simple products only.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "prices": {
+          "description": "Simple products only. Rows are {currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}. Amounts are JSON decimal strings with the currency’s permitted precision. Include the base currency. On update, supplying this array replaces the complete price set. A sale price may be zero but must be below the regular price. The base-currency sale schedule applies to all currency sale prices; a non-base sale requires a base sale. Omit sale prices from the replacement set to remove them.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "publish_at": {
+          "description": "Publication time, required when the resulting status is scheduled. Accepts an ISO 8601 timestamp; include an offset for an explicit instant, or use the store timezone for a local timestamp. Stay within publish_max_days_ahead from GET /products/limits. Invalid local times during a daylight-saving change are rejected; a repeated local time uses its first occurrence. Changing to another status clears the schedule.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "quantity_tiers": {
+          "description": "Complete quantity-pricing ladder set for this Product. Supplying the field replaces every Product and Variant ladder atomically; an empty array clears them, while omission leaves them unchanged. Each row is `{target_type, target_id, min_quantity, percent}`. `target_type` is `product` or `variant`; a Product target uses this Product's id and a Variant target must belong to this Product. `min_quantity` is inclusive. `percent` is an exact decimal string representing the percentage discount from the otherwise applicable Product or Variant price. Rows are capped by the limits returned from `GET /products/{id}/quantity-pricing`, and minimum quantities must increase within each target ladder. Example: `[{\"target_type\":\"product\",\"target_id\":42,\"min_quantity\":10,\"percent\":\"5.25\"}]`.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "removed_variant_ids": {
+          "description": "Variant ids to delete. Removing the last variant of a variable product is rejected. Removals and additions in one request are validated together, so replacing a combination in one call works.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "requires_shipping": {
+          "description": "Defaults to true. Choose the shipping classification on create; it cannot be changed afterwards. A product that does not require shipping cannot have weight, dimensions, customs fields, or per-item shipping prices.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Search-engine description. Whitespace is trimmed and control characters are rejected. See seo_description_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Search-engine title. Whitespace is trimmed and control characters are rejected. See seo_title_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shipping_prices": {
+          "description": "Simple products only. Per-currency flat shipping overrides: {currency_code, price}. Send price as an exact decimal string using that currency's precision.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "short_description": {
+          "description": "Plain-text summary. Surrounding whitespace is removed and control characters are rejected. See short_description_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sku": {
+          "description": "Required product SKU, including for a variable parent. ASCII letters, digits, hyphens, underscores, periods, and slashes are accepted. Trimmed, case-sensitive, and unique across products, variants, and inventory groups in the store. Case-only matches produce warnings. See sku_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "URL slug. Omit on create to generate it from the title. A source slug must use lowercase, hyphen-separated words and stay within slug_max_length. A duplicate source slug receives a suffix. On update, omit to keep it; changing it creates a redirect unless create_redirect is false.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "Product status: draft, active, scheduled, or archived. Defaults to draft. Scheduled products require publish_at. Active products are available only through their assigned sales channels. Allowed values: `active`, `scheduled`, `draft`, `archived`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tag_ids": {
+          "description": "Tag IDs in this store, up to max_tags. Duplicates are removed. On update, replaces the assignment set; [] clears it and omission keeps it.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "tax_classes": {
+          "description": "Per-market tax assignment: {market_id, tax_class_id}. Supplied array replaces the full set.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Existing product template handle for this store. Use default_product for the default template. Omit on update to keep the assignment; an empty string is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "description": "Product title. Required on create; cannot be empty on update. Normalized to NFC. Control characters are rejected. See title_max_length in GET /products/limits.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "variants": {
+          "description": "Variable products only: entries address existing variants by `variant_id` and change only the supplied fields. Variants not mentioned are untouched. Supplying `attribute_values` replaces that Variant's complete combination; it must cover the Product's declared attributes and remain unique across all surviving and concurrently updated Variants. Supplying `prices` replaces the complete currency set and cannot be empty. Supplying `shipping_prices` replaces the complete set and an empty array clears it. Supplying `inventory` sets only the named locations. Include `expected_quantity` in each edited location row to reject a stale stock snapshot with PRODUCT_VERSION_STALE (409). Omit unchanged locations when editing other fields. Example — reprice one variant: `{\"variants\": [{\"variant_id\": 1007, \"prices\": [{\"currency_code\": \"USD\", \"regular_price\": \"31.00\"}]}]}`.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "vendor_id": {
+          "description": "Vendor ID in this store. On create, omit if unassigned. On update, omit or send null to keep the assignment; send 0 to clear it.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "weight": {
+          "description": "Positive weight within the store’s limit. Requires weight_unit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "weight_unit": {
+          "description": "Weight unit; required with weight. Allowed values: `kg`, `g`, `lb`, `oz`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "width": {
+          "description": "Positive package width within the store’s limit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_product",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.duplicate",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products/{id}/duplicate",
+    "description": "Create an unpublished copy of a product. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products/{id}/duplicate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "title": {
+          "description": "Optional title for the copy. Defaults to `Copy of \u003csource title\u003e`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "duplicate_product",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/products/{id}",
+    "description": "Delete a product. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/products/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token from the first response. Valid for five minutes.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true only when repeating the request after reviewing its confirmation response.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_product",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/{id}/metafields",
+    "description": "List a product's metafield values visible to your token. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "limit": {
+          "description": "Positive page size. Omission uses the configured default; values above the metafield maximum are reduced to that maximum. Read the effective limit from the response.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Positive page number. Defaults to 1.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_product_metafields",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "products.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/products/{id}/metafields",
+    "description": "Set or remove product metafield values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "metafields": {
+          "description": "Non-empty array of {namespace, key, value} entries. Use definitions owned by your app; replace the example namespace with yours. null, an empty string, or an omitted value removes the stored value. Other entries are unchanged.",
+          "items": {},
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_product_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.metafields.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Fetch one translated product metafield value. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_product_metafield_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "products.metafields.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Set one translated product metafield value. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Translated metafield value. An empty value clears the stored translation.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "set_product_metafield_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "products.variants.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/{id}/variants/{variantId}/metafields",
+    "description": "List a variant's metafield values visible to the calling app (paginated). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/variants/{variantId}/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "limit": {
+          "description": "Positive page size. Omission uses the configured default; values above the metafield maximum are reduced to that maximum. Read the effective limit from the response.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Positive page number. Defaults to 1.",
+          "type": "integer"
+        },
+        "variant_id": {
+          "description": "Variant ID.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "variant_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_product_variant_metafields",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "products.variants.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/products/{id}/variants/{variantId}/metafields",
+    "description": "Set or remove variant metafield values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/variants/{variantId}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "metafields": {
+          "description": "Non-empty array of {namespace, key, value} entries for variant definitions owned by your app. Replace the example namespace with yours. null, an empty string, or an omitted value removes the stored value; other entries remain unchanged.",
+          "items": {},
+          "type": "array"
+        },
+        "variant_id": {
+          "description": "Variant ID.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "variant_id",
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_product_variant_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.variants.metafields.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Fetch one translated variant metafield value. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        },
+        "variant_id": {
+          "description": "Variant ID.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "variant_id",
+        "namespace",
+        "key",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_product_variant_metafield_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "products.variants.metafields.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Set one translated variant metafield value. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Translated metafield value. An empty value clears the stored translation.",
+          "type": "string"
+        },
+        "variant_id": {
+          "description": "Variant ID.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "variant_id",
+        "namespace",
+        "key",
+        "locale",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "set_product_variant_metafield_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "products.bulk-status",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products/bulk-status",
+    "description": "Set the status of up to bulk_max products in one call. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products/bulk-status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "product_ids": {
+          "description": "Non-empty array of product IDs. Duplicates are ignored; the distinct count must not exceed bulk_max.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "status": {
+          "description": "One of `draft`, `active`, `archived`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_ids",
+        "status"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_update_product_status",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.bulk-tags",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products/bulk-tags",
+    "description": "Add or remove tags across up to bulk_max products. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products/bulk-tags. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "`add` or `remove`.",
+          "type": "string"
+        },
+        "product_ids": {
+          "description": "Non-empty array of product IDs. Duplicates are ignored; the distinct count must not exceed bulk_max.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "tag_ids": {
+          "description": "Non-empty array of tag IDs in this store. Duplicates are ignored.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "product_ids",
+        "tag_ids",
+        "action"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_update_product_tags",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.bulk-categories",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products/bulk-categories",
+    "description": "Add or remove categories on multiple products. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products/bulk-categories. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "`add` or `remove`.",
+          "type": "string"
+        },
+        "category_ids": {
+          "description": "Non-empty array of category IDs in this store. Duplicates are ignored.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "product_ids": {
+          "description": "Non-empty array of product IDs. Duplicates are ignored; the distinct count must not exceed bulk_max.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "product_ids",
+        "category_ids",
+        "action"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_update_product_categories",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.bulk-channels",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products/bulk-channels",
+    "description": "Add or remove sales channels on multiple products. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products/bulk-channels. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "`add` or `remove`. Remove requires the confirmation handshake.",
+          "type": "string"
+        },
+        "channel_ids": {
+          "description": "Non-empty array of sales channel IDs in this store. Duplicates are ignored.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "confirmation_token": {
+          "description": "Token from the first remove call.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true on the second call of a remove, with confirmation_token.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "product_ids": {
+          "description": "Non-empty array of product IDs. Duplicates are ignored; the distinct count must not exceed bulk_max.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "product_ids",
+        "channel_ids",
+        "action"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_update_product_channels",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.bulk-vendor",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products/bulk-vendor",
+    "description": "Set or clear the vendor on multiple products. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products/bulk-vendor. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "product_ids": {
+          "description": "Non-empty array of product IDs. Duplicates are ignored; the distinct count must not exceed bulk_max.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "vendor_id": {
+          "description": "Vendor ID to assign, or null to clear the assignment. The field is required.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "product_ids",
+        "vendor_id"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_set_product_vendor",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.bulk-brand",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products/bulk-brand",
+    "description": "Set or clear the brand on multiple products. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products/bulk-brand. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "brand_id": {
+          "description": "Brand ID to assign, or null to clear the assignment. The field is required.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "product_ids": {
+          "description": "Non-empty array of product IDs. Duplicates are ignored; the distinct count must not exceed bulk_max.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "product_ids",
+        "brand_id"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_set_product_brand",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products/bulk-delete",
+    "description": "Delete multiple products after confirmation. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the first call.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true on the second call, with confirmation_token.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "product_ids": {
+          "description": "Non-empty array of product IDs. Duplicates are ignored; the distinct count must not exceed bulk_max.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "product_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_products",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/{id}/translations/{locale}",
+    "description": "Fetch one product translation. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product id.",
+          "type": "integer"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_product_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "products.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/products/{id}/translations/{locale}",
+    "description": "Set one product translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product id.",
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_product_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "products.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/translations/{locale}",
+    "description": "Fetch product translations in batch. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated product ids.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_product_translations",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "products.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/products/translations/{locale}",
+    "description": "Set product translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_product_translations",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "products.variants.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/{id}/variants/{variantId}/translations/{locale}",
+    "description": "Fetch one variant translation. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/variants/{variantId}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "locale": {
+          "description": "BCP-47 locale code, e.g. fr or pt-BR.",
+          "type": "string"
+        },
+        "variant_id": {
+          "description": "Variant ID.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "variant_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_product_variant_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "products.variants.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/products/{id}/variants/{variantId}/translations/{locale}",
+    "description": "Set one variant translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/variants/{variantId}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "BCP-47 locale code, e.g. fr or pt-BR.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values; variants translate `title`.",
+          "type": "object"
+        },
+        "variant_id": {
+          "description": "Variant ID.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "variant_id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_product_variant_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "collections.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/collections/limits",
+    "description": "Fetch Collection limits and per-field constraints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_collection_limits",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "collections.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/collections",
+    "description": "List collections for the store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque cursor from a previous `collections.list` response. Omit for the first page; reset when search, status, or sorting changes.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search collections by name or slug.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field from the Collection list contract.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction from the Collection list contract.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Filter by active or inactive.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_collections",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "collections.search",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/collections/search",
+    "description": "Search collections for picker-style suggestions. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/search. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Suggestion count.",
+          "type": "integer"
+        },
+        "offset": {
+          "description": "Number of suggestions to skip.",
+          "type": "integer"
+        },
+        "q": {
+          "description": "Search query.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "search_collections",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "collections.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/collections/{id}",
+    "description": "Fetch one collection by id. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_collection",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "collections.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/collections/{id}/metafields",
+    "description": "List a collection's custom-data values visible to the calling app. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/{id}/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size; capped by the metafield list limit.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number (default 1).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_collection_metafields",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "collections.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/collections/{id}/metafields",
+    "description": "Create, update, or delete collection custom-data values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "metafields": {
+          "description": "Entries shaped as `{namespace, key, value}`. Send `null` or an empty string to delete the stored value.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_collection_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "collections.metafields.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Fetch one translated collection custom-data value. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_collection_metafield_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "collections.metafields.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Set or clear one translated collection custom-data value. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Translated value. Send an empty string to delete the stored translation for this locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "set_collection_metafield_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "collections.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/collections",
+    "description": "Create a collection. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/collections. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Optional plain-text description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "image_id": {
+          "description": "Optional Media-library upload image UUID. Non-empty values require `read_files` access to the referenced file; site assets and non-image uploads are rejected.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_active": {
+          "description": "Whether the collection is visible on the storefront. Defaults to true when omitted during creation.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "match_type": {
+          "description": "`all` requires every rule to match; `any` requires at least one rule.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Collection name.",
+          "type": "string"
+        },
+        "rules": {
+          "description": "Automatic collection rules. Each rule has field, operator, optional value, and include_subcategories.",
+          "items": {
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Optional SEO description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_collection`. Use `default_collection` for the default Collection template, or pass an alternate Collection template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_collection` to reset it to default, and do not send an empty string.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_collection",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "collections.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/collections/{id}",
+    "description": "Update a collection. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "create_redirect": {
+          "description": "When slug changes, create a redirect from the previous slug.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "Optional plain-text description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "image_id": {
+          "description": "Optional Media-library upload image UUID. Non-empty values require `read_files` access to the referenced file; site assets and non-image uploads are rejected.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_active": {
+          "description": "Whether the collection is visible on the storefront. Defaults to true when omitted during creation.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "match_type": {
+          "description": "`all` requires every rule to match; `any` requires at least one rule.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Collection name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rules": {
+          "description": "Automatic collection rules. Each rule has field, operator, optional value, and include_subcategories.",
+          "items": {
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Optional SEO description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "New slug. Omit to leave the current slug unchanged; an empty value is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_collection`. Use `default_collection` for the default Collection template, or pass an alternate Collection template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_collection` to reset it to default, and do not send an empty string.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_collection",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "collections.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/collections/{id}",
+    "description": "Delete a collection. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/collections/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_collection",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "collections.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/collections/bulk-delete",
+    "description": "Delete multiple collections. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/collections/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collection_ids": {
+          "description": "Collection UUIDs to delete.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "collection_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_collections",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "collections.bulk-activate",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/collections/bulk-activate",
+    "description": "Activate or deactivate multiple collections. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/collections/bulk-activate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "collection_ids": {
+          "description": "Collection UUIDs to update.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "is_active": {
+          "description": "Target storefront visibility.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "collection_ids",
+        "is_active"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_update_collection_status",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "collections.products.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/collections/{id}/products",
+    "description": "List product ids matched by a collection. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/{id}/products. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque cursor from this collection's previous response. Omit for the first page; reset when search or page size changes.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_collection_products",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "collections.products.details",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/collections/{id}/products/details",
+    "description": "List display-ready products matched by a collection. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/{id}/products/details. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque cursor from this collection's previous response. Omit for the first page; reset when search or page size changes.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Filter products by title or SKU.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_collection_product_details",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "collections.rules.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/collections/{id}/rules",
+    "description": "List rules for a collection. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/{id}/rules. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_collection_rules",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "collections.rules.add",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/collections/{id}/rules",
+    "description": "Add a rule to a collection. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/collections/{id}/rules. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "description": "Rule field: tag, category, vendor, brand, or title.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "include_subcategories": {
+          "description": "Only valid for category rules.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "operator": {
+          "description": "Rule operator allowed for the field.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Rule value. Required for value-bearing operators.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "field",
+        "operator"
+      ],
+      "type": "object"
+    },
+    "name": "add_collection_rule",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "collections.rules.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/collections/{id}/rules/{rule_id}",
+    "description": "Update a rule on a collection. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/{id}/rules/{rule_id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "description": "Rule field: tag, category, vendor, brand, or title.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "include_subcategories": {
+          "description": "Only valid for category rules.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "operator": {
+          "description": "Rule operator allowed for the field.",
+          "type": "string"
+        },
+        "rule_id": {
+          "description": "Rule id.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Rule value. Required for value-bearing operators.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "rule_id",
+        "field",
+        "operator"
+      ],
+      "type": "object"
+    },
+    "name": "update_collection_rule",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "collections.rules.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/collections/{id}/rules/{rule_id}",
+    "description": "Delete a rule from a collection. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/collections/{id}/rules/{rule_id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "rule_id": {
+          "description": "Rule id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "rule_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_collection_rule",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "collections.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/collections/{id}/translations/{locale}",
+    "description": "Fetch one collection translation. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_collection_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "collections.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/collections/{id}/translations/{locale}",
+    "description": "Set one collection translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Collection id.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_collection_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "collections.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/collections/translations/{locale}",
+    "description": "Fetch collection translations in batch. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated collection ids.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_collection_translations",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "collections.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/collections/translations/{locale}",
+    "description": "Set collection translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_collection_translations",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "categories.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/categories/limits",
+    "description": "Fetch Category limits and per-field constraints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_category_limits",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "categories.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/categories",
+    "description": "List categories for the store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ancestor_id": {
+          "description": "Filter to descendants of this ancestor category id. Must be a positive integer.",
+          "type": "integer"
+        },
+        "cursor": {
+          "description": "Opaque cursor from a previous `categories.list` response. Omit for the first page; reset when search, filters, tree, or sorting changes.",
+          "type": "string"
+        },
+        "has_children": {
+          "description": "Filter categories by whether they have subcategories. Accepted values: true, false.",
+          "type": "boolean"
+        },
+        "has_images": {
+          "description": "Filter categories by whether they have an image. Accepted values: true, false.",
+          "type": "boolean"
+        },
+        "limit": {
+          "description": "Page size. Defaults to 50. Maximum 500.",
+          "type": "integer"
+        },
+        "parent_id": {
+          "description": "`null` for root categories, or a positive parent category id.",
+          "type": "string"
+        },
+        "search": {
+          "description": "Search categories by name or slug. Maximum 200 characters.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field. Allowed values: name, product_count, created_at, updated_at.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction. Allowed values: asc, desc.",
+          "type": "string"
+        },
+        "tree": {
+          "description": "When true and no search or filters are active, paginate roots by `limit`, then nest an ancestor-first prefix of their combined subtrees up to `request_caps.tree_max_limit` total nodes. `truncated: true` means later nodes were omitted by that expansion cap; it is independent of root-page `has_next`. Search or filter parameters return the complete flat cursor-paginated result instead. Accepted values: true, false.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_categories",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "categories.search",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/categories/search",
+    "description": "Search categories for picker-style suggestions. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories/search. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Suggestion count. Defaults to 10. Maximum 50.",
+          "type": "integer"
+        },
+        "q": {
+          "description": "Search query. Maximum 200 characters.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "search_categories",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "categories.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/categories/{id}",
+    "description": "Fetch one category by id. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Category id.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_category",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "categories.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/categories/{id}/metafields",
+    "description": "List a category's custom-data values visible to the calling app. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories/{id}/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Category id.",
+          "type": "integer"
+        },
+        "limit": {
+          "description": "Page size; capped by the metafield list limit.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number (default 1).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_category_metafields",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "categories.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/categories/{id}/metafields",
+    "description": "Create, update, or delete category custom-data values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Category id.",
+          "type": "integer"
+        },
+        "metafields": {
+          "description": "Entries shaped as `{namespace, key, value}`. Send `null` or an empty string to delete the stored value.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_category_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "categories.metafields.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Fetch one translated category custom-data value. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Category id.",
+          "type": "integer"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_category_metafield_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "categories.metafields.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Set or clear one translated category custom-data value. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Category id.",
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Translated value. Send an empty string to delete the stored translation for this locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "set_category_metafield_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "categories.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/categories",
+    "description": "Create a category. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/categories. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Optional plain-text description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "image_id": {
+          "description": "Optional Media-library upload image UUID. Non-empty values require `read_files` access to the referenced file.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Category name.",
+          "type": "string"
+        },
+        "parent_id": {
+          "description": "Optional parent category id. Omit or send 0 for a root category.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Optional SEO description. Omit or send an empty string to let the storefront fall back to the Category description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title. Omit or send an empty string to let the storefront fall back to the Category name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Category template assignment. Omit this field, send an empty string, or send `default_category` to use the default Category template. Otherwise, send a Category template handle available in the store's active theme.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_category",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "categories.bulk-create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/categories/bulk-create",
+    "description": "Create multiple categories by name. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/categories/bulk-create. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "names": {
+          "description": "Category names to create.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "names"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_create_categories",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "categories.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/categories/{id}",
+    "description": "Update a category. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "create_redirect": {
+          "description": "When slug changes, create a redirect from the previous slug.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "New plain-text description. Omit to leave it unchanged; send an empty string to clear it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Category id.",
+          "type": "integer"
+        },
+        "image_id": {
+          "description": "New Media-library upload image UUID. Omit to leave the image unchanged; send an empty string to clear it. A non-empty value requires `read_files` access and must reference an image upload in this store.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "New Category name. Omit to leave it unchanged; an empty value is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parent_id": {
+          "description": "New parent category id. Omit to leave it unchanged; send 0 to move the Category to the root.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "New SEO description. Omit to leave it unchanged; send an empty string to clear it and restore the storefront Category-description fallback.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "New SEO title. Omit to leave it unchanged; send an empty string to clear it and restore the storefront Category-name fallback.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "New slug. Omit to leave the current slug unchanged; send an empty string to regenerate it from the current Category name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "New Category template assignment. Omit to leave it unchanged, send `default_category` to use the default Category template, or send another Category template handle available in the store's active theme. An empty string is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_category",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "categories.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/categories/{id}",
+    "description": "Delete a category. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/categories/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Category id.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_category",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "categories.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/categories/bulk-delete",
+    "description": "Delete multiple categories. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/categories/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "category_ids": {
+          "description": "Store-scoped integer category ids to delete.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "category_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_categories",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "categories.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/categories/{id}/translations/{locale}",
+    "description": "Fetch one category translation. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Category id.",
+          "type": "integer"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_category_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "categories.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/categories/{id}/translations/{locale}",
+    "description": "Set one category translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Category id.",
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_category_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "categories.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/categories/translations/{locale}",
+    "description": "Fetch category translations in batch. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated category ids.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_category_translations",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "categories.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/categories/translations/{locale}",
+    "description": "Set category translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_category_translations",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "attributes.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/attributes/limits",
+    "description": "Fetch Attribute limits, option limits, and list constraints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/attributes/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_attribute_limits",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "attributes.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/attributes",
+    "description": "List product attributes for the store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/attributes. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque cursor returned as `next_cursor` or `previous_cursor`. Omit for the first page; reset when search, filters, or sorting changes.",
+          "type": "string"
+        },
+        "in_use": {
+          "description": "Filter by whether the attribute is used by variants.",
+          "type": "boolean"
+        },
+        "limit": {
+          "description": "Page size, up to `list_max_limit` from Attribute limits. Values above that maximum are rejected.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search attributes by name or slug.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field from the Attribute list contract.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction from the Attribute list contract.",
+          "type": "string"
+        },
+        "sub_type": {
+          "description": "Filter by sub type: standard, swatch, or image.",
+          "type": "string"
+        },
+        "summary": {
+          "description": "Return attribute summaries without full option arrays.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_attributes",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "attributes.search",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/attributes/search",
+    "description": "Search attributes for picker-style suggestions. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/attributes/search. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Suggestion count.",
+          "type": "integer"
+        },
+        "offset": {
+          "description": "Result offset.",
+          "type": "integer"
+        },
+        "q": {
+          "description": "Search query.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "search_attributes",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "attributes.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/attributes/{id}",
+    "description": "Fetch one attribute by id. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/attributes/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Attribute id.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_attribute",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "attributes.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/attributes",
+    "description": "Create an attribute with options. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/attributes. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Optional plain-text description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Attribute name.",
+          "type": "string"
+        },
+        "options": {
+          "description": "Attribute options. `label` is required. `value` is optional and can be generated. `color` is required for swatch attributes. `file_id` is required for image attributes and requires `read_files`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sort_order": {
+          "description": "Store-wide display order.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "sub_type": {
+          "description": "One of `standard`, `swatch`, or `image`. Controls which option fields are required.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "sub_type",
+        "options"
+      ],
+      "type": "object"
+    },
+    "name": "create_attribute",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "attributes.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/attributes/{id}",
+    "description": "Update an attribute and replace its option set. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attributes/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Supply the exact current expected_revision, unchanged sub_type, and complete options array. Omitted options request removal; preserve existing IDs and option data.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Optional plain-text description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expected_revision": {
+          "description": "Copy `revision` from Get attribute. A concurrent change returns `ATTRIBUTE_VERSION_STALE` instead of replacing a newer option set.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Attribute id.",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Attribute name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "options": {
+          "description": "Required full replacement option array with at least one option. Existing options include their id; new options use `id: 0`. Removing an option in use by variants is blocked.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "slug": {
+          "description": "Optional slug. Omit to keep the current slug; send an empty string to regenerate it from the effective name. Changes are blocked while products or storefront filters use this attribute.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sort_order": {
+          "description": "Store-wide display order.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "sub_type": {
+          "description": "Send the existing `sub_type`; it is required and cannot be changed after create.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "sub_type",
+        "options",
+        "expected_revision"
+      ],
+      "type": "object"
+    },
+    "name": "update_attribute",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "attributes.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/attributes/{id}",
+    "description": "Delete an attribute. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/attributes/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Attribute id.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_attribute",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "attributes.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/attributes/bulk-delete",
+    "description": "Delete multiple attributes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/attributes/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_ids": {
+          "description": "Store-scoped integer attribute ids to delete.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "attribute_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_attributes",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "attributes.reorder",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/attributes/reorder",
+    "description": "Set the order of selected attributes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/attributes/reorder. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_ids": {
+          "description": "Attribute ids in display order.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "attribute_ids"
+      ],
+      "type": "object"
+    },
+    "name": "reorder_attributes",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "attributes.options.reorder",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/attributes/{id}/options/reorder",
+    "description": "Set the order of selected options within one attribute. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/attributes/{id}/options/reorder. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Attribute id.",
+          "type": "integer"
+        },
+        "option_ids": {
+          "description": "Option ids in display order.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "option_ids"
+      ],
+      "type": "object"
+    },
+    "name": "reorder_attribute_options",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "attributes.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/attributes/{id}/translations/{locale}",
+    "description": "Fetch one attribute translation. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/attributes/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Attribute id.",
+          "type": "integer"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_attribute_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "attributes.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/attributes/{id}/translations/{locale}",
+    "description": "Set one attribute translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attributes/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Attribute id.",
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields: name, slug, description.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_attribute_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "attributes.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/attributes/translations/{locale}",
+    "description": "Fetch attribute translations in batch. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/attributes/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated attribute ids.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_attribute_translations",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "attributes.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/attributes/translations/{locale}",
+    "description": "Set attribute translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attributes/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed fields: name, slug, description.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_attribute_translations",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "attribute_options.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/attribute-options/{id}/translations/{locale}",
+    "description": "Fetch one attribute option translation. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/attribute-options/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Attribute option id.",
+          "type": "integer"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_attribute_option_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "attribute_options.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/attribute-options/{id}/translations/{locale}",
+    "description": "Set one attribute option translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attribute-options/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Attribute option id.",
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields: label, value.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_attribute_option_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "attribute_options.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/attribute-options/translations/{locale}",
+    "description": "Fetch attribute option translations in batch. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/attribute-options/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated attribute option ids.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_attribute_option_translations",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "attribute_options.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/attribute-options/translations/{locale}",
+    "description": "Set attribute option translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attribute-options/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed fields: label, value.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_attribute_option_translations",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "catalog.metafield-definitions.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/metafield-definitions",
+    "description": "List catalog metafield definitions available to the connected user. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/metafield-definitions. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque next-page cursor.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size within the service limit.",
+          "type": "integer"
+        },
+        "owner_type": {
+          "description": "Catalog resource that owns the metafields.",
+          "enum": [
+            "product",
+            "variant",
+            "category",
+            "collection",
+            "brand",
+            "vendor"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_type"
+      ],
+      "type": "object"
+    },
+    "name": "list_catalog_metafield_definitions",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "description": "List or search one file library with cursor pagination. Media and Site Assets are separate. Use returned cursors and reset them after changing search or media type; the service enforces page-size limits.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "type": "string"
+        },
+        "library": {
+          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        },
+        "limit": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "media_type": {
+          "enum": [
+            "image",
+            "video",
+            "document",
+            "3d"
+          ],
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "list_files",
+    "scopes": [
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "description": "Get a file's metadata, URLs, revision and preview status from the selected library. An ID from another store or library is not accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "type": "string"
+        },
+        "library": {
+          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "library",
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_file",
+    "scopes": [
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "description": "Update only supplied original_filename and/or alt_text. Omitted fields stay unchanged; empty alt_text clears it. This does not replace file bytes or move the file between libraries.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "alt_text": {
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "type": "string"
+        },
+        "library": {
+          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        },
+        "original_filename": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "library",
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_file",
+    "scopes": [
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "description": "Permanently delete a file from the selected library. First call with only library and id. Show any CONFIRMATION_REQUIRED impact and obtain approval before sending confirmed=true and the exact returned token. Required references can block deletion and cannot be overridden. Never auto-confirm.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "id": {
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "type": "string"
+        },
+        "library": {
+          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "library",
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_file",
+    "scopes": [
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "description": "Read supported file formats, upload sizes, metadata limits and upload batch limits before preparing uploads. Requires read access to the selected library.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "library": {
+          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "get_file_limits",
+    "scopes": [
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "description": "Read the store's shared storage allowance and usage. Media and Site Assets consume the same allowance. Requires read access to the selected library.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "library": {
+          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "get_storage_quota",
+    "scopes": [
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "description": "Prepare direct uploads to one library. Provide exact filenames, MIME types and byte counts. Returns upload intents and short-lived signed PUT URLs/headers; upload bytes directly to those URLs, never in MCP arguments, then call finalize_file_uploads. Preparing an intent does not create a usable library file. Do not expose signed upload URLs publicly. Storage and file validation limits apply.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "alt_text": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "original_filename": {
+                "type": "string"
+              },
+              "size_bytes": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "original_filename",
+              "mime_type",
+              "size_bytes"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "library": {
+          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "library",
+        "items"
+      ],
+      "type": "object"
+    },
+    "name": "create_file_uploads",
+    "scopes": [
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "description": "Finalize uploaded bytes using the returned intent IDs and the same library. Validation runs asynchronously; use get_file_upload_status until ready or failed. Never treat a processing intent as a file ready to attach.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "intent_ids": {
+          "items": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "library": {
+          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "library",
+        "intent_ids"
+      ],
+      "type": "object"
+    },
+    "name": "finalize_file_uploads",
+    "scopes": [
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "description": "Read status of upload intents belonging to the connected store and authorizing user. Requires write access to the selected library, as in the upload flow. A ready result provides the validated file; a failed result supplies its error. Check status later while processing; do not start duplicate uploads.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "intent_ids": {
+          "items": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "library": {
+          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "library",
+        "intent_ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_file_upload_status",
+    "scopes": [
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  }
+]

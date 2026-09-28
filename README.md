@@ -76,16 +76,19 @@ The server returns tools allowed by your approved connection and current permiss
 | Tags | `list_tags`, `get_tag` | `create_tag`, `update_tag`, `delete_tag` |
 | Brands | `list_brands`, `get_brand` | `create_brand`, `update_brand`, `delete_brand` |
 | Vendors | `list_vendors`, `get_vendor` | `create_vendor`, `update_vendor`, `delete_vendor` |
-| Attributes | `list_attributes`, `get_attribute` | `create_attribute`, `update_attribute`, `delete_attribute` |
+| Attributes | Lists, discovery, details, translations | Create, update, delete, bulk delete, reorder attributes/options, translations |
+| Products | Lists, details, variants, quantity pricing, metafields, translations | Create, update, duplicate, delete, supported bulk actions, metafields and translations |
+| Collections | Lists, search, details, product lists, rules, metafields, translations | Create, update, delete, bulk actions, rules, metafields and translations |
+| Categories | Lists, search, details, metafields, translations | Create, update, delete, bulk create/delete, metafields and translations |
 | Files | `list_files`, `get_file`, `get_file_limits`, `get_storage_quota` | `update_file`, `delete_file`, `create_file_uploads`, `finalize_file_uploads`, `get_file_upload_status` |
 
 Catalog reads require `store:products:read`; catalog writes require `store:products:write`. Binding new catalog images also requires `store:files:read`. `connection:read` permits the connection itself and grants no store-data access.
 
 For Files, choose `library: "media"` or `library: "site_assets"` on every call. Media requires `store:files:read` or `store:files:write`. Site Assets requires `store:online_store.site_assets:read` or `store:online_store.site_assets:write`. Upload status is a read of an upload operation and, like preparation and finalization, requires that library's **write** permission. A file ID from another library cannot bypass these permissions.
 
-Existing Products permissions cover the Brand, Vendor and Attribute tools. Refresh the tool list in your client to discover new tools. To add file permissions, reconnect and approve the additional access; refreshing a token cannot enlarge its grant.
+Existing Products permissions cover the catalog tools. Translation operations also require `store:settings.languages:read` or `store:settings.languages:write`, matching the existing Languages permissions. Product operations affecting Gift Card products require `store:gift_cards:write` where the API requires it. Refresh the tool list in your client to discover new tools. To add file permissions, reconnect and approve the additional access; refreshing a token cannot enlarge its grant.
 
-The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation.
+The [complete tool inventory](docs/catalog-tools.md) lists the supported operations and their API counterparts. The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation. Products, Collections, Categories, and Attributes cover their documented merchant-authorized API endpoints. App-only purchase requirements remain outside user connections. Brands, Vendors, Tags, and Files support the tools shown above; their remaining API endpoints are not implied.
 
 ## Work with brands and vendors
 

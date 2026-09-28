@@ -2,7 +2,8 @@
 
 ## 2026-09-28 — Catalog and Files
 
-- Added Brand, Vendor and Attribute tools alongside Tags.
+- Added Brand and Vendor tools alongside Tags, plus documented merchant-authorized Product, Collection, Category and Attribute operations.
+- Added catalog metafield definition discovery, translations, bulk operations, collection rules and attribute ordering.
 - Added separate Media and Site Assets access, file metadata/deletion, and direct-upload preparation, finalization and status.
 - Preserved partial updates, deletion impact, attribute revision checks and image-reference permissions.
 
