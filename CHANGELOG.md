@@ -1,5 +1,11 @@
 # Changelog
 
+## Content resources
+
+- Added all supported Pages, Policies, Blog Posts, Tags, Categories, and Authors API operations to MCP, including their available translations, bulk actions, and metafields.
+- Added independent Pages/Blog permissions and content metafield discovery.
+
+
 ## Uniform Store API operations
 
 - Routed every store-data tool through its Store API handler, including file uploads and attribute summaries.
