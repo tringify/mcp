@@ -86,7 +86,7 @@ Catalog reads require `store:products:read`; catalog writes require `store:produ
 
 For Files, choose `library: "media"` or `library: "site_assets"` on every call. Media requires `store:files:read` or `store:files:write`. Site Assets requires `store:online_store.site_assets:read` or `store:online_store.site_assets:write`. Upload status is a read of an upload operation and, like preparation and finalization, requires that library's **write** permission. A file ID from another library cannot bypass these permissions.
 
-Existing Products permissions cover the catalog tools. Translation operations also require `store:settings.languages:read` or `store:settings.languages:write`, matching the existing Languages permissions. Product operations affecting Gift Card products require `store:gift_cards:write` where the API requires it. Refresh the tool list in your client to discover new tools. To add file permissions, reconnect and approve the additional access; refreshing a token cannot enlarge its grant.
+Existing Products permissions cover the catalog tools. Translation operations also require `store:settings.languages:read` or `store:settings.languages:write`, matching the existing Languages permissions. Product operations affecting Gift Card products require `store:gift_cards:write` where the API requires it. Refresh the tool list in your client to discover new tools. To add permissions, use the access-update flow below; refreshing a token cannot enlarge its grant.
 
 The [complete tool inventory](docs/catalog-tools.md) lists the supported operations and their API counterparts. The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation. Products, Collections, Categories, and Attributes cover their documented merchant-authorized API endpoints. App-only purchase requirements remain outside user connections. Brands, Vendors, Tags, and Files support the tools shown above; their remaining API endpoints are not implied.
 
@@ -120,6 +120,20 @@ Do not put binary data or base64 into MCP arguments. Starting an upload does not
 
 Files can be renamed or have their alt text changed with `update_file`. Clearing a catalog image reference does not delete its library file. `delete_file` checks use and may require impact confirmation; a file required by another record can block deletion.
 
+## Update permissions
+
+Keep your existing MCP server entry and start authorization again:
+
+```sh
+codex mcp login tringify
+```
+
+Use your configured server name if it differs from `tringify`. On Tringify’s approval screen, select the same store and choose the existing connection. Review the permissions marked **New permission** and any access that will be removed, then select **Update access**. If several connections match, select the one you intend to update; **Create a separate connection** is a separate choice.
+
+Your current connection keeps working until Codex completes the authorization. The connection keeps its ID, its old credentials stop working, and Codex receives replacement credentials. Cancelling or abandoning approval leaves existing access unchanged. Refresh the connection or start a new conversation to load the updated tools.
+
+The tool must request the additional scopes, and your current store role must allow them. An expired or disconnected connection needs a new authorization. **Accounts → Connected Tools → Update access** also explains these steps. You do not need to disconnect first.
+
 ## Manage or remove the connection
 
 Open [Connected tools](https://accounts.tringify.com/manage/connected-tools) in Tringify Accounts to review or disconnect access. Store owners can also disconnect their team's connections for that store. Removing a team member or their permissions changes what the connection can do.
@@ -135,7 +149,7 @@ Remove access in Tringify Accounts first. Removing a local configuration entry s
 ## Troubleshooting
 
 - **Authentication does not finish:** complete the browser flow on the computer running Codex. Use the exact server URL above, without a trailing slash. If the approval expired, start a new sign-in.
-- **No tools appear:** approve product read or write access as needed. A connection with only `connection:read` has no tag tools. Reconnect after changing approved scopes; refresh cannot add permissions. Reload the connection or start a new conversation after setup.
+- **No tools appear:** approve product read or write access as needed. A connection with only `connection:read` has no tag tools. Use Update access to approve missing permissions; refresh cannot add permissions. Reload the connection or start a new conversation after setup.
 - **A tool returns insufficient access:** check both the connection's approved scopes and your current store permissions. A tool listed earlier can become unavailable if your access changes.
 - **Sign-in is required again:** reconnect through Codex. Disconnecting a tool, removed membership, expired access, and token rotation failures can require a fresh sign-in.
 - **The store is not listed:** use the Tringify account with access to that store and check whether the store and subscription are active.
