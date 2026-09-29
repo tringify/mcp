@@ -80,6 +80,11 @@ All store-data tools use the corresponding Store API operations. The server retu
 | Products | Lists, details, variants, quantity pricing, metafields, translations | Create, update, duplicate, delete, supported bulk actions, metafields and translations |
 | Collections | Lists, search, details, product lists, rules, metafields, translations | Create, update, delete, bulk actions, rules, metafields and translations |
 | Categories | Lists, search, details, metafields, translations | Create, update, delete, bulk create/delete, metafields and translations |
+| Pages | Limits, list, search, details, translations, metafields | Create, update, delete, bulk delete, translations and metafields |
+| Policies | Limits, list, get by type, translations | Update by type, individual and batch translations |
+| Blog Posts | Limits, list, search, details, translations, metafields | Create, update, delete, bulk status/category/tag changes, translations and metafields |
+| Blog Tags and Categories | Limits, list, details, translations; category metafields | Create, update, delete, bulk delete, translations; category metafields |
+| Blog Authors | Limits, list, search, details | Create, update, delete, bulk delete with reassignment when required |
 | Languages | `list_languages`, `list_available_languages` | `set_languages`, `set_default_language`, `delete_language_translations` |
 | Files | `list_files`, `get_file`, `get_file_limits`, `get_storage_quota` | `update_file`, `delete_file`, `create_file_uploads`, `finalize_file_uploads`, `get_file_upload_status` |
 
@@ -90,6 +95,14 @@ For Files, choose `library: "media"` or `library: "site_assets"` on every call. 
 Existing Products permissions cover the catalog tools. Translation operations also require `store:settings.languages:read` or `store:settings.languages:write`, matching the existing Languages permissions. Product operations affecting Gift Card products require `store:gift_cards:write` where the API requires it. Refresh the tool list in your client to discover new tools. To add permissions, use the access-update flow below; refreshing a token cannot enlarge its grant.
 
 The [complete tool inventory](docs/catalog-tools.md) lists the supported operations and their API counterparts. The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation. Products, Collections, Categories, Attributes, and Languages cover their documented merchant-authorized API endpoints. App-only purchase requirements remain outside user connections. Brands, Vendors, Tags, and Files support the tools shown above; their remaining API endpoints are not implied.
+
+## Pages, policies, and blogs
+
+Pages and Policies require `store:pages:read` or `store:pages:write`. Blog Posts, Tags, Categories, and Authors require `store:blog:read` or `store:blog:write`. These are separate from Products permissions. Translations also require the corresponding Languages permission; attaching a post featured image or author avatar requires Files read access.
+
+Policies are fixed records: use their type for get/update and their UUID for translations. There are no create or delete policy tools. Deleting an author assigned to posts requires a replacement author. Blog Authors have no translation endpoints.
+
+Use `list_page_metafield_definitions` and `list_blog_metafield_definitions` to discover accessible definitions before setting Page, Blog Post, or Blog Category values. Blog Comments, Blog Settings, and blog list-page SEO are outside this batch.
 
 ## Languages and translations
 
@@ -103,7 +116,7 @@ Languages use `store:settings.languages:read` and `store:settings.languages:writ
 
 Removing a language can permanently delete translations and requires confirmation. A language assigned to a storefront is protected until its assignments are removed. Adding a language does not publish it on a storefront or translate content automatically. Review the returned warnings before confirming destructive changes.
 
-Content translation tools are already available for **Products, variant titles, Collections, Categories, Attributes, attribute options, Tags, Brands, Vendors, and supported product, variant, category, collection, brand, and vendor metafields**. Product, collection, category, attribute, option, tag, brand, and vendor translations also have batch tools. Variant titles and metafields use individual tools. **Files translations, AI translation jobs, and translation CSV import/export are not exposed through MCP.**
+Content translation tools are already available for **Products, variant titles, Collections, Categories, Attributes, attribute options, Tags, Brands, Vendors, Pages, Policies, Blog Posts, Blog Tags, Blog Categories, and supported product, variant, category, collection, brand, vendor, page, blog post, and blog category metafields**. Product, collection, category, attribute, option, tag, brand, vendor, page, policy, blog post, blog tag, and blog category translations also have batch tools. Variant titles and metafields use individual tools. **Files translations, AI translation jobs, and translation CSV import/export are not exposed through MCP.**
 
 ## Work with brands and vendors
 

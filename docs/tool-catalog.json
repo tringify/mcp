@@ -334,7 +334,7 @@
           ]
         },
         "height": {
-          "description": "Positive package height within the store\u2019s limit.",
+          "description": "Positive package height within the store’s limit.",
           "type": [
             "number",
             "null"
@@ -355,7 +355,7 @@
           ]
         },
         "images": {
-          "description": "Gallery entries: {file_id, alt_text?, sort_order?}. Files may be images, videos, or 3D models. Non-empty file_id values require read_files. On update, the array replaces the gallery; [] clears it. The store\u2019s max_images limit applies.",
+          "description": "Gallery entries: {file_id, alt_text?, sort_order?}. Files may be images, videos, or 3D models. Non-empty file_id values require read_files. On update, the array replaces the gallery; [] clears it. The store’s max_images limit applies.",
           "items": {},
           "type": [
             "array",
@@ -363,7 +363,7 @@
           ]
         },
         "inventory": {
-          "description": "Simple products with inventory_source=track. Rows are {location_id, quantity, low_stock_threshold?, expected_quantity?}. Quantities are non-negative integers within the store\u2019s limits. On update, only named locations change. expected_quantity is the on-hand value previously read (0 for a missing row); a mismatch returns 409 PRODUCT_VERSION_STALE. You may use merchant-managed locations or locations owned by your app\u2019s active installation.",
+          "description": "Simple products with inventory_source=track. Rows are {location_id, quantity, low_stock_threshold?, expected_quantity?}. Quantities are non-negative integers within the store’s limits. On update, only named locations change. expected_quantity is the on-hand value previously read (0 for a missing row); a mismatch returns 409 PRODUCT_VERSION_STALE. You may use merchant-managed locations or locations owned by your app’s active installation.",
           "items": {},
           "type": [
             "array",
@@ -385,14 +385,14 @@
           ]
         },
         "length": {
-          "description": "Positive package length within the store\u2019s limit.",
+          "description": "Positive package length within the store’s limit.",
           "type": [
             "number",
             "null"
           ]
         },
         "max_order_quantity": {
-          "description": "Optional per-order quantity cap, independent of inventory mode. On update, 0 clears the explicit cap; omission or null leaves it unchanged. Without an explicit cap, the store\u2019s default order cap may still apply.",
+          "description": "Optional per-order quantity cap, independent of inventory mode. On update, 0 clears the explicit cap; omission or null leaves it unchanged. Without an explicit cap, the store’s default order cap may still apply.",
           "type": [
             "integer",
             "null"
@@ -414,7 +414,7 @@
           ]
         },
         "no_manufacturer_identifiers": {
-          "description": "Set true only if the product has no manufacturer identifiers. Cannot be true with a barcode or MPN. The response\u2019s identifier_status is provided when identifiers exist, not_applicable when this flag is true, and unknown otherwise.",
+          "description": "Set true only if the product has no manufacturer identifiers. Cannot be true with a barcode or MPN. The response’s identifier_status is provided when identifiers exist, not_applicable when this flag is true, and unknown otherwise.",
           "type": [
             "boolean",
             "null"
@@ -428,7 +428,7 @@
           ]
         },
         "prices": {
-          "description": "Simple products only. Rows are {currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}. Amounts are JSON decimal strings with the currency\u2019s permitted precision. Include the base currency. On update, supplying this array replaces the complete price set. A sale price may be zero but must be below the regular price. The base-currency sale schedule applies to all currency sale prices; a non-base sale requires a base sale. Omit sale prices from the replacement set to remove them.",
+          "description": "Simple products only. Rows are {currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}. Amounts are JSON decimal strings with the currency’s permitted precision. Include the base currency. On update, supplying this array replaces the complete price set. A sale price may be zero but must be below the regular price. The base-currency sale schedule applies to all currency sale prices; a non-base sale requires a base sale. Omit sale prices from the replacement set to remove them.",
           "items": {},
           "type": [
             "array",
@@ -528,7 +528,7 @@
           "type": "string"
         },
         "variants": {
-          "description": "Variable products only; required (at least one variant). The initial variant set, validated together: combination uniqueness against the declared attributes, attribute coverage, at least one variant, and store-wide SKU uniqueness. Each entry:\n\n- `sku` (string, required) \u2014 unique across the entire store.\n- `attribute_values` (array, required) \u2014 One entry per declared attribute: `{attribute_id, option_id}` for an option choice, or `{attribute_id, value_text}` for a text value. Attribute and option ids come from `GET /attributes` (the product's `attribute_ids` must cover every `attribute_id` used). Two variants can never share the same combination.\n- `prices` (array, required) \u2014 per-currency rows `{currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}`; the base currency row is required. Amounts are decimal strings.\n- `title` (string, optional) \u2014 auto-composed from option labels (\"Red / M\") unless supplied.\n- `barcode` is variant-specific. `condition`, `mpn`, and `no_manufacturer_identifiers` can override the parent\u2019s values. `identifier_status` describes whether identifiers are provided, unknown, or not applicable; use the identifier fields and declaration consistently.\n- `weight`, `weight_unit`, `length`, `width`, `height`, `dimension_unit`, `hs_code`, `country_of_origin`, `requires_shipping` \u2014 physical overrides.\n- `inventory_source` (`track` | `none` | `group`), `inventory` (per-location rows `{location_id, quantity, low_stock_threshold?, expected_quantity?}` when tracking), `inventory_group_id` (when `group`).\n- `image_file_id` (string, optional) \u2014 Media-library upload UUID; non-empty values require `read_files` in addition to `write_products`. `image_id` selects an existing product gallery row and does not require `read_files`.\n- `max_order_quantity` is an optional per-order cap; `overall_low_stock_threshold` applies only to directly tracked stock.\n\nCreate supplies the initial set here. Later edits use the delta fields on Product update; read operations use the paginated Variant endpoints.",
+          "description": "Variable products only; required (at least one variant). The initial variant set, validated together: combination uniqueness against the declared attributes, attribute coverage, at least one variant, and store-wide SKU uniqueness. Each entry:\n\n- `sku` (string, required) — unique across the entire store.\n- `attribute_values` (array, required) — One entry per declared attribute: `{attribute_id, option_id}` for an option choice, or `{attribute_id, value_text}` for a text value. Attribute and option ids come from `GET /attributes` (the product's `attribute_ids` must cover every `attribute_id` used). Two variants can never share the same combination.\n- `prices` (array, required) — per-currency rows `{currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}`; the base currency row is required. Amounts are decimal strings.\n- `title` (string, optional) — auto-composed from option labels (\"Red / M\") unless supplied.\n- `barcode` is variant-specific. `condition`, `mpn`, and `no_manufacturer_identifiers` can override the parent’s values. `identifier_status` describes whether identifiers are provided, unknown, or not applicable; use the identifier fields and declaration consistently.\n- `weight`, `weight_unit`, `length`, `width`, `height`, `dimension_unit`, `hs_code`, `country_of_origin`, `requires_shipping` — physical overrides.\n- `inventory_source` (`track` | `none` | `group`), `inventory` (per-location rows `{location_id, quantity, low_stock_threshold?, expected_quantity?}` when tracking), `inventory_group_id` (when `group`).\n- `image_file_id` (string, optional) — Media-library upload UUID; non-empty values require `read_files` in addition to `write_products`. `image_id` selects an existing product gallery row and does not require `read_files`.\n- `max_order_quantity` is an optional per-order cap; `overall_low_stock_threshold` applies only to directly tracked stock.\n\nCreate supplies the initial set here. Later edits use the delta fields on Product update; read operations use the paginated Variant endpoints.",
           "items": {},
           "type": [
             "array",
@@ -543,7 +543,7 @@
           ]
         },
         "weight": {
-          "description": "Positive weight within the store\u2019s limit. Requires weight_unit.",
+          "description": "Positive weight within the store’s limit. Requires weight_unit.",
           "type": [
             "number",
             "null"
@@ -557,7 +557,7 @@
           ]
         },
         "width": {
-          "description": "Positive package width within the store\u2019s limit.",
+          "description": "Positive package width within the store’s limit.",
           "type": [
             "number",
             "null"
@@ -606,7 +606,7 @@
           ]
         },
         "catalog_position": {
-          "description": "Merchant-curated position for the storefront featured listing sort. Sparse, NON-unique positive integers \u2014 ties order deterministically by product id, gaps are encouraged (10, 20, 30) so products slot between without renumbering. Nil/cleared products trail the positioned set.",
+          "description": "Merchant-curated position for the storefront featured listing sort. Sparse, NON-unique positive integers — ties order deterministically by product id, gaps are encouraged (10, 20, 30) so products slot between without renumbering. Nil/cleared products trail the positioned set.",
           "type": [
             "integer",
             "null"
@@ -685,7 +685,7 @@
           ]
         },
         "height": {
-          "description": "Positive package height within the store\u2019s limit.",
+          "description": "Positive package height within the store’s limit.",
           "type": [
             "number",
             "null"
@@ -711,7 +711,7 @@
           "type": "integer"
         },
         "images": {
-          "description": "Gallery entries: {file_id, alt_text?, sort_order?}. Files may be images, videos, or 3D models. Non-empty file_id values require read_files. On update, the array replaces the gallery; [] clears it. The store\u2019s max_images limit applies.",
+          "description": "Gallery entries: {file_id, alt_text?, sort_order?}. Files may be images, videos, or 3D models. Non-empty file_id values require read_files. On update, the array replaces the gallery; [] clears it. The store’s max_images limit applies.",
           "items": {},
           "type": [
             "array",
@@ -719,7 +719,7 @@
           ]
         },
         "inventory": {
-          "description": "Simple products with inventory_source=track. Rows are {location_id, quantity, low_stock_threshold?, expected_quantity?}. Quantities are non-negative integers within the store\u2019s limits. On update, only named locations change. expected_quantity is the on-hand value previously read (0 for a missing row); a mismatch returns 409 PRODUCT_VERSION_STALE. You may use merchant-managed locations or locations owned by your app\u2019s active installation.",
+          "description": "Simple products with inventory_source=track. Rows are {location_id, quantity, low_stock_threshold?, expected_quantity?}. Quantities are non-negative integers within the store’s limits. On update, only named locations change. expected_quantity is the on-hand value previously read (0 for a missing row); a mismatch returns 409 PRODUCT_VERSION_STALE. You may use merchant-managed locations or locations owned by your app’s active installation.",
           "items": {},
           "type": [
             "array",
@@ -741,14 +741,14 @@
           ]
         },
         "length": {
-          "description": "Positive package length within the store\u2019s limit.",
+          "description": "Positive package length within the store’s limit.",
           "type": [
             "number",
             "null"
           ]
         },
         "max_order_quantity": {
-          "description": "Optional per-order quantity cap, independent of inventory mode. On update, 0 clears the explicit cap; omission or null leaves it unchanged. Without an explicit cap, the store\u2019s default order cap may still apply.",
+          "description": "Optional per-order quantity cap, independent of inventory mode. On update, 0 clears the explicit cap; omission or null leaves it unchanged. Without an explicit cap, the store’s default order cap may still apply.",
           "type": [
             "integer",
             "null"
@@ -770,7 +770,7 @@
           ]
         },
         "new_variants": {
-          "description": "Variable products only. Brand-new variants to add alongside the existing set \u2014 same entry shape as create's variants array. Combination uniqueness is validated against the surviving existing variants and within the batch.",
+          "description": "Variable products only. Brand-new variants to add alongside the existing set — same entry shape as create's variants array. Combination uniqueness is validated against the surviving existing variants and within the batch.",
           "items": {},
           "type": [
             "array",
@@ -778,7 +778,7 @@
           ]
         },
         "no_manufacturer_identifiers": {
-          "description": "Set true only if the product has no manufacturer identifiers. Cannot be true with a barcode or MPN. The response\u2019s identifier_status is provided when identifiers exist, not_applicable when this flag is true, and unknown otherwise.",
+          "description": "Set true only if the product has no manufacturer identifiers. Cannot be true with a barcode or MPN. The response’s identifier_status is provided when identifiers exist, not_applicable when this flag is true, and unknown otherwise.",
           "type": [
             "boolean",
             "null"
@@ -792,7 +792,7 @@
           ]
         },
         "prices": {
-          "description": "Simple products only. Rows are {currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}. Amounts are JSON decimal strings with the currency\u2019s permitted precision. Include the base currency. On update, supplying this array replaces the complete price set. A sale price may be zero but must be below the regular price. The base-currency sale schedule applies to all currency sale prices; a non-base sale requires a base sale. Omit sale prices from the replacement set to remove them.",
+          "description": "Simple products only. Rows are {currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}. Amounts are JSON decimal strings with the currency’s permitted precision. Include the base currency. On update, supplying this array replaces the complete price set. A sale price may be zero but must be below the regular price. The base-currency sale schedule applies to all currency sale prices; a non-base sale requires a base sale. Omit sale prices from the replacement set to remove them.",
           "items": {},
           "type": [
             "array",
@@ -910,7 +910,7 @@
           ]
         },
         "variants": {
-          "description": "Variable products only: entries address existing variants by `variant_id` and change only the supplied fields. Variants not mentioned are untouched. Supplying `attribute_values` replaces that Variant's complete combination; it must cover the Product's declared attributes and remain unique across all surviving and concurrently updated Variants. Supplying `prices` replaces the complete currency set and cannot be empty. Supplying `shipping_prices` replaces the complete set and an empty array clears it. Supplying `inventory` sets only the named locations. Include `expected_quantity` in each edited location row to reject a stale stock snapshot with PRODUCT_VERSION_STALE (409). Omit unchanged locations when editing other fields. Example \u2014 reprice one variant: `{\"variants\": [{\"variant_id\": 1007, \"prices\": [{\"currency_code\": \"USD\", \"regular_price\": \"31.00\"}]}]}`.",
+          "description": "Variable products only: entries address existing variants by `variant_id` and change only the supplied fields. Variants not mentioned are untouched. Supplying `attribute_values` replaces that Variant's complete combination; it must cover the Product's declared attributes and remain unique across all surviving and concurrently updated Variants. Supplying `prices` replaces the complete currency set and cannot be empty. Supplying `shipping_prices` replaces the complete set and an empty array clears it. Supplying `inventory` sets only the named locations. Include `expected_quantity` in each edited location row to reject a stale stock snapshot with PRODUCT_VERSION_STALE (409). Omit unchanged locations when editing other fields. Example — reprice one variant: `{\"variants\": [{\"variant_id\": 1007, \"prices\": [{\"currency_code\": \"USD\", \"regular_price\": \"31.00\"}]}]}`.",
           "items": {},
           "type": [
             "array",
@@ -925,7 +925,7 @@
           ]
         },
         "weight": {
-          "description": "Positive weight within the store\u2019s limit. Requires weight_unit.",
+          "description": "Positive weight within the store’s limit. Requires weight_unit.",
           "type": [
             "number",
             "null"
@@ -939,7 +939,7 @@
           ]
         },
         "width": {
-          "description": "Positive package width within the store\u2019s limit.",
+          "description": "Positive package width within the store’s limit.",
           "type": [
             "number",
             "null"
@@ -970,7 +970,7 @@
           "type": "integer"
         },
         "title": {
-          "description": "Optional title for the copy. Defaults to `Copy of <source title>`.",
+          "description": "Optional title for the copy. Defaults to `Copy of \u003csource title\u003e`.",
           "type": [
             "string",
             "null"
@@ -2025,7 +2025,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
           "type": "string"
         }
       },
@@ -2068,7 +2068,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
           "type": "string"
         },
         "value": {
@@ -4027,6 +4027,2924 @@
     ]
   },
   {
+    "api_key": "pages.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/pages/limits",
+    "description": "Fetch Page limits and per-field constraints. Returns the per-field maximum lengths, enum values, and request caps that apply to Page endpoints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_page_limits",
+    "scopes": [
+      "store:pages:read"
+    ]
+  },
+  {
+    "api_key": "pages.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/pages",
+    "description": "List pages for the store. Returns paginated Pages. Use `search` or `status` to filter. `total` counts matching pages; `store_total` counts all pages in the store, including those excluded by filters. Use `store_total` with the page limit when showing remaining capacity. Missing or non-positive pagination values use the contract defaults, values above the maximum are capped, and invalid sort values are rejected. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search Pages by title or slug.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field from the Page list contract.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction from the Page list contract.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Filter by status.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_pages",
+    "scopes": [
+      "store:pages:read"
+    ]
+  },
+  {
+    "api_key": "pages.search",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/pages/search",
+    "description": "Search pages for picker UIs. Returns lightweight page options. Missing or non-positive pagination values use the contract defaults, and `limit` is capped by the Page contract. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/search. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Suggestion count.",
+          "type": "integer"
+        },
+        "offset": {
+          "description": "Result offset.",
+          "type": "integer"
+        },
+        "q": {
+          "description": "Search query.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Filter by status.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "search_pages",
+    "scopes": [
+      "store:pages:read"
+    ]
+  },
+  {
+    "api_key": "pages.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/pages/{id}",
+    "description": "Fetch one page by id. Returns the Page if it belongs to the token's store. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Page id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_page",
+    "scopes": [
+      "store:pages:read"
+    ]
+  },
+  {
+    "api_key": "pages.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/pages/{id}/metafields",
+    "description": "List a page's custom-data values visible to the token. Returns a paginated list. Definitions are filtered through the token's access rules; app-owned definitions follow their declared app and merchant access. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Page id.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size; capped by the metafield list limit.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number (default 1).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_page_metafields",
+    "scopes": [
+      "store:pages:read"
+    ]
+  },
+  {
+    "api_key": "pages.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/pages/{id}/metafields",
+    "description": "Create, update, or delete page custom-data values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. The complete value change succeeds or fails together. Omitted entries are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Page id.",
+          "type": "string"
+        },
+        "metafields": {
+          "description": "Entries shaped as `{namespace, key, value}`. Send `null` or an empty string to delete the stored value.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_page_metafield",
+    "scopes": [
+      "store:pages:write"
+    ]
+  },
+  {
+    "api_key": "pages.metafields.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Fetch one translated page custom-data value. Resolves the definition by namespace and key, verifies that it is translatable and visible to the token, then returns its value for the requested enabled non-default language. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Page id.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_page_metafield_translation",
+    "scopes": [
+      "store:pages:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "pages.metafields.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Set or clear one translated page custom-data value. The definition must permit writes and translations. Send an empty value to clear this locale’s translation. Send an explicit string in `value`; omit neither the field nor its value, and do not send null. An empty string clears the translation. For `list.string`, send a JSON-encoded string array with one translated item for each source item, in the same order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Page id.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Translated value. Send an empty string to delete the stored translation for this locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "set_page_metafield_translation",
+    "scopes": [
+      "store:pages:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "pages.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/pages",
+    "description": "Create a page. Creates a Page. `title` is required. Omitted `status` defaults to `draft`. `slug` is optional on create; when omitted or empty, the backend generates it from the title. Optional SEO, content, and template fields follow the Page resource contract. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/pages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "description": "Optional sanitized HTML content.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Optional SEO description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "Page status: draft or published. Omit to create a draft.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_page`. Use `default_page` for the default Page template, or pass an alternate Page template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_page` to reset it to default, and do not send an empty string.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "description": "Page title.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "type": "object"
+    },
+    "name": "create_page",
+    "scopes": [
+      "store:pages:write"
+    ]
+  },
+  {
+    "api_key": "pages.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/pages/{id}",
+    "description": "Update a page. Updates provided Page fields. Omitted fields are left unchanged. When `slug` is supplied it must be non-empty and valid. Slugs are generated from the title only during create. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "description": "Optional sanitized HTML content.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "create_redirect": {
+          "description": "When the slug changes, create a redirect from the old page URL to the new one. Defaults to true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Page id.",
+          "type": "string"
+        },
+        "seo_description": {
+          "description": "Optional SEO description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit it to keep the current slug; when supplied it must be non-empty and valid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "Page status: draft or published. Omit to leave the current status unchanged.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Template assignment. Omit to leave the current assignment unchanged, use default_page to reset to the default Page template, and do not send an empty string.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "description": "Page title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_page",
+    "scopes": [
+      "store:pages:write"
+    ]
+  },
+  {
+    "api_key": "pages.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/pages/{id}",
+    "description": "Delete a page. Deletes a Page, its custom-data values, and all related translations atomically. Value and translation deletion webhooks are queued before the Page deletion event. If menus link to the Page, the first request returns `CONFIRMATION_REQUIRED`; repeat it with the returned token to delete the Page and durably queue removal of those menu links. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/pages/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token returned by the first delete attempt.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true when repeating a delete that returned `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Page id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_page",
+    "scopes": [
+      "store:pages:write"
+    ]
+  },
+  {
+    "api_key": "pages.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/pages/bulk-delete",
+    "description": "Delete multiple pages. Deletes the existing requested Pages in one transaction and reports missing ids per item. If menus link to any requested Page, the first request returns `CONFIRMATION_REQUIRED`; repeat it with the returned token to continue and durably queue removal of those menu links. The request is capped by the Page bulk contract. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/pages/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token returned by the first delete attempt.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true when repeating a delete that returned `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "ids": {
+          "description": "Page ids to delete.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_pages",
+    "scopes": [
+      "store:pages:write"
+    ]
+  },
+  {
+    "api_key": "pages.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/pages/{id}/translations/{locale}",
+    "description": "Fetch one page translation. Returns stored translated Page fields for one locale, including whether the translation is out of date. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Page id.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_page_translation",
+    "scopes": [
+      "store:pages:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "pages.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/pages/{id}/translations/{locale}",
+    "description": "Set one page translation. Writes translated Page fields for one locale. Empty values clear the matching field translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Page id.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_page_translation",
+    "scopes": [
+      "store:pages:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "pages.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/pages/translations/{locale}",
+    "description": "Fetch page translations in batch. Returns translated Page fields for multiple page ids in one locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated Page ids.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_page_translations",
+    "scopes": [
+      "store:pages:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "pages.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/pages/translations/{locale}",
+    "description": "Set page translations in batch. Writes translated Page fields for multiple page ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_page_translations",
+    "scopes": [
+      "store:pages:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "policies.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/policies/limits",
+    "description": "Fetch Policy limits and per-field constraints. Returns the per-field maximum lengths, enum values, and the fixed policy-type set that apply to Policy endpoints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_policy_limits",
+    "scopes": [
+      "store:pages:read"
+    ]
+  },
+  {
+    "api_key": "policies.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/policies",
+    "description": "List all policies for the store. Returns the store's fixed set of Policies — one row per policy type. There is no pagination: Policies are a fixed singleton set. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_policies",
+    "scopes": [
+      "store:pages:read"
+    ]
+  },
+  {
+    "api_key": "policies.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/policies/{type}",
+    "description": "Fetch one policy by type. Returns the Policy for the given type (privacy, terms, refund, shipping, or cookie). `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/{type}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "Policy type: privacy, terms, refund, shipping, or cookie.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "name": "get_policy",
+    "scopes": [
+      "store:pages:read"
+    ]
+  },
+  {
+    "api_key": "policies.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/policies/{type}",
+    "description": "Update one policy by type. Updates provided fields on the existing fixed Policy row. Omitted fields are left unchanged. An empty `slug` resets to the default slug for the policy type. When `slug` changes, `create_redirect` controls whether the old policy URL redirects to the new one and defaults to true. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/policies/{type}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "description": "Optional sanitized HTML content.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "create_redirect": {
+          "description": "When slug changes, create a redirect from the old policy URL to the new one. Defaults to true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Optional SEO description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit to leave unchanged; send an empty string to reset to the default slug for the policy type.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "Policy status: draft or published.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "description": "Policy title. When supplied, it must be non-empty after normalization.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "description": "Policy type: privacy, terms, refund, shipping, or cookie.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "name": "update_policy",
+    "scopes": [
+      "store:pages:write"
+    ]
+  },
+  {
+    "api_key": "policies.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/policies/{id}/translations/{locale}",
+    "description": "Fetch one policy translation. Returns stored translated Policy fields for one locale, including whether the translation is out of date. Translation routes use the policy UUID returned by list/get, while policy CRUD routes use the fixed policy type. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Policy id.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_policy_translation",
+    "scopes": [
+      "store:pages:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "policies.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/policies/{id}/translations/{locale}",
+    "description": "Set one policy translation. Writes translated Policy fields for one locale. Empty values clear the matching field translation. The `{id}` value is the policy UUID returned by list/get, not the policy type. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/policies/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Policy id.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_policy_translation",
+    "scopes": [
+      "store:pages:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "policies.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/policies/translations/{locale}",
+    "description": "Fetch policy translations in batch. Returns translated Policy fields for multiple policy ids in one locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated Policy ids.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_policy_translations",
+    "scopes": [
+      "store:pages:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "policies.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/policies/translations/{locale}",
+    "description": "Set policy translations in batch. Writes translated Policy fields for multiple policy ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/policies/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_policy_translations",
+    "scopes": [
+      "store:pages:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/posts/limits",
+    "description": "Fetch Blog Post limits and per-field constraints. Returns the per-field maximum lengths, enum values, and request caps that apply to Blog Post endpoints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_blog_post_limits",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_posts.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/posts",
+    "description": "List blog posts for the store. Returns paginated Blog Posts. `total` counts matches for the current filters; `store_total` counts all records in the store and can be compared with the store capacity returned by the limits endpoint. Filter by search, status, author, category, tag, or publication date. Invalid pagination, UUID, and sort parameters are rejected instead of silently defaulted. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "author_ref": {
+          "description": "Filter by blog author id.",
+          "type": "string"
+        },
+        "category_id": {
+          "description": "Filter by assigned blog category id.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "publication_date_from": {
+          "description": "Include posts published or scheduled on or after this store-local date (YYYY-MM-DD).",
+          "type": "string"
+        },
+        "publication_date_to": {
+          "description": "Include posts published or scheduled on or before this store-local date (YYYY-MM-DD).",
+          "type": "string"
+        },
+        "search": {
+          "description": "Search Blog Posts by title or slug.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field from the Blog Post list contract.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction from the Blog Post list contract.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Filter by status.",
+          "type": "string"
+        },
+        "tag_id": {
+          "description": "Filter by assigned blog tag id.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_blog_posts",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_posts.search",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/posts/search",
+    "description": "Search blog posts for picker UIs. Returns lightweight post options. `limit` is strict and capped by the Blog Post contract. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/search. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Suggestion count.",
+          "type": "integer"
+        },
+        "offset": {
+          "description": "Result offset.",
+          "type": "integer"
+        },
+        "q": {
+          "description": "Search query.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Filter by status.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "search_blog_posts",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_posts.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/posts/{id}",
+    "description": "Fetch one blog post by id. Returns the Blog Post if it belongs to the token's store. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Post id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_post",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_posts.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/posts/{id}/metafields",
+    "description": "List custom-data values visible to the token. Definitions are filtered through the token's access rules. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Post id.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size; capped by the metafield list limit.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number (default 1).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_blog_post_metafields",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_posts.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/posts/{id}/metafields",
+    "description": "Create, update, or delete custom-data values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. The complete value change succeeds or fails together. Omitted entries are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Post id.",
+          "type": "string"
+        },
+        "metafields": {
+          "description": "Entries shaped as `{namespace, key, value}`. Send `null` or an empty string to delete the stored value.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_post_metafield",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.metafields.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Fetch one translated custom-data value. The definition must be visible and translatable. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Post id.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_post_metafield_translation",
+    "scopes": [
+      "store:blog:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "blog_posts.metafields.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Set or clear one translated custom-data value. Send an empty value to clear the locale's translation. Send an explicit string in `value`; omit neither the field nor its value, and do not send null. An empty string clears the translation. For `list.string`, send a JSON-encoded string array with one translated item for each source item, in the same order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Post id.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Translated value; empty clears it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_post_metafield_translation",
+    "scopes": [
+      "store:blog:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/posts",
+    "description": "Create a blog post. Creates a Blog Post. `title`, `author_ref`, and `status` are required. `author_ref` must identify an author in this store. `slug` is optional on create; when omitted or empty, the backend generates it from the title. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "author_ref": {
+          "description": "Store-scoped blog author id.",
+          "type": "string"
+        },
+        "category_ids": {
+          "description": "Category ids to assign.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "content": {
+          "description": "Optional sanitized HTML content.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "excerpt": {
+          "description": "Optional excerpt.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "featured_image_id": {
+          "description": "Optional image file id. Non-empty values must reference an image in this store.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "publish_at": {
+          "description": "Publication time, as a local datetime in the store timezone or RFC 3339 with an offset. Required for scheduled status.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Optional SEO description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "Post status: draft, scheduled, published, or archived.",
+          "type": "string"
+        },
+        "tag_ids": {
+          "description": "Tag ids to assign.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog`. Use `default_blog` for the default Blog Post template, or pass an alternate Blog Post template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog` to reset it to default, and do not send an empty string.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "description": "Blog Post title.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "author_ref",
+        "status"
+      ],
+      "type": "object"
+    },
+    "name": "create_blog_post",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/posts/{id}",
+    "description": "Update a blog post. Updates provided Blog Post fields. Omitted fields are left unchanged. A blank `slug` keeps the current slug; a non-empty slug is normalized and validated. Set `create_redirect` to false to suppress the default redirect when the slug changes. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "author_ref": {
+          "description": "Store-scoped blog author id.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "category_ids": {
+          "description": "Category ids to assign.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "content": {
+          "description": "Optional sanitized HTML content.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "create_redirect": {
+          "description": "When slug changes, create a redirect from the previous post URL. Defaults to true; set false to suppress it.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "excerpt": {
+          "description": "Optional excerpt.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "featured_image_id": {
+          "description": "Optional image file id. Non-empty values must reference an image in this store.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Blog Post id.",
+          "type": "string"
+        },
+        "publish_at": {
+          "description": "Publication time, as a local datetime in the store timezone or RFC 3339 with an offset. Required for scheduled status.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Optional SEO description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "Post status: draft, scheduled, published, or archived.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tag_ids": {
+          "description": "Tag ids to assign.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog`. Use `default_blog` for the default Blog Post template, or pass an alternate Blog Post template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog` to reset it to default, and do not send an empty string.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "description": "Blog Post title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_blog_post",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/blog/posts/{id}",
+    "description": "Delete a blog post. Deletes a Blog Post together with its category/tag assignments, comments, and translations. Each cascaded comment emits `blog_comments/delete`. Menu references require confirmation and are removed after the confirmed delete. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/posts/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token returned by `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true only when retrying after `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Blog Post id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_blog_post",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/posts/bulk-delete",
+    "description": "Delete multiple blog posts. Deletes multiple Blog Posts in one request together with their assignments, comments, and translations. Each cascaded comment emits `blog_comments/delete`. Menu references require confirmation and are removed after the confirmed delete. The request is capped by the Blog Post bulk contract. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token returned by `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true only when retrying after `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "post_ids": {
+          "description": "Blog Post ids to delete.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "post_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_blog_posts",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.bulk-status",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/posts/bulk-update-status",
+    "description": "Update status for multiple blog posts. Sets draft, published, or archived status on all supplied post ids. Schedule posts individually because this endpoint does not accept a publish date. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts/bulk-update-status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "post_ids": {
+          "description": "Blog Post ids to update.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "status": {
+          "description": "New post status: draft, published, or archived.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_ids",
+        "status"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_update_blog_post_status",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.bulk-assign-categories",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/posts/bulk-assign-categories",
+    "description": "Assign categories to multiple blog posts. Adds the supplied categories to each post while keeping existing categories. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts/bulk-assign-categories. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "category_ids": {
+          "description": "Category ids to add.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "post_ids": {
+          "description": "Blog Post ids to update.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "post_ids",
+        "category_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_assign_blog_post_categories",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.bulk-assign-tags",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/posts/bulk-assign-tags",
+    "description": "Assign tags to multiple blog posts. Adds the supplied tags to each post while keeping existing tags. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts/bulk-assign-tags. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "post_ids": {
+          "description": "Blog Post ids to update.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "tag_ids": {
+          "description": "Tag ids to add.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "post_ids",
+        "tag_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_assign_blog_post_tags",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.bulk-remove-categories",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/posts/bulk-remove-categories",
+    "description": "Remove categories from multiple blog posts. Removes the supplied categories from each post while keeping every other category assignment. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts/bulk-remove-categories. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "category_ids": {
+          "description": "Category ids to remove.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "post_ids": {
+          "description": "Blog Post ids to update.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "post_ids",
+        "category_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_remove_blog_post_categories",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.bulk-remove-tags",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/posts/bulk-remove-tags",
+    "description": "Remove tags from multiple blog posts. Removes the supplied tags from each post while keeping every other tag assignment. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts/bulk-remove-tags. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "post_ids": {
+          "description": "Blog Post ids to update.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "tag_ids": {
+          "description": "Tag ids to remove.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "post_ids",
+        "tag_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_remove_blog_post_tags",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/posts/{id}/translations/{locale}",
+    "description": "Fetch one blog post translation. Returns stored translated Blog Post fields for one locale, including whether the translation is out of date. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Post id.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_post_translation",
+    "scopes": [
+      "store:blog:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "blog_posts.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/posts/{id}/translations/{locale}",
+    "description": "Set one blog post translation. Writes translated Blog Post fields for one locale. Empty values clear the matching field translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Post id.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_post_translation",
+    "scopes": [
+      "store:blog:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/posts/translations/{locale}",
+    "description": "Fetch blog post translations in batch. Returns translated Blog Post fields for multiple post ids in one locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated Blog Post ids.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_post_translations",
+    "scopes": [
+      "store:blog:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "blog_posts.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/posts/translations/{locale}",
+    "description": "Set blog post translations in batch. Writes translated Blog Post fields for multiple post ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_post_translations",
+    "scopes": [
+      "store:blog:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "blog_categories.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/categories/limits",
+    "description": "Fetch Blog Category limits and per-field constraints. Returns the per-field maximum lengths and request caps that apply to Blog Category endpoints. Useful for clients to validate inputs before sending them and to size UIs. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_blog_category_limits",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_categories.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/categories",
+    "description": "List blog categories for the store. Returns paginated Blog Categories. `total` counts matches for the current filters; `store_total` counts all records in the store and can be compared with the store capacity returned by the limits endpoint. Use `search` to filter by name or slug. Invalid pagination and unsupported sort values are rejected. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search Blog Categories by name or slug.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field from the Blog Category list contract.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction from the Blog Category list contract.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_blog_categories",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_categories.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/categories/{id}",
+    "description": "Fetch one blog category by id. Returns the Blog Category if it belongs to the token's store. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Category id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_category",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_categories.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/categories/{id}/metafields",
+    "description": "List custom-data values visible to the token. Definitions are filtered through the token's access rules. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Category id.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size; capped by the metafield list limit.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number (default 1).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_blog_category_metafields",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_categories.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/categories/{id}/metafields",
+    "description": "Create, update, or delete custom-data values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. The complete value change succeeds or fails together. Omitted entries are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Category id.",
+          "type": "string"
+        },
+        "metafields": {
+          "description": "Entries shaped as `{namespace, key, value}`. Send `null` or an empty string to delete the stored value.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_category_metafield",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_categories.metafields.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Fetch one translated custom-data value. The definition must be visible and translatable. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Category id.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_category_metafield_translation",
+    "scopes": [
+      "store:blog:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "blog_categories.metafields.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Set or clear one translated custom-data value. Send an empty value to clear the locale's translation. Send an explicit string in `value`; omit neither the field nor its value, and do not send null. An empty string clears the translation. For `list.string`, send a JSON-encoded string array with one translated item for each source item, in the same order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Category id.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Translated value; empty clears it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_category_metafield_translation",
+    "scopes": [
+      "store:blog:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "blog_categories.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/categories",
+    "description": "Create a blog category. Creates a Blog Category. `name` is required. `slug` is optional on create; when omitted or empty, the backend generates it from the name. Optional SEO and template fields follow the Blog Category resource contract. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/categories. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Optional plain-text description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Blog Category name.",
+          "type": "string"
+        },
+        "seo_description": {
+          "description": "Optional SEO description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog_category`. Use `default_blog_category` for the default Blog Category template, or pass an alternate Blog Category template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog_category` to reset it to default, and do not send an empty string.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_blog_category",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_categories.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/categories/{id}",
+    "description": "Update a blog category. Updates provided Blog Category fields. Omitted fields are left unchanged. When `slug` is provided it must be non-empty and valid; create is the only path that auto-generates a blank slug from the name. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "create_redirect": {
+          "description": "When slug changes, create a redirect from the previous slug.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "Optional plain-text description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Blog Category id.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Blog Category name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Optional SEO description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "New slug. Omit to leave the current slug unchanged; an empty value is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog_category`. Use `default_blog_category` for the default Blog Category template, or pass an alternate Blog Category template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog_category` to reset it to default, and do not send an empty string.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_blog_category",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_categories.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/blog/categories/{id}",
+    "description": "Delete a blog category. Deletes a Blog Category only when no {{blog_post_plural_lower}} are assigned to it. Assigned posts block deletion. If menus link to it, the first request returns `CONFIRMATION_REQUIRED` listing the menu links that will be removed; retry with the returned token to delete. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/categories/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token returned by CONFIRMATION_REQUIRED.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true only when retrying after CONFIRMATION_REQUIRED.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Blog Category id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_blog_category",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_categories.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/categories/bulk-delete",
+    "description": "Delete multiple blog categories. Deletes unassigned Blog Categories together. Any that are missing, or still assigned to {{blog_post_plural_lower}}, are reported as failures and left in place. If menus link to the rest, the first request returns `CONFIRMATION_REQUIRED`; retry the same IDs with the returned token. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/categories/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "category_ids": {
+          "description": "Blog Category ids to delete.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "confirmation_token": {
+          "description": "Token returned by CONFIRMATION_REQUIRED.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true only when retrying after CONFIRMATION_REQUIRED.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "category_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_blog_categories",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_categories.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/categories/{id}/translations/{locale}",
+    "description": "Fetch one blog category translation. Returns stored translated Blog Category fields for one locale, including whether the translation is out of date. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Category id.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_category_translation",
+    "scopes": [
+      "store:blog:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "blog_categories.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/categories/{id}/translations/{locale}",
+    "description": "Set one blog category translation. Writes translated Blog Category fields for one locale. Empty values clear the matching field translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Category id.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_category_translation",
+    "scopes": [
+      "store:blog:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "blog_categories.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/categories/translations/{locale}",
+    "description": "Fetch blog category translations in batch. Returns translated Blog Category fields for multiple category ids in one locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated Blog Category ids.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_category_translations",
+    "scopes": [
+      "store:blog:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "blog_categories.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/categories/translations/{locale}",
+    "description": "Set blog category translations in batch. Writes translated Blog Category fields for multiple category ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_category_translations",
+    "scopes": [
+      "store:blog:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "blog_tags.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/tags/limits",
+    "description": "Fetch Blog Tag limits and per-field constraints. Returns the per-field maximum lengths and request caps that apply to Blog Tag endpoints. Useful for clients to validate inputs before sending them and to size UIs. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_blog_tag_limits",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_tags.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/tags",
+    "description": "List blog tags for the store. Returns paginated Blog Tags. `total` counts matches for the current filters; `store_total` counts all records in the store and can be compared with the store capacity returned by the limits endpoint. Use `search` to filter by name or slug. Invalid pagination and unsupported sort values are rejected. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search Blog Tags by name or slug.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field from the Blog Tag list contract.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction from the Blog Tag list contract.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_blog_tags",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_tags.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/tags/{id}",
+    "description": "Fetch one blog tag by id. Returns the Blog Tag if it belongs to the token's store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Tag id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_tag",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_tags.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/tags",
+    "description": "Create a blog tag. Creates a Blog Tag. `name` is required. `slug` is optional on create; when omitted or empty, it is generated from the name. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/tags. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Blog Tag name.",
+          "type": "string"
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_blog_tag",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_tags.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/tags/{id}",
+    "description": "Update a blog tag. Updates provided Blog Tag fields. Omitted fields are left unchanged. When `slug` is provided it must be non-empty and valid; create is the only path that auto-generates a blank slug from the name. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/tags/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Tag id.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Blog Tag name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "New slug. Omit to leave the current slug unchanged; an empty value is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_blog_tag",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_tags.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/blog/tags/{id}",
+    "description": "Delete a blog tag. Deletes a Blog Tag. If the tag is assigned to {{blog_post_plural_lower}}, retry with the returned confirmation token; confirmed delete removes the tag from those posts. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/tags/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Blog Tag id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_blog_tag",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_tags.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/tags/bulk-delete",
+    "description": "Delete multiple blog tags. Deletes multiple Blog Tags in one request. When any selected tag is assigned to {{blog_post_plural_lower}}, the request returns a confirmation token; retry with it to remove them all together. Missing or blocked tags are reported in `failed`; eligible tags are reported in `deleted`. A confirmation-required response makes no changes until confirmed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/tags/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "tag_ids": {
+          "description": "Blog Tag ids to delete.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "tag_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_blog_tags",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_tags.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/tags/{id}/translations/{locale}",
+    "description": "Fetch one blog tag translation. Returns stored translated Blog Tag fields for one locale, including whether the translation is out of date. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Tag id.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_tag_translation",
+    "scopes": [
+      "store:blog:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "blog_tags.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/tags/{id}/translations/{locale}",
+    "description": "Set one blog tag translation. Writes translated Blog Tag fields for one locale. Empty values clear the matching field translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/tags/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Tag id.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_tag_translation",
+    "scopes": [
+      "store:blog:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "blog_tags.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/tags/translations/{locale}",
+    "description": "Fetch blog tag translations in batch. Returns translated Blog Tag fields for multiple tag ids in one locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated Blog Tag ids.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_tag_translations",
+    "scopes": [
+      "store:blog:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "blog_tags.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/tags/translations/{locale}",
+    "description": "Set blog tag translations in batch. Writes translated Blog Tag fields for multiple tag ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/tags/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_tag_translations",
+    "scopes": [
+      "store:blog:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "blog_authors.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/authors/limits",
+    "description": "Fetch blog author limits. Returns field, pagination, search, and store caps for this store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/authors/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_blog_author_limits",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_authors.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/authors",
+    "description": "List store blog authors. Returns a strictly paginated list. Search and sorting are validated before pagination. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/authors. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search by name or slug.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_blog_authors",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_authors.search",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/authors/search",
+    "description": "Search blog authors for picker UIs. Returns lightweight store-scoped author options. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/authors/search. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Suggestion count.",
+          "type": "integer"
+        },
+        "offset": {
+          "description": "Number of suggestions to skip.",
+          "type": "integer"
+        },
+        "q": {
+          "description": "Search by name or slug.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "search_blog_authors",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_authors.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/authors/{id}",
+    "description": "Fetch one blog author. Returns the author when it belongs to the token's store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/authors/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Author id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_author",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_authors.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/authors",
+    "description": "Create a store-scoped blog author. The slug is generated from the name. A non-empty avatar_media_id must reference an uploaded image in this store and also requires read_files. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/authors. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "avatar_media_id": {
+          "description": "Uploaded image UUID. A non-empty value requires read_files; null clears it on update.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bio": {
+          "description": "Author biography.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Author display name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_blog_author",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_authors.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/authors/{id}",
+    "description": "Update one blog author. Omitted fields are unchanged. Renaming regenerates the generated slug. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/authors/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "avatar_media_id": {
+          "description": "Uploaded image UUID. A non-empty value requires read_files; null clears it on update.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bio": {
+          "description": "Author biography.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Blog Author id.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Author display name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_blog_author",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_authors.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/blog/authors/{id}",
+    "description": "Delete one blog author. If posts reference the author, the request must name `reassign_to_author_id`; otherwise it returns `BLOG_AUTHOR_REASSIGN_REQUIRED`. The named author takes over every assigned post in the same transaction as the delete. No post is deleted or left without an author. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/authors/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Author id.",
+          "type": "string"
+        },
+        "reassign_to_author_id": {
+          "description": "Author UUID that takes over this author's posts. Required when the author has posts.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_blog_author",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_authors.bulk_delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/authors/bulk-delete",
+    "description": "Delete multiple blog authors. Missing authors are reported in `failed`. If any selected author is assigned to posts, the request must name `reassign_to_author_id` (an author outside the selection); otherwise it returns `BLOG_AUTHOR_BULK_REASSIGN_REQUIRED`. The named author takes over every assigned post and the selected authors are deleted atomically. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/authors/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "author_ids": {
+          "description": "Store-scoped author UUIDs.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reassign_to_author_id": {
+          "description": "Author UUID, outside the selection, that takes over the selected authors' posts. Required when any has posts.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "author_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_blog_authors",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
     "api_key": "tags.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/tags",
@@ -5612,7 +8530,7 @@
     "api_key": "languages.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/languages",
-    "description": "Update the store's enabled language set. When `locales` is supplied, it is the complete set of locale codes the store should publish in. Repeated codes count once, and an identical set is a no-op that does not claim an update. Omitting `locales` leaves the enabled set unchanged. The default language must always be included in a supplied set \u2014 it cannot be removed here. Disabling a language permanently deletes its translations and requires confirmation: the first call that would remove locales returns `CONFIRMATION_REQUIRED` with warnings and a token bound to those locales; repeat with `confirmed: true` and that token. Adding languages does not require confirmation. A language that is assigned to a storefront is protected (remove it from those storefronts first), and the set size is capped by the store's plan. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update the store's enabled language set. When `locales` is supplied, it is the complete set of locale codes the store should publish in. Repeated codes count once, and an identical set is a no-op that does not claim an update. Omitting `locales` leaves the enabled set unchanged. The default language must always be included in a supplied set — it cannot be removed here. Disabling a language permanently deletes its translations and requires confirmation: the first call that would remove locales returns `CONFIRMATION_REQUIRED` with warnings and a token bound to those locales; repeat with `confirmed: true` and that token. Adding languages does not require confirmation. A language that is assigned to a storefront is protected (remove it from those storefronts first), and the set size is capped by the store's plan. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5652,7 +8570,7 @@
     "api_key": "languages.default.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/languages/default",
-    "description": "Change the store's default (source) language \u2014 a confirmed two-step. The selected language becomes the source language for store content. This does not translate existing source content into the new language. Any translations stored for the selected language are permanently removed because that language will now contain source content. The first call returns impact warnings and a confirmation token without making changes; repeat the request with `confirmed: true` and that token to continue. Tokens are short-lived and single-use. A successful change publishes `store/locales/update`. `store/translations/deleted` is published only when translations, translated storefront messages, or active translation work were actually removed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages/default. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change the store's default (source) language — a confirmed two-step. The selected language becomes the source language for store content. This does not translate existing source content into the new language. Any translations stored for the selected language are permanently removed because that language will now contain source content. The first call returns impact warnings and a confirmation token without making changes; repeat the request with `confirmed: true` and that token to continue. Tokens are short-lived and single-use. A successful change publishes `store/locales/update`. `store/translations/deleted` is published only when translations, translated storefront messages, or active translation work were actually removed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages/default. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5774,6 +8692,75 @@
     "name": "list_catalog_metafield_definitions",
     "scopes": [
       "store:products:read"
+    ]
+  },
+  {
+    "api_key": "pages.metafield-definitions.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/metafield-definitions",
+    "description": "List content metafield definitions available to the connected user.  Uses the documented Store API fields, validation and permissions for GET /api/2025-01/metafield-definitions. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque next-page cursor.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size within the service limit.",
+          "type": "integer"
+        },
+        "owner_type": {
+          "description": "Content resource that owns the metafields.",
+          "enum": [
+            "page"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_type"
+      ],
+      "type": "object"
+    },
+    "name": "list_page_metafield_definitions",
+    "scopes": [
+      "store:pages:read"
+    ]
+  },
+  {
+    "api_key": "blog.metafield-definitions.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/metafield-definitions",
+    "description": "List content metafield definitions available to the connected user.  Uses the documented Store API fields, validation and permissions for GET /api/2025-01/metafield-definitions. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque next-page cursor.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size within the service limit.",
+          "type": "integer"
+        },
+        "owner_type": {
+          "description": "Content resource that owns the metafields.",
+          "enum": [
+            "blog_post",
+            "blog_category"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner_type"
+      ],
+      "type": "object"
+    },
+    "name": "list_blog_metafield_definitions",
+    "scopes": [
+      "store:blog:read"
     ]
   }
 ]

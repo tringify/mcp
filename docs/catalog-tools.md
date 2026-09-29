@@ -195,3 +195,119 @@ App-owned product purchase-requirement endpoints require an installed app identi
 | `set_default_language` | `PUT /api/2025-01/languages/default` | `store:settings.languages:write` |
 | `delete_language_translations` | `DELETE /api/2025-01/languages/{locale}/translations` | `store:settings.languages:write` |
 | `list_available_languages` | `GET /api/2025-01/reference/languages` | `store:settings.languages:read` |
+
+## Pages
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_page_limits` | `GET /api/2025-01/pages/limits` | `store:pages:read` |
+| `list_pages` | `GET /api/2025-01/pages` | `store:pages:read` |
+| `search_pages` | `GET /api/2025-01/pages/search` | `store:pages:read` |
+| `get_page` | `GET /api/2025-01/pages/{id}` | `store:pages:read` |
+| `list_page_metafields` | `GET /api/2025-01/pages/{id}/metafields` | `store:pages:read` |
+| `set_page_metafield` | `PUT /api/2025-01/pages/{id}/metafields` | `store:pages:write` |
+| `get_page_metafield_translation` | `GET /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}` | `store:pages:read`, `store:settings.languages:read` |
+| `set_page_metafield_translation` | `PUT /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}` | `store:pages:write`, `store:settings.languages:write` |
+| `create_page` | `POST /api/2025-01/pages` | `store:pages:write` |
+| `update_page` | `PUT /api/2025-01/pages/{id}` | `store:pages:write` |
+| `delete_page` | `DELETE /api/2025-01/pages/{id}` | `store:pages:write` |
+| `bulk_delete_pages` | `POST /api/2025-01/pages/bulk-delete` | `store:pages:write` |
+| `get_page_translation` | `GET /api/2025-01/pages/{id}/translations/{locale}` | `store:pages:read`, `store:settings.languages:read` |
+| `set_page_translation` | `PUT /api/2025-01/pages/{id}/translations/{locale}` | `store:pages:write`, `store:settings.languages:write` |
+| `get_page_translations` | `GET /api/2025-01/pages/translations/{locale}` | `store:pages:read`, `store:settings.languages:read` |
+| `set_page_translations` | `PUT /api/2025-01/pages/translations/{locale}` | `store:pages:write`, `store:settings.languages:write` |
+| `list_page_metafield_definitions` | `GET /api/2025-01/metafield-definitions` | `store:pages:read` |
+
+## Policies
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_policy_limits` | `GET /api/2025-01/policies/limits` | `store:pages:read` |
+| `list_policies` | `GET /api/2025-01/policies` | `store:pages:read` |
+| `get_policy` | `GET /api/2025-01/policies/{type}` | `store:pages:read` |
+| `update_policy` | `PUT /api/2025-01/policies/{type}` | `store:pages:write` |
+| `get_policy_translation` | `GET /api/2025-01/policies/{id}/translations/{locale}` | `store:pages:read`, `store:settings.languages:read` |
+| `set_policy_translation` | `PUT /api/2025-01/policies/{id}/translations/{locale}` | `store:pages:write`, `store:settings.languages:write` |
+| `get_policy_translations` | `GET /api/2025-01/policies/translations/{locale}` | `store:pages:read`, `store:settings.languages:read` |
+| `set_policy_translations` | `PUT /api/2025-01/policies/translations/{locale}` | `store:pages:write`, `store:settings.languages:write` |
+
+## Blog Posts
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_blog_post_limits` | `GET /api/2025-01/blog/posts/limits` | `store:blog:read` |
+| `list_blog_posts` | `GET /api/2025-01/blog/posts` | `store:blog:read` |
+| `search_blog_posts` | `GET /api/2025-01/blog/posts/search` | `store:blog:read` |
+| `get_blog_post` | `GET /api/2025-01/blog/posts/{id}` | `store:blog:read` |
+| `list_blog_post_metafields` | `GET /api/2025-01/blog/posts/{id}/metafields` | `store:blog:read` |
+| `set_blog_post_metafield` | `PUT /api/2025-01/blog/posts/{id}/metafields` | `store:blog:write` |
+| `get_blog_post_metafield_translation` | `GET /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}` | `store:blog:read`, `store:settings.languages:read` |
+| `set_blog_post_metafield_translation` | `PUT /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}` | `store:blog:write`, `store:settings.languages:write` |
+| `create_blog_post` | `POST /api/2025-01/blog/posts` | `store:blog:write` |
+| `update_blog_post` | `PUT /api/2025-01/blog/posts/{id}` | `store:blog:write` |
+| `delete_blog_post` | `DELETE /api/2025-01/blog/posts/{id}` | `store:blog:write` |
+| `bulk_delete_blog_posts` | `POST /api/2025-01/blog/posts/bulk-delete` | `store:blog:write` |
+| `bulk_update_blog_post_status` | `POST /api/2025-01/blog/posts/bulk-update-status` | `store:blog:write` |
+| `bulk_assign_blog_post_categories` | `POST /api/2025-01/blog/posts/bulk-assign-categories` | `store:blog:write` |
+| `bulk_assign_blog_post_tags` | `POST /api/2025-01/blog/posts/bulk-assign-tags` | `store:blog:write` |
+| `bulk_remove_blog_post_categories` | `POST /api/2025-01/blog/posts/bulk-remove-categories` | `store:blog:write` |
+| `bulk_remove_blog_post_tags` | `POST /api/2025-01/blog/posts/bulk-remove-tags` | `store:blog:write` |
+| `get_blog_post_translation` | `GET /api/2025-01/blog/posts/{id}/translations/{locale}` | `store:blog:read`, `store:settings.languages:read` |
+| `set_blog_post_translation` | `PUT /api/2025-01/blog/posts/{id}/translations/{locale}` | `store:blog:write`, `store:settings.languages:write` |
+| `get_blog_post_translations` | `GET /api/2025-01/blog/posts/translations/{locale}` | `store:blog:read`, `store:settings.languages:read` |
+| `set_blog_post_translations` | `PUT /api/2025-01/blog/posts/translations/{locale}` | `store:blog:write`, `store:settings.languages:write` |
+
+## Blog Tags
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_blog_tag_limits` | `GET /api/2025-01/blog/tags/limits` | `store:blog:read` |
+| `list_blog_tags` | `GET /api/2025-01/blog/tags` | `store:blog:read` |
+| `get_blog_tag` | `GET /api/2025-01/blog/tags/{id}` | `store:blog:read` |
+| `create_blog_tag` | `POST /api/2025-01/blog/tags` | `store:blog:write` |
+| `update_blog_tag` | `PUT /api/2025-01/blog/tags/{id}` | `store:blog:write` |
+| `delete_blog_tag` | `DELETE /api/2025-01/blog/tags/{id}` | `store:blog:write` |
+| `bulk_delete_blog_tags` | `POST /api/2025-01/blog/tags/bulk-delete` | `store:blog:write` |
+| `get_blog_tag_translation` | `GET /api/2025-01/blog/tags/{id}/translations/{locale}` | `store:blog:read`, `store:settings.languages:read` |
+| `set_blog_tag_translation` | `PUT /api/2025-01/blog/tags/{id}/translations/{locale}` | `store:blog:write`, `store:settings.languages:write` |
+| `get_blog_tag_translations` | `GET /api/2025-01/blog/tags/translations/{locale}` | `store:blog:read`, `store:settings.languages:read` |
+| `set_blog_tag_translations` | `PUT /api/2025-01/blog/tags/translations/{locale}` | `store:blog:write`, `store:settings.languages:write` |
+
+## Blog Categories
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_blog_category_limits` | `GET /api/2025-01/blog/categories/limits` | `store:blog:read` |
+| `list_blog_categories` | `GET /api/2025-01/blog/categories` | `store:blog:read` |
+| `get_blog_category` | `GET /api/2025-01/blog/categories/{id}` | `store:blog:read` |
+| `list_blog_category_metafields` | `GET /api/2025-01/blog/categories/{id}/metafields` | `store:blog:read` |
+| `set_blog_category_metafield` | `PUT /api/2025-01/blog/categories/{id}/metafields` | `store:blog:write` |
+| `get_blog_category_metafield_translation` | `GET /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}` | `store:blog:read`, `store:settings.languages:read` |
+| `set_blog_category_metafield_translation` | `PUT /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}` | `store:blog:write`, `store:settings.languages:write` |
+| `create_blog_category` | `POST /api/2025-01/blog/categories` | `store:blog:write` |
+| `update_blog_category` | `PUT /api/2025-01/blog/categories/{id}` | `store:blog:write` |
+| `delete_blog_category` | `DELETE /api/2025-01/blog/categories/{id}` | `store:blog:write` |
+| `bulk_delete_blog_categories` | `POST /api/2025-01/blog/categories/bulk-delete` | `store:blog:write` |
+| `get_blog_category_translation` | `GET /api/2025-01/blog/categories/{id}/translations/{locale}` | `store:blog:read`, `store:settings.languages:read` |
+| `set_blog_category_translation` | `PUT /api/2025-01/blog/categories/{id}/translations/{locale}` | `store:blog:write`, `store:settings.languages:write` |
+| `get_blog_category_translations` | `GET /api/2025-01/blog/categories/translations/{locale}` | `store:blog:read`, `store:settings.languages:read` |
+| `set_blog_category_translations` | `PUT /api/2025-01/blog/categories/translations/{locale}` | `store:blog:write`, `store:settings.languages:write` |
+
+## Blog Authors
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_blog_author_limits` | `GET /api/2025-01/blog/authors/limits` | `store:blog:read` |
+| `list_blog_authors` | `GET /api/2025-01/blog/authors` | `store:blog:read` |
+| `search_blog_authors` | `GET /api/2025-01/blog/authors/search` | `store:blog:read` |
+| `get_blog_author` | `GET /api/2025-01/blog/authors/{id}` | `store:blog:read` |
+| `create_blog_author` | `POST /api/2025-01/blog/authors` | `store:blog:write` |
+| `update_blog_author` | `PUT /api/2025-01/blog/authors/{id}` | `store:blog:write` |
+| `delete_blog_author` | `DELETE /api/2025-01/blog/authors/{id}` | `store:blog:write` |
+| `bulk_delete_blog_authors` | `POST /api/2025-01/blog/authors/bulk-delete` | `store:blog:write` |
+
+## Blog metafield definitions
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_blog_metafield_definitions` | `GET /api/2025-01/metafield-definitions` | `store:blog:read` |
