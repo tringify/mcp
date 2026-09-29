@@ -1,5 +1,11 @@
 # Changelog
 
+## Languages
+
+- Added five Languages tools with current plan limits and the existing confirmation rules.
+- Clarified which resources expose content translations.
+
+
 ## 2026-09-28 — Catalog and Files
 
 - Added Brand and Vendor tools alongside Tags, plus documented merchant-authorized Product, Collection, Category and Attribute operations.

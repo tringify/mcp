@@ -125,3 +125,13 @@ App-only product purchase-requirement endpoints are excluded: a user connection 
 | Tool | API operation | Required access |
 | --- | --- | --- |
 | `list_catalog_metafield_definitions` | `GET /api/2025-01/metafield-definitions` | `store:products:read` |
+
+## Languages
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_languages` | `GET /api/2025-01/languages` | `store:settings.languages:read` |
+| `set_languages` | `PUT /api/2025-01/languages` | `store:settings.languages:write` |
+| `set_default_language` | `PUT /api/2025-01/languages/default` | `store:settings.languages:write` |
+| `delete_language_translations` | `DELETE /api/2025-01/languages/{locale}/translations` | `store:settings.languages:write` |
+| `list_available_languages` | `GET /api/2025-01/reference/languages` | `store:settings.languages:read` |
