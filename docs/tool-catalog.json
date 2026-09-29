@@ -1,498 +1,5 @@
 [
   {
-    "description": "List or search tags in the connected store. Returns one cursor-paginated page with totals and available next/previous cursors. Defaults to name ascending and the service's page size. Reset the cursor when search or sorting changes.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "cursor": {
-          "description": "Exact next_cursor or previous_cursor from this tool. Omit for the first page.",
-          "type": "string"
-        },
-        "limit": {
-          "description": "Page size. Values above the service limit are rejected.",
-          "minimum": 1,
-          "type": "integer"
-        },
-        "search": {
-          "type": "string"
-        },
-        "sort_by": {
-          "enum": [
-            "name",
-            "product_count",
-            "created_at",
-            "updated_at"
-          ],
-          "type": "string"
-        },
-        "sort_direction": {
-          "enum": [
-            "asc",
-            "desc"
-          ],
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "name": "list_tags",
-    "scopes": [
-      "store:products:read"
-    ]
-  },
-  {
-    "description": "Get a tag by ID from the connected store, including its product count and ISO timestamps.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "tag ID in the connected store.",
-          "minimum": 1,
-          "type": "integer"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "get_tag",
-    "scopes": [
-      "store:products:read"
-    ]
-  },
-  {
-    "description": "Create a tag in the connected store. Name is required. Omit slug or leave it empty to generate it in the store's default language. Existing validation, uniqueness and store limits apply. This does not assign it to products.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "slug": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "name"
-      ],
-      "type": "object"
-    },
-    "name": "create_tag",
-    "scopes": [
-      "store:products:write"
-    ]
-  },
-  {
-    "description": "Update only supplied fields of a tag in the connected store. Include id and at least one editable field. Omitted fields remain unchanged. Null is not accepted. Normal source-translation guards apply.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "tag ID in the connected store.",
-          "minimum": 1,
-          "type": "integer"
-        },
-        "name": {
-          "type": "string"
-        },
-        "slug": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "update_tag",
-    "scopes": [
-      "store:products:write"
-    ]
-  },
-  {
-    "description": "Permanently delete a tag. First call with only id. If in use, the service returns CONFIRMATION_REQUIRED with impact warnings and a confirmation token. Show that impact and obtain approval before calling again with confirmed=true and the exact token. Never confirm automatically. Related products are retained.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "confirmation_token": {
-          "description": "Exact token returned in a confirmation-required result, only after the user approves the impact.",
-          "type": "string"
-        },
-        "confirmed": {
-          "type": "boolean"
-        },
-        "id": {
-          "description": "tag ID in the connected store.",
-          "minimum": 1,
-          "type": "integer"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "delete_tag",
-    "scopes": [
-      "store:products:write"
-    ]
-  },
-  {
-    "description": "List or search brands in the connected store. Returns one cursor-paginated page with totals and available next/previous cursors. Defaults to name ascending and the service's page size. Reset the cursor when search or sorting changes.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "cursor": {
-          "description": "Exact next_cursor or previous_cursor from this tool. Omit for the first page.",
-          "type": "string"
-        },
-        "limit": {
-          "description": "Page size. Values above the service limit are rejected.",
-          "minimum": 1,
-          "type": "integer"
-        },
-        "search": {
-          "type": "string"
-        },
-        "sort_by": {
-          "enum": [
-            "name",
-            "product_count",
-            "created_at",
-            "updated_at"
-          ],
-          "type": "string"
-        },
-        "sort_direction": {
-          "enum": [
-            "asc",
-            "desc"
-          ],
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "name": "list_brands",
-    "scopes": [
-      "store:products:read"
-    ]
-  },
-  {
-    "description": "Get a brand by ID from the connected store, including its product count and ISO timestamps.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "brand ID in the connected store.",
-          "minimum": 1,
-          "type": "integer"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "get_brand",
-    "scopes": [
-      "store:products:read"
-    ]
-  },
-  {
-    "description": "Create a brand in the connected store. Name is required. Omit slug or leave it empty to generate it in the store's default language. Existing validation, uniqueness and store limits apply. This does not assign it to products.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "image_id": {
-          "description": "Existing Media image ID. A non-empty reference requires store:files:read. On update, an empty string clears the image; omission preserves it. No upload or external URL.",
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "seo_description": {
-          "type": "string"
-        },
-        "seo_title": {
-          "type": "string"
-        },
-        "slug": {
-          "type": "string"
-        },
-        "template_handle": {
-          "description": "Existing storefront template handle. Use default_brand for the default. Omission preserves the current value on update.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "name"
-      ],
-      "type": "object"
-    },
-    "name": "create_brand",
-    "scopes": [
-      "store:products:write"
-    ]
-  },
-  {
-    "description": "Update only supplied fields of a brand in the connected store. Include id and at least one editable field. Omitted fields remain unchanged. Null is not accepted. Normal source-translation guards apply. Empty description or SEO fields clear them; empty image_id clears the image. Slug changes create a redirect unless create_redirect is false.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "create_redirect": {
-          "description": "Create a redirect when the slug changes. Defaults to true. Only meaningful with a slug change.",
-          "type": "boolean"
-        },
-        "description": {
-          "type": "string"
-        },
-        "id": {
-          "description": "brand ID in the connected store.",
-          "minimum": 1,
-          "type": "integer"
-        },
-        "image_id": {
-          "description": "Existing Media image ID. A non-empty reference requires store:files:read. On update, an empty string clears the image; omission preserves it. No upload or external URL.",
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "seo_description": {
-          "type": "string"
-        },
-        "seo_title": {
-          "type": "string"
-        },
-        "slug": {
-          "type": "string"
-        },
-        "template_handle": {
-          "description": "Existing storefront template handle. Use default_brand for the default. Omission preserves the current value on update.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "update_brand",
-    "scopes": [
-      "store:products:write"
-    ]
-  },
-  {
-    "description": "Permanently delete a brand. First call with only id. If in use, the service returns CONFIRMATION_REQUIRED with impact warnings and a confirmation token. Show that impact and obtain approval before calling again with confirmed=true and the exact token. Never confirm automatically. Related products are retained.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "confirmation_token": {
-          "description": "Exact token returned in a confirmation-required result, only after the user approves the impact.",
-          "type": "string"
-        },
-        "confirmed": {
-          "type": "boolean"
-        },
-        "id": {
-          "description": "brand ID in the connected store.",
-          "minimum": 1,
-          "type": "integer"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "delete_brand",
-    "scopes": [
-      "store:products:write"
-    ]
-  },
-  {
-    "description": "List or search vendors in the connected store. Returns one cursor-paginated page with totals and available next/previous cursors. Defaults to name ascending and the service's page size. Reset the cursor when search or sorting changes.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "cursor": {
-          "description": "Exact next_cursor or previous_cursor from this tool. Omit for the first page.",
-          "type": "string"
-        },
-        "limit": {
-          "description": "Page size. Values above the service limit are rejected.",
-          "minimum": 1,
-          "type": "integer"
-        },
-        "search": {
-          "type": "string"
-        },
-        "sort_by": {
-          "enum": [
-            "name",
-            "product_count",
-            "created_at",
-            "updated_at"
-          ],
-          "type": "string"
-        },
-        "sort_direction": {
-          "enum": [
-            "asc",
-            "desc"
-          ],
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "name": "list_vendors",
-    "scopes": [
-      "store:products:read"
-    ]
-  },
-  {
-    "description": "Get a vendor by ID from the connected store, including its product count and ISO timestamps.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "vendor ID in the connected store.",
-          "minimum": 1,
-          "type": "integer"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "get_vendor",
-    "scopes": [
-      "store:products:read"
-    ]
-  },
-  {
-    "description": "Create a vendor in the connected store. Name is required. Omit slug or leave it empty to generate it in the store's default language. Existing validation, uniqueness and store limits apply. This does not assign it to products.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "image_id": {
-          "description": "Existing Media image ID. A non-empty reference requires store:files:read. On update, an empty string clears the image; omission preserves it. No upload or external URL.",
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "seo_description": {
-          "type": "string"
-        },
-        "seo_title": {
-          "type": "string"
-        },
-        "slug": {
-          "type": "string"
-        },
-        "template_handle": {
-          "description": "Existing storefront template handle. Use default_vendor for the default. Omission preserves the current value on update.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "name"
-      ],
-      "type": "object"
-    },
-    "name": "create_vendor",
-    "scopes": [
-      "store:products:write"
-    ]
-  },
-  {
-    "description": "Update only supplied fields of a vendor in the connected store. Include id and at least one editable field. Omitted fields remain unchanged. Null is not accepted. Normal source-translation guards apply. Empty description or SEO fields clear them; empty image_id clears the image. Slug changes create a redirect unless create_redirect is false.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "create_redirect": {
-          "description": "Create a redirect when the slug changes. Defaults to true. Only meaningful with a slug change.",
-          "type": "boolean"
-        },
-        "description": {
-          "type": "string"
-        },
-        "id": {
-          "description": "vendor ID in the connected store.",
-          "minimum": 1,
-          "type": "integer"
-        },
-        "image_id": {
-          "description": "Existing Media image ID. A non-empty reference requires store:files:read. On update, an empty string clears the image; omission preserves it. No upload or external URL.",
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "seo_description": {
-          "type": "string"
-        },
-        "seo_title": {
-          "type": "string"
-        },
-        "slug": {
-          "type": "string"
-        },
-        "template_handle": {
-          "description": "Existing storefront template handle. Use default_vendor for the default. Omission preserves the current value on update.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "update_vendor",
-    "scopes": [
-      "store:products:write"
-    ]
-  },
-  {
-    "description": "Permanently delete a vendor. First call with only id. If in use, the service returns CONFIRMATION_REQUIRED with impact warnings and a confirmation token. Show that impact and obtain approval before calling again with confirmed=true and the exact token. Never confirm automatically. Related products are retained.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "confirmation_token": {
-          "description": "Exact token returned in a confirmation-required result, only after the user approves the impact.",
-          "type": "string"
-        },
-        "confirmed": {
-          "type": "boolean"
-        },
-        "id": {
-          "description": "vendor ID in the connected store.",
-          "minimum": 1,
-          "type": "integer"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "delete_vendor",
-    "scopes": [
-      "store:products:write"
-    ]
-  },
-  {
     "api_key": "products.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/products/limits",
@@ -645,6 +152,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -668,6 +176,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -691,6 +200,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "limit": {
@@ -722,10 +232,12 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "variant_id": {
           "description": "Variant ID.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -822,7 +334,7 @@
           ]
         },
         "height": {
-          "description": "Positive package height within the store’s limit.",
+          "description": "Positive package height within the store\u2019s limit.",
           "type": [
             "number",
             "null"
@@ -843,7 +355,7 @@
           ]
         },
         "images": {
-          "description": "Gallery entries: {file_id, alt_text?, sort_order?}. Files may be images, videos, or 3D models. Non-empty file_id values require read_files. On update, the array replaces the gallery; [] clears it. The store’s max_images limit applies.",
+          "description": "Gallery entries: {file_id, alt_text?, sort_order?}. Files may be images, videos, or 3D models. Non-empty file_id values require read_files. On update, the array replaces the gallery; [] clears it. The store\u2019s max_images limit applies.",
           "items": {},
           "type": [
             "array",
@@ -851,7 +363,7 @@
           ]
         },
         "inventory": {
-          "description": "Simple products with inventory_source=track. Rows are {location_id, quantity, low_stock_threshold?, expected_quantity?}. Quantities are non-negative integers within the store’s limits. On update, only named locations change. expected_quantity is the on-hand value previously read (0 for a missing row); a mismatch returns 409 PRODUCT_VERSION_STALE. You may use merchant-managed locations or locations owned by your app’s active installation.",
+          "description": "Simple products with inventory_source=track. Rows are {location_id, quantity, low_stock_threshold?, expected_quantity?}. Quantities are non-negative integers within the store\u2019s limits. On update, only named locations change. expected_quantity is the on-hand value previously read (0 for a missing row); a mismatch returns 409 PRODUCT_VERSION_STALE. You may use merchant-managed locations or locations owned by your app\u2019s active installation.",
           "items": {},
           "type": [
             "array",
@@ -873,14 +385,14 @@
           ]
         },
         "length": {
-          "description": "Positive package length within the store’s limit.",
+          "description": "Positive package length within the store\u2019s limit.",
           "type": [
             "number",
             "null"
           ]
         },
         "max_order_quantity": {
-          "description": "Optional per-order quantity cap, independent of inventory mode. On update, 0 clears the explicit cap; omission or null leaves it unchanged. Without an explicit cap, the store’s default order cap may still apply.",
+          "description": "Optional per-order quantity cap, independent of inventory mode. On update, 0 clears the explicit cap; omission or null leaves it unchanged. Without an explicit cap, the store\u2019s default order cap may still apply.",
           "type": [
             "integer",
             "null"
@@ -902,7 +414,7 @@
           ]
         },
         "no_manufacturer_identifiers": {
-          "description": "Set true only if the product has no manufacturer identifiers. Cannot be true with a barcode or MPN. The response’s identifier_status is provided when identifiers exist, not_applicable when this flag is true, and unknown otherwise.",
+          "description": "Set true only if the product has no manufacturer identifiers. Cannot be true with a barcode or MPN. The response\u2019s identifier_status is provided when identifiers exist, not_applicable when this flag is true, and unknown otherwise.",
           "type": [
             "boolean",
             "null"
@@ -916,7 +428,7 @@
           ]
         },
         "prices": {
-          "description": "Simple products only. Rows are {currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}. Amounts are JSON decimal strings with the currency’s permitted precision. Include the base currency. On update, supplying this array replaces the complete price set. A sale price may be zero but must be below the regular price. The base-currency sale schedule applies to all currency sale prices; a non-base sale requires a base sale. Omit sale prices from the replacement set to remove them.",
+          "description": "Simple products only. Rows are {currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}. Amounts are JSON decimal strings with the currency\u2019s permitted precision. Include the base currency. On update, supplying this array replaces the complete price set. A sale price may be zero but must be below the regular price. The base-currency sale schedule applies to all currency sale prices; a non-base sale requires a base sale. Omit sale prices from the replacement set to remove them.",
           "items": {},
           "type": [
             "array",
@@ -1016,7 +528,7 @@
           "type": "string"
         },
         "variants": {
-          "description": "Variable products only; required (at least one variant). The initial variant set, validated together: combination uniqueness against the declared attributes, attribute coverage, at least one variant, and store-wide SKU uniqueness. Each entry:\n\n- `sku` (string, required) — unique across the entire store.\n- `attribute_values` (array, required) — One entry per declared attribute: `{attribute_id, option_id}` for an option choice, or `{attribute_id, value_text}` for a text value. Attribute and option ids come from `GET /attributes` (the product's `attribute_ids` must cover every `attribute_id` used). Two variants can never share the same combination.\n- `prices` (array, required) — per-currency rows `{currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}`; the base currency row is required. Amounts are decimal strings.\n- `title` (string, optional) — auto-composed from option labels (\"Red / M\") unless supplied.\n- `barcode` is variant-specific. `condition`, `mpn`, and `no_manufacturer_identifiers` can override the parent’s values. `identifier_status` describes whether identifiers are provided, unknown, or not applicable; use the identifier fields and declaration consistently.\n- `weight`, `weight_unit`, `length`, `width`, `height`, `dimension_unit`, `hs_code`, `country_of_origin`, `requires_shipping` — physical overrides.\n- `inventory_source` (`track` | `none` | `group`), `inventory` (per-location rows `{location_id, quantity, low_stock_threshold?, expected_quantity?}` when tracking), `inventory_group_id` (when `group`).\n- `image_file_id` (string, optional) — Media-library upload UUID; non-empty values require `read_files` in addition to `write_products`. `image_id` selects an existing product gallery row and does not require `read_files`.\n- `max_order_quantity` is an optional per-order cap; `overall_low_stock_threshold` applies only to directly tracked stock.\n\nCreate supplies the initial set here. Later edits use the delta fields on Product update; read operations use the paginated Variant endpoints.",
+          "description": "Variable products only; required (at least one variant). The initial variant set, validated together: combination uniqueness against the declared attributes, attribute coverage, at least one variant, and store-wide SKU uniqueness. Each entry:\n\n- `sku` (string, required) \u2014 unique across the entire store.\n- `attribute_values` (array, required) \u2014 One entry per declared attribute: `{attribute_id, option_id}` for an option choice, or `{attribute_id, value_text}` for a text value. Attribute and option ids come from `GET /attributes` (the product's `attribute_ids` must cover every `attribute_id` used). Two variants can never share the same combination.\n- `prices` (array, required) \u2014 per-currency rows `{currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}`; the base currency row is required. Amounts are decimal strings.\n- `title` (string, optional) \u2014 auto-composed from option labels (\"Red / M\") unless supplied.\n- `barcode` is variant-specific. `condition`, `mpn`, and `no_manufacturer_identifiers` can override the parent\u2019s values. `identifier_status` describes whether identifiers are provided, unknown, or not applicable; use the identifier fields and declaration consistently.\n- `weight`, `weight_unit`, `length`, `width`, `height`, `dimension_unit`, `hs_code`, `country_of_origin`, `requires_shipping` \u2014 physical overrides.\n- `inventory_source` (`track` | `none` | `group`), `inventory` (per-location rows `{location_id, quantity, low_stock_threshold?, expected_quantity?}` when tracking), `inventory_group_id` (when `group`).\n- `image_file_id` (string, optional) \u2014 Media-library upload UUID; non-empty values require `read_files` in addition to `write_products`. `image_id` selects an existing product gallery row and does not require `read_files`.\n- `max_order_quantity` is an optional per-order cap; `overall_low_stock_threshold` applies only to directly tracked stock.\n\nCreate supplies the initial set here. Later edits use the delta fields on Product update; read operations use the paginated Variant endpoints.",
           "items": {},
           "type": [
             "array",
@@ -1031,7 +543,7 @@
           ]
         },
         "weight": {
-          "description": "Positive weight within the store’s limit. Requires weight_unit.",
+          "description": "Positive weight within the store\u2019s limit. Requires weight_unit.",
           "type": [
             "number",
             "null"
@@ -1045,7 +557,7 @@
           ]
         },
         "width": {
-          "description": "Positive package width within the store’s limit.",
+          "description": "Positive package width within the store\u2019s limit.",
           "type": [
             "number",
             "null"
@@ -1094,7 +606,7 @@
           ]
         },
         "catalog_position": {
-          "description": "Merchant-curated position for the storefront featured listing sort. Sparse, NON-unique positive integers — ties order deterministically by product id, gaps are encouraged (10, 20, 30) so products slot between without renumbering. Nil/cleared products trail the positioned set.",
+          "description": "Merchant-curated position for the storefront featured listing sort. Sparse, NON-unique positive integers \u2014 ties order deterministically by product id, gaps are encouraged (10, 20, 30) so products slot between without renumbering. Nil/cleared products trail the positioned set.",
           "type": [
             "integer",
             "null"
@@ -1173,7 +685,7 @@
           ]
         },
         "height": {
-          "description": "Positive package height within the store’s limit.",
+          "description": "Positive package height within the store\u2019s limit.",
           "type": [
             "number",
             "null"
@@ -1195,10 +707,11 @@
         },
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "images": {
-          "description": "Gallery entries: {file_id, alt_text?, sort_order?}. Files may be images, videos, or 3D models. Non-empty file_id values require read_files. On update, the array replaces the gallery; [] clears it. The store’s max_images limit applies.",
+          "description": "Gallery entries: {file_id, alt_text?, sort_order?}. Files may be images, videos, or 3D models. Non-empty file_id values require read_files. On update, the array replaces the gallery; [] clears it. The store\u2019s max_images limit applies.",
           "items": {},
           "type": [
             "array",
@@ -1206,7 +719,7 @@
           ]
         },
         "inventory": {
-          "description": "Simple products with inventory_source=track. Rows are {location_id, quantity, low_stock_threshold?, expected_quantity?}. Quantities are non-negative integers within the store’s limits. On update, only named locations change. expected_quantity is the on-hand value previously read (0 for a missing row); a mismatch returns 409 PRODUCT_VERSION_STALE. You may use merchant-managed locations or locations owned by your app’s active installation.",
+          "description": "Simple products with inventory_source=track. Rows are {location_id, quantity, low_stock_threshold?, expected_quantity?}. Quantities are non-negative integers within the store\u2019s limits. On update, only named locations change. expected_quantity is the on-hand value previously read (0 for a missing row); a mismatch returns 409 PRODUCT_VERSION_STALE. You may use merchant-managed locations or locations owned by your app\u2019s active installation.",
           "items": {},
           "type": [
             "array",
@@ -1228,14 +741,14 @@
           ]
         },
         "length": {
-          "description": "Positive package length within the store’s limit.",
+          "description": "Positive package length within the store\u2019s limit.",
           "type": [
             "number",
             "null"
           ]
         },
         "max_order_quantity": {
-          "description": "Optional per-order quantity cap, independent of inventory mode. On update, 0 clears the explicit cap; omission or null leaves it unchanged. Without an explicit cap, the store’s default order cap may still apply.",
+          "description": "Optional per-order quantity cap, independent of inventory mode. On update, 0 clears the explicit cap; omission or null leaves it unchanged. Without an explicit cap, the store\u2019s default order cap may still apply.",
           "type": [
             "integer",
             "null"
@@ -1257,7 +770,7 @@
           ]
         },
         "new_variants": {
-          "description": "Variable products only. Brand-new variants to add alongside the existing set — same entry shape as create's variants array. Combination uniqueness is validated against the surviving existing variants and within the batch.",
+          "description": "Variable products only. Brand-new variants to add alongside the existing set \u2014 same entry shape as create's variants array. Combination uniqueness is validated against the surviving existing variants and within the batch.",
           "items": {},
           "type": [
             "array",
@@ -1265,7 +778,7 @@
           ]
         },
         "no_manufacturer_identifiers": {
-          "description": "Set true only if the product has no manufacturer identifiers. Cannot be true with a barcode or MPN. The response’s identifier_status is provided when identifiers exist, not_applicable when this flag is true, and unknown otherwise.",
+          "description": "Set true only if the product has no manufacturer identifiers. Cannot be true with a barcode or MPN. The response\u2019s identifier_status is provided when identifiers exist, not_applicable when this flag is true, and unknown otherwise.",
           "type": [
             "boolean",
             "null"
@@ -1279,7 +792,7 @@
           ]
         },
         "prices": {
-          "description": "Simple products only. Rows are {currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}. Amounts are JSON decimal strings with the currency’s permitted precision. Include the base currency. On update, supplying this array replaces the complete price set. A sale price may be zero but must be below the regular price. The base-currency sale schedule applies to all currency sale prices; a non-base sale requires a base sale. Omit sale prices from the replacement set to remove them.",
+          "description": "Simple products only. Rows are {currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}. Amounts are JSON decimal strings with the currency\u2019s permitted precision. Include the base currency. On update, supplying this array replaces the complete price set. A sale price may be zero but must be below the regular price. The base-currency sale schedule applies to all currency sale prices; a non-base sale requires a base sale. Omit sale prices from the replacement set to remove them.",
           "items": {},
           "type": [
             "array",
@@ -1397,7 +910,7 @@
           ]
         },
         "variants": {
-          "description": "Variable products only: entries address existing variants by `variant_id` and change only the supplied fields. Variants not mentioned are untouched. Supplying `attribute_values` replaces that Variant's complete combination; it must cover the Product's declared attributes and remain unique across all surviving and concurrently updated Variants. Supplying `prices` replaces the complete currency set and cannot be empty. Supplying `shipping_prices` replaces the complete set and an empty array clears it. Supplying `inventory` sets only the named locations. Include `expected_quantity` in each edited location row to reject a stale stock snapshot with PRODUCT_VERSION_STALE (409). Omit unchanged locations when editing other fields. Example — reprice one variant: `{\"variants\": [{\"variant_id\": 1007, \"prices\": [{\"currency_code\": \"USD\", \"regular_price\": \"31.00\"}]}]}`.",
+          "description": "Variable products only: entries address existing variants by `variant_id` and change only the supplied fields. Variants not mentioned are untouched. Supplying `attribute_values` replaces that Variant's complete combination; it must cover the Product's declared attributes and remain unique across all surviving and concurrently updated Variants. Supplying `prices` replaces the complete currency set and cannot be empty. Supplying `shipping_prices` replaces the complete set and an empty array clears it. Supplying `inventory` sets only the named locations. Include `expected_quantity` in each edited location row to reject a stale stock snapshot with PRODUCT_VERSION_STALE (409). Omit unchanged locations when editing other fields. Example \u2014 reprice one variant: `{\"variants\": [{\"variant_id\": 1007, \"prices\": [{\"currency_code\": \"USD\", \"regular_price\": \"31.00\"}]}]}`.",
           "items": {},
           "type": [
             "array",
@@ -1412,7 +925,7 @@
           ]
         },
         "weight": {
-          "description": "Positive weight within the store’s limit. Requires weight_unit.",
+          "description": "Positive weight within the store\u2019s limit. Requires weight_unit.",
           "type": [
             "number",
             "null"
@@ -1426,7 +939,7 @@
           ]
         },
         "width": {
-          "description": "Positive package width within the store’s limit.",
+          "description": "Positive package width within the store\u2019s limit.",
           "type": [
             "number",
             "null"
@@ -1453,10 +966,11 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "title": {
-          "description": "Optional title for the copy. Defaults to `Copy of \u003csource title\u003e`.",
+          "description": "Optional title for the copy. Defaults to `Copy of <source title>`.",
           "type": [
             "string",
             "null"
@@ -1497,6 +1011,7 @@
         },
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -1520,6 +1035,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "limit": {
@@ -1551,6 +1067,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "metafields": {
@@ -1580,6 +1097,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "key": {
@@ -1619,6 +1137,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "idempotency_key": {
@@ -1667,6 +1186,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "limit": {
@@ -1679,6 +1199,7 @@
         },
         "variant_id": {
           "description": "Variant ID.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -1703,6 +1224,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "metafields": {
@@ -1712,6 +1234,7 @@
         },
         "variant_id": {
           "description": "Variant ID.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -1737,6 +1260,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "key": {
@@ -1753,6 +1277,7 @@
         },
         "variant_id": {
           "description": "Variant ID.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -1781,6 +1306,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "idempotency_key": {
@@ -1805,6 +1331,7 @@
         },
         "variant_id": {
           "description": "Variant ID.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -2104,6 +1631,7 @@
       "properties": {
         "id": {
           "description": "Product id.",
+          "minimum": 1,
           "type": "integer"
         },
         "locale": {
@@ -2133,6 +1661,7 @@
       "properties": {
         "id": {
           "description": "Product id.",
+          "minimum": 1,
           "type": "integer"
         },
         "idempotency_key": {
@@ -2236,6 +1765,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "locale": {
@@ -2244,6 +1774,7 @@
         },
         "variant_id": {
           "description": "Variant ID.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -2270,6 +1801,7 @@
       "properties": {
         "id": {
           "description": "Product ID.",
+          "minimum": 1,
           "type": "integer"
         },
         "idempotency_key": {
@@ -2286,6 +1818,7 @@
         },
         "variant_id": {
           "description": "Variant ID.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -2492,7 +2025,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "type": "string"
         }
       },
@@ -2535,7 +2068,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "type": "string"
         },
         "value": {
@@ -3311,6 +2844,7 @@
       "properties": {
         "id": {
           "description": "Category id.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -3334,6 +2868,7 @@
       "properties": {
         "id": {
           "description": "Category id.",
+          "minimum": 1,
           "type": "integer"
         },
         "limit": {
@@ -3365,6 +2900,7 @@
       "properties": {
         "id": {
           "description": "Category id.",
+          "minimum": 1,
           "type": "integer"
         },
         "metafields": {
@@ -3396,6 +2932,7 @@
       "properties": {
         "id": {
           "description": "Category id.",
+          "minimum": 1,
           "type": "integer"
         },
         "key": {
@@ -3435,6 +2972,7 @@
       "properties": {
         "id": {
           "description": "Category id.",
+          "minimum": 1,
           "type": "integer"
         },
         "idempotency_key": {
@@ -3595,6 +3133,7 @@
         },
         "id": {
           "description": "Category id.",
+          "minimum": 1,
           "type": "integer"
         },
         "image_id": {
@@ -3681,6 +3220,7 @@
         },
         "id": {
           "description": "Category id.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -3744,6 +3284,7 @@
       "properties": {
         "id": {
           "description": "Category id.",
+          "minimum": 1,
           "type": "integer"
         },
         "locale": {
@@ -3773,6 +3314,7 @@
       "properties": {
         "id": {
           "description": "Category id.",
+          "minimum": 1,
           "type": "integer"
         },
         "idempotency_key": {
@@ -3967,6 +3509,7 @@
       "properties": {
         "id": {
           "description": "Attribute id.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -4058,6 +3601,7 @@
         },
         "id": {
           "description": "Attribute id.",
+          "minimum": 1,
           "type": "integer"
         },
         "name": {
@@ -4116,6 +3660,7 @@
       "properties": {
         "id": {
           "description": "Attribute id.",
+          "minimum": 1,
           "type": "integer"
         }
       },
@@ -4191,6 +3736,7 @@
       "properties": {
         "id": {
           "description": "Attribute id.",
+          "minimum": 1,
           "type": "integer"
         },
         "option_ids": {
@@ -4222,6 +3768,7 @@
       "properties": {
         "id": {
           "description": "Attribute id.",
+          "minimum": 1,
           "type": "integer"
         },
         "locale": {
@@ -4251,6 +3798,7 @@
       "properties": {
         "id": {
           "description": "Attribute id.",
+          "minimum": 1,
           "type": "integer"
         },
         "idempotency_key": {
@@ -4354,6 +3902,7 @@
       "properties": {
         "id": {
           "description": "Attribute option id.",
+          "minimum": 1,
           "type": "integer"
         },
         "locale": {
@@ -4383,6 +3932,7 @@
       "properties": {
         "id": {
           "description": "Attribute option id.",
+          "minimum": 1,
           "type": "integer"
         },
         "idempotency_key": {
@@ -4477,6 +4027,1717 @@
     ]
   },
   {
+    "api_key": "tags.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/tags",
+    "description": "List product tags for the store. Returns a cursor-paginated list of product tags. Omit `cursor` for the first page; use `next_cursor` or `previous_cursor` from the response for the next or previous page. Changing `search`, `sort_by`, or `sort_direction` requires a fresh first-page request. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/tags. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque cursor from a previous `tags.list` response. Omit for the first page; reset when search or sorting changes.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search query.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Field used to sort the results.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_tags",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "tags.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/tags/{id}",
+    "description": "Fetch one tag by ID. Returns the tag if it belongs to the token's store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/tags/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Tag ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_tag",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "tags.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/tags",
+    "description": "Create a tag. Creates a product tag. `name` is required. When `slug` is omitted or empty, Tringify generates it from the name. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/tags. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Tag name.",
+          "type": "string"
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_tag",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "tags.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/tags/{id}",
+    "description": "Update a tag. Updates the provided tag fields and leaves omitted fields unchanged. A supplied `slug` must be non-empty and valid; automatic slug generation is available only when creating a tag. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/tags/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Tag ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "name": {
+          "description": "Tag name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "New slug. Omit to leave the current slug unchanged; an empty value is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_tag",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "tags.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/tags/{id}",
+    "description": "Delete a tag. Deletes a tag. If the tag is assigned to products or used by collection rules, the first request returns `CONFIRMATION_REQUIRED`. A confirmed deletion removes those references atomically. If the tag has translations, the API emits one `tags/translations/delete` event per translated locale before `tags/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/tags/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Tag ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_tag",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "tags.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/tags/{id}/translations/{locale}",
+    "description": "Fetch one tag translation. Returns the stored `name` and `slug` translations for one tag in the selected locale. Each returned field includes `is_outdated`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/tags/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Tag ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_tag_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "tags.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/tags/{id}/translations/{locale}",
+    "description": "Set one tag translation. Only supplied fields change. Set `name` or `slug` to an empty string to remove that field's translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/tags/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Tag ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields are `name` and `slug`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_tag_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "tags.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/tags/translations/{locale}",
+    "description": "Fetch tag translations in batch. Returns a `resources` entry keyed by `tag:{id}` for each requested tag. A tag without stored translations has an empty object. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/tags/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated tag IDs.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_tag_translations",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "tags.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/tags/translations/{locale}",
+    "description": "Set tag translations in batch. Writes translations for multiple tags in one locale. The whole request succeeds or fails together; if any row is invalid, none are saved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/tags/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed field keys are `name` and `slug`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_tag_translations",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "brands.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/brands",
+    "description": "List brands for the store. Returns brands and their product counts. Search matches names and slugs. Use the returned cursors unchanged, and start without a cursor when search or sorting changes. Fetch `/brands/limits` for page-size and search limits; supported sort fields are listed below. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque cursor returned by the preceding Brand list response.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search query.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field from the Brand list contract.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction from the Brand list contract.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_brands",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "brands.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/brands/{id}",
+    "description": "Fetch one brand by id. Returns the brand if it belongs to the token's store. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Brand id.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_brand",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "brands.metafields.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Get one brand metafield translation. Returns the stored translation for a translatable metafield the token can read, in an enabled non-default language. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Brand id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_brand_metafield_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "brands.metafields.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Set or clear one brand metafield translation. Sets this metafield's translation in an enabled non-default locale without changing the source value. `value` is required. Send an empty string to clear it. For `list.string`, send a JSON-encoded string array with one item per source item, in the same order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Brand id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Translated value. Send an empty string to delete the stored translation for this locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "set_brand_metafield_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "brands.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/brands",
+    "description": "Create a brand. Create with `name`; omit `slug` to generate it. Omitted or empty `template_handle` uses `default_brand`. A non-empty `image_id` must reference an uploaded image in this store and also requires `read_files`; video, documents, 3D models, and site assets are rejected. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/brands. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Optional plain-text description. Omit or send an empty string for no description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "image_id": {
+          "description": "Optional Media-library upload image UUID. Video, document, 3D-model, and site-asset ids are invalid. Non-empty values require `read_files` access to the referenced file.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Brand name.",
+          "type": "string"
+        },
+        "seo_description": {
+          "description": "Optional SEO description. Omit or send an empty string to let the storefront fall back to the Brand description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title. Omit or send an empty string to let the storefront fall back to the Brand name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Brand template assignment. Omit this field, send an empty string, or send `default_brand` to use the default Brand template. Otherwise, send a Brand template handle available in the store's active theme.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_brand",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "brands.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/brands/{id}",
+    "description": "Update a brand. Changes only supplied fields. Empty optional text or `image_id` clears that field; clear a text field's translations first. A non-empty `image_id` must reference an uploaded image in this store and also requires `read_files`; video, documents, 3D models, and site assets are rejected. Omit `template_handle` to keep it, or send `default_brand` to reset it; an empty value is invalid. A slug change creates a redirect unless `create_redirect` is `false`. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "create_redirect": {
+          "description": "When slug changes, create a redirect from the previous slug.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "New plain-text description. Omit to leave it unchanged; send an empty string to clear it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Brand id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "image_id": {
+          "description": "New Media-library upload image UUID. Omit to leave the image unchanged; send an empty string to clear it. A non-empty value requires `read_files` access and must reference an image upload in this store.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "New Brand name. Omit to leave it unchanged; an empty value is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "New SEO description. Omit to leave it unchanged; send an empty string to clear it and restore the storefront Brand-description fallback.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "New SEO title. Omit to leave it unchanged; send an empty string to clear it and restore the storefront Brand-name fallback.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "New slug. Omit to leave the current slug unchanged; an empty value is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "New Brand template assignment. Omit to leave it unchanged, send `default_brand` to use the default Brand template, or send another Brand template handle available in the store's active theme. An empty string is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_brand",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "brands.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/brands/{id}",
+    "description": "Delete a brand. Deletes the brand, its translations, and its metafield values. If products, collection rules, or menu links use it, the first request returns `CONFIRMATION_REQUIRED`; repeat with `confirmed: true` and the returned `confirmation_token`. The brand, product assignments, and collection rules change atomically. Deletion emits one `brands/translations/delete` per translated locale and a `brands/delete` event. Menu links may update shortly after the response. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/brands/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Brand id.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_brand",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "brands.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/brands/{id}/translations/{locale}",
+    "description": "Fetch one brand translation. Returns stored translations for one brand and locale. Each returned field includes `is_outdated`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Brand id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_brand_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "brands.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/brands/{id}/translations/{locale}",
+    "description": "Set one brand translation. Only supplied fields change. Send an empty string to clear a field's translation. Fetch the translation to read saved values and metadata. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Brand ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Translated `name`, `slug`, `description`, `seo_title`, or `seo_description` values.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_brand_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "brands.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/brands/translations/{locale}",
+    "description": "Fetch brand translations in batch. Returns one `resources` entry per requested brand ID. A brand without stored translations has an empty object. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated brand IDs.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_brand_translations",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "brands.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/brands/translations/{locale}",
+    "description": "Set brand translations in batch. Sets translations for multiple brands in one locale. The whole request succeeds or fails together; if any row is invalid, none are saved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`; allowed fields are `name`, `slug`, `description`, `seo_title`, and `seo_description`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_brand_translations",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "vendors.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/vendors",
+    "description": "List vendors for the store. Returns vendors and their product counts. Search matches names and slugs. Use the returned cursors unchanged, and start without a cursor when search or sorting changes. Fetch `/vendors/limits` for page-size and search limits; supported sort fields are listed below. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque cursor from a previous `vendors.list` response. Omit for the first page; reset when search or sorting changes.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search query.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field from the Vendor list contract.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction from the Vendor list contract.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_vendors",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "vendors.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/vendors/{id}",
+    "description": "Fetch one vendor by id. Returns the vendor if it belongs to the token's store. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Vendor id.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_vendor",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "vendors.metafields.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Get one vendor metafield translation. Returns the stored translation for a translatable metafield the token can read, in an enabled non-default language. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Vendor id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_vendor_metafield_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "vendors.metafields.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Set or clear one vendor metafield translation. Sets this metafield's translation in an enabled non-default locale without changing the source value. `value` is required. Send an empty string to clear it. For `list.string`, send a JSON-encoded string array with one item per source item, in the same order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Vendor id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Translated value. Send an empty string to delete the stored translation for this locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key",
+        "locale",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "set_vendor_metafield_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "vendors.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/vendors",
+    "description": "Create a vendor. Create with `name`; omit `slug` to generate it. Omitted or empty `template_handle` uses `default_vendor`. A non-empty `image_id` must reference an uploaded image in this store and also requires `read_files`; video, documents, 3D models, and site assets are rejected. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/vendors. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Optional plain-text description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "image_id": {
+          "description": "Optional Media-library upload image UUID. Video, document, 3D-model, and site-asset ids are invalid. A non-empty value requires `read_files` access to the referenced file.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Vendor name.",
+          "type": "string"
+        },
+        "seo_description": {
+          "description": "Optional SEO description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Optional SEO title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Vendor template assignment. Omit this field, send an empty string, or send `default_vendor` to use the default Vendor template. Otherwise, send a Vendor template handle available in the store's active theme.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_vendor",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "vendors.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/vendors/{id}",
+    "description": "Update a vendor. Changes only supplied fields. Empty optional text or `image_id` clears that field; clear a text field's translations first. A non-empty `image_id` must reference an uploaded image in this store and also requires `read_files`; video, documents, 3D models, and site assets are rejected. Omit `template_handle` to keep it, or send `default_vendor` to reset it; an empty value is invalid. A slug change creates a redirect unless `create_redirect` is `false`. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "create_redirect": {
+          "description": "When slug changes, create a redirect from the previous slug.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "New plain-text description. Omit to leave it unchanged; send an empty string to clear it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Vendor id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "image_id": {
+          "description": "New Media-library upload image UUID. Omit to leave the image unchanged; send an empty string to clear it. A non-empty value requires `read_files` access and must reference an image upload in this store.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Vendor name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "New SEO description. Omit to leave it unchanged; send an empty string to clear it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "New SEO title. Omit to leave it unchanged; send an empty string to clear it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "New slug. Omit to leave the current slug unchanged; an empty value is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "New Vendor template assignment. Omit to leave it unchanged, send `default_vendor` to use the default Vendor template, or send another Vendor template handle available in the store's active theme. An empty string is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_vendor",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "vendors.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/vendors/{id}",
+    "description": "Delete a vendor. Deletes the vendor, its translations, and its metafield values. If products, collection rules, or menu links use it, the first request returns `CONFIRMATION_REQUIRED`; repeat with `confirmed: true` and the returned `confirmation_token`. The vendor, product assignments, and collection rules change atomically. Menu links may update shortly after the response. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/vendors/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Vendor id.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_vendor",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "vendors.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/vendors/{id}/translations/{locale}",
+    "description": "Fetch one vendor translation. Returns stored translations for one vendor and locale. Each returned field includes `is_outdated`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Vendor ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_vendor_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "vendors.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/vendors/{id}/translations/{locale}",
+    "description": "Set one vendor translation. Only supplied fields change. Send an empty string to clear a field's translation. Fetch the translation to read saved values and metadata. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Vendor ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Translated `name`, `slug`, `description`, `seo_title`, or `seo_description` values.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_vendor_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "vendors.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/vendors/translations/{locale}",
+    "description": "Fetch vendor translations in batch. Returns one `resources` entry per requested vendor ID. A vendor without stored translations has an empty object. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated vendor IDs.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_vendor_translations",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "vendors.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/vendors/translations/{locale}",
+    "description": "Set vendor translations in batch. Sets translations for multiple vendors in one locale. The whole request succeeds or fails together; if any row is invalid, none are saved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`; allowed fields are `name`, `slug`, `description`, `seo_title`, and `seo_description`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_vendor_translations",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "files.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/files/limits",
+    "description": "Read supported formats and request limits. Returns the current format, size, image pixel-count, text-length and batch limits. Upload batches use `max_files_per_upload`; lookups use `bulk_lookup_max`; deletions use `bulk_delete_max`. Configure list and picker pagination from their respective page-size values. Sample values are illustrative; fetch this endpoint for the current limits. Size limits ending in `_mb` use 1,048,576 bytes per unit. `model_viewer_url` identifies the hosted 3D viewer. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "get_file_limits",
+    "scopes": [
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "api_key": "files.quota",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/files/quota",
+    "description": "Read the store's used storage and allowance. Media and Site Assets share this allowance. `used_bytes` reports counted file storage and excludes space reserved for uploads still in progress. `quota_bytes - used_bytes` is therefore not guaranteed upload capacity. Creating upload intents checks committed and reserved usage together. The `_gb` fields use 1,073,741,824 bytes per unit. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/quota. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "get_storage_quota",
+    "scopes": [
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "api_key": "files.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/files",
+    "description": "List files in one library. Defaults to Media (`type=upload`); use `type=site_asset` for Site Assets. Results are ordered by upload time, newest first, with an ID tie-breaker. `media` filters the media type and `search` matches `original_filename` case-insensitively. Pass returned cursors unchanged and keep the same library, media filter and search. Reset the cursor when changing those filters. `total` is counted when the cursor walk begins and is carried through later pages; it is not a live count or a snapshot of the library. An omitted `limit` uses `list_page_size`; an invalid or oversized limit is rejected. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque cursor returned by the previous response. Keep the same namespace, media filter, and search while using it.",
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "media_type": {
+          "description": "Filter by media type: `image`, `video`, `document`, or `3d`.",
+          "type": "string"
+        },
+        "search": {
+          "description": "Free-text filename match (case-insensitive substring).",
+          "type": "string"
+        }
+      },
+      "required": [
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "list_files",
+    "scopes": [
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "api_key": "files.upload-intents.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/upload-intents",
+    "description": "Reserve storage and obtain signed upload requests. Creates one intent for each item, in request order. Upload each original file body with HTTPS PUT to its returned `url`, including every returned signed header unchanged. Do not send the Store API bearer token to that URL. The declared byte size must match the uploaded body. A new create request creates new intents; keep their IDs to recover interrupted uploads. After validation, video and 3D preview work starts automatically for Store API uploads. Preview completion is separate from the original becoming ready. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/upload-intents. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "description": "Files to reserve. Each item requires `original_filename`, `mime_type`, and exact `size_bytes`; `alt_text` is optional.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "items",
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "create_file_uploads",
+    "scopes": [
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "api_key": "files.upload-intents.finalize",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/upload-intents/finalize",
+    "description": "Check uploaded files and begin validation. Call after each signed PUT attempt has finished, including an attempt whose response was lost. Send at most `max_files_per_upload` intent IDs. The library and creating identity must match: app uploads belong to the app installation, and other uploads to their creating user. Finalize returns per-intent results; `processing` means validation is still running and only `ready` makes the file available. A missing uploaded body can be rejected. HTTP 200 does not mean every file was accepted: inspect each intent's `status` and optional `error`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/upload-intents/finalize. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "intent_ids": {
+          "description": "Intent ids returned by the create call.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "intent_ids",
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "finalize_file_uploads",
+    "scopes": [
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "api_key": "files.upload-intents.status",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/upload-intents/status",
+    "description": "Read the result of each upload intent. Send at most `max_files_per_upload` intent IDs with the same library and creating identity. Each result is `pending`, `processing`, `ready`, `rejected` or `expired`. A `ready` result contains `file`. A rejected or expired result contains `error`, including its code and message, within the successful response envelope. Validation codes can include `STORAGE_CONTENT_TYPE_MISMATCH`, `STORAGE_IMAGE_MEGAPIXELS_TOO_BIG` and `STORAGE_MALWARE_REJECTED`. Inspect every result and stop polling terminal intents. Retain IDs while recovering an interrupted upload. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/upload-intents/status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "intent_ids": {
+          "description": "Intent ids to inspect.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "intent_ids",
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "get_file_upload_status",
+    "scopes": [
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "api_key": "files.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/files/{id}",
+    "description": "Read one file and its delivery URLs. Returns file metadata, preview state and delivery URLs. `original_filename` is the editable display name; `filename` is the file name assigned when the file was created. Use `display_url` for the current source, `download_url` for download and `thumbnail_display_url` for a generated thumbnail when present. `preview_url` falls back to the source URL when no current thumbnail is available, so it is not always an image. An ordinary image can have `preview_status=none` and still display normally. `revision` identifies the source revision; `preview_revision` identifies the source used by the thumbnail. `has_original` indicates a retained earlier source, not whether the current original exists. Optional fields are omitted when absent. Delivery URLs are opaque: use them as returned. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "File id.",
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "get_file",
+    "scopes": [
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "api_key": "files.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/files/{id}",
+    "description": "Change the display filename or alt text. Updates only supplied fields; omitted fields are unchanged. `original_filename` and `alt_text` are trimmed and validated against the limits response. Use an empty `alt_text` to clear it; a blank filename is rejected. This endpoint does not replace file contents, change the library, convert the format or change existing file references. Renaming leaves delivery URLs unchanged. The consuming theme or content determines how alt text is rendered. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/files/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "alt_text": {
+          "description": "A text alternative for the image. Use an empty string to clear it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "File id.",
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        },
+        "original_filename": {
+          "description": "New filename. Empty string is rejected.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "update_file",
+    "scopes": [
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "api_key": "files.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/files/{id}",
+    "description": "Delete a file and clear its removable references. A file with no tracked uses is deleted without an impact-confirmation round trip. Optional catalog images, product gallery entries, blog featured images and author avatars, supported file metafields and Online Store image settings can be detached after `CONFIRMATION_REQUIRED`. Repeat the same request with `confirmed: true` and the returned token. An attribute-option image blocks deletion; replace it or remove the option first. Manually pasted URLs in HTML and external content are not tracked or rewritten. Deletion commits the library removal, reference cleanup and quota change together; removal of delivered file objects follows asynchronously. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/files/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "File id.",
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "delete_file",
+    "scopes": [
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "api_key": "languages.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/languages",
+    "description": "List the store's enabled languages with the default flagged. Returns every enabled language with its locale code, display label, native name, selector label, text direction, and default-language status. The response also includes the store's language limit. Content is authored in the default language and translated into the others. This list is the catalog a storefront can publish. Assigning those languages to a specific storefront is an Online Store Admin action and is not part of this resource. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/languages. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_languages",
+    "scopes": [
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "languages.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/languages",
+    "description": "Update the store's enabled language set. When `locales` is supplied, it is the complete set of locale codes the store should publish in. Repeated codes count once, and an identical set is a no-op that does not claim an update. Omitting `locales` leaves the enabled set unchanged. The default language must always be included in a supplied set \u2014 it cannot be removed here. Disabling a language permanently deletes its translations and requires confirmation: the first call that would remove locales returns `CONFIRMATION_REQUIRED` with warnings and a token bound to those locales; repeat with `confirmed: true` and that token. Adding languages does not require confirmation. A language that is assigned to a storefront is protected (remove it from those storefronts first), and the set size is capped by the store's plan. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the first call's warning response when locales are being disabled.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "true on the second call, with the confirmation token, when locales are being disabled.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "locales": {
+          "description": "Complete enabled set of locale codes, including the default. Omit it to leave languages unchanged.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "set_languages",
+    "scopes": [
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "languages.default.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/languages/default",
+    "description": "Change the store's default (source) language \u2014 a confirmed two-step. The selected language becomes the source language for store content. This does not translate existing source content into the new language. Any translations stored for the selected language are permanently removed because that language will now contain source content. The first call returns impact warnings and a confirmation token without making changes; repeat the request with `confirmed: true` and that token to continue. Tokens are short-lived and single-use. A successful change publishes `store/locales/update`. `store/translations/deleted` is published only when translations, translated storefront messages, or active translation work were actually removed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages/default. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the first call's warning response.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "true on the second call, with the confirmation token.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "locale": {
+          "description": "Locale code to become the default. If it is not enabled yet, it is added when the plan limit allows.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "set_default_language",
+    "scopes": [
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "languages.translations.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/languages/{locale}/translations",
+    "description": "Delete all translation data for one enabled language without disabling it. The first call returns warnings and a confirmation token without deleting anything. Repeat the request with `confirmed: true` and that token to permanently remove every stored content translation, translated storefront message, localized search document, pending AI suggestion, and translation CSV preview for the selected language. Active AI and CSV translation work is cancelled and cannot restore removed content. Completed import and export history remains available. The language remains enabled and its storefront assignments do not change. `store/translations/deleted` is published only when the reset removes data or cancels active work. The default language cannot be selected because it contains source content rather than translations. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/languages/{locale}/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token returned by the first call.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "true on the second call, with the confirmation token.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "locale": {
+          "description": "Enabled non-default locale whose translation data should be removed.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "delete_language_translations",
+    "scopes": [
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "languages.reference.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reference/languages",
+    "description": "List every language available for storefront translation. Returns each supported language's BCP 47 code, English name, native name, and right-to-left flag. Use it to build locale selectors and translation workflows. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/languages. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_available_languages",
+    "scopes": [
+      "store:settings.languages:read"
+    ]
+  },
+  {
     "api_key": "catalog.metafield-definitions.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/metafield-definitions",
@@ -4514,323 +5775,5 @@
     "scopes": [
       "store:products:read"
     ]
-  },
-  {
-    "description": "List or search one file library with cursor pagination. Media and Site Assets are separate. Use returned cursors and reset them after changing search or media type; the service enforces page-size limits.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "cursor": {
-          "type": "string"
-        },
-        "library": {
-          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
-          "enum": [
-            "media",
-            "site_assets"
-          ],
-          "type": "string"
-        },
-        "limit": {
-          "minimum": 1,
-          "type": "integer"
-        },
-        "media_type": {
-          "enum": [
-            "image",
-            "video",
-            "document",
-            "3d"
-          ],
-          "type": "string"
-        },
-        "search": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "library"
-      ],
-      "type": "object"
-    },
-    "name": "list_files",
-    "scopes": [
-      "store:files:read"
-    ],
-    "site_assets_scope": "store:online_store.site_assets:read"
-  },
-  {
-    "description": "Get a file's metadata, URLs, revision and preview status from the selected library. An ID from another store or library is not accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-          "type": "string"
-        },
-        "library": {
-          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
-          "enum": [
-            "media",
-            "site_assets"
-          ],
-          "type": "string"
-        }
-      },
-      "required": [
-        "library",
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "get_file",
-    "scopes": [
-      "store:files:read"
-    ],
-    "site_assets_scope": "store:online_store.site_assets:read"
-  },
-  {
-    "description": "Update only supplied original_filename and/or alt_text. Omitted fields stay unchanged; empty alt_text clears it. This does not replace file bytes or move the file between libraries.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "alt_text": {
-          "type": "string"
-        },
-        "id": {
-          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-          "type": "string"
-        },
-        "library": {
-          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
-          "enum": [
-            "media",
-            "site_assets"
-          ],
-          "type": "string"
-        },
-        "original_filename": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "library",
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "update_file",
-    "scopes": [
-      "store:files:write"
-    ],
-    "site_assets_scope": "store:online_store.site_assets:write"
-  },
-  {
-    "description": "Permanently delete a file from the selected library. First call with only library and id. Show any CONFIRMATION_REQUIRED impact and obtain approval before sending confirmed=true and the exact returned token. Required references can block deletion and cannot be overridden. Never auto-confirm.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "confirmation_token": {
-          "type": "string"
-        },
-        "confirmed": {
-          "type": "boolean"
-        },
-        "id": {
-          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-          "type": "string"
-        },
-        "library": {
-          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
-          "enum": [
-            "media",
-            "site_assets"
-          ],
-          "type": "string"
-        }
-      },
-      "required": [
-        "library",
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "delete_file",
-    "scopes": [
-      "store:files:write"
-    ],
-    "site_assets_scope": "store:online_store.site_assets:write"
-  },
-  {
-    "description": "Read supported file formats, upload sizes, metadata limits and upload batch limits before preparing uploads. Requires read access to the selected library.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "library": {
-          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
-          "enum": [
-            "media",
-            "site_assets"
-          ],
-          "type": "string"
-        }
-      },
-      "required": [
-        "library"
-      ],
-      "type": "object"
-    },
-    "name": "get_file_limits",
-    "scopes": [
-      "store:files:read"
-    ],
-    "site_assets_scope": "store:online_store.site_assets:read"
-  },
-  {
-    "description": "Read the store's shared storage allowance and usage. Media and Site Assets consume the same allowance. Requires read access to the selected library.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "library": {
-          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
-          "enum": [
-            "media",
-            "site_assets"
-          ],
-          "type": "string"
-        }
-      },
-      "required": [
-        "library"
-      ],
-      "type": "object"
-    },
-    "name": "get_storage_quota",
-    "scopes": [
-      "store:files:read"
-    ],
-    "site_assets_scope": "store:online_store.site_assets:read"
-  },
-  {
-    "description": "Prepare direct uploads to one library. Provide exact filenames, MIME types and byte counts. Returns upload intents and short-lived signed PUT URLs/headers; upload bytes directly to those URLs, never in MCP arguments, then call finalize_file_uploads. Preparing an intent does not create a usable library file. Do not expose signed upload URLs publicly. Storage and file validation limits apply.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "items": {
-          "items": {
-            "additionalProperties": false,
-            "properties": {
-              "alt_text": {
-                "type": "string"
-              },
-              "mime_type": {
-                "type": "string"
-              },
-              "original_filename": {
-                "type": "string"
-              },
-              "size_bytes": {
-                "minimum": 1,
-                "type": "integer"
-              }
-            },
-            "required": [
-              "original_filename",
-              "mime_type",
-              "size_bytes"
-            ],
-            "type": "object"
-          },
-          "minItems": 1,
-          "type": "array"
-        },
-        "library": {
-          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
-          "enum": [
-            "media",
-            "site_assets"
-          ],
-          "type": "string"
-        }
-      },
-      "required": [
-        "library",
-        "items"
-      ],
-      "type": "object"
-    },
-    "name": "create_file_uploads",
-    "scopes": [
-      "store:files:write"
-    ],
-    "site_assets_scope": "store:online_store.site_assets:write"
-  },
-  {
-    "description": "Finalize uploaded bytes using the returned intent IDs and the same library. Validation runs asynchronously; use get_file_upload_status until ready or failed. Never treat a processing intent as a file ready to attach.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "intent_ids": {
-          "items": {
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "type": "string"
-          },
-          "minItems": 1,
-          "type": "array"
-        },
-        "library": {
-          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
-          "enum": [
-            "media",
-            "site_assets"
-          ],
-          "type": "string"
-        }
-      },
-      "required": [
-        "library",
-        "intent_ids"
-      ],
-      "type": "object"
-    },
-    "name": "finalize_file_uploads",
-    "scopes": [
-      "store:files:write"
-    ],
-    "site_assets_scope": "store:online_store.site_assets:write"
-  },
-  {
-    "description": "Read status of upload intents belonging to the connected store and authorizing user. Requires write access to the selected library, as in the upload flow. A ready result provides the validated file; a failed result supplies its error. Check status later while processing; do not start duplicate uploads.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "intent_ids": {
-          "items": {
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "type": "string"
-          },
-          "minItems": 1,
-          "type": "array"
-        },
-        "library": {
-          "description": "Choose the library explicitly. Media requires Files access; Site Assets requires Site Assets access.",
-          "enum": [
-            "media",
-            "site_assets"
-          ],
-          "type": "string"
-        }
-      },
-      "required": [
-        "library",
-        "intent_ids"
-      ],
-      "type": "object"
-    },
-    "name": "get_file_upload_status",
-    "scopes": [
-      "store:files:write"
-    ],
-    "site_assets_scope": "store:online_store.site_assets:write"
   }
 ]

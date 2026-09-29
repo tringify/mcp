@@ -69,17 +69,18 @@ If a write reports an uncertain result or loses its response, read back the resu
 
 ## Available tools
 
-The server returns tools allowed by your approved connection and current permissions. Read and write access are separate.
+All store-data tools use the corresponding Store API operations. The server returns tools allowed by your approved connection and current permissions. Read and write access are separate.
 
 | Resource | Read tools | Write tools |
 | --- | --- | --- |
-| Tags | `list_tags`, `get_tag` | `create_tag`, `update_tag`, `delete_tag` |
-| Brands | `list_brands`, `get_brand` | `create_brand`, `update_brand`, `delete_brand` |
-| Vendors | `list_vendors`, `get_vendor` | `create_vendor`, `update_vendor`, `delete_vendor` |
+| Tags | List, get, individual and batch translations | Create, update, delete, individual and batch translations |
+| Brands | List, get, individual/batch translations, metafield translations | Create, update, delete, individual/batch translations, metafield translations |
+| Vendors | List, get, individual/batch translations, metafield translations | Create, update, delete, individual/batch translations, metafield translations |
 | Attributes | Lists, discovery, details, translations | Create, update, delete, bulk delete, reorder attributes/options, translations |
 | Products | Lists, details, variants, quantity pricing, metafields, translations | Create, update, duplicate, delete, supported bulk actions, metafields and translations |
 | Collections | Lists, search, details, product lists, rules, metafields, translations | Create, update, delete, bulk actions, rules, metafields and translations |
 | Categories | Lists, search, details, metafields, translations | Create, update, delete, bulk create/delete, metafields and translations |
+| Languages | `list_languages`, `list_available_languages` | `set_languages`, `set_default_language`, `delete_language_translations` |
 | Files | `list_files`, `get_file`, `get_file_limits`, `get_storage_quota` | `update_file`, `delete_file`, `create_file_uploads`, `finalize_file_uploads`, `get_file_upload_status` |
 
 Catalog reads require `store:products:read`; catalog writes require `store:products:write`. Binding new catalog images also requires `store:files:read`. `connection:read` permits the connection itself and grants no store-data access.
@@ -88,7 +89,21 @@ For Files, choose `library: "media"` or `library: "site_assets"` on every call. 
 
 Existing Products permissions cover the catalog tools. Translation operations also require `store:settings.languages:read` or `store:settings.languages:write`, matching the existing Languages permissions. Product operations affecting Gift Card products require `store:gift_cards:write` where the API requires it. Refresh the tool list in your client to discover new tools. To add permissions, use the access-update flow below; refreshing a token cannot enlarge its grant.
 
-The [complete tool inventory](docs/catalog-tools.md) lists the supported operations and their API counterparts. The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation. Products, Collections, Categories, and Attributes cover their documented merchant-authorized API endpoints. App-only purchase requirements remain outside user connections. Brands, Vendors, Tags, and Files support the tools shown above; their remaining API endpoints are not implied.
+The [complete tool inventory](docs/catalog-tools.md) lists the supported operations and their API counterparts. The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation. Products, Collections, Categories, Attributes, and Languages cover their documented merchant-authorized API endpoints. App-only purchase requirements remain outside user connections. Brands, Vendors, Tags, and Files support the tools shown above; their remaining API endpoints are not implied.
+
+## Languages and translations
+
+Languages use `store:settings.languages:read` and `store:settings.languages:write`, independently of Products access.
+
+- `list_available_languages` lists supported locale codes.
+- `list_languages` returns enabled languages, the default, and the current plan limit.
+- `set_languages` sets the complete enabled list. Always include the default; omitting `locales` leaves the set unchanged.
+- `set_default_language` changes the source language after impact confirmation.
+- `delete_language_translations` resets one enabled non-default language after impact confirmation, without disabling it.
+
+Removing a language can permanently delete translations and requires confirmation. A language assigned to a storefront is protected until its assignments are removed. Adding a language does not publish it on a storefront or translate content automatically. Review the returned warnings before confirming destructive changes.
+
+Content translation tools are already available for **Products, variant titles, Collections, Categories, Attributes, attribute options, Tags, Brands, Vendors, and supported product, variant, category, collection, brand, and vendor metafields**. Product, collection, category, attribute, option, tag, brand, and vendor translations also have batch tools. Variant titles and metafields use individual tools. **Files translations, AI translation jobs, and translation CSV import/export are not exposed through MCP.**
 
 ## Work with brands and vendors
 
@@ -133,6 +148,12 @@ Use your configured server name if it differs from `tringify`. On Tringify’s a
 Your current connection keeps working until Codex completes the authorization. The connection keeps its ID, its old credentials stop working, and Codex receives replacement credentials. Cancelling or abandoning approval leaves existing access unchanged. Refresh the connection or start a new conversation to load the updated tools.
 
 The tool must request the additional scopes, and your current store role must allow them. An expired or disconnected connection needs a new authorization. **Accounts → Connected Tools → Update access** also explains these steps. You do not need to disconnect first.
+
+## Audit logs
+
+Audited changes identify the user who authorized the connection. The store audit log shows that account’s email in **User**, **API** as the source, and **Connected tool: Codex** when Codex is the client. Other clients show their registered name. A staff member’s connection records that staff member, not the store owner.
+
+File uploads retain the same user and tool attribution. The usual resource audit details apply, such as the affected record and recorded changes. Reading data does not create a mutation audit entry.
 
 ## Manage or remove the connection
 

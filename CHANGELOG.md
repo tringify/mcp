@@ -1,5 +1,18 @@
 # Changelog
 
+## Uniform Store API operations
+
+- Routed every store-data tool through its Store API handler, including file uploads and attribute summaries.
+- Added individual and batch Tag, Brand, and Vendor translations, plus Brand/Vendor metafield translations.
+- Documented the user and connected-tool identity shown in audit logs.
+
+
+## Languages
+
+- Added five Languages tools with current plan limits and the existing confirmation rules.
+- Clarified which resources expose content translations.
+
+
 ## 2026-09-28 — Catalog and Files
 
 - Added Brand and Vendor tools alongside Tags, plus documented merchant-authorized Product, Collection, Category and Attribute operations.

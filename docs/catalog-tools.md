@@ -1,14 +1,14 @@
-# Catalog tools
+# MCP tool inventory
 
-Generated from the hosted MCP tool registry. Refresh the connection’s tool list to discover released additions; new permissions require new approval.
+Every store-data tool below uses its corresponding Store API operation. The MCP supplies the connected user and store; tool arguments cannot choose another identity or store.
 
-Tool arguments follow the linked Store API contract. Path and query parameters are named arguments alongside body fields; `variantId` is exposed as `variant_id`. Attribute lists additionally accept `summary: true`. Translation writes accept an optional `idempotency_key`.
+Path and query parameters are named arguments alongside body fields. `variantId` is exposed as `variant_id`. File tools use `library: media|site_assets` in place of API `type` or `file_type`, and `media_type` for the API `media` filter. Attribute lists accept `summary: true`. Content translation writes accept an optional `idempotency_key`.
 
-App-only product purchase-requirement endpoints are excluded: a user connection cannot act as an installed app. MCP mutations keep the existing resource webhook behavior; webhook subscription management is not included.
+App-owned product purchase-requirement endpoints require an installed app identity and are not exposed through user connections. Normal resource webhooks apply; webhook subscription management is not included.
 
 ## Products
 
-| Tool | API operation | Required access |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_product_limits` | `GET /api/2025-01/products/limits` | `store:products:read` |
 | `list_products` | `GET /api/2025-01/products` | `store:products:read` |
@@ -44,7 +44,7 @@ App-only product purchase-requirement endpoints are excluded: a user connection 
 
 ## Collections
 
-| Tool | API operation | Required access |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_collection_limits` | `GET /api/2025-01/collections/limits` | `store:products:read` |
 | `list_collections` | `GET /api/2025-01/collections` | `store:products:read` |
@@ -72,7 +72,7 @@ App-only product purchase-requirement endpoints are excluded: a user connection 
 
 ## Categories
 
-| Tool | API operation | Required access |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_category_limits` | `GET /api/2025-01/categories/limits` | `store:products:read` |
 | `list_categories` | `GET /api/2025-01/categories` | `store:products:read` |
@@ -94,7 +94,7 @@ App-only product purchase-requirement endpoints are excluded: a user connection 
 
 ## Attributes
 
-| Tool | API operation | Required access |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_attribute_limits` | `GET /api/2025-01/attributes/limits` | `store:products:read` |
 | `list_attributes` | `GET /api/2025-01/attributes` | `store:products:read` |
@@ -113,15 +113,85 @@ App-only product purchase-requirement endpoints are excluded: a user connection 
 
 ## Attribute options
 
-| Tool | API operation | Required access |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_attribute_option_translation` | `GET /api/2025-01/attribute-options/{id}/translations/{locale}` | `store:products:read`, `store:settings.languages:read` |
 | `set_attribute_option_translation` | `PUT /api/2025-01/attribute-options/{id}/translations/{locale}` | `store:products:write`, `store:settings.languages:write` |
 | `get_attribute_option_translations` | `GET /api/2025-01/attribute-options/translations/{locale}` | `store:products:read`, `store:settings.languages:read` |
 | `set_attribute_option_translations` | `PUT /api/2025-01/attribute-options/translations/{locale}` | `store:products:write`, `store:settings.languages:write` |
 
-## Metafield discovery
+## Metafield definitions
 
-| Tool | API operation | Required access |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `list_catalog_metafield_definitions` | `GET /api/2025-01/metafield-definitions` | `store:products:read` |
+
+## Tags
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_tags` | `GET /api/2025-01/tags` | `store:products:read` |
+| `get_tag` | `GET /api/2025-01/tags/{id}` | `store:products:read` |
+| `create_tag` | `POST /api/2025-01/tags` | `store:products:write` |
+| `update_tag` | `PUT /api/2025-01/tags/{id}` | `store:products:write` |
+| `delete_tag` | `DELETE /api/2025-01/tags/{id}` | `store:products:write` |
+| `get_tag_translation` | `GET /api/2025-01/tags/{id}/translations/{locale}` | `store:products:read`, `store:settings.languages:read` |
+| `set_tag_translation` | `PUT /api/2025-01/tags/{id}/translations/{locale}` | `store:products:write`, `store:settings.languages:write` |
+| `get_tag_translations` | `GET /api/2025-01/tags/translations/{locale}` | `store:products:read`, `store:settings.languages:read` |
+| `set_tag_translations` | `PUT /api/2025-01/tags/translations/{locale}` | `store:products:write`, `store:settings.languages:write` |
+
+## Brands
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_brands` | `GET /api/2025-01/brands` | `store:products:read` |
+| `get_brand` | `GET /api/2025-01/brands/{id}` | `store:products:read` |
+| `get_brand_metafield_translation` | `GET /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}` | `store:products:read`, `store:settings.languages:read` |
+| `set_brand_metafield_translation` | `PUT /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}` | `store:products:write`, `store:settings.languages:write` |
+| `create_brand` | `POST /api/2025-01/brands` | `store:products:write` |
+| `update_brand` | `PUT /api/2025-01/brands/{id}` | `store:products:write` |
+| `delete_brand` | `DELETE /api/2025-01/brands/{id}` | `store:products:write` |
+| `get_brand_translation` | `GET /api/2025-01/brands/{id}/translations/{locale}` | `store:products:read`, `store:settings.languages:read` |
+| `set_brand_translation` | `PUT /api/2025-01/brands/{id}/translations/{locale}` | `store:products:write`, `store:settings.languages:write` |
+| `get_brand_translations` | `GET /api/2025-01/brands/translations/{locale}` | `store:products:read`, `store:settings.languages:read` |
+| `set_brand_translations` | `PUT /api/2025-01/brands/translations/{locale}` | `store:products:write`, `store:settings.languages:write` |
+
+## Vendors
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_vendors` | `GET /api/2025-01/vendors` | `store:products:read` |
+| `get_vendor` | `GET /api/2025-01/vendors/{id}` | `store:products:read` |
+| `get_vendor_metafield_translation` | `GET /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}` | `store:products:read`, `store:settings.languages:read` |
+| `set_vendor_metafield_translation` | `PUT /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}` | `store:products:write`, `store:settings.languages:write` |
+| `create_vendor` | `POST /api/2025-01/vendors` | `store:products:write` |
+| `update_vendor` | `PUT /api/2025-01/vendors/{id}` | `store:products:write` |
+| `delete_vendor` | `DELETE /api/2025-01/vendors/{id}` | `store:products:write` |
+| `get_vendor_translation` | `GET /api/2025-01/vendors/{id}/translations/{locale}` | `store:products:read`, `store:settings.languages:read` |
+| `set_vendor_translation` | `PUT /api/2025-01/vendors/{id}/translations/{locale}` | `store:products:write`, `store:settings.languages:write` |
+| `get_vendor_translations` | `GET /api/2025-01/vendors/translations/{locale}` | `store:products:read`, `store:settings.languages:read` |
+| `set_vendor_translations` | `PUT /api/2025-01/vendors/translations/{locale}` | `store:products:write`, `store:settings.languages:write` |
+
+## Files
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_file_limits` | `GET /api/2025-01/files/limits` | `store:files:read` (Media) or `store:online_store.site_assets:read` (Site Assets) |
+| `get_storage_quota` | `GET /api/2025-01/files/quota` | `store:files:read` (Media) or `store:online_store.site_assets:read` (Site Assets) |
+| `list_files` | `GET /api/2025-01/files` | `store:files:read` (Media) or `store:online_store.site_assets:read` (Site Assets) |
+| `create_file_uploads` | `POST /api/2025-01/files/upload-intents` | `store:files:write` (Media) or `store:online_store.site_assets:write` (Site Assets) |
+| `finalize_file_uploads` | `POST /api/2025-01/files/upload-intents/finalize` | `store:files:write` (Media) or `store:online_store.site_assets:write` (Site Assets) |
+| `get_file_upload_status` | `POST /api/2025-01/files/upload-intents/status` | `store:files:write` (Media) or `store:online_store.site_assets:write` (Site Assets) |
+| `get_file` | `GET /api/2025-01/files/{id}` | `store:files:read` (Media) or `store:online_store.site_assets:read` (Site Assets) |
+| `update_file` | `PUT /api/2025-01/files/{id}` | `store:files:write` (Media) or `store:online_store.site_assets:write` (Site Assets) |
+| `delete_file` | `DELETE /api/2025-01/files/{id}` | `store:files:write` (Media) or `store:online_store.site_assets:write` (Site Assets) |
+
+## Languages
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_languages` | `GET /api/2025-01/languages` | `store:settings.languages:read` |
+| `set_languages` | `PUT /api/2025-01/languages` | `store:settings.languages:write` |
+| `set_default_language` | `PUT /api/2025-01/languages/default` | `store:settings.languages:write` |
+| `delete_language_translations` | `DELETE /api/2025-01/languages/{locale}/translations` | `store:settings.languages:write` |
+| `list_available_languages` | `GET /api/2025-01/reference/languages` | `store:settings.languages:read` |
