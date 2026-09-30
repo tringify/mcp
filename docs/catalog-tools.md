@@ -194,7 +194,44 @@ App-owned product purchase-requirement endpoints require an installed app identi
 | `set_languages` | `PUT /api/2025-01/languages` | `store:settings.languages:write` |
 | `set_default_language` | `PUT /api/2025-01/languages/default` | `store:settings.languages:write` |
 | `delete_language_translations` | `DELETE /api/2025-01/languages/{locale}/translations` | `store:settings.languages:write` |
-| `list_available_languages` | `GET /api/2025-01/reference/languages` | `store:settings.languages:read` |
+| `list_available_languages` | `GET /api/2025-01/reference/languages` | Connection only (`connection:read`) |
+
+## Currencies
+
+Currency writes follow the Store API rules: the base currency cannot be changed or rounded, automatic-rate mode manages rates and enabled state, and data removal is a two-step confirmation.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_currencies` | `GET /api/2025-01/currencies` | `store:settings.currencies:read` |
+| `list_enabled_currencies` | `GET /api/2025-01/currencies/enabled` | `store:settings.currencies:read` |
+| `get_base_currency` | `GET /api/2025-01/currencies/base` | `store:settings.currencies:read` |
+| `list_exchange_rates` | `GET /api/2025-01/currencies/exchange-rates` | `store:settings.currencies:read` |
+| `get_exchange_rate` | `GET /api/2025-01/currencies/exchange-rates/{code}` | `store:settings.currencies:read` |
+| `get_currency` | `GET /api/2025-01/currencies/{id}` | `store:settings.currencies:read` |
+| `create_currency` | `POST /api/2025-01/currencies` | `store:settings.currencies:write` |
+| `update_currency` | `PUT /api/2025-01/currencies/{id}` | `store:settings.currencies:write` |
+| `delete_currency` | `DELETE /api/2025-01/currencies/{id}` | `store:settings.currencies:write` |
+| `bulk_remove_currency_data` | `POST /api/2025-01/currencies/bulk-remove-data` | `store:settings.currencies:write` |
+| `remove_currency_data` | `POST /api/2025-01/currencies/{id}/remove-data` | `store:settings.currencies:write` |
+| `set_currency_rounding` | `PUT /api/2025-01/currencies/{id}/rounding` | `store:settings.currencies:write` |
+| `set_multi_currency` | `PUT /api/2025-01/currencies/multi-currency` | `store:settings.currencies:write` |
+| `set_auto_exchange_rates` | `PUT /api/2025-01/currencies/auto-rates` | `store:settings.currencies:write` |
+
+## Reference data
+
+These read-only lookups need only the connection; they return platform-wide reference data, not store data.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_store_api_scopes` | `GET /api/2025-01/scopes` | Connection only (`connection:read`) |
+| `list_countries` | `GET /api/2025-01/reference/countries` | Connection only (`connection:read`) |
+| `list_subdivisions` | `GET /api/2025-01/reference/subdivisions/{countryCode}` | Connection only (`connection:read`) |
+| `list_timezones` | `GET /api/2025-01/reference/timezones` | Connection only (`connection:read`) |
+| `list_available_currencies` | `GET /api/2025-01/reference/currencies` | Connection only (`connection:read`) |
+| `list_phone_country_codes` | `GET /api/2025-01/reference/phone-codes` | Connection only (`connection:read`) |
+| `get_number_format_defaults` | `GET /api/2025-01/reference/number-format-defaults/{countryCode}` | Connection only (`connection:read`) |
+| `list_address_formats` | `GET /api/2025-01/reference/address-format` | Connection only (`connection:read`) |
+| `get_address_format` | `GET /api/2025-01/reference/address-format/{countryCode}` | Connection only (`connection:read`) |
 
 ## Pages
 
