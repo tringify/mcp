@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-30
+
+- Add all Currency Store API operations with independent read/write access and native confirmations.
+- Add the complete reference lookup surface and readable reference, phone-number and address guides.
+- Universal reference reads need only a valid Store connection; language and currency settings remain permission-gated.
+
+
 ## Content resources
 
 - Added all supported Pages, Policies, Blog Posts, Tags, Categories, and Authors API operations to MCP, including their available translations, bulk actions, and metafields.

@@ -970,7 +970,7 @@
           "type": "integer"
         },
         "title": {
-          "description": "Optional title for the copy. Defaults to `Copy of \u003csource title\u003e`.",
+          "description": "Optional title for the copy. Defaults to `Copy of <source title>`.",
           "type": [
             "string",
             "null"
@@ -2025,7 +2025,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "type": "string"
         }
       },
@@ -2068,7 +2068,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "type": "string"
         },
         "value": {
@@ -8651,9 +8651,500 @@
       "type": "object"
     },
     "name": "list_available_languages",
+    "scopes": []
+  },
+  {
+    "api_key": "currencies.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/currencies",
+    "description": "List the store's currencies with their settings. Returns the store's complete currency set, including the base currency and any added currencies. Each currency includes its conversion rate, rounding mode, enabled state, and timestamps. The response also shows whether multi-currency is enabled and available on the store's plan, whether rates are automatic, the supported rounding modes, and the store's currency limits. Use `max_conversion_decimals` and `max_conversion_rate` to validate manual rates. `bulk_max` caps currency batches, including the bulk data-removal endpoint. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_currencies",
     "scopes": [
-      "store:settings.languages:read"
+      "store:settings.currencies:read"
     ]
+  },
+  {
+    "api_key": "currencies.enabled",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/currencies/enabled",
+    "description": "Currencies enabled at the store level for pricing and market assignment. Returns only the enabled currencies with their ids, display fields, conversion and rounding configuration, timestamps, and the store's multi-currency enabled state. Market assignment still determines which currencies a shopper may use. Use the resolved active market—not this store-wide list alone—to build a shopper-facing currency selector. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/enabled. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_enabled_currencies",
+    "scopes": [
+      "store:settings.currencies:read"
+    ]
+  },
+  {
+    "api_key": "currencies.base",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/currencies/base",
+    "description": "Fetch the store's base currency. Returns the store's base currency. Every price the API returns is in this currency unless a market currency applies. The base is set when the store is created and never changes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/base. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_base_currency",
+    "scopes": [
+      "store:settings.currencies:read"
+    ]
+  },
+  {
+    "api_key": "currencies.exchange_rates.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/currencies/exchange-rates",
+    "description": "Current market rates for supported currencies, relative to the store's base. Returns current market rates for supported currencies relative to the store's base currency. Each entry carries `base_currency` and the rate in both directions as decimal strings: `rate` is how much base one unit of the currency buys, while `rate_inverse` is how many units one base unit buys. Both are rounded to six significant digits (at most ten decimal places), so they may not multiply to exactly one. `updated_at` is an RFC 3339 UTC timestamp for the complete rate snapshot. The request fails when the latest snapshot is unavailable or stale. The store's base currency is not included in `rates`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/exchange-rates. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_exchange_rates",
+    "scopes": [
+      "store:settings.currencies:read"
+    ]
+  },
+  {
+    "api_key": "currencies.exchange_rates.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/currencies/exchange-rates/{code}",
+    "description": "Current market rate for one currency code. Returns the market rate for a single ISO currency code relative to the store's base, in both directions. `updated_at` is the complete snapshot's RFC 3339 UTC timestamp. The request fails when the latest snapshot is unavailable or stale. Useful when suggesting a rate while a merchant sets a manual one. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/exchange-rates/{code}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "ISO 4217 currency code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "type": "object"
+    },
+    "name": "get_exchange_rate",
+    "scopes": [
+      "store:settings.currencies:read"
+    ]
+  },
+  {
+    "api_key": "currencies.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/currencies/{id}",
+    "description": "Fetch one store currency by id. Returns the currency if it belongs to the token's store, with its conversion rate, rounding mode, and enabled state. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Store currency id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_currency",
+    "scopes": [
+      "store:settings.currencies:read"
+    ]
+  },
+  {
+    "api_key": "currencies.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/currencies",
+    "description": "Add a currency to the store with a manual conversion rate. Adds a non-base currency. `conversion_rate` is a positive decimal string expressing how many units of the added currency equal one unit of the store's base currency—for example, `\"0.0105\"` means 1 INR = 0.0105 USD. Send it as a JSON string to avoid binary floating-point conversion. Manual rate values currently allow up to four decimal places after insignificant trailing zeros are removed, and a maximum value of `999999`; read `max_conversion_decimals` and `max_conversion_rate` from List currencies instead of hardcoding those limits. Equivalent formatting such as trailing zeros is not preserved. The call fails when multi-currency is off or unavailable on the plan, automatic rates are on, the store has reached its currency limit, or the code is unknown or already configured. `is_base` is not accepted. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "ISO 4217 currency code to add.",
+          "type": "string"
+        },
+        "conversion_rate": {
+          "description": "Positive decimal string: one base-currency unit equals this many units of the added currency. Apply the limits returned by List currencies.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "conversion_rate"
+      ],
+      "type": "object"
+    },
+    "name": "create_currency",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/currencies/{id}",
+    "description": "Update a currency's rate, enabled state, or rounding mode. Updates a non-base currency. Supply only the fields you want to change; omitted fields keep their current values. The base currency is immutable and requests against it are rejected. In automatic-rate mode the rate is market-managed and this update is rejected. Disabling a currency is rejected while a market still uses it. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "conversion_rate": {
+          "description": "Positive decimal string: one base-currency unit equals this many units of this currency. Apply the limits returned by List currencies. Omit to keep the current rate.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Store currency id.",
+          "type": "string"
+        },
+        "is_enabled": {
+          "description": "Whether the currency is enabled at the store level. Market assignment still determines shopper availability. Omit to keep the current state.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "rounding_mode": {
+          "description": "One of the values returned in `rounding_modes` by List currencies. Omit to keep the current rounding mode.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_currency",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/currencies/{id}",
+    "description": "Remove a non-base currency from the store. Deletes the currency in manual-rate mode. Removal is blocked while any live mutable reference remains. The error returns both five summary groups and exact per-table counts. Use Remove Currency Data to clear those references first. Historical carts, orders, payments, gift cards, ledgers, invoices, and settlements are retained and do not block removal. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/currencies/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Store currency id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_currency",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.data.bulk-remove",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/currencies/bulk-remove-data",
+    "description": "Preview and atomically clear live data for selected non-base currencies. Send a non-empty list of unique currency UUIDs in `ids`, capped by `bulk_max` from List currencies. Every ID must belong to this store. The base currency and automatic exchange-rate mode are rejected. The entire selection is checked together: a market must retain at least one currency after removal. First call without confirmation. `CONFIRMATION_REQUIRED` returns `details.preview` with total and per-currency `removed`/`counts`, warnings, and a five-minute single-use confirmation token. Repeat the same IDs with `confirmed: true` and `confirmation_token`. The token is bound to the store, actor, sorted selection and all previewed counts. Changed counts, selection, expiry or replay require a fresh preview. All 17 mutable reference types are cleared for the whole batch in one transaction using two ordered set-based writes. No currency configuration records or historical carts, orders, payments or financial records are deleted. An all-empty unconfirmed batch returns zero counts without mutation events. Successful cleanup records per-currency and batch audit entries, queues one `currencies/update` with changed currency IDs/codes and one `currencies/data_removed` per currency whose data changed, and requests at most one product filter-index rebuild. Any failure rolls back the entire batch. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-remove-data. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token returned by the preview.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "True only after reviewing the preview.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "ids": {
+          "description": "Unique store currency UUIDs; maximum bulk_max from List currencies.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_remove_currency_data",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.data.remove",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/currencies/{id}/remove-data",
+    "description": "Clear live mutable data that references one currency. This is a two-step destructive operation. Call it first without confirmation; if references exist, the API returns `CONFIRMATION_REQUIRED` with exact warnings and a short-lived, single-use token bound to those counts. Repeat with `confirmed: true` and that token. If the counts changed, review a fresh preview. The confirmed transaction locks the currency, rechecks the last-currency market rule, clears all 17 current mutable reference types in two ordered database statements, records the actual committed counts, and queues both `currencies/update` and `currencies/data_removed` in the same transaction. The first statement removes country overrides before their parent market assignments; the second clears the remaining reference types together. Counts cover directly addressed reference rows; dependent feed jobs, diagnostics, and artifacts cascade with their feed unit and are not added to the total. It does not delete the currency. Historical commerce and financial records are never changed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/{id}/remove-data. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token returned by CONFIRMATION_REQUIRED for this currency.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set to true only when repeating a request that returned CONFIRMATION_REQUIRED.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Store currency id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "remove_currency_data",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.rounding.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/currencies/{id}/rounding",
+    "description": "Set the price rounding rule for one currency. Applies the selected rounding rule to converted prices in this currency. The base currency keeps its original prices and does not use a rounding rule, so requests against it are rejected. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/{id}/rounding. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Store currency id.",
+          "type": "string"
+        },
+        "rounding_mode": {
+          "description": "One of the values returned in `rounding_modes` by List currencies.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "rounding_mode"
+      ],
+      "type": "object"
+    },
+    "name": "set_currency_rounding",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.multi_currency.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/currencies/multi-currency",
+    "description": "Turn selling in additional currencies on or off. Enables or disables multi-currency for the store. Enabling requires the store's plan to include multi-currency. Disabling requires every additional currency to be removed first. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/multi-currency. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "description": "Whether multi-currency selling is on.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "type": "object"
+    },
+    "name": "set_multi_currency",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.auto_rates.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/currencies/auto-rates",
+    "description": "Switch between market-managed and manual exchange rates. Switches exchange rates between market-managed automatic rates and merchant-managed manual rates. Turning automatic rates on requires the store to have no additional currencies. In automatic mode, selecting additional currencies is a Store Admin workflow. Turning automatic rates off snapshots current market rates onto each enabled currency; those values then become the store's manual rates. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/auto-rates. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "description": "Whether exchange rates follow the market automatically.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "type": "object"
+    },
+    "name": "set_auto_exchange_rates",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "reference.scopes.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/scopes",
+    "description": "List the requestable Store API scope catalog. Scope definitions are reference data, not the permissions approved for this connection. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/scopes. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_store_api_scopes",
+    "scopes": []
+  },
+  {
+    "api_key": "reference.countries.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reference/countries",
+    "description": "List countries and territories. Returns the complete country catalog. Inclusion does not establish selling, shipping, or payment availability. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/countries. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_countries",
+    "scopes": []
+  },
+  {
+    "api_key": "reference.subdivisions.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reference/subdivisions/{countryCode}",
+    "description": "List a country's states and provinces. Invalid country codes fail; a valid country with no subdivisions returns an empty list. For address inputs, use exact codes from get_address_format. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/subdivisions/{countryCode}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "Two-letter country/region code returned by the reference catalog, such as IN, US, or GB.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "country_code"
+      ],
+      "type": "object"
+    },
+    "name": "list_subdivisions",
+    "scopes": []
+  },
+  {
+    "api_key": "reference.timezones.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reference/timezones",
+    "description": "List supported IANA timezones.  Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/timezones. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_timezones",
+    "scopes": []
+  },
+  {
+    "api_key": "reference.currencies.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reference/currencies",
+    "description": "List supported currency codes and display metadata. This is the universal currency catalog, not the store's enabled currency set or shopper market assignments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/currencies. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_available_currencies",
+    "scopes": []
+  },
+  {
+    "api_key": "reference.phone_codes.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reference/phone-codes",
+    "description": "List country calling codes and contact phone-length metadata. Country/region codes and calling prefixes are distinct; a prefix may serve several regions. Length alone does not prove number validity or ownership. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/phone-codes. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_phone_country_codes",
+    "scopes": []
+  },
+  {
+    "api_key": "reference.number_formats.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reference/number-format-defaults/{countryCode}",
+    "description": "Get number-format defaults for a country. Formatting metadata affects presentation, not exact decimal API amounts. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/number-format-defaults/{countryCode}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "Two-letter country/region code returned by the reference catalog, such as IN, US, or GB.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "country_code"
+      ],
+      "type": "object"
+    },
+    "name": "get_number_format_defaults",
+    "scopes": []
+  },
+  {
+    "api_key": "reference.address_formats.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reference/address-format",
+    "description": "List the full country address-format catalog. Returns the complete dataset without pagination. Prefer get_address_format for a single country's form; this full catalog is for bulk reference discovery. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/address-format. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_address_formats",
+    "scopes": []
+  },
+  {
+    "api_key": "reference.address_formats.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reference/address-format/{countryCode}",
+    "description": "Get a country's address and postal rules. Use returned subdivision codes, field labels, postal format, required fields and metadata. Resource-specific requirements still apply; validation does not prove deliverability. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/address-format/{countryCode}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "Two-letter country/region code returned by the reference catalog, such as IN, US, or GB.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "country_code"
+      ],
+      "type": "object"
+    },
+    "name": "get_address_format",
+    "scopes": []
   },
   {
     "api_key": "catalog.metafield-definitions.list",

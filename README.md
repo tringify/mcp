@@ -85,6 +85,8 @@ All store-data tools use the corresponding Store API operations. The server retu
 | Blog Posts | Limits, list, search, details, translations, metafields | Create, update, delete, bulk status/category/tag changes, translations and metafields |
 | Blog Tags and Categories | Limits, list, details, translations; category metafields | Create, update, delete, bulk delete, translations; category metafields |
 | Blog Authors | Limits, list, search, details | Create, update, delete, bulk delete with reassignment when required |
+| Currencies | List, enabled set, base currency, individual currencies and exchange rates | Create, update, delete, rounding, multi-currency, automatic rates and confirmed data cleanup |
+| Reference data | Countries, subdivisions, language and currency catalogs, timezones, phone codes, number formats, address formats and API scopes | — |
 | Languages | `list_languages`, `list_available_languages` | `set_languages`, `set_default_language`, `delete_language_translations` |
 | Files | `list_files`, `get_file`, `get_file_limits`, `get_storage_quota` | `update_file`, `delete_file`, `create_file_uploads`, `finalize_file_uploads`, `get_file_upload_status` |
 
@@ -104,9 +106,23 @@ Policies are fixed records: use their type for get/update and their UUID for tra
 
 Use `list_page_metafield_definitions` and `list_blog_metafield_definitions` to discover accessible definitions before setting Page, Blog Post, or Blog Category values. Blog Comments, Blog Settings, and blog list-page SEO are outside this batch.
 
+## Currencies and reference data
+
+Store currency reads require `store:settings.currencies:read`; changes require `store:settings.currencies:write`. Use Update access to approve these permissions if the connection does not have them. The base currency is fixed. Native plan restrictions, rate precision, automatic-rate rules and cleanup confirmation remain in force; show the impact before confirming removal of live currency data.
+
+Universal reference lookups need a valid Store connection without additional resource permissions. They do not reveal store configuration or enlarge access. Prefer `get_address_format` for one country's form; complete catalogs are available for bulk discovery. `list_store_api_scopes` describes requestable API scopes, not what this connection can do.
+
+MCP clients can list and read three Markdown resources:
+
+- `https://dev-docs.tringify.com/store-api/reference`
+- `https://dev-docs.tringify.com/store-api/reference/phone-numbers`
+- `https://dev-docs.tringify.com/store-api/reference/addresses`
+
+These guides explain how to use the lookup data and the phone/address validation rules. Fetch current country-specific values with the tools. Each resource is bounded to 32 KiB.
+
 ## Languages and translations
 
-Languages use `store:settings.languages:read` and `store:settings.languages:write`, independently of Products access.
+Language settings use `store:settings.languages:read` and `store:settings.languages:write`, independently of Products access. Supported-language discovery is universal reference data and needs only the existing Store connection.
 
 - `list_available_languages` lists supported locale codes.
 - `list_languages` returns enabled languages, the default, and the current plan limit.
