@@ -1,5 +1,12 @@
 # Changelog
 
+## Currencies and reference data
+
+- Documented the 14 Currencies tools and their `store:settings.currencies:read` / `store:settings.currencies:write` permissions.
+- Documented the connection-only reference data tools; `list_available_languages` needs only `connection:read`.
+- Regenerated the tool inventory and machine-readable catalog from the live catalog.
+
+
 ## Content resources
 
 - Added all supported Pages, Policies, Blog Posts, Tags, Categories, and Authors API operations to MCP, including their available translations, bulk actions, and metafields.

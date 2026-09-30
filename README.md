@@ -86,15 +86,17 @@ All store-data tools use the corresponding Store API operations. The server retu
 | Blog Tags and Categories | Limits, list, details, translations; category metafields | Create, update, delete, bulk delete, translations; category metafields |
 | Blog Authors | Limits, list, search, details | Create, update, delete, bulk delete with reassignment when required |
 | Languages | `list_languages`, `list_available_languages` | `set_languages`, `set_default_language`, `delete_language_translations` |
+| Currencies | `list_currencies`, `list_enabled_currencies`, `get_base_currency`, `get_currency`, `list_exchange_rates`, `get_exchange_rate` | `create_currency`, `update_currency`, `delete_currency`, `remove_currency_data`, `bulk_remove_currency_data`, `set_currency_rounding`, `set_multi_currency`, `set_auto_exchange_rates` |
+| Reference data | `list_countries`, `list_subdivisions`, `list_timezones`, `list_available_currencies`, `list_phone_country_codes`, `get_number_format_defaults`, `list_address_formats`, `get_address_format`, `list_store_api_scopes` | — |
 | Files | `list_files`, `get_file`, `get_file_limits`, `get_storage_quota` | `update_file`, `delete_file`, `create_file_uploads`, `finalize_file_uploads`, `get_file_upload_status` |
 
 Catalog reads require `store:products:read`; catalog writes require `store:products:write`. Binding new catalog images also requires `store:files:read`. `connection:read` permits the connection itself and grants no store-data access.
 
 For Files, choose `library: "media"` or `library: "site_assets"` on every call. Media requires `store:files:read` or `store:files:write`. Site Assets requires `store:online_store.site_assets:read` or `store:online_store.site_assets:write`. Upload status is a read of an upload operation and, like preparation and finalization, requires that library's **write** permission. A file ID from another library cannot bypass these permissions.
 
-Existing Products permissions cover the catalog tools. Translation operations also require `store:settings.languages:read` or `store:settings.languages:write`, matching the existing Languages permissions. Product operations affecting Gift Card products require `store:gift_cards:write` where the API requires it. Refresh the tool list in your client to discover new tools. To add permissions, use the access-update flow below; refreshing a token cannot enlarge its grant.
+Existing Products permissions cover the catalog tools. Translation operations also require `store:settings.languages:read` or `store:settings.languages:write`, matching the existing Languages permissions. Product operations affecting Gift Card products require `store:gift_cards:write` where the API requires it. Currency tools require `store:settings.currencies:read` or `store:settings.currencies:write`, independently of Products access. Reference data tools and `list_available_languages` need only `connection:read`. Refresh the tool list in your client to discover new tools. To add permissions, use the access-update flow below; refreshing a token cannot enlarge its grant.
 
-The [complete tool inventory](docs/catalog-tools.md) lists the supported operations and their API counterparts. The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation. Products, Collections, Categories, Attributes, and Languages cover their documented merchant-authorized API endpoints. App-only purchase requirements remain outside user connections. Brands, Vendors, Tags, and Files support the tools shown above; their remaining API endpoints are not implied.
+The [complete tool inventory](docs/catalog-tools.md) lists the supported operations and their API counterparts. The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation. Products, Collections, Categories, Attributes, Languages, and Currencies cover their documented merchant-authorized API endpoints. App-only purchase requirements remain outside user connections. Brands, Vendors, Tags, and Files support the tools shown above; their remaining API endpoints are not implied.
 
 ## Pages, policies, and blogs
 
@@ -106,7 +108,7 @@ Use `list_page_metafield_definitions` and `list_blog_metafield_definitions` to d
 
 ## Languages and translations
 
-Languages use `store:settings.languages:read` and `store:settings.languages:write`, independently of Products access.
+Languages use `store:settings.languages:read` and `store:settings.languages:write`, independently of Products access. `list_available_languages` is universal reference data and needs only the connection.
 
 - `list_available_languages` lists supported locale codes.
 - `list_languages` returns enabled languages, the default, and the current plan limit.
@@ -117,6 +119,15 @@ Languages use `store:settings.languages:read` and `store:settings.languages:writ
 Removing a language can permanently delete translations and requires confirmation. A language assigned to a storefront is protected until its assignments are removed. Adding a language does not publish it on a storefront or translate content automatically. Review the returned warnings before confirming destructive changes.
 
 Content translation tools are already available for **Products, variant titles, Collections, Categories, Attributes, attribute options, Tags, Brands, Vendors, Pages, Policies, Blog Posts, Blog Tags, Blog Categories, and supported product, variant, category, collection, brand, vendor, page, blog post, and blog category metafields**. Product, collection, category, attribute, option, tag, brand, vendor, page, policy, blog post, blog tag, and blog category translations also have batch tools. Variant titles and metafields use individual tools. **Files translations, AI translation jobs, and translation CSV import/export are not exposed through MCP.**
+
+## Currencies
+
+Currencies use `store:settings.currencies:read` and `store:settings.currencies:write`, independently of Products access.
+
+- The base currency is fixed: it cannot be added, edited, disabled, rounded, or removed. Its `rounding_modes` is empty.
+- `update_currency` changes only the fields you send; send at least one. Offer only the currency's own `rounding_modes`.
+- In automatic-rate mode, rates and enabled state follow the market (`rate_source: "automatic"`); only rounding can change. Turning automatic rates on requires no additional currencies; turning them off copies the current market rate onto every additional currency.
+- `remove_currency_data` and `bulk_remove_currency_data` preview first and need confirmation. `delete_currency` is blocked while live references or active Gift Card balances in that currency remain.
 
 ## Work with brands and vendors
 
