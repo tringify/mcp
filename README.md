@@ -85,6 +85,7 @@ All store-data tools use the corresponding Store API operations. The server retu
 | Blog Posts | Limits, list, search, details, translations, metafields | Create, update, delete, bulk status/category/tag changes, translations and metafields |
 | Blog Tags and Categories | Limits, list, details, translations; category metafields | Create, update, delete, bulk delete, translations; category metafields |
 | Blog Authors | Limits, list, search, details | Create, update, delete, bulk delete with reassignment when required |
+| Markets | All 107 documented JSON operations; live limits, country/currency mappings, tax, discounts, shipping, duties, COD, payments, checkout | Market and specialist configuration, bulk operations, confirmation and fee ordering |
 | Languages | `list_languages`, `list_available_languages` | `set_languages`, `set_default_language`, `delete_language_translations` |
 | Currencies | `list_currencies`, `list_enabled_currencies`, `get_base_currency`, `get_currency`, `list_exchange_rates`, `get_exchange_rate` | `create_currency`, `update_currency`, `delete_currency`, `remove_currency_data`, `bulk_remove_currency_data`, `set_currency_rounding`, `set_multi_currency`, `set_auto_exchange_rates` |
 | Reference data | `list_countries`, `list_subdivisions`, `list_timezones`, `list_available_currencies`, `list_phone_country_codes`, `get_number_format_defaults`, `list_address_formats`, `get_address_format`, `list_store_api_scopes` | — |
@@ -105,6 +106,14 @@ Pages and Policies require `store:pages:read` or `store:pages:write`. Blog Posts
 Policies are fixed records: use their type for get/update and their UUID for translations. There are no create or delete policy tools. Deleting an author assigned to posts requires a replacement author. Blog Authors have no translation endpoints.
 
 Use `list_page_metafield_definitions` and `list_blog_metafield_definitions` to discover accessible definitions before setting Page, Blog Post, or Blog Category values. Blog Comments, Blog Settings, and blog list-page SEO are outside this batch.
+
+## Markets
+
+Markets require `store:markets:read` and `store:markets:write`, independently of Products and store Currencies. The hosted connector exposes all 107 documented Markets JSON operations, including country/currency assignments, tax classes/zones/rates/price rules, discounts, shipping, duties, COD, connected payment-provider availability/discounts, checkout limits and fees. Update an existing connection's approved access to add Markets, then refresh discovery.
+
+Start with `get_market_limits`, `get_assigned_market_countries`, `list_markets` and `get_market`. Read each specialist's live limits and complete saved definition before changing it. Market PATCH changes supplied fields; specialist PUT requests follow their replacement contract. Amount maps and fields declared as decimal strings retain currency precision. Buy X Get Y `fixed` means an amount off each reward item; a bundle fixed price is the complete set's price.
+
+The [Markets integration guide](docs/markets.md) covers dependencies, calculation behavior, confirmation and bulk results. The same guide is available through MCP `resources/read` at `https://dev-docs.tringify.com/store-api/markets/markets`. CSV tax import/export and its asynchronous jobs are available in Store Admin and mobile.
 
 ## Languages and translations
 
