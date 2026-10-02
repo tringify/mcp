@@ -172,6 +172,30 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `update_blog_author` | `PUT /api/2025-01/blog/authors/{id}` | store:blog:write |
 | `delete_blog_author` | `DELETE /api/2025-01/blog/authors/{id}` | store:blog:write |
 | `bulk_delete_blog_authors` | `POST /api/2025-01/blog/authors/bulk-delete` | store:blog:write |
+| `get_blog_comment_limits` | `GET /api/2025-01/blog/comments/limits` | store:blog:read |
+| `list_blog_comments` | `GET /api/2025-01/blog/comments` | store:blog:read |
+| `get_blog_comment_counts` | `GET /api/2025-01/blog/comments/counts` | store:blog:read |
+| `get_blog_comment` | `GET /api/2025-01/blog/comments/{id}` | store:blog:read |
+| `update_blog_comment` | `PUT /api/2025-01/blog/comments/{id}` | store:blog:write |
+| `bulk_update_blog_comment_status` | `POST /api/2025-01/blog/comments/bulk-update-status` | store:blog:write |
+| `delete_blog_comment` | `DELETE /api/2025-01/blog/comments/{id}` | store:blog:write |
+| `bulk_delete_blog_comments` | `POST /api/2025-01/blog/comments/bulk-delete` | store:blog:write |
+| `get_menu_limits` | `GET /api/2025-01/menus/limits` | store:menus:read |
+| `list_menus` | `GET /api/2025-01/menus` | store:menus:read |
+| `get_menu` | `GET /api/2025-01/menus/{menuId}` | store:menus:read |
+| `list_menu_items` | `GET /api/2025-01/menus/{menuId}/items` | store:menus:read |
+| `search_menu_items` | `GET /api/2025-01/menus/{menuId}/items/search` | store:menus:read |
+| `create_menu` | `POST /api/2025-01/menus` | store:menus:write |
+| `update_menu` | `PUT /api/2025-01/menus/{menuId}` | store:menus:write |
+| `save_menu` | `PUT /api/2025-01/menus/{menuId}/save` | store:menus:write |
+| `create_menu_item` | `POST /api/2025-01/menus/{menuId}/items` | store:menus:write |
+| `update_menu_item` | `PUT /api/2025-01/menus/{menuId}/items/{itemId}` | store:menus:write |
+| `delete_menu_item` | `DELETE /api/2025-01/menus/{menuId}/items/{itemId}` | store:menus:write |
+| `delete_menu` | `DELETE /api/2025-01/menus/{menuId}` | store:menus:write |
+| `get_menu_item_translation` | `GET /api/2025-01/menus/items/{itemId}/translations/{locale}` | store:menus:read, store:settings.languages:read |
+| `set_menu_item_translation` | `PUT /api/2025-01/menus/items/{itemId}/translations/{locale}` | store:menus:write, store:settings.languages:write |
+| `get_menu_item_translations` | `GET /api/2025-01/menus/items/translations/{locale}` | store:menus:read, store:settings.languages:read |
+| `set_menu_item_translations` | `PUT /api/2025-01/menus/items/translations/{locale}` | store:menus:write, store:settings.languages:write |
 | `list_tags` | `GET /api/2025-01/tags` | store:products:read |
 | `get_tag` | `GET /api/2025-01/tags/{id}` | store:products:read |
 | `create_tag` | `POST /api/2025-01/tags` | store:products:write |
@@ -203,20 +227,26 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `set_vendor_translation` | `PUT /api/2025-01/vendors/{id}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `get_vendor_translations` | `GET /api/2025-01/vendors/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_vendor_translations` | `PUT /api/2025-01/vendors/translations/{locale}` | store:products:write, store:settings.languages:write |
-| `get_file_limits` | `GET /api/2025-01/files/limits` | store:files:read (Media), or store:online_store.site_assets:read (Site Assets) |
-| `get_storage_quota` | `GET /api/2025-01/files/quota` | store:files:read (Media), or store:online_store.site_assets:read (Site Assets) |
-| `list_files` | `GET /api/2025-01/files` | store:files:read (Media), or store:online_store.site_assets:read (Site Assets) |
-| `create_file_uploads` | `POST /api/2025-01/files/upload-intents` | store:files:write (Media), or store:online_store.site_assets:write (Site Assets) |
-| `finalize_file_uploads` | `POST /api/2025-01/files/upload-intents/finalize` | store:files:write (Media), or store:online_store.site_assets:write (Site Assets) |
-| `get_file_upload_status` | `POST /api/2025-01/files/upload-intents/status` | store:files:write (Media), or store:online_store.site_assets:write (Site Assets) |
-| `get_file` | `GET /api/2025-01/files/{id}` | store:files:read (Media), or store:online_store.site_assets:read (Site Assets) |
-| `update_file` | `PUT /api/2025-01/files/{id}` | store:files:write (Media), or store:online_store.site_assets:write (Site Assets) |
-| `delete_file` | `DELETE /api/2025-01/files/{id}` | store:files:write (Media), or store:online_store.site_assets:write (Site Assets) |
+| `get_file_limits` | `GET /api/2025-01/files/limits` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
+| `get_storage_quota` | `GET /api/2025-01/files/quota` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
+| `list_files` | `GET /api/2025-01/files` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
+| `create_file_uploads` | `POST /api/2025-01/files/upload-intents` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `finalize_file_uploads` | `POST /api/2025-01/files/upload-intents/finalize` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `get_file_upload_status` | `POST /api/2025-01/files/upload-intents/status` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `get_file` | `GET /api/2025-01/files/{id}` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
+| `update_file` | `PUT /api/2025-01/files/{id}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `delete_file` | `DELETE /api/2025-01/files/{id}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `get_blog_settings` | `GET /api/2025-01/blog/settings` | store:blog:read |
+| `update_blog_settings` | `PUT /api/2025-01/blog/settings` | store:blog:write |
+| `get_blog_list_seo` | `GET /api/2025-01/blog/list-seo` | store:blog:read |
+| `update_blog_list_seo` | `PUT /api/2025-01/blog/list-seo` | store:blog:write |
+| `get_blog_list_seo_translation` | `GET /api/2025-01/blog/list-seo/translations/{locale}` | store:blog:read, store:settings.languages:read |
+| `set_blog_list_seo_translation` | `PUT /api/2025-01/blog/list-seo/translations/{locale}` | store:blog:write, store:settings.languages:write |
 | `list_languages` | `GET /api/2025-01/languages` | store:settings.languages:read |
 | `set_languages` | `PUT /api/2025-01/languages` | store:settings.languages:write |
 | `set_default_language` | `PUT /api/2025-01/languages/default` | store:settings.languages:write |
 | `delete_language_translations` | `DELETE /api/2025-01/languages/{locale}/translations` | store:settings.languages:write |
-| `list_available_languages` | `GET /api/2025-01/reference/languages` | Valid Store connection |
+| `list_available_languages` | `GET /api/2025-01/reference/languages` | Valid Store connection; no resource scope |
 | `list_currencies` | `GET /api/2025-01/currencies` | store:settings.currencies:read |
 | `list_enabled_currencies` | `GET /api/2025-01/currencies/enabled` | store:settings.currencies:read |
 | `get_base_currency` | `GET /api/2025-01/currencies/base` | store:settings.currencies:read |
@@ -350,15 +380,15 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_email_reply_to` | `GET /api/2025-01/email/reply-to` | store:settings.email:read |
 | `update_email_reply_to` | `PUT /api/2025-01/email/reply-to` | store:settings.email:write |
 | `get_email_suppression` | `GET /api/2025-01/email/suppressions` | store:settings.email:read |
-| `list_store_api_scopes` | `GET /api/2025-01/scopes` | Valid Store connection |
-| `list_countries` | `GET /api/2025-01/reference/countries` | Valid Store connection |
-| `list_subdivisions` | `GET /api/2025-01/reference/subdivisions/{countryCode}` | Valid Store connection |
-| `list_timezones` | `GET /api/2025-01/reference/timezones` | Valid Store connection |
-| `list_available_currencies` | `GET /api/2025-01/reference/currencies` | Valid Store connection |
-| `list_phone_country_codes` | `GET /api/2025-01/reference/phone-codes` | Valid Store connection |
-| `get_number_format_defaults` | `GET /api/2025-01/reference/number-format-defaults/{countryCode}` | Valid Store connection |
-| `list_address_formats` | `GET /api/2025-01/reference/address-format` | Valid Store connection |
-| `get_address_format` | `GET /api/2025-01/reference/address-format/{countryCode}` | Valid Store connection |
+| `list_store_api_scopes` | `GET /api/2025-01/scopes` | Valid Store connection; no resource scope |
+| `list_countries` | `GET /api/2025-01/reference/countries` | Valid Store connection; no resource scope |
+| `list_subdivisions` | `GET /api/2025-01/reference/subdivisions/{countryCode}` | Valid Store connection; no resource scope |
+| `list_timezones` | `GET /api/2025-01/reference/timezones` | Valid Store connection; no resource scope |
+| `list_available_currencies` | `GET /api/2025-01/reference/currencies` | Valid Store connection; no resource scope |
+| `list_phone_country_codes` | `GET /api/2025-01/reference/phone-codes` | Valid Store connection; no resource scope |
+| `get_number_format_defaults` | `GET /api/2025-01/reference/number-format-defaults/{countryCode}` | Valid Store connection; no resource scope |
+| `list_address_formats` | `GET /api/2025-01/reference/address-format` | Valid Store connection; no resource scope |
+| `get_address_format` | `GET /api/2025-01/reference/address-format/{countryCode}` | Valid Store connection; no resource scope |
 | `list_catalog_metafield_definitions` | `GET /api/2025-01/metafield-definitions` | store:products:read |
 | `list_page_metafield_definitions` | `GET /api/2025-01/metafield-definitions` | store:pages:read |
 | `list_blog_metafield_definitions` | `GET /api/2025-01/metafield-definitions` | store:blog:read |
