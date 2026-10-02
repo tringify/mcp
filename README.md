@@ -105,7 +105,7 @@ Pages and Policies require `store:pages:read` or `store:pages:write`. Blog Posts
 
 Policies are fixed records: use their type for get/update and their UUID for translations. There are no create or delete policy tools. Deleting an author assigned to posts requires a replacement author. Blog Authors have no translation endpoints.
 
-Use `list_page_metafield_definitions` and `list_blog_metafield_definitions` to discover accessible definitions before setting Page, Blog Post, or Blog Category values. Blog Comments, Blog Settings, and blog list-page SEO are outside this batch.
+Use `list_page_metafield_definitions` and `list_blog_metafield_definitions` to discover accessible definitions before setting Page, Blog Post, or Blog Category values. Blog Comments expose single and bulk moderation and permanent deletion. Blog Settings expose comment mode and moderation. Blog index SEO includes source and translations; setting a social image also requires Site Assets read access. Menus have separate `store:menus:read` and `store:menus:write` access, including full and lazy tree reads, item changes, atomic saves and title translations. Send the revision from your menu read with every save; a stale save is refused with `MENU_SAVE_CONFLICT`.
 
 ## Markets
 

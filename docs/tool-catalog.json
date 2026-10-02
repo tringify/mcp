@@ -7085,6 +7085,813 @@
     ]
   },
   {
+    "api_key": "blog_comments.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/comments/limits",
+    "description": "Fetch blog comment limits. Returns pagination, search, bulk-operation, field, and moderation-status limits. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/comments/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_blog_comment_limits",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_comments.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/comments",
+    "description": "List blog comments for moderation. Returns store-wide comments in newest-first order. Filter by status or post, or search author name, author email, and content. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/comments. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "post_id": {
+          "description": "Filter by Blog Post id.",
+          "type": "string"
+        },
+        "search": {
+          "description": "Search author name, author email, or comment content.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Filter by moderation status.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_blog_comments",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_comments.counts",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/comments/counts",
+    "description": "Fetch counts by moderation status. Returns the current pending, approved, spam, and trash counts for the store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/comments/counts. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_blog_comment_counts",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_comments.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/comments/{id}",
+    "description": "Fetch one blog comment. Returns the comment only when it belongs to the token's store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/comments/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Comment id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_comment",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_comments.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/comments/{id}",
+    "description": "Change one comment's moderation status. Sets status to pending, approved, spam, or trash. The change, audit record, and update webhook commit atomically. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/comments/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Comment id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "description": "New moderation status.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "status"
+      ],
+      "type": "object"
+    },
+    "name": "update_blog_comment",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_comments.bulk-update-status",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/comments/bulk-update-status",
+    "description": "Change the moderation status of multiple comments. Updates every selected comment atomically. If an id is invalid, missing, or belongs to another store, none are changed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/comments/bulk-update-status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "comment_ids": {
+          "description": "Comment ids to update.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "status": {
+          "description": "New moderation status.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_ids",
+        "status"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_update_blog_comment_status",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_comments.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/blog/comments/{id}",
+    "description": "Permanently delete one comment. Deletes the comment atomically with its audit record and delete webhook. This operation cannot be undone. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/comments/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Comment id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_blog_comment",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_comments.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/comments/bulk-delete",
+    "description": "Permanently delete multiple comments. Deletes every selected comment atomically. If an id is invalid, missing, or belongs to another store, none are deleted. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/comments/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "comment_ids": {
+          "description": "Comment ids to delete.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "comment_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_blog_comments",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "menus.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/menus/limits",
+    "description": "Fetch Menu limits, tree caps, and the link-type vocabulary. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/menus/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_menu_limits",
+    "scopes": [
+      "store:menus:read"
+    ]
+  },
+  {
+    "api_key": "menus.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/menus",
+    "description": "List menus for the store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/menus. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size, capped by `list_max_limit`.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search menus by name or handle.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort column: name, created_at, or updated_at.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "asc or desc.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_menus",
+    "scopes": [
+      "store:menus:read"
+    ]
+  },
+  {
+    "api_key": "menus.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/menus/{menuId}",
+    "description": "Fetch one menu with its full item tree. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/menus/{menuId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "menu_id": {
+          "description": "Menu ID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "menu_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_menu",
+    "scopes": [
+      "store:menus:read"
+    ]
+  },
+  {
+    "api_key": "menus.items.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/menus/{menuId}/items",
+    "description": "List one level of a menu's item tree. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/menus/{menuId}/items. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size, capped by `list_max_limit`.",
+          "type": "integer"
+        },
+        "menu_id": {
+          "description": "Menu ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "page": {
+          "description": "Page number within the sibling level.",
+          "type": "integer"
+        },
+        "parent_id": {
+          "description": "Parent item id. Omit for root items.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "menu_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_menu_items",
+    "scopes": [
+      "store:menus:read"
+    ]
+  },
+  {
+    "api_key": "menus.items.search",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/menus/{menuId}/items/search",
+    "description": "Search items across the whole menu. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/menus/{menuId}/items/search. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size, capped by `list_max_limit`.",
+          "type": "integer"
+        },
+        "menu_id": {
+          "description": "Menu ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "q": {
+          "description": "Search query over item titles and link labels. An empty query returns an empty list.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "menu_id"
+      ],
+      "type": "object"
+    },
+    "name": "search_menu_items",
+    "scopes": [
+      "store:menus:read"
+    ]
+  },
+  {
+    "api_key": "menus.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/menus",
+    "description": "Create a menu (name + optional handle). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/menus. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "handle": {
+          "description": "Optional handle. Omit to generate from the name (auto-uniquified). A provided duplicate is rejected.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Menu name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_menu",
+    "scopes": [
+      "store:menus:write"
+    ]
+  },
+  {
+    "api_key": "menus.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/menus/{menuId}",
+    "description": "Rename a menu or change its handle. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/menus/{menuId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "handle": {
+          "description": "New handle. Must be unique and slug-shaped.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "menu_id": {
+          "description": "Menu ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "name": {
+          "description": "New menu name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "menu_id"
+      ],
+      "type": "object"
+    },
+    "name": "update_menu",
+    "scopes": [
+      "store:menus:write"
+    ]
+  },
+  {
+    "api_key": "menus.save",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/menus/{menuId}/save",
+    "description": "Save name, handle, and item changes as one atomic batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/menus/{menuId}/save. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "handle": {
+          "description": "Menu handle — required on save.",
+          "type": "string"
+        },
+        "items": {
+          "description": "The FULL item tree. Each node: optional `id` (existing item), `title`, `link_type`, optional `link_value`/`link_label`, `open_in_new_tab`, `children`. Existing ids update in place; ids missing from the tree are deleted; nodes without ids are created.",
+          "items": {
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "menu_id": {
+          "description": "Menu ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "name": {
+          "description": "Menu name.",
+          "type": "string"
+        },
+        "ops": {
+          "description": "Ordered operations instead of `items`. Each object has `kind` (create, update, delete, or move), `id` or a unique create `temp_id`, placement fields, and the editable item fields at the top level. There is no nested fields object. Create a parent before using its `temp_id` as a later operation’s `parent_temp_id`.",
+          "items": {
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "revision": {
+          "description": "The `revision` returned when you read the menu. A save from an older revision is rejected.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "menu_id",
+        "name",
+        "handle",
+        "revision"
+      ],
+      "type": "object"
+    },
+    "name": "save_menu",
+    "scopes": [
+      "store:menus:write"
+    ]
+  },
+  {
+    "api_key": "menus.items.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/menus/{menuId}/items",
+    "description": "Add one item to a menu. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/menus/{menuId}/items. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "link_label": {
+          "description": "Display label for the linked resource.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "link_type": {
+          "description": "Link type from the limits vocabulary.",
+          "type": "string"
+        },
+        "link_value": {
+          "description": "Target reference for types that require one — a resource id, policy type, or custom URL. Existence-validated.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "menu_id": {
+          "description": "Menu ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "open_in_new_tab": {
+          "description": "Open the link in a new tab.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "parent_id": {
+          "description": "Parent item id. Omit for a root item. Subject to the nesting-depth cap.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sort_order": {
+          "description": "Position within the sibling group. Omit to append.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "title": {
+          "description": "Item title.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "menu_id",
+        "title",
+        "link_type"
+      ],
+      "type": "object"
+    },
+    "name": "create_menu_item",
+    "scopes": [
+      "store:menus:write"
+    ]
+  },
+  {
+    "api_key": "menus.items.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/menus/{menuId}/items/{itemId}",
+    "description": "Update one item's fields or placement. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/menus/{menuId}/items/{itemId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Menu item id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "link_label": {
+          "description": "New display label.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "link_type": {
+          "description": "New link type. Switching to a type without a target clears `link_value`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "link_value": {
+          "description": "New target reference. Existence-validated.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "menu_id": {
+          "description": "Menu ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "open_in_new_tab": {
+          "description": "Open the link in a new tab.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "parent_id": {
+          "description": "New parent item id; empty string moves the item to the root. Cycle- and depth-guarded.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "description": "New item title.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "menu_id",
+        "item_id"
+      ],
+      "type": "object"
+    },
+    "name": "update_menu_item",
+    "scopes": [
+      "store:menus:write"
+    ]
+  },
+  {
+    "api_key": "menus.items.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/menus/{menuId}/items/{itemId}",
+    "description": "Delete one item and its descendants. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/menus/{menuId}/items/{itemId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Menu item id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "menu_id": {
+          "description": "Menu ID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "menu_id",
+        "item_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_menu_item",
+    "scopes": [
+      "store:menus:write"
+    ]
+  },
+  {
+    "api_key": "menus.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/menus/{menuId}",
+    "description": "Delete a menu and all of its items. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/menus/{menuId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "menu_id": {
+          "description": "Menu ID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "menu_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_menu",
+    "scopes": [
+      "store:menus:write"
+    ]
+  },
+  {
+    "api_key": "menus.items.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/menus/items/{itemId}/translations/{locale}",
+    "description": "Read a menu item's translated title. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/menus/items/{itemId}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Menu item ID returned in a menu tree or item list.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_menu_item_translation",
+    "scopes": [
+      "store:menus:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "menus.items.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/menus/items/{itemId}/translations/{locale}",
+    "description": "Write or clear a menu item's translated title. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/menus/items/{itemId}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Menu item ID returned in a menu tree or item list.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Only title is supported.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "item_id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_menu_item_translation",
+    "scopes": [
+      "store:menus:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "menus.items.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/menus/items/translations/{locale}",
+    "description": "Read translated titles for menu items. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/menus/items/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated menu item IDs.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_menu_item_translations",
+    "scopes": [
+      "store:menus:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "menus.items.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/menus/items/translations/{locale}",
+    "description": "Write translated menu item titles in one batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/menus/items/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with an item id and title in fields.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_menu_item_translations",
+    "scopes": [
+      "store:menus:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
     "api_key": "tags.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/tags",
@@ -8681,6 +9488,190 @@
       "store:files:write"
     ],
     "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "api_key": "blog-settings.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/settings",
+    "description": "Get blog comment settings. Returns the supported modes as well as the store's current mode and moderation choice. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/settings. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_blog_settings",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog-settings.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/settings",
+    "description": "Update blog comment settings. This is an atomic patch. Omitted fields stay unchanged. Disabling comments hides existing comments and reports zero counts without deleting them. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "comments_mode": {
+          "description": "Who may comment: disabled, all, or registered.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "comments_moderation": {
+          "description": "Whether new comments wait for merchant approval.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "update_blog_settings",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog-list-seo.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/list-seo",
+    "description": "Get source SEO for the public blog index. Returns the fixed blog_list resource and never exposes its database row id. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/list-seo. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_blog_list_seo",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog-list-seo.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/list-seo",
+    "description": "Update source SEO for the public blog index. This is a patch. Empty text clears that field. Remove a source field’s translations before clearing it. A non-empty social_image_id additionally requires read_site_assets and a site-asset image from this store. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/list-seo. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "robots_follow": {
+          "description": "Whether search engines may follow links on the page.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index": {
+          "description": "Whether search engines may index the page.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Search-result description. Empty clears it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Search-result title. Empty clears it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_description": {
+          "description": "Social-share description. Empty clears it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_image_id": {
+          "description": "Site-asset image UUID. Empty string or null clears it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_title": {
+          "description": "Social-share title. Empty clears it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "update_blog_list_seo",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog-list-seo.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/list-seo/translations/{locale}",
+    "description": "Get translated SEO for the public blog index. The locale must be enabled and cannot be the store default. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/list-seo/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_list_seo_translation",
+    "scopes": [
+      "store:blog:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "blog-list-seo.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/list-seo/translations/{locale}",
+    "description": "Set or clear translated SEO fields for the public blog index. Empty values clear only that locale's field. The write is atomic. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/list-seo/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translations.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_list_seo_translation",
+    "scopes": [
+      "store:blog:write",
+      "store:settings.languages:write"
+    ]
   },
   {
     "api_key": "languages.list",
