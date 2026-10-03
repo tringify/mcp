@@ -9490,6 +9490,349 @@
     "site_assets_scope": "store:online_store.site_assets:write"
   },
   {
+    "api_key": "orders.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/orders/{id}",
+    "description": "Fetch one order with fulfillment plans. Order numbers are assigned using the merchant’s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` is collected for verification and never proves an exemption by itself; `tax_exempt` and `invoice_only` are server-computed outcomes. When `duty_collection_mode` is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`; when it is `pay_on_delivery`, the amount is an informational estimate outside `grand_total`. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token’s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_order",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "orders.edits.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/orders/{id}/edits",
+    "description": "List the edits made to an order's items. Returns every edit of the order, newest first: the version it produced, each line's change (added, increased, decreased or removed) with quantities before and after, the unit price, the amount change, the balance the customer owes and any amount returned, and the fulfillment orders whose contents changed. An edit that changed a fulfillment order your app had already received stays unacknowledged until your app makes a content write with the current order_version, such as creating a fulfillment. refund_error is set while a refund the edit owes the customer hasn't been sent after several attempts; it is retried automatically. The same information is sent in orders/edited. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}/edits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_order_edits",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "orders.edits.options",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/orders/{id}/edit-options",
+    "description": "Read current edit eligibility and field restrictions. Returns the current order version, backend eligibility and localized reasons, field permissions, per-line minimum quantities and price/discount restrictions, current contact/address/shipping/discount values, and edit limits. These are current UI hints; preview and apply validate again. Requires read_orders. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}/edit-options. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_order_edit_options",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "orders.edits.shipping-options",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/orders/{id}/edit-shipping-options",
+    "description": "List shipping methods for the proposed order. Send the same order version, item changes and updates as the edit draft. Returns the Shipping resolver’s available and unavailable methods using the order’s existing allocations plus proposed additions. It does not reserve stock or change the order. Send a selected option ID in updates.shipping.method_id, then obtain a new preview token before applying. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{id}/edit-shipping-options. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "balance_collection": {
+          "description": "How a balance the edit leaves is collected. payment_link emails the customer a link to pay it; none leaves it open on the order. Omit it to use payment_link when the total changes and the order already has a captured payment; otherwise the default is none. Ignored when nothing is owed.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "changes": {
+          "description": "Up to 50 changes; optional when updates changes order details. set_price takes order_item_id and unit_price. set_discount takes order_item_id and either discount {type: fixed|percentage, value: decimal string, name: optional} or clear_discount: true. Each type may target a line once. set_quantity changes an existing line to quantity (order_item_id, quantity; 0 removes it; a higher quantity adds the extra units as a new line). add_item adds a product (product_id, optional variant_id, quantity, optional unit_price override); a product with variants needs variant_id. add_custom_item adds a line with its own title, unit_price (decimal string in the order currency), quantity and optional taxable and requires_shipping (both default true). Each change type may target a line once; do not combine removal with price or discount changes.",
+          "items": {
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "notify_customer": {
+          "description": "Email the customer the updated order, including any payment link. Defaults to true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "order_version": {
+          "description": "The order's current version, from your last read of it.",
+          "type": "integer"
+        },
+        "preview_token": {
+          "description": "Required when applying updates, set_price, set_discount or an added-product price override. Send the token from the latest matching preview. Changed totals/details return ORDER_EDIT_PREVIEW_STALE; preview and review again. It is not an idempotency key.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "price_basis": {
+          "description": "current (default) prices added products at today's price in the order's market; original keeps the price already on the order for the same product.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason": {
+          "description": "Reason shown on the order timeline and in orders/edited, up to 500 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "refund_method": {
+          "description": "Required when the edit lowers the total below what was paid: original_payment, store_credit (orders with a customer account) or manual. The preview lists the methods available in refund_methods.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "updates": {
+          "description": "Optional order snapshot changes: contact {email, phone, first_name, last_name}; shipping_address and billing_address (full address objects, billing_address may be null); shipping {method_id, amount, name}; discount {type: fixed|percentage, value, name} or null to remove the manual order discount. Omitted fields remain unchanged. Contact changes never edit a customer account. Prices, discounts, shipping and addresses are locked once fulfillment or an item refund starts. Existing promotions keep their identities and original target lines, with amounts capped at the edited line value. Unrelated fees remain recorded. A tax-exempt order must retain its tax country/state.",
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "order_version"
+      ],
+      "type": "object"
+    },
+    "name": "list_order_edit_shipping_options",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "orders.edits.preview",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/orders/{id}/edits/preview",
+    "description": "See what an edit would do, without changing anything. Computes an edit exactly as applying it would: the new totals, the balance the customer would owe or the refund due, the refund methods available, each line's change and the fulfillment orders and apps it would affect. Nothing is saved, reserved or sent, and no Idempotency-Key is needed. Changes eligible items, prices, manual discounts, contact, addresses and shipping of a placed order through the same edit Store Admin uses, with the same rules: lines can be lowered or removed down to what has shipped, been refunded or is being refunded; products, variants and custom items can be added; gift-card lines cannot change. Added products are priced at the current price in the order's market, or with price_basis original at the price already on the order for the same product. Prices, manual discounts and delivery changes require fulfillment and item refunds not to have started. Contact corrections never change the customer account. The order keeps its currency and original exchange rate. Repricing recalculates taxes, preserves unrelated fees and keeps existing promotions on their original target items, capped at their edited value. Orders with duties, cancelled or imported orders, orders with an authorized but uncaptured payment, and orders placed before editing existed cannot be edited. order_version must be the order's current version; any other value is refused so an edit never overwrites a change you have not seen. Every successful edit raises the version by one, is recorded on the order timeline and audit log under your app's name, and sends orders/edited with edited_by_app_id set to your app. Apps that had already received a changed fulfillment order must acknowledge it by writing with the new version. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{id}/edits/preview. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "balance_collection": {
+          "description": "How a balance the edit leaves is collected. payment_link emails the customer a link to pay it; none leaves it open on the order. Omit it to use payment_link when the total changes and the order already has a captured payment; otherwise the default is none. Ignored when nothing is owed.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "changes": {
+          "description": "Up to 50 changes; optional when updates changes order details. set_price takes order_item_id and unit_price. set_discount takes order_item_id and either discount {type: fixed|percentage, value: decimal string, name: optional} or clear_discount: true. Each type may target a line once. set_quantity changes an existing line to quantity (order_item_id, quantity; 0 removes it; a higher quantity adds the extra units as a new line). add_item adds a product (product_id, optional variant_id, quantity, optional unit_price override); a product with variants needs variant_id. add_custom_item adds a line with its own title, unit_price (decimal string in the order currency), quantity and optional taxable and requires_shipping (both default true). Each change type may target a line once; do not combine removal with price or discount changes.",
+          "items": {
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "notify_customer": {
+          "description": "Email the customer the updated order, including any payment link. Defaults to true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "order_version": {
+          "description": "The order's current version, from your last read of it.",
+          "type": "integer"
+        },
+        "preview_token": {
+          "description": "Required when applying updates, set_price, set_discount or an added-product price override. Send the token from the latest matching preview. Changed totals/details return ORDER_EDIT_PREVIEW_STALE; preview and review again. It is not an idempotency key.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "price_basis": {
+          "description": "current (default) prices added products at today's price in the order's market; original keeps the price already on the order for the same product.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason": {
+          "description": "Reason shown on the order timeline and in orders/edited, up to 500 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "refund_method": {
+          "description": "Required when the edit lowers the total below what was paid: original_payment, store_credit (orders with a customer account) or manual. The preview lists the methods available in refund_methods.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "updates": {
+          "description": "Optional order snapshot changes: contact {email, phone, first_name, last_name}; shipping_address and billing_address (full address objects, billing_address may be null); shipping {method_id, amount, name}; discount {type: fixed|percentage, value, name} or null to remove the manual order discount. Omitted fields remain unchanged. Contact changes never edit a customer account. Prices, discounts, shipping and addresses are locked once fulfillment or an item refund starts. Existing promotions keep their identities and original target lines, with amounts capped at the edited line value. Unrelated fees remain recorded. A tax-exempt order must retain its tax country/state.",
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "order_version"
+      ],
+      "type": "object"
+    },
+    "name": "preview_order_edit",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "orders.edits.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/orders/{id}/edits",
+    "description": "Change the items of a placed order. Applies an edit and returns it with the updated order. Stock for added products is reserved and stock that removed units held is released. A balance is collected as chosen in balance_collection; a payment attempt still open for the old total is cancelled. When the new total is below what was paid, the difference is refunded with refund_method through the ordinary refund path. Preview first to show the result before committing. Changes eligible items, prices, manual discounts, contact, addresses and shipping of a placed order through the same edit Store Admin uses, with the same rules: lines can be lowered or removed down to what has shipped, been refunded or is being refunded; products, variants and custom items can be added; gift-card lines cannot change. Added products are priced at the current price in the order's market, or with price_basis original at the price already on the order for the same product. Prices, manual discounts and delivery changes require fulfillment and item refunds not to have started. Contact corrections never change the customer account. The order keeps its currency and original exchange rate. Repricing recalculates taxes, preserves unrelated fees and keeps existing promotions on their original target items, capped at their edited value. Orders with duties, cancelled or imported orders, orders with an authorized but uncaptured payment, and orders placed before editing existed cannot be edited. order_version must be the order's current version; any other value is refused so an edit never overwrites a change you have not seen. Every successful edit raises the version by one, is recorded on the order timeline and audit log under your app's name, and sends orders/edited with edited_by_app_id set to your app. Apps that had already received a changed fulfillment order must acknowledge it by writing with the new version. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{id}/edits. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "balance_collection": {
+          "description": "How a balance the edit leaves is collected. payment_link emails the customer a link to pay it; none leaves it open on the order. Omit it to use payment_link when the total changes and the order already has a captured payment; otherwise the default is none. Ignored when nothing is owed.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "changes": {
+          "description": "Up to 50 changes; optional when updates changes order details. set_price takes order_item_id and unit_price. set_discount takes order_item_id and either discount {type: fixed|percentage, value: decimal string, name: optional} or clear_discount: true. Each type may target a line once. set_quantity changes an existing line to quantity (order_item_id, quantity; 0 removes it; a higher quantity adds the extra units as a new line). add_item adds a product (product_id, optional variant_id, quantity, optional unit_price override); a product with variants needs variant_id. add_custom_item adds a line with its own title, unit_price (decimal string in the order currency), quantity and optional taxable and requires_shipping (both default true). Each change type may target a line once; do not combine removal with price or discount changes.",
+          "items": {
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Stable key for this exact edit. Reuse it after an uncertain response.",
+          "maxLength": 120,
+          "minLength": 1,
+          "type": "string"
+        },
+        "notify_customer": {
+          "description": "Email the customer the updated order, including any payment link. Defaults to true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "order_version": {
+          "description": "The order's current version, from your last read of it.",
+          "type": "integer"
+        },
+        "preview_token": {
+          "description": "Required when applying updates, set_price, set_discount or an added-product price override. Send the token from the latest matching preview. Changed totals/details return ORDER_EDIT_PREVIEW_STALE; preview and review again. It is not an idempotency key.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "price_basis": {
+          "description": "current (default) prices added products at today's price in the order's market; original keeps the price already on the order for the same product.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason": {
+          "description": "Reason shown on the order timeline and in orders/edited, up to 500 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "refund_method": {
+          "description": "Required when the edit lowers the total below what was paid: original_payment, store_credit (orders with a customer account) or manual. The preview lists the methods available in refund_methods.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "updates": {
+          "description": "Optional order snapshot changes: contact {email, phone, first_name, last_name}; shipping_address and billing_address (full address objects, billing_address may be null); shipping {method_id, amount, name}; discount {type: fixed|percentage, value, name} or null to remove the manual order discount. Omitted fields remain unchanged. Contact changes never edit a customer account. Prices, discounts, shipping and addresses are locked once fulfillment or an item refund starts. Existing promotions keep their identities and original target lines, with amounts capped at the edited line value. Unrelated fees remain recorded. A tax-exempt order must retain its tax country/state.",
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "order_version",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "apply_order_edit",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
     "api_key": "blog-settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/settings",
