@@ -4108,7 +4108,7 @@
     "api_key": "pages.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/pages",
-    "description": "List pages for the store. Returns paginated Pages. Use `search` or `status` to filter. `total` counts matching pages; `store_total` counts all pages in the store, including those excluded by filters. Use `store_total` with the page limit when showing remaining capacity. Missing or non-positive pagination values use the contract defaults, values above the maximum are capped, and invalid sort values are rejected. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages. Only the connected store is accessible.",
+    "description": "List pages for the store. Returns paginated Pages. Use `search` or `status` to filter. `total` counts matching pages; `store_total` counts all pages in the store, including those excluded by filters. Use `store_total` with the page limit when showing remaining capacity. Missing or non-positive pagination values use the contract defaults, values above the maximum are capped, and invalid sort values are rejected. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4180,7 +4180,7 @@
     "api_key": "pages.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/pages/{id}",
-    "description": "Fetch one page by id. Returns the Page if it belongs to the token's store. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}. Only the connected store is accessible.",
+    "description": "Fetch one page by id. Returns the Page if it belongs to the token's store. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4363,7 +4363,7 @@
     "api_key": "pages.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/pages",
-    "description": "Create a page. Creates a Page. `title` is required. Omitted `status` defaults to `draft`. `slug` is optional on create; when omitted or empty, the backend generates it from the title. Optional SEO, content, and template fields follow the Page resource contract. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/pages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a page. Creates a Page. `title` is required. Omitted `status` defaults to `draft`. `slug` is optional on create; when omitted or empty, the backend generates it from the title. Optional SEO, content, and template fields follow the Page resource contract. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/pages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4428,7 +4428,7 @@
     "api_key": "pages.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/pages/{id}",
-    "description": "Update a page. Updates provided Page fields. Omitted fields are left unchanged. When `slug` is supplied it must be non-empty and valid. Slugs are generated from the title only during create. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update a page. Updates provided Page fields. Omitted fields are left unchanged. When `slug` is supplied it must be non-empty and valid. Slugs are generated from the title only during create. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4739,7 +4739,7 @@
     "api_key": "policies.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/policies",
-    "description": "List all policies for the store. Returns the store's fixed set of Policies — one row per policy type. There is no pagination: Policies are a fixed singleton set. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies. Only the connected store is accessible.",
+    "description": "List all policies for the store. Returns the store's fixed set of Policies — one row per policy type. There is no pagination: Policies are a fixed singleton set. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -4754,7 +4754,7 @@
     "api_key": "policies.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/policies/{type}",
-    "description": "Fetch one policy by type. Returns the Policy for the given type (privacy, terms, refund, shipping, or cookie). `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/{type}. Only the connected store is accessible.",
+    "description": "Fetch one policy by type. Returns the Policy for the given type (privacy, terms, refund, shipping, or cookie). `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/{type}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4778,7 +4778,7 @@
     "api_key": "policies.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/policies/{type}",
-    "description": "Update one policy by type. Updates provided fields on the existing fixed Policy row. Omitted fields are left unchanged. An empty `slug` resets to the default slug for the policy type. When `slug` changes, `create_redirect` controls whether the old policy URL redirects to the new one and defaults to true. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/policies/{type}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update one policy by type. Updates provided fields on the existing fixed Policy row. Omitted fields are left unchanged. An empty `slug` resets to the default slug for the policy type. When `slug` changes, `create_redirect` controls whether the old policy URL redirects to the new one and defaults to true. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/policies/{type}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5004,7 +5004,7 @@
     "api_key": "blog_posts.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/posts",
-    "description": "List blog posts for the store. Returns paginated Blog Posts. `total` counts matches for the current filters; `store_total` counts all records in the store and can be compared with the store capacity returned by the limits endpoint. Filter by search, status, author, category, tag, or publication date. Invalid pagination, UUID, and sort parameters are rejected instead of silently defaulted. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts. Only the connected store is accessible.",
+    "description": "List blog posts for the store. Returns paginated Blog Posts. `total` counts matches for the current filters; `store_total` counts all records in the store and can be compared with the store capacity returned by the limits endpoint. Filter by search, status, author, category, tag, or publication date. Invalid pagination, UUID, and sort parameters are rejected instead of silently defaulted. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5096,7 +5096,7 @@
     "api_key": "blog_posts.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/posts/{id}",
-    "description": "Fetch one blog post by id. Returns the Blog Post if it belongs to the token's store. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}. Only the connected store is accessible.",
+    "description": "Fetch one blog post by id. Returns the Blog Post if it belongs to the token's store. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5279,7 +5279,7 @@
     "api_key": "blog_posts.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/blog/posts",
-    "description": "Create a blog post. Creates a Blog Post. `title`, `author_ref`, and `status` are required. `author_ref` must identify an author in this store. `slug` is optional on create; when omitted or empty, the backend generates it from the title. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a blog post. Creates a Blog Post. `title`, `author_ref`, and `status` are required. `author_ref` must identify an author in this store. `slug` is optional on create; when omitted or empty, the backend generates it from the title. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5388,7 +5388,7 @@
     "api_key": "blog_posts.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/posts/{id}",
-    "description": "Update a blog post. Updates provided Blog Post fields. Omitted fields are left unchanged. A blank `slug` keeps the current slug; a non-empty slug is normalized and validated. Set `create_redirect` to false to suppress the default redirect when the slug changes. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update a blog post. Updates provided Blog Post fields. Omitted fields are left unchanged. A blank `slug` keeps the current slug; a non-empty slug is normalized and validated. Set `create_redirect` to false to suppress the default redirect when the slug changes. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5914,7 +5914,7 @@
     "api_key": "blog_categories.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/categories",
-    "description": "List blog categories for the store. Returns paginated Blog Categories. `total` counts matches for the current filters; `store_total` counts all records in the store and can be compared with the store capacity returned by the limits endpoint. Use `search` to filter by name or slug. Invalid pagination and unsupported sort values are rejected. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories. Only the connected store is accessible.",
+    "description": "List blog categories for the store. Returns paginated Blog Categories. `total` counts matches for the current filters; `store_total` counts all records in the store and can be compared with the store capacity returned by the limits endpoint. Use `search` to filter by name or slug. Invalid pagination and unsupported sort values are rejected. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5950,7 +5950,7 @@
     "api_key": "blog_categories.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/categories/{id}",
-    "description": "Fetch one blog category by id. Returns the Blog Category if it belongs to the token's store. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}. Only the connected store is accessible.",
+    "description": "Fetch one blog category by id. Returns the Blog Category if it belongs to the token's store. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6133,7 +6133,7 @@
     "api_key": "blog_categories.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/blog/categories",
-    "description": "Create a blog category. Creates a Blog Category. `name` is required. `slug` is optional on create; when omitted or empty, the backend generates it from the name. Optional SEO and template fields follow the Blog Category resource contract. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/categories. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a blog category. Creates a Blog Category. `name` is required. `slug` is optional on create; when omitted or empty, the backend generates it from the name. Optional SEO and template fields follow the Blog Category resource contract. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/categories. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6191,7 +6191,7 @@
     "api_key": "blog_categories.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/categories/{id}",
-    "description": "Update a blog category. Updates provided Blog Category fields. Omitted fields are left unchanged. When `slug` is provided it must be non-empty and valid; create is the only path that auto-generates a blank slug from the name. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Shopper-context GraphQL and hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update a blog category. Updates provided Blog Category fields. Omitted fields are left unchanged. When `slug` is provided it must be non-empty and valid; create is the only path that auto-generates a blank slug from the name. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
