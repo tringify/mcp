@@ -29,6 +29,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `bulk_set_product_vendor` | `POST /api/2025-01/products/bulk-vendor` | store:products:write |
 | `bulk_set_product_brand` | `POST /api/2025-01/products/bulk-brand` | store:products:write |
 | `bulk_delete_products` | `POST /api/2025-01/products/bulk-delete` | store:products:write |
+| `bulk_delete_product_variants` | `POST /api/2025-01/products/variants/bulk-delete` | store:products:write |
 | `get_product_translation` | `GET /api/2025-01/products/{id}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_product_translation` | `PUT /api/2025-01/products/{id}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `get_product_translations` | `GET /api/2025-01/products/translations/{locale}` | store:products:read, store:settings.languages:read |
