@@ -54,6 +54,10 @@
           "description": "Set `true` to return only gift-only products or `false` to exclude gift-only products. Omit to include both.",
           "type": "boolean"
         },
+        "ids": {
+          "description": "Comma-separated product IDs, up to `list_max_limit`; returns only those products. Use it to fetch a known set in one call instead of one call per product. IDs that do not exist are left out.",
+          "type": "string"
+        },
         "is_gift_card": {
           "description": "Filter Gift Card products. Omit to include both ordinary and Gift Card products; gift_only is a different, free-gift classification.",
           "type": "boolean"
@@ -970,7 +974,7 @@
           "type": "integer"
         },
         "title": {
-          "description": "Optional title for the copy. Defaults to `Copy of \u003csource title\u003e`.",
+          "description": "Optional title for the copy. Defaults to `Copy of <source title>`.",
           "type": [
             "string",
             "null"
@@ -1634,6 +1638,46 @@
     ]
   },
   {
+    "api_key": "products.variants.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products/variants/bulk-delete",
+    "description": "Delete variants across many products after confirmation. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products/variants/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the first call.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true on the second call, with confirmation_token.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "variant_ids": {
+          "description": "Non-empty array of variant IDs, from any products. Duplicates are ignored; the distinct count must not exceed bulk_max.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "variant_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_product_variants",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
     "api_key": "products.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/products/{id}/translations/{locale}",
@@ -2049,7 +2093,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "minLength": 1,
           "type": "string"
         }
@@ -2096,7 +2140,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "minLength": 1,
           "type": "string"
         },
@@ -10498,7 +10542,7 @@
     "api_key": "currencies.auto_rates.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/currencies/auto-rates",
-    "description": "Switch between market-managed and manual exchange rates. Switches exchange rates between market-managed automatic rates and merchant-managed manual rates. Turning automatic rates on requires the store to have no additional currencies. In automatic mode, selecting additional currencies is a Store Admin workflow, and currency reads report the live market rate with `rate_source: \"automatic\"`. Turning automatic rates off writes the current market rate onto every additional currency, enabled or disabled, in the same transaction; those values then become the store's manual rates. It fails with `CURRENCY_EXCHANGE_RATE_UNAVAILABLE` (503) and changes nothing when a current rate is missing for any additional currency. The response echoes `use_auto_exchange_rates`. A change returns `CURRENCY_UPDATED` and queues `currencies/update`; requesting the current value returns without `code` or `message` and records nothing. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/auto-rates. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Switch between market-managed and manual exchange rates. Switches exchange rates between market-managed automatic rates and merchant-managed manual rates. Turning automatic rates on requires the store to have no additional currencies. In automatic mode, selecting additional currencies is a Store Admin workflow, and currency reads report the live market rate with `rate_source: \"automatic\"`. Each market-rate refresh that changes those rates fires `currencies/rates_updated`. Turning automatic rates off writes the current market rate onto every additional currency, enabled or disabled, in the same transaction; those values then become the store's manual rates. It fails with `CURRENCY_EXCHANGE_RATE_UNAVAILABLE` (503) and changes nothing when a current rate is missing for any additional currency. The response echoes `use_auto_exchange_rates`. A change returns `CURRENCY_UPDATED` and queues `currencies/update`; requesting the current value returns without `code` or `message` and records nothing. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/auto-rates. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
