@@ -10240,51 +10240,100 @@
       "additionalProperties": false,
       "properties": {
         "robots_follow": {
-          "description": "Whether search engines may follow links on the page.",
+          "description": "Whether search engines may follow links on the page. Null returns it to the default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_follow_is_default": {
+          "description": "`true` returns link following to the default.",
           "type": [
             "boolean",
             "null"
           ]
         },
         "robots_index": {
-          "description": "Whether search engines may index the page.",
+          "description": "Whether search engines may index the page. Null returns it to the default, which is `false` while the page lists nothing.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index_is_default": {
+          "description": "`true` returns indexing to the default.",
           "type": [
             "boolean",
             "null"
           ]
         },
         "seo_description": {
-          "description": "Search-result description. Empty clears it.",
+          "description": "Search-result description. Empty or null returns it to the generated default.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "seo_description_is_default": {
+          "description": "`true` returns the search-result description to the generated default.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
         "seo_title": {
-          "description": "Search-result title. Empty clears it.",
+          "description": "Search-result title. Empty or null returns it to the generated default.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "seo_title_is_default": {
+          "description": "`true` returns the search-result title to the generated default.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
         "social_description": {
-          "description": "Social-share description. Empty clears it.",
+          "description": "Social-share description. Empty or null returns it to the generated default.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "social_description_is_default": {
+          "description": "`true` returns the social-share description to the generated default.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
         "social_image_id": {
-          "description": "Site-asset image UUID. Empty string or null clears it.",
+          "description": "Site-asset image UUID. Empty string or null returns it to the default share image.",
           "type": [
             "string",
             "null"
           ]
         },
+        "social_image_is_default": {
+          "description": "`true` returns the social image to the default share image.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "social_title": {
-          "description": "Social-share title. Empty clears it.",
+          "description": "Social-share title. Empty or null returns it to the generated default.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "social_title_is_default": {
+          "description": "`true` returns the social-share title to the generated default.",
+          "type": [
+            "boolean",
             "null"
           ]
         }
@@ -10352,6 +10401,289 @@
     "name": "set_blog_list_seo_translation",
     "scopes": [
       "store:blog:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "list-page-seo.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/list-page-seo/{pageType}",
+    "description": "Get source SEO for a catalog list page. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/list-page-seo/{pageType}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "pageType": {
+          "description": "Catalog list page.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "pageType"
+      ],
+      "type": "object"
+    },
+    "name": "get_list_page_seo",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "list-page-seo.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/list-page-seo/{pageType}",
+    "description": "Update source SEO for a catalog list page. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/{pageType}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "pageType": {
+          "description": "Catalog list page.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "robots_follow": {
+          "description": "Whether search engines may follow links on the page. Null returns it to the default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_follow_is_default": {
+          "description": "`true` returns link following to the default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index": {
+          "description": "Whether search engines may index the page. Null returns it to the default, which is `false` while the page lists nothing.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index_is_default": {
+          "description": "`true` returns indexing to the default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Search-result description. Empty or null returns it to the generated default.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description_is_default": {
+          "description": "`true` returns the search-result description to the generated default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Search-result title. Empty or null returns it to the generated default.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title_is_default": {
+          "description": "`true` returns the search-result title to the generated default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_description": {
+          "description": "Social-share description. Empty or null returns it to the generated default.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_description_is_default": {
+          "description": "`true` returns the social-share description to the generated default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_image_id": {
+          "description": "Site-asset image UUID. Empty string or null returns it to the default share image.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_image_is_default": {
+          "description": "`true` returns the social image to the default share image.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_title": {
+          "description": "Social-share title. Empty or null returns it to the generated default.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_title_is_default": {
+          "description": "`true` returns the social-share title to the generated default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "pageType"
+      ],
+      "type": "object"
+    },
+    "name": "update_list_page_seo",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "list-page-seo.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/list-page-seo/{pageType}/translations/{locale}",
+    "description": "Get translated SEO for one list page and locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/list-page-seo/{pageType}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "pageType": {
+          "description": "Catalog list page.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "pageType",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_list_page_seo_translation",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "list-page-seo.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/list-page-seo/{pageType}/translations/{locale}",
+    "description": "Set or clear translated SEO fields for one list page. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/{pageType}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "pageType": {
+          "description": "Catalog list page.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translations.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "pageType",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_list_page_seo_translation",
+    "scopes": [
+      "store:products:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "list-page-seo.translations.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/list-page-seo/translations/{locale}",
+    "description": "Get translations for several catalog list pages. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/list-page-seo/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "page_types": {
+          "description": "Comma-separated list-page types.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_list_page_seo_translations",
+    "scopes": [
+      "store:products:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "list-page-seo.translations.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/list-page-seo/translations/{locale}",
+    "description": "Set translations for several catalog list pages atomically. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows shaped as {page_type, fields}.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_list_page_seo_translations",
+    "scopes": [
+      "store:products:write",
       "store:settings.languages:write"
     ]
   },

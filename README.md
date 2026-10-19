@@ -80,6 +80,7 @@ All store-data tools use the corresponding Store API operations. The server retu
 | Products | Lists, details, variants, quantity pricing, metafields, translations | Create, update, duplicate, delete, supported bulk actions, metafields and translations |
 | Collections | Lists, search, details, product lists, rules, metafields, translations | Create, update, delete, bulk actions, rules, metafields and translations |
 | Categories | Lists, search, details, metafields, translations | Create, update, delete, bulk create/delete, metafields and translations |
+| List-page SEO | All brands, vendors, categories, and collections pages: source SEO, individual and batch translations | Update source SEO (send `null` or a `*_is_default` flag to return a field to its generated default), individual and batch translations |
 | Pages | Limits, list, search, details, translations, metafields | Create, update, delete, bulk delete, translations and metafields |
 | Policies | Limits, list, get by type, translations | Update by type, individual and batch translations |
 | Blog Posts | Limits, list, search, details, translations, metafields | Create, update, delete, bulk status/category/tag changes, translations and metafields |
