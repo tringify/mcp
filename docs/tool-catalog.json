@@ -58,6 +58,10 @@
           "description": "Comma-separated product IDs, up to `list_max_limit`; returns only those products. Use it to fetch a known set in one call instead of one call per product. IDs that do not exist are left out.",
           "type": "string"
         },
+        "include_total": {
+          "description": "Set to false to omit `total` from a filtered page. Defaults to true on every page. Unfiltered lists always include `total`.",
+          "type": "boolean"
+        },
         "is_gift_card": {
           "description": "Filter Gift Card products. Omit to include both ordinary and Gift Card products; gift_only is a different, free-gift classification.",
           "type": "boolean"
@@ -115,11 +119,11 @@
           "type": "integer"
         },
         "tag_id": {
-          "description": "Filter by assigned tag ID.",
+          "description": "Filter by assigned tag ID. A tag that does not exist or is being deleted matches no products.",
           "type": "integer"
         },
         "tag_ids": {
-          "description": "Comma-separated assigned tag IDs. Use `tag_match` to choose whether any or all IDs must match.",
+          "description": "Comma-separated assigned tag IDs. Use `tag_match` to choose whether any or all IDs must match. A tag that does not exist or is being deleted is rejected.",
           "type": "string"
         },
         "tag_match": {
@@ -222,6 +226,34 @@
       "type": "object"
     },
     "name": "list_product_variants",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "variants.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/variants",
+    "description": "List the store's variants changed since a time. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/variants. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque `next_cursor` from the previous page. Send the same `updated_since` with it.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Positive page size. Omit to use `variant_list_page_size` from Product limits. Values above `variant_list_max_limit` are capped; the response reports the effective size as `per_page`.",
+          "type": "integer"
+        },
+        "updated_since": {
+          "description": "RFC 3339 timestamp. Only variants whose `updated_at` is at or after it are listed. Omit for every variant.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_variants",
     "scopes": [
       "store:products:read"
     ]
@@ -447,7 +479,7 @@
           ]
         },
         "requires_shipping": {
-          "description": "Defaults to true. Choose the shipping classification on create; it cannot be changed afterwards. A product that does not require shipping cannot have weight, dimensions, customs fields, or per-item shipping prices.",
+          "description": "Defaults to true and can be changed on update. Variants follow this value unless they set their own requires_shipping. While it is false, the product and every variant that follows it reject weight, dimensions, customs fields, and per-item shipping prices; values stored earlier are kept but not used.",
           "type": [
             "boolean",
             "null"
@@ -532,7 +564,7 @@
           "type": "string"
         },
         "variants": {
-          "description": "Variable products only; required (at least one variant). The initial variant set, validated together: combination uniqueness against the declared attributes, attribute coverage, at least one variant, and store-wide SKU uniqueness. Each entry:\n\n- `sku` (string, required) — unique across the entire store.\n- `attribute_values` (array, required) — One entry per declared attribute: `{attribute_id, option_id}` for an option choice, or `{attribute_id, value_text}` for a text value. Attribute and option ids come from `GET /attributes` (the product's `attribute_ids` must cover every `attribute_id` used). Two variants can never share the same combination.\n- `prices` (array, required) — per-currency rows `{currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}`; the base currency row is required. Amounts are decimal strings.\n- `title` (string, optional) — auto-composed from option labels (\"Red / M\") unless supplied.\n- `barcode` is variant-specific. `condition`, `mpn`, and `no_manufacturer_identifiers` can override the parent’s values. `identifier_status` describes whether identifiers are provided, unknown, or not applicable; use the identifier fields and declaration consistently.\n- `weight`, `weight_unit`, `length`, `width`, `height`, `dimension_unit`, `hs_code`, `country_of_origin`, `requires_shipping` — physical overrides.\n- `inventory_source` (`track` | `none` | `group`), `inventory` (per-location rows `{location_id, quantity, low_stock_threshold?, expected_quantity?}` when tracking), `inventory_group_id` (when `group`).\n- `image_file_id` (string, optional) — Media-library upload UUID; non-empty values require `read_files` in addition to `write_products`. `image_id` selects an existing product gallery row and does not require `read_files`.\n- `max_order_quantity` is an optional per-order cap; `overall_low_stock_threshold` applies only to directly tracked stock.\n\nCreate supplies the initial set here. Later edits use the delta fields on Product update; read operations use the paginated Variant endpoints.",
+          "description": "Variable products only; required (at least one variant). The initial variant set, validated together: combination uniqueness against the declared attributes, attribute coverage, at least one variant, and store-wide SKU uniqueness. Each entry:\n\n- `sku` (string, required) — unique across the entire store.\n- `attribute_values` (array, required) — One entry per declared attribute: `{attribute_id, option_id}`, choosing one of that attribute's options. Attribute and option ids come from `GET /attributes` (the product's `attribute_ids` must cover every `attribute_id` used). Two variants can never share the same combination.\n- `prices` (array, required) — per-currency rows `{currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}`; the base currency row is required. Amounts are decimal strings.\n- `title` (string, optional) — auto-composed from option labels (\"Red / M\") unless supplied.\n- `barcode` is variant-specific. `condition`, `mpn`, and `no_manufacturer_identifiers` can override the parent’s values. `identifier_status` describes whether identifiers are provided, unknown, or not applicable; use the identifier fields and declaration consistently.\n- `weight`, `weight_unit`, `length`, `width`, `height`, `dimension_unit`, `hs_code`, `country_of_origin` — physical overrides.\n- `requires_shipping` (boolean or null, optional) — this variant's own shipping setting, for example a hardcover that ships beside a PDF that does not. Omit it or send null to follow the product. A variant that does not ship cannot have weight, dimensions, customs fields, or `shipping_prices`.\n- `inventory_source` (`track` | `none` | `group`), `inventory` (per-location rows `{location_id, quantity, low_stock_threshold?, expected_quantity?}` when tracking), `inventory_group_id` (when `group`).\n- `image_file_id` (string, optional) — Media-library upload UUID; non-empty values require `read_files` in addition to `write_products`. `image_id` selects an existing product gallery row and does not require `read_files`.\n- `max_order_quantity` is an optional per-order cap; `overall_low_stock_threshold` applies only to directly tracked stock.\n\nCreate supplies the initial set here. Later edits use the delta fields on Product update; read operations use the paginated Variant endpoints.",
           "items": {},
           "type": [
             "array",
@@ -681,6 +713,10 @@
             "null"
           ]
         },
+        "expected_revision": {
+          "description": "Copy `revision` from Get product. A product changed since that read returns `PRODUCT_VERSION_STALE` instead of overwriting the newer save.",
+          "type": "string"
+        },
         "gift_only": {
           "description": "Defaults to false. When true, direct cart additions are rejected with CART_GIFT_ONLY; the product can be added only as an eligible free gift. This flag does not hide the product from listings.",
           "type": [
@@ -827,7 +863,7 @@
           ]
         },
         "requires_shipping": {
-          "description": "Defaults to true. Choose the shipping classification on create; it cannot be changed afterwards. A product that does not require shipping cannot have weight, dimensions, customs fields, or per-item shipping prices.",
+          "description": "Defaults to true and can be changed on update. Variants follow this value unless they set their own requires_shipping. While it is false, the product and every variant that follows it reject weight, dimensions, customs fields, and per-item shipping prices; values stored earlier are kept but not used.",
           "type": [
             "boolean",
             "null"
@@ -914,7 +950,7 @@
           ]
         },
         "variants": {
-          "description": "Variable products only: entries address existing variants by `variant_id` and change only the supplied fields. Variants not mentioned are untouched. Supplying `attribute_values` replaces that Variant's complete combination; it must cover the Product's declared attributes and remain unique across all surviving and concurrently updated Variants. Supplying `prices` replaces the complete currency set and cannot be empty. Supplying `shipping_prices` replaces the complete set and an empty array clears it. Supplying `inventory` sets only the named locations. Include `expected_quantity` in each edited location row to reject a stale stock snapshot with PRODUCT_VERSION_STALE (409). Omit unchanged locations when editing other fields. Example — reprice one variant: `{\"variants\": [{\"variant_id\": 1007, \"prices\": [{\"currency_code\": \"USD\", \"regular_price\": \"31.00\"}]}]}`.",
+          "description": "Variable products only: entries address existing variants by `variant_id` and change only the supplied fields. Variants not mentioned are untouched. Supplying `attribute_values` replaces that Variant's complete combination; it must cover the Product's declared attributes and remain unique across all surviving and concurrently updated Variants. Supplying `prices` replaces the complete currency set and cannot be empty. Supplying `shipping_prices` replaces the complete set and an empty array clears it. `requires_shipping` takes `true` or `false` to set the variant's own value, or null to return it to the product's setting; omit it to leave it unchanged. When a variant stops shipping, its stored weight, dimensions, customs fields, and shipping prices are cleared, and supplying non-empty values for them is rejected. Supplying `inventory` sets only the named locations. Include `expected_quantity` in each edited location row to reject a stale stock snapshot with PRODUCT_VERSION_STALE (409). Omit unchanged locations when editing other fields. Example — reprice one variant: `{\"variants\": [{\"variant_id\": 1007, \"prices\": [{\"currency_code\": \"USD\", \"regular_price\": \"31.00\"}]}]}`.",
           "items": {},
           "type": [
             "array",
@@ -951,7 +987,8 @@
         }
       },
       "required": [
-        "id"
+        "id",
+        "expected_revision"
       ],
       "type": "object"
     },
@@ -974,7 +1011,7 @@
           "type": "integer"
         },
         "title": {
-          "description": "Optional title for the copy. Defaults to `Copy of <source title>`.",
+          "description": "Optional title for the copy. Defaults to `Copy of \u003csource title\u003e`.",
           "type": [
             "string",
             "null"
@@ -2051,7 +2088,7 @@
           "type": "string"
         },
         "metafields": {
-          "description": "Entries shaped as `{namespace, key, value}`. Send `null` or an empty string to delete the stored value.",
+          "description": "Entries shaped as `{namespace, key, value}`. `value` is required in every entry; send `null` or an empty string to delete the stored value.",
           "items": {
             "type": "object"
           },
@@ -2093,7 +2130,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
           "minLength": 1,
           "type": "string"
         }
@@ -2140,7 +2177,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
           "minLength": 1,
           "type": "string"
         },
@@ -2868,7 +2905,7 @@
           "type": "boolean"
         },
         "limit": {
-          "description": "Page size. Defaults to 50. Maximum 500.",
+          "description": "Page size, 1-100 (default 50). Larger values return `CATEGORY_LIST_INVALID_LIMIT`. A page whose rows would exceed the 512 KiB reply budget returns `LIST_RESPONSE_TOO_LARGE`; request it again with a lower limit.",
           "type": "integer"
         },
         "parent_id": {
@@ -2993,7 +3030,7 @@
           "type": "integer"
         },
         "metafields": {
-          "description": "Entries shaped as `{namespace, key, value}`. Send `null` or an empty string to delete the stored value.",
+          "description": "Entries shaped as `{namespace, key, value}`. `value` is required in every entry; send `null` or an empty string to delete the stored value.",
           "items": {
             "type": "object"
           },
@@ -3121,6 +3158,12 @@
             "null"
           ]
         },
+        "idempotency_key": {
+          "description": "Optional stable key for this create. Repeating the exact same create with the same key within 24 hours returns the original result instead of creating again.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        },
         "image_id": {
           "description": "Optional Media-library upload image UUID. Non-empty values require `read_files` access to the referenced file.",
           "type": [
@@ -3186,6 +3229,12 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this create. Repeating the exact same create with the same key within 24 hours returns the original result instead of creating again.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        },
         "names": {
           "description": "Category names to create.",
           "items": {
@@ -3538,8 +3587,12 @@
           "description": "Filter by whether the attribute is used by variants.",
           "type": "boolean"
         },
+        "include": {
+          "description": "`options` returns every option of each attribute instead of the first 6. Omit for the preview.",
+          "type": "string"
+        },
         "limit": {
-          "description": "Page size, up to `list_max_limit` from Attribute limits. Values above that maximum are rejected.",
+          "description": "Page size, 1-100 (`list_max_limit` from Attribute limits, default 50). Larger values return `ATTRIBUTE_LIST_INVALID_LIMIT`.",
           "type": "integer"
         },
         "search": {
@@ -3559,7 +3612,7 @@
           "type": "string"
         },
         "summary": {
-          "description": "Return attribute summaries without full option arrays.",
+          "description": "Return summaries without full option arrays.",
           "type": "boolean"
         }
       },
@@ -3636,6 +3689,12 @@
             "string",
             "null"
           ]
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this create. Repeating the exact same create with the same key within 24 hours returns the original result instead of creating again.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
         },
         "name": {
           "description": "Attribute name.",
@@ -4137,7 +4196,7 @@
     "api_key": "pages.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/pages/limits",
-    "description": "Fetch Page limits and per-field constraints. Returns the per-field maximum lengths, enum values, and request caps that apply to Page endpoints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/limits. Only the connected store is accessible.",
+    "description": "Fetch Page limits and per-field constraints. Returns the per-field maximum lengths, enum values, and request caps that apply to Page endpoints. `max_per_store` is this store's plan cap, `count` is how many exist now, and `usage` is the localized label. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -4290,7 +4349,7 @@
           "type": "string"
         },
         "metafields": {
-          "description": "Entries shaped as `{namespace, key, value}`. Send `null` or an empty string to delete the stored value.",
+          "description": "Entries shaped as `{namespace, key, value}`. `value` is required in every entry; send `null` or an empty string to delete the stored value.",
           "items": {
             "type": "object"
           },
@@ -4312,7 +4371,7 @@
     "api_key": "pages.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Fetch one translated page custom-data value. Resolves the definition by namespace and key, verifies that it is translatable and visible to the token, then returns its value for the requested enabled non-default language. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one translated page custom-data value. Resolves the definition by namespace and key, verifies that it is translatable and visible to the token, then returns its value for the requested enabled non-default language. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4407,12 +4466,19 @@
     "api_key": "pages.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/pages",
-    "description": "Create a page. Creates a Page. `title` is required. Omitted `status` defaults to `draft`. `slug` is optional on create; when omitted or empty, the backend generates it from the title. Optional SEO, content, and template fields follow the Page resource contract. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/pages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a page. Creates a Page. `title` is required. Omitted `status` defaults to `draft`. `slug` is optional on create; when omitted or empty, the backend generates it from the title. Optional SEO, content, and template fields follow the Page resource contract. Send a UUID Idempotency-Key header. Exact retries replay the original response for seven days without creating another page; reusing a key with different content returns 409. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/pages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "content": {
           "description": "Optional sanitized HTML content.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "robots": {
+          "description": "Search visibility: index or noindex. noindex does not restrict who can open the page.",
           "type": [
             "string",
             "null"
@@ -4495,6 +4561,13 @@
           "minLength": 1,
           "type": "string"
         },
+        "robots": {
+          "description": "Template assignment. Omit to leave the current assignment unchanged, use default_page to reset to the default Page template, and do not send an empty string.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "seo_description": {
           "description": "Optional SEO description.",
           "type": [
@@ -4524,7 +4597,7 @@
           ]
         },
         "template_handle": {
-          "description": "Template assignment. Omit to leave the current assignment unchanged, use default_page to reset to the default Page template, and do not send an empty string.",
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_page`. Use `default_page` for the default Page template, or pass an alternate Page template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_page` to reset it to default, and do not send an empty string.",
           "type": [
             "string",
             "null"
@@ -4630,7 +4703,7 @@
     "api_key": "pages.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/pages/{id}/translations/{locale}",
-    "description": "Fetch one page translation. Returns stored translated Page fields for one locale, including whether the translation is out of date. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one page translation. Returns stored translated Page fields for one locale, including whether the translation is out of date. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4701,7 +4774,7 @@
     "api_key": "pages.translation.batch-get",
     "api_method": "GET",
     "api_path": "/api/2025-01/pages/translations/{locale}",
-    "description": "Fetch page translations in batch. Returns translated Page fields for multiple page ids in one locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch page translations in batch. Returns translated Page fields for multiple page ids in one locale. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4895,7 +4968,7 @@
     "api_key": "policies.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/policies/{id}/translations/{locale}",
-    "description": "Fetch one policy translation. Returns stored translated Policy fields for one locale, including whether the translation is out of date. Translation routes use the policy UUID returned by list/get, while policy CRUD routes use the fixed policy type. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/{id}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one policy translation. Returns stored translated Policy fields for one locale, including whether the translation is out of date. Translation routes use the policy UUID returned by list/get, while policy CRUD routes use the fixed policy type. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/{id}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4966,7 +5039,7 @@
     "api_key": "policies.translation.batch-get",
     "api_method": "GET",
     "api_path": "/api/2025-01/policies/translations/{locale}",
-    "description": "Fetch policy translations in batch. Returns translated Policy fields for multiple policy ids in one locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch policy translations in batch. Returns translated Policy fields for multiple policy ids in one locale. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5033,7 +5106,7 @@
     "api_key": "blog_posts.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/posts/limits",
-    "description": "Fetch Blog Post limits and per-field constraints. Returns the per-field maximum lengths, enum values, and request caps that apply to Blog Post endpoints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/limits. Only the connected store is accessible.",
+    "description": "Fetch Blog Post limits and per-field constraints. Returns the per-field maximum lengths, enum values, and request caps that apply to Blog Post endpoints. `max_per_store` is this store's plan cap, `count` is how many exist now, and `usage` is the localized label. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -5206,7 +5279,7 @@
           "type": "string"
         },
         "metafields": {
-          "description": "Entries shaped as `{namespace, key, value}`. Send `null` or an empty string to delete the stored value.",
+          "description": "Entries shaped as `{namespace, key, value}`. `value` is required in every entry; send `null` or an empty string to delete the stored value.",
           "items": {
             "type": "object"
           },
@@ -5228,7 +5301,7 @@
     "api_key": "blog_posts.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Fetch one translated custom-data value. The definition must be visible and translatable. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one translated custom-data value. The definition must be visible and translatable. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5805,7 +5878,7 @@
     "api_key": "blog_posts.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/posts/{id}/translations/{locale}",
-    "description": "Fetch one blog post translation. Returns stored translated Blog Post fields for one locale, including whether the translation is out of date. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one blog post translation. Returns stored translated Blog Post fields for one locale, including whether the translation is out of date. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5876,7 +5949,7 @@
     "api_key": "blog_posts.translation.batch-get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/posts/translations/{locale}",
-    "description": "Fetch blog post translations in batch. Returns translated Blog Post fields for multiple post ids in one locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch blog post translations in batch. Returns translated Blog Post fields for multiple post ids in one locale. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5943,7 +6016,7 @@
     "api_key": "blog_categories.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/categories/limits",
-    "description": "Fetch Blog Category limits and per-field constraints. Returns the per-field maximum lengths and request caps that apply to Blog Category endpoints. Useful for clients to validate inputs before sending them and to size UIs. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/limits. Only the connected store is accessible.",
+    "description": "Fetch Blog Category limits and per-field constraints. Returns the per-field maximum lengths and request caps that apply to Blog Category endpoints. Useful for clients to validate inputs before sending them and to size UIs. `max_per_store` is this store's plan cap, `count` is how many exist now, and `usage` is the localized label. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -6060,7 +6133,7 @@
           "type": "string"
         },
         "metafields": {
-          "description": "Entries shaped as `{namespace, key, value}`. Send `null` or an empty string to delete the stored value.",
+          "description": "Entries shaped as `{namespace, key, value}`. `value` is required in every entry; send `null` or an empty string to delete the stored value.",
           "items": {
             "type": "object"
           },
@@ -6082,7 +6155,7 @@
     "api_key": "blog_categories.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Fetch one translated custom-data value. The definition must be visible and translatable. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one translated custom-data value. The definition must be visible and translatable. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6386,7 +6459,7 @@
     "api_key": "blog_categories.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/categories/{id}/translations/{locale}",
-    "description": "Fetch one blog category translation. Returns stored translated Blog Category fields for one locale, including whether the translation is out of date. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one blog category translation. Returns stored translated Blog Category fields for one locale, including whether the translation is out of date. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6457,7 +6530,7 @@
     "api_key": "blog_categories.translation.batch-get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/categories/translations/{locale}",
-    "description": "Fetch blog category translations in batch. Returns translated Blog Category fields for multiple category ids in one locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch blog category translations in batch. Returns translated Blog Category fields for multiple category ids in one locale. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6524,7 +6597,7 @@
     "api_key": "blog_tags.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/tags/limits",
-    "description": "Fetch Blog Tag limits and per-field constraints. Returns the per-field maximum lengths and request caps that apply to Blog Tag endpoints. Useful for clients to validate inputs before sending them and to size UIs. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/limits. Only the connected store is accessible.",
+    "description": "Fetch Blog Tag limits and per-field constraints. Returns the per-field maximum lengths and request caps that apply to Blog Tag endpoints. Useful for clients to validate inputs before sending them and to size UIs. `max_per_store` is this store's plan cap, `count` is how many exist now, and `usage` is the localized label. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -6745,7 +6818,7 @@
     "api_key": "blog_tags.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/tags/{id}/translations/{locale}",
-    "description": "Fetch one blog tag translation. Returns stored translated Blog Tag fields for one locale, including whether the translation is out of date. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/{id}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one blog tag translation. Returns stored translated Blog Tag fields for one locale, including whether the translation is out of date. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/{id}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6816,7 +6889,7 @@
     "api_key": "blog_tags.translation.batch-get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/tags/translations/{locale}",
-    "description": "Fetch blog tag translations in batch. Returns translated Blog Tag fields for multiple tag ids in one locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch blog tag translations in batch. Returns translated Blog Tag fields for multiple tag ids in one locale. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6883,7 +6956,7 @@
     "api_key": "blog_authors.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/authors/limits",
-    "description": "Fetch blog author limits. Returns field, pagination, search, and store caps for this store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/authors/limits. Only the connected store is accessible.",
+    "description": "Fetch blog author limits. Returns field, pagination, search, and store caps for this store. `max_per_store` is this store's plan cap, `count` is how many exist now, and `usage` is the localized label. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/authors/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -7387,6 +7460,10 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "include_items": {
+          "description": "Set false to read metadata, item_count and revision without the tree.",
+          "type": "boolean"
+        },
         "menu_id": {
           "description": "Menu ID.",
           "minLength": 1,
@@ -7575,7 +7652,7 @@
           "type": "string"
         },
         "ops": {
-          "description": "Ordered operations instead of `items`. Each object has `kind` (create, update, delete, or move), `id` or a unique create `temp_id`, placement fields, and the editable item fields at the top level. There is no nested fields object. Create a parent before using its `temp_id` as a later operation’s `parent_temp_id`.",
+          "description": "Ordered operations instead of `items`. Each object has `kind` (create, update, delete, or move), `id` or a unique create `temp_id`, placement fields, and the editable item fields at the top level. Moves accept one of `before_id` or `after_id` in the destination sibling group, or an explicit absolute `sort_order`. Omit position when changing parent to append. Preserve operation order, including repeated moves of one item. There is no nested fields object. Create a parent before using its `temp_id` as a later operation’s `parent_temp_id`.",
           "items": {
             "type": "object"
           },
@@ -8105,7 +8182,7 @@
     "api_key": "tags.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/tags/{id}/translations/{locale}",
-    "description": "Fetch one tag translation. Returns the stored `name` and `slug` translations for one tag in the selected locale. Each returned field includes `is_outdated`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/tags/{id}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one tag translation. Returns the stored `name` translation for one tag in the selected locale, with `is_outdated`. Tag slugs are not translatable: tags have no pages and filters match the source slug. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/tags/{id}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8136,7 +8213,7 @@
     "api_key": "tags.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/tags/{id}/translations/{locale}",
-    "description": "Set one tag translation. Only supplied fields change. Set `name` or `slug` to an empty string to remove that field's translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/tags/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set one tag translation. Only `name` is translatable; a tag's slug stays the same in every language. Set `name` to an empty string to remove its translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/tags/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8155,7 +8232,7 @@
           "type": "string"
         },
         "translations": {
-          "description": "Field-keyed translation values. Allowed fields are `name` and `slug`.",
+          "description": "Field-keyed translation values. The only allowed field is `name`.",
           "type": "object"
         }
       },
@@ -8176,7 +8253,7 @@
     "api_key": "tags.translation.batch-get",
     "api_method": "GET",
     "api_path": "/api/2025-01/tags/translations/{locale}",
-    "description": "Fetch tag translations in batch. Returns a `resources` entry keyed by `tag:{id}` for each requested tag. A tag without stored translations has an empty object. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/tags/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch tag translations in batch. Returns a `resources` entry keyed by `tag:{id}` for each requested tag. A tag without stored translations has an empty object. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/tags/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8220,7 +8297,7 @@
           "type": "string"
         },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field keys are `name` and `slug`.",
+          "description": "Rows with `id` and `fields`. The only allowed field key is `name`.",
           "items": {
             "type": "object"
           },
@@ -8240,10 +8317,25 @@
     ]
   },
   {
+    "api_key": "brands.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/brands/limits",
+    "description": "Fetch Brand limits and per-field constraints. Returns the per-field maximum lengths and request caps that apply to Brand endpoints. Useful for clients to validate inputs before sending them and to size UIs. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_brand_limits",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
     "api_key": "brands.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/brands",
-    "description": "List brands for the store. Returns brands and their product counts. Search matches names and slugs. Use the returned cursors unchanged, and start without a cursor when search or sorting changes. Fetch `/brands/limits` for page-size and search limits; supported sort fields are listed below. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands. Only the connected store is accessible.",
+    "description": "List brands for the store. Returns brands and their product counts. Each page holds at most 100 brands, and every row carries the full Brand fields, description included. Search matches names and slugs; matches are ordered by relevance (exact name, name prefix, exact slug, slug prefix, then other matches), then by the sort field. Use the returned cursors unchanged, and start without a cursor when search or sorting changes. Fetch `/brands/limits` for page-size and search limits; supported sort fields are listed below. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8252,7 +8344,7 @@
           "type": "string"
         },
         "limit": {
-          "description": "Page size.",
+          "description": "Page size, 1-100 (default 50). Larger values return VALIDATION_LIST_INVALID_LIMIT.",
           "type": "integer"
         },
         "search": {
@@ -8271,6 +8363,30 @@
       "type": "object"
     },
     "name": "list_brands",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "brands.search",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/brands/search",
+    "description": "Search brands for picker-style suggestions. Returns lightweight brand suggestions by query. This endpoint is intended for pickers and simple selection UIs. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/search. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Suggestion count, 1-50 (default 10).",
+          "type": "integer"
+        },
+        "q": {
+          "description": "Search query.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "search_brands",
     "scopes": [
       "store:products:read"
     ]
@@ -8300,10 +8416,74 @@
     ]
   },
   {
+    "api_key": "brands.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/brands/{id}/metafields",
+    "description": "List brand metafield values visible to the token. Returns paginated metafield values the token can read. `total` counts only visible values. Identify each value by `namespace` and `key`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/{id}/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Brand id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "limit": {
+          "description": "Page size; capped by the metafield list limit.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number (default 1).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_brand_metafields",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "brands.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/brands/{id}/metafields",
+    "description": "Create, update, or delete brand metafield values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. Only definitions writable by this token can be changed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Brand id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "metafields": {
+          "description": "Entries shaped as `{namespace, key, value}`. `value` is required in every entry; send `null` or an empty string to delete the stored value.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_brand_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
     "api_key": "brands.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Get one brand metafield translation. Returns the stored translation for a translatable metafield the token can read, in an enabled non-default language. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Get one brand metafield translation. Returns the stored translation for a translatable metafield the token can read, in an enabled non-default language. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8408,6 +8588,12 @@
             "string",
             "null"
           ]
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this create. Repeating the exact same create with the same key within 24 hours returns the original result instead of creating again.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
         },
         "image_id": {
           "description": "Optional Media-library upload image UUID. Video, document, 3D-model, and site-asset ids are invalid. Non-empty values require `read_files` access to the referenced file.",
@@ -8581,7 +8767,7 @@
     "api_key": "brands.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/brands/{id}/translations/{locale}",
-    "description": "Fetch one brand translation. Returns stored translations for one brand and locale. Each returned field includes `is_outdated`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/{id}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one brand translation. Returns stored translations for one brand and locale. Each returned field includes `is_outdated`. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/{id}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8652,7 +8838,7 @@
     "api_key": "brands.translation.batch-get",
     "api_method": "GET",
     "api_path": "/api/2025-01/brands/translations/{locale}",
-    "description": "Fetch brand translations in batch. Returns one `resources` entry per requested brand ID. A brand without stored translations has an empty object. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch brand translations in batch. Returns one `resources` entry per requested brand ID. A brand without stored translations has an empty object. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8716,10 +8902,25 @@
     ]
   },
   {
+    "api_key": "vendors.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/vendors/limits",
+    "description": "Fetch vendor field limits and request limits. Returns the validation limits clients need when building vendor forms and requests. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_vendor_limits",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
     "api_key": "vendors.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/vendors",
-    "description": "List vendors for the store. Returns vendors and their product counts. Search matches names and slugs. Use the returned cursors unchanged, and start without a cursor when search or sorting changes. Fetch `/vendors/limits` for page-size and search limits; supported sort fields are listed below. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors. Only the connected store is accessible.",
+    "description": "List vendors for the store. Returns vendors and their product counts. Each page holds at most 100 vendors, and every row carries the full Vendor fields, description included. Search matches names and slugs; matches are ordered by relevance (exact name, name prefix, exact slug, slug prefix, then other matches), then by the sort field. Use the returned cursors unchanged, and start without a cursor when search or sorting changes. Fetch `/vendors/limits` for page-size and search limits; supported sort fields are listed below. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8728,7 +8929,7 @@
           "type": "string"
         },
         "limit": {
-          "description": "Page size.",
+          "description": "Page size, 1-100 (default 50). Larger values return VALIDATION_LIST_INVALID_LIMIT.",
           "type": "integer"
         },
         "search": {
@@ -8747,6 +8948,30 @@
       "type": "object"
     },
     "name": "list_vendors",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "vendors.search",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/vendors/search",
+    "description": "Search vendors for picker-style suggestions. Returns lightweight vendor suggestions by query. This endpoint is intended for pickers and simple selection UIs. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/search. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Suggestion count, 1-50 (default 10).",
+          "type": "integer"
+        },
+        "q": {
+          "description": "Search query.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "search_vendors",
     "scopes": [
       "store:products:read"
     ]
@@ -8776,10 +9001,74 @@
     ]
   },
   {
+    "api_key": "vendors.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/vendors/{id}/metafields",
+    "description": "List vendor metafield values visible to the token. Returns paginated metafield values the token can read. `total` counts only visible values. Identify each value by `namespace` and `key`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/{id}/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Vendor id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "limit": {
+          "description": "Page size; capped by the metafield list limit.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number (default 1).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_vendor_metafields",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "vendors.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/vendors/{id}/metafields",
+    "description": "Create, update, or delete vendor metafield values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. Only definitions writable by this token can be changed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Vendor id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "metafields": {
+          "description": "Entries shaped as `{namespace, key, value}`. `value` is required in every entry; send `null` or an empty string to delete the stored value.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_vendor_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
     "api_key": "vendors.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Get one vendor metafield translation. Returns the stored translation for a translatable metafield the token can read, in an enabled non-default language. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Get one vendor metafield translation. Returns the stored translation for a translatable metafield the token can read, in an enabled non-default language. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8884,6 +9173,12 @@
             "string",
             "null"
           ]
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this create. Repeating the exact same create with the same key within 24 hours returns the original result instead of creating again.",
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
         },
         "image_id": {
           "description": "Optional Media-library upload image UUID. Video, document, 3D-model, and site-asset ids are invalid. A non-empty value requires `read_files` access to the referenced file.",
@@ -9057,7 +9352,7 @@
     "api_key": "vendors.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/vendors/{id}/translations/{locale}",
-    "description": "Fetch one vendor translation. Returns stored translations for one vendor and locale. Each returned field includes `is_outdated`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/{id}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one vendor translation. Returns stored translations for one vendor and locale. Each returned field includes `is_outdated`. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/{id}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -9128,7 +9423,7 @@
     "api_key": "vendors.translation.batch-get",
     "api_method": "GET",
     "api_path": "/api/2025-01/vendors/translations/{locale}",
-    "description": "Fetch vendor translations in batch. Returns one `resources` entry per requested vendor ID. A vendor without stored translations has an empty object. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch vendor translations in batch. Returns one `resources` entry per requested vendor ID. A vendor without stored translations has an empty object. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -9223,7 +9518,7 @@
     "api_key": "files.quota",
     "api_method": "GET",
     "api_path": "/api/2025-01/files/quota",
-    "description": "Read the store's used storage and allowance. Media and Site Assets share this allowance. `used_bytes` reports counted file storage and excludes space reserved for uploads still in progress. `quota_bytes - used_bytes` is therefore not guaranteed upload capacity. Creating upload intents checks committed and reserved usage together. The `_gb` fields use 1,073,741,824 bytes per unit. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/quota. Only the connected store is accessible.",
+    "description": "Read the store's used storage, file count and allowances. Media and Site Assets share this allowance. `used_bytes` reports counted file storage and excludes space reserved for uploads still in progress. `quota_bytes - used_bytes` is therefore not guaranteed upload capacity. Creating upload intents checks committed and reserved usage together. The `_gb` fields use 1,073,741,824 bytes per unit. `used_files` counts Media and Site Assets files together, one per file whatever its size; `file_limit` is the plan's maximum. Uploads still in progress also hold a file slot, so `file_limit - used_files` is not guaranteed upload capacity either. An upload that would pass the file limit fails with `STORAGE_FILE_LIMIT_REACHED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/quota. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -9268,7 +9563,7 @@
           "type": "string"
         },
         "limit": {
-          "description": "Page size.",
+          "description": "Page size, 1-200 (default 50).",
           "type": "integer"
         },
         "media_type": {
@@ -10005,7 +10300,7 @@
     "api_key": "blog-list-seo.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/list-seo/translations/{locale}",
-    "description": "Get translated SEO for the public blog index. The locale must be enabled and cannot be the store default. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/list-seo/translations/{locale}. Only the connected store is accessible.",
+    "description": "Get translated SEO for the public blog index. The locale must be enabled and cannot be the store default. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/list-seo/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10343,7 +10638,7 @@
     "api_key": "currencies.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/currencies/{id}",
-    "description": "Update a currency's rate, enabled state, or rounding mode. Updates a non-base currency. Supply at least one field; omitted fields keep their current values, and a request with none is rejected with `CURRENCY_BULK_FIELDS_REQUIRED`. The base currency is immutable and requests against it are rejected. In automatic-rate mode the rate and enabled state are market-managed: changing either is rejected, while a rounding-only change is accepted and values equal to the current ones are not changes. The rounding mode must be one of the currency's own `rounding_modes`; a zero-decimal currency rejects `nearest_99`, `nearest_95` and `nearest_50` with `CURRENCY_ROUNDING_MODE_UNAVAILABLE`. Disabling a currency is rejected while a market still uses it. A request that changes nothing returns the currency without `code` or `message` and records no audit entry or webhook. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update a currency's rate, enabled state, or rounding mode. Updates a non-base currency. Supply at least one field; omitted fields keep their current values, and a request with none is rejected with `CURRENCY_BULK_FIELDS_REQUIRED`. The base currency is immutable and requests against it are rejected. In automatic-rate mode the rate and enabled state are market-managed: changing either is rejected, while a rounding-only change is accepted and values equal to the current ones are not changes. The rounding mode must be one of the currency's own `rounding_modes`; a zero-decimal currency rejects `nearest_99`, `nearest_95` and `nearest_50` with `CURRENCY_ROUNDING_MODE_UNAVAILABLE`. Disabling a currency is rejected while a market still uses it. It is also rejected with `CURRENCY_DISABLE_GIFT_CARD_BALANCES` while active or scheduled, unexpired Gift Cards still hold a balance in it; `details` carries `code`, `active_gift_cards` and `outstanding_balance`. A request that changes nothing returns the currency without `code` or `message` and records no audit entry or webhook. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10580,7 +10875,7 @@
     "api_key": "markets.assigned-countries",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/assigned-countries",
-    "description": "Retrieve countries that are assigned or available for assignment. Returns localized country names in two lists. `countries` contains countries already assigned to a market, while `available_countries` contains countries that can be assigned. When editing a market, pass its id as `exclude_market_id` so its current countries remain available for selection. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/assigned-countries. Only the connected store is accessible.",
+    "description": "Retrieve countries that are assigned or available for assignment. Returns localized country names in two lists. `countries` contains the countries that markets already serve, each with the `market_id` and `market_name` of the market that serves it, sorted by country name. `available_countries` contains the countries no market serves, in the same localized order. When editing a market, pass its id as `exclude_market_id`: that market's own countries then move from `countries` to `available_countries`, so they stay selectable. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/assigned-countries. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10600,7 +10895,7 @@
     "api_key": "markets.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets",
-    "description": "Retrieve the store's markets. Returns a paginated list of markets with their countries and assigned currencies. Search by name or slug, and use `is_active` to show active or inactive markets. Omit `is_active` to return both. The primary market always appears first; the remaining markets follow the requested sort order. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets. Only the connected store is accessible.",
+    "description": "Retrieve the store's markets. Returns a paginated list of markets with their countries and assigned currencies. Search matches a market's name or slug, the code or name of a country it serves, or the code of a currency assigned to it. Use `is_active` to show active or inactive markets; omit it to return both. Sort by `name`, `created_at` or `updated_at`; results are sorted by `name` in ascending order by default. The primary market always appears first; the remaining markets follow the requested sort order. Each market carries a `revision` number that increases with every change. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10613,15 +10908,15 @@
           "type": "integer"
         },
         "per_page": {
-          "description": "Number of markets to return per page.",
+          "description": "Number of markets to return per page. Values above `list_max_limit` from the limits endpoint are reduced to it.",
           "type": "integer"
         },
         "search": {
-          "description": "Search by market name or slug.",
+          "description": "Matches the market name or slug, a served country's code or name in the request language, or an assigned currency code.",
           "type": "string"
         },
         "sort_by": {
-          "description": "Field used to order the results.",
+          "description": "Field used to order the results: `name`, `created_at` or `updated_at`.",
           "type": "string"
         },
         "sort_direction": {
@@ -10640,12 +10935,12 @@
     "api_key": "markets.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets",
-    "description": "Create a market for one or more countries. Provide a name and at least one country. Each country can belong to only one market; if a country is already assigned, the error identifies that country and its current market. You may provide a URL-safe slug or let Tringify generate one from the name. New markets begin with the store's base currency. They are active by default, calculate tax from the shipping address using tax-exclusive catalog prices, use the default tax class, and leave duties disabled. The store's first market becomes its primary market. A successful request returns the created market and publishes `markets/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a market for one or more countries. Provide a name and at least one country. Every store starts with a primary market, created with the store and named after its base currency, that serves every country. Each country can belong to only one market, so first remove the new market's countries from the primary market (or whichever market serves them) with Update a market; otherwise the request fails with `MARKET_COUNTRY_CONFLICT`, which identifies the country and its current market. You may provide a URL-safe slug or let Tringify generate one from the name, adding `-2`, `-3` and so on when that slug is taken. New markets begin with the store's base currency. They are active by default, calculate tax from the shipping address using tax-exclusive catalog prices, use the default tax class, and leave duties disabled. A successful request returns the created market and publishes `markets/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "countries": {
-          "description": "ISO 3166-1 alpha-2 codes for the countries served by this market. Each country can belong to only one market.",
+          "description": "Uppercase ISO 3166-1 alpha-2 codes for the countries served by this market. Repeated codes are ignored. Each country can belong to only one market.",
           "items": {
             "type": "string"
           },
@@ -10709,12 +11004,26 @@
     "api_key": "markets.update",
     "api_method": "PATCH",
     "api_path": "/api/2025-01/markets/{marketId}",
-    "description": "Change a market's settings. Send only the fields you want to change. When provided, `countries` and `currency_codes` replace their complete existing lists. Always retain the store's base currency in `currency_codes`; other currencies require a store plan with multi-currency support. Every market country has a serving currency, and newly added countries initially use the store's base currency. A country cannot be removed while a tax, shipping, or cash-on-delivery zone still uses it, and a currency cannot be removed while a country or duty rule uses it. Removing a currency also removes its exact shipping overrides; adding it back later converts blank shipping values from the base again. A single update can add or remove at most the market-currency bulk limit. `tax_included` controls whether catalog prices already contain tax, while `tax_display_mode` controls how storefront prices are presented. Successful changes return the updated market and publish `markets/update`; sending values that are already saved leaves the market unchanged. Uses the documented Store API fields, validation and permissions for PATCH /api/2025-01/markets/{marketId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change a market's settings. Send only the fields you want to change. To avoid overwriting someone else's change, send the `revision` you last read as `expected_revision`: if the market changed since, the request fails with `MARKET_CHANGED` and nothing is saved. When provided, `countries` and `currency_codes` replace their complete existing lists. Always retain the store's base currency in `currency_codes`; other currencies require a store plan with multi-currency support. Every market country has a serving currency, and newly added countries initially use the store's base currency. A country cannot be removed while a tax, shipping, or cash-on-delivery zone still uses it, and a currency cannot be removed while a country or duty rule uses it. Removing a currency also removes its exact shipping overrides; adding it back later converts blank shipping values from the base again. A single update can add or remove at most the market-currency bulk limit. `tax_included` controls whether catalog prices already contain tax, while `tax_display_mode` controls how storefront prices are presented. Deactivating a market while checkout orders in it are still waiting for payment first returns `CONFIRMATION_REQUIRED` with warnings and a confirmation token; repeat the request with `confirmed: true` and that `confirmation_token` to proceed. Successful changes return the updated market and publish `markets/update`. Sending only values that are already saved changes nothing and publishes no event, unless a market country was missing its serving currency, in which case that country is given the base currency. Uses the documented Store API fields, validation and permissions for PATCH /api/2025-01/markets/{marketId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "confirmation_token": {
+          "description": "Token returned with `CONFIRMATION_REQUIRED` when deactivating a market that has checkout orders waiting for payment.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set to `true`, with `confirmation_token`, to repeat a deactivation that returned `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "countries": {
-          "description": "Complete list of countries the market should serve. Countries omitted from this list are removed.",
+          "description": "Complete list of uppercase ISO 3166-1 alpha-2 codes the market should serve. Countries omitted from this list are removed; repeated codes are ignored.",
           "items": {
             "type": "string"
           },
@@ -10744,6 +11053,13 @@
           "description": "Whether estimated duties are collected at checkout or paid to the carrier on delivery.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "expected_revision": {
+          "description": "The market `revision` you last read. When provided and the market has changed since, the request fails with `MARKET_CHANGED`.",
+          "type": [
+            "integer",
             "null"
           ]
         },
@@ -10823,7 +11139,7 @@
     "api_key": "markets.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/markets/{marketId}",
-    "description": "Permanently delete a market. The first request returns `CONFIRMATION_REQUIRED` with a warning and confirmation token. Review the warning, then repeat the request with `confirmed: true` and that token. Deleting a market also deletes its market-specific settings and stops serving its countries. The primary market cannot be deleted. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Permanently delete a market. The primary market cannot be deleted. For any other market, the first request returns `CONFIRMATION_REQUIRED` with `details.warnings` and `details.confirmation_token`: the warnings name the countries the market stops serving and, when there are any, how many of its checkout orders are still waiting for payment (those shoppers can no longer pay). Repeat the request with `confirmed: true` and that token to delete. Deleting a market also deletes its market-specific settings, leaves its countries unassigned, and publishes `markets/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10861,7 +11177,7 @@
     "api_key": "markets.currencies.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/currencies",
-    "description": "Retrieve the currencies assigned to a market. Returns the market's assigned currencies and the enabled store currencies that are still available to add. `multi_currency_allowed` indicates whether the store's plan supports additional currencies, `multi_currency_enabled` indicates whether the store has enabled multi-currency, and `can_add_currency` is true when both requirements are met and another currency is available. `currency_bulk_max_count` is the configured maximum number of additions or removals in one market currency update or dedicated bulk request. Every market retains the store's base currency. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/currencies. Only the connected store is accessible.",
+    "description": "Retrieve the currencies assigned to a market. Returns the market's assigned currencies and the enabled store currencies that are still available to add. `available_currencies` is empty unless the store's plan includes multi-currency and multi-currency is enabled. Each assigned currency carries its `decimals` and `money_amount_max`, the largest amount any price or fee in that currency may hold. `multi_currency_allowed` indicates whether the store's plan supports additional currencies, `multi_currency_enabled` indicates whether the store has enabled multi-currency, and `can_add_currency` is true when both requirements are met and another currency is available. `currency_bulk_max_count` is the configured maximum number of additions or removals in one market currency update or dedicated bulk request. Every market retains the store's base currency. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/currencies. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10922,7 +11238,7 @@
     "api_key": "markets.currencies.bulk-add",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/currencies/bulk",
-    "description": "Add several enabled currencies to a market atomically. The request is all-or-nothing. Existing assignments and duplicate codes are skipped. Every new code must be enabled for the store, the store must have multi-currency available and enabled, and the batch must remain within the live market-currency cap. Successful changes publish one `markets/update` event containing the resulting currency set. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/currencies/bulk. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add several enabled currencies to a market atomically. The request is all-or-nothing. Codes already on the market and repeated codes are skipped, not refused; the response lists only the currencies this request added, so it is empty (and nothing is published) when every code was already there. Every new code must be enabled for the store, the store must have multi-currency available and enabled, and `currency_codes` may hold at most `currency_bulk_max_count` entries, repeats included. Successful changes publish one `markets/update` event containing the resulting currency set. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/currencies/bulk. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11016,7 +11332,7 @@
     "api_key": "markets.country-currencies.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/country-currencies",
-    "description": "Retrieve the currency selected for each country in a market. Returns every country in the market with its selected currency and the currencies available for assignment. Every country always has a currency: new countries start on the store's base currency and can then be changed to another currency assigned to the market. Search by country name or code. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/country-currencies. Only the connected store is accessible.",
+    "description": "Retrieve the currency selected for each country in a market. Returns every country in the market with its selected currency, the currencies available for assignment, and the market `revision` the list was read at. Every country always has a currency: new countries start on the store's base currency and can then be changed to another currency assigned to the market. Search by country name or code. `filter` defaults to `all`; because every country has a currency, `assigned` returns the same countries. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/country-currencies. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11034,7 +11350,7 @@
           "type": "integer"
         },
         "per_page": {
-          "description": "Number of countries to return per page.",
+          "description": "Number of countries to return per page. Values above `list_max_limit` from the country-currency limits are reduced to it.",
           "type": "integer"
         },
         "search": {
@@ -11056,7 +11372,7 @@
     "api_key": "markets.country-currencies.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/country-currencies/limits",
-    "description": "Retrieve the current country-currency list limits. Use these limits to validate pagination and search before listing a market's country currencies. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/country-currencies/limits. Only the connected store is accessible.",
+    "description": "Retrieve the current country-currency list limits. Use these limits to validate pagination and search before listing a market's country currencies. The limits are the same for every market. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/country-currencies/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11080,10 +11396,17 @@
     "api_key": "markets.country-currencies.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/country-currencies",
-    "description": "Choose which currency a market uses for selected countries. Send a country-to-currency map containing only the countries you want to change; omitted countries keep their current selections. Each country must belong to the market, and each currency must already be assigned to it. Configure enabled checkout, fee, COD and payment-adjustment amounts before assigning a new selling currency. Remove affected duty rules before changing their currency, then recreate them with explicit amounts. Selections that already match the requested currency remain unchanged. When at least one selection changes, the response returns the current country-currency list and `markets/update` publishes all country selections. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/country-currencies. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Choose which currency a market uses for selected countries. Send a country-to-currency map containing only the countries you want to change; omitted countries keep their current selections. Each country must belong to the market, and each currency must already be assigned to it. Configure enabled checkout, fee, COD and payment-adjustment amounts before assigning a new selling currency. Remove affected duty rules before changing their currency, then recreate them with explicit amounts. Selections that already match the requested currency remain unchanged. The response is always the first page of the country-currency list, with the market's current `revision`. When at least one selection changes, `markets/update` publishes all country selections. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/country-currencies. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "expected_revision": {
+          "description": "The market `revision` you last read. When provided and the market has changed since, nothing is saved and the request fails with `MARKET_CHANGED`.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "mappings": {
           "description": "Country-code to currency-code map. Only listed countries change.",
           "type": "object"
@@ -11109,7 +11432,7 @@
     "api_key": "markets.country-currencies.bulk-assign",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/country-currencies/bulk-assign",
-    "description": "Assign one currency to selected market countries. Every country must currently belong to the market and the currency must already be assigned to it. Duplicate country codes and selections that already use the requested currency are harmless. The remaining changes commit atomically and publish one `markets/update` event. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/country-currencies/bulk-assign. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Assign one currency to selected market countries. Every country must currently belong to the market and the currency must already be assigned to it. Duplicate country codes and selections that already use the requested currency are harmless. The remaining changes commit atomically and publish one `markets/update` event. The response gives the number of countries changed and the market's `revision`; when nothing changed, `updated` is 0 and nothing is published. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/country-currencies/bulk-assign. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11123,6 +11446,13 @@
         "currency_code": {
           "description": "Currency already assigned to the market.",
           "type": "string"
+        },
+        "expected_revision": {
+          "description": "The market `revision` you last read. When provided and the market has changed since, nothing is saved and the request fails with `MARKET_CHANGED`.",
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "market_id": {
           "description": "Market id.",
@@ -11146,13 +11476,20 @@
     "api_key": "markets.country-currencies.auto-assign",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/country-currencies/auto-assign",
-    "description": "Assign one currency to all current countries in a market. The currency must already be assigned to the market. All changed country mappings commit atomically under the market write lock; selections already using the currency are unchanged. A successful change publishes one `markets/update` event. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/country-currencies/auto-assign. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Assign one currency to all current countries in a market. The currency must already be assigned to the market. All changed country mappings commit atomically under the market write lock; selections already using the currency are unchanged. The response gives the number of countries changed and the market's `revision`; a change publishes one `markets/update` event, and nothing is published when `updated` is 0. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/country-currencies/auto-assign. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "currency_code": {
           "description": "Currency already assigned to the market.",
           "type": "string"
+        },
+        "expected_revision": {
+          "description": "The market `revision` you last read. When provided and the market has changed since, nothing is saved and the request fails with `MARKET_CHANGED`.",
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "market_id": {
           "description": "Market id.",
@@ -11175,7 +11512,7 @@
     "api_key": "markets.payment-providers.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/payment-providers",
-    "description": "Read availability and currency coverage of connected providers. Connect providers in store settings first. This endpoint returns market enablement, ordering, readiness and supported currencies without provider credentials. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-providers. Only the connected store is accessible.",
+    "description": "Read availability and currency coverage of connected providers. Connect providers in store settings first. This endpoint returns market enablement, ordering, readiness and supported currencies without provider credentials. A provider appears here once a payment app is installed on the store: installing it creates a binding (`binding_id`) in `pending_configuration`, listed in every market with `status` `setup_required`. The merchant then connects their account inside the app, and the app reports it through `POST /service-bindings/{id}/configuration-changed`. Tringify asks the app to attest the connection (mode, account country, operations, presentment currencies); a successful attestation makes the binding `ready`. A ready provider is `eligible` in a market when it supports at least one of the market's currencies (otherwise `currency_unavailable`). Enable it per market with Update market payment provider; enabled, ready providers are offered at checkout in `sort_order`. On development and transfer stores only test-mode connections can be enabled, and the platform test gateway is enabled in the primary market the first time it attests. `status` is `setup_required`, `currency_unavailable` (the provider supports none of the market's currencies), `ready` or `active`; `eligible` says whether it can be enabled; `currency_coverage` is `none`, `partial` or `full`, with the market currencies it does and does not support listed. Enabled providers come first, ordered by `sort_order`; the rest follow by app name. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-providers. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11199,7 +11536,7 @@
     "api_key": "markets.payment-providers.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/payment-providers/{bindingId}",
-    "description": "Enable or order a connected provider for this market. Only is_enabled and sort_order are editable here. Lower sort_order values appear first in checkout. You can disable an existing assignment even when its connection is unavailable. Provider connection and credential management belong to the app lifecycle. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/payment-providers/{bindingId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Enable or order a connected provider for this market. Only is_enabled and sort_order are editable here. Lower sort_order values appear first in checkout. You can disable an existing assignment even when its connection is unavailable. Provider connection and credential management belong to the app lifecycle. A provider can be enabled only while it is `eligible`. The response is the provider as the list returns it. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/payment-providers/{bindingId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11243,7 +11580,7 @@
     "api_key": "markets.payment-adjustments.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/payment-adjustments",
-    "description": "Read saved rules and their authoring catalog. Read the payment_adjustment_catalog to determine supported kinds, values, amount requirements and limits before authoring. The catalog includes percent_max, percent_decimal_places, and fixed_amount_max. Fixed amounts must also fit each currency’s decimal precision. A binding path filters the list to that provider. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-adjustments. Only the connected store is accessible.",
+    "description": "Read saved rules and their authoring catalog. Read the payment_adjustment_catalog to determine supported kinds, values, amount requirements and limits before authoring. The catalog includes percent_max, percent_decimal_places, and fixed_amount_max. Fixed amounts must also fit each currency’s decimal precision. A binding path filters the list to that provider; a binding with no adjustments, or one not connected to the store, returns an empty list. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-adjustments. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11267,7 +11604,7 @@
     "api_key": "markets.payment-adjustments.list-provider",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments",
-    "description": "Read saved rules and their authoring catalog. Read the payment_adjustment_catalog to determine supported kinds, values, amount requirements and limits before authoring. The catalog includes percent_max, percent_decimal_places, and fixed_amount_max. Fixed amounts must also fit each currency’s decimal precision. A binding path filters the list to that provider. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments. Only the connected store is accessible.",
+    "description": "Read saved rules and their authoring catalog. Read the payment_adjustment_catalog to determine supported kinds, values, amount requirements and limits before authoring. The catalog includes percent_max, percent_decimal_places, and fixed_amount_max. Fixed amounts must also fit each currency’s decimal precision. A binding path filters the list to that provider; a binding with no adjustments, or one not connected to the store, returns an empty list. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11297,7 +11634,7 @@
     "api_key": "markets.payment-adjustments.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments",
-    "description": "Create, replace, or remove a provider-specific adjustment. The binding comes from the URL and must belong to this store. Updating or deleting a rule through a different binding returns not found. Send one fixed or percentage merchandise discount; a second discount for the same provider is rejected. Scheduling, minimum-spend conditions, discount caps and fee-tax fields are not supported. Omit starts_at, ends_at, min_order_amounts, max_adjustment_amounts, tax_class_id and hsn_code; populated values are rejected. The response label is assigned by Tringify. Fixed amounts must be positive for every market currency and fit the catalog maximum and currency precision. Percentages must be positive, at most percent_max and fit percent_decimal_places. An unchanged update emits no webhook. Successful changes emit market_payment_adjustments/create, /update or /delete. Existing orders retain their recorded allocations. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add an online payment discount for one provider. Creates the provider's discount in this market. Send one fixed or percentage merchandise discount; each provider can have one. Scheduling, minimum-spend conditions, discount caps and fee-tax fields are not supported: omit starts_at, ends_at, min_order_amounts, max_adjustment_amounts, tax_class_id and hsn_code, as populated values are rejected. The label is always \"Online payment discount\", assigned by Tringify. Fixed amounts must be positive for every market currency and fit the catalog maximum and currency precision. Percentages must be positive, at most percent_max and fit percent_decimal_places. Existing orders keep their recorded allocations. A successful request publishes `market_payment_adjustments/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11356,7 +11693,7 @@
     "api_key": "markets.payment-adjustments.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}",
-    "description": "Create, replace, or remove a provider-specific adjustment. The binding comes from the URL and must belong to this store. Updating or deleting a rule through a different binding returns not found. Send one fixed or percentage merchandise discount; a second discount for the same provider is rejected. Scheduling, minimum-spend conditions, discount caps and fee-tax fields are not supported. Omit starts_at, ends_at, min_order_amounts, max_adjustment_amounts, tax_class_id and hsn_code; populated values are rejected. The response label is assigned by Tringify. Fixed amounts must be positive for every market currency and fit the catalog maximum and currency precision. Percentages must be positive, at most percent_max and fit percent_decimal_places. An unchanged update emits no webhook. Successful changes emit market_payment_adjustments/create, /update or /delete. Existing orders retain their recorded allocations. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace a provider's online payment discount. Send the complete adjustment; it replaces the saved one. The rule must belong to the provider in the URL. Send one fixed or percentage merchandise discount; each provider can have one. Scheduling, minimum-spend conditions, discount caps and fee-tax fields are not supported: omit starts_at, ends_at, min_order_amounts, max_adjustment_amounts, tax_class_id and hsn_code, as populated values are rejected. The label is always \"Online payment discount\", assigned by Tringify. Fixed amounts must be positive for every market currency and fit the catalog maximum and currency precision. Percentages must be positive, at most percent_max and fit percent_decimal_places. Existing orders keep their recorded allocations. A change publishes `market_payment_adjustments/update`; sending the saved values changes nothing and publishes nothing. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11421,7 +11758,7 @@
     "api_key": "markets.payment-adjustments.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}",
-    "description": "Create, replace, or remove a provider-specific adjustment. The binding comes from the URL and must belong to this store. Updating or deleting a rule through a different binding returns not found. Send one fixed or percentage merchandise discount; a second discount for the same provider is rejected. Scheduling, minimum-spend conditions, discount caps and fee-tax fields are not supported. Omit starts_at, ends_at, min_order_amounts, max_adjustment_amounts, tax_class_id and hsn_code; populated values are rejected. The response label is assigned by Tringify. Fixed amounts must be positive for every market currency and fit the catalog maximum and currency precision. Percentages must be positive, at most percent_max and fit percent_decimal_places. An unchanged update emits no webhook. Successful changes emit market_payment_adjustments/create, /update or /delete. Existing orders retain their recorded allocations. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Remove a provider's online payment discount. The rule must belong to the provider in the URL. Existing orders keep their recorded allocations. A successful request publishes `market_payment_adjustments/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11644,7 +11981,7 @@
     "api_key": "tax-classes.bulk-delete",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/tax-classes/bulk-delete",
-    "description": "Delete a selected set of tax classes atomically. Send 1 to `list_max_limit` unique tax-class UUIDs from the same market. The service validates the full selection before deleting anything. A default class, a class assigned to shipping, a missing class, a duplicate or malformed id, or an oversized selection rejects the whole request. If any class has dependent rates, product or variant assignments, or price rules, the first request returns all warnings and a confirmation token bound to the exact sorted selection. Repeat the identical selection with `confirmed` and `confirmation_token`. All deletions, per-class audit records, and `tax_classes/delete` webhook events commit in one transaction or all roll back. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/tax-classes/bulk-delete. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete a selected set of tax classes atomically. Send 1 to `list_max_limit` unique tax-class UUIDs from the same market. The service validates the full selection before deleting anything. A default class, a class assigned to shipping, checkout fees, cash on delivery or payment adjustments, a missing class, a duplicate or malformed id, or an oversized selection rejects the whole request. If any class has dependent rates, product or variant assignments, or price rules, the first request returns all warnings and a confirmation token bound to the exact sorted selection. Repeat the identical selection with `confirmed` and `confirmation_token`. All deletions, per-class audit records, and `tax_classes/delete` webhook events commit in one transaction or all roll back. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/tax-classes/bulk-delete. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11690,7 +12027,7 @@
     "api_key": "tax-classes.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/markets/{marketId}/tax-classes/{taxClassId}",
-    "description": "Delete one tax class. Use the bulk-delete endpoint for a selection. Each successful deletion records the class and market names in its audit entry. Deletes the tax class together with its rates, product and variant assignments, and price rules. The default class can't be deleted — promote another class first. Shipping settings and shipping methods must be reassigned before deleting their tax class. When the class still has dependents, the first call returns a confirmation response listing what will be removed; retry with `confirmed` and the returned `confirmation_token` to proceed. Products left without a class are taxed by the market's default class while `use_default_tax_class` is on, and sold untaxed when it is off. Fires `tax_classes/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/tax-classes/{taxClassId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete one tax class. Use the bulk-delete endpoint for a selection. Each successful deletion records the class and market names in its audit entry. Deletes the tax class together with its rates, product and variant assignments, and price rules. The default class can't be deleted — promote another class first. Shipping settings and shipping methods must be reassigned before deleting their tax class (`TAX_CLASS_SHIPPING_ASSIGNED`), and so must checkout fees, cash-on-delivery settings and payment adjustments (`TAX_CLASS_CHARGES_ASSIGNED`). When the class still has dependents, the first call returns a confirmation response listing what will be removed; retry with `confirmed` and the returned `confirmation_token` to proceed. Products left without a class are taxed by the market's default class while `use_default_tax_class` is on, and sold untaxed when it is off. Fires `tax_classes/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/tax-classes/{taxClassId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11813,7 +12150,7 @@
     "api_key": "tax-zones.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/tax-zones",
-    "description": "Create a tax zone in a market. Creates a tax zone. `name` is required and unique within the market. A regular zone needs at least one country or subdivision; every country must belong to the market, every subdivision must be a known ISO subdivision belonging to a selected country, and duplicate subdivision claims or duplicate whole-country claims are rejected. A whole-country zone with an empty `subdivisions` array can coexist with state-specific zones: state matches win, then the country zone covers the rest. For example, a zone with `countries: [\"IN\"]` and `subdivisions: [\"IN-UP\"]` handles Uttar Pradesh; a second zone with `countries: [\"IN\"]` and `subdivisions: []` handles the rest of India. Only the matching zone’s rates apply. Setting `is_default` instead creates the market's catch-all zone for unmatched addresses. The optional `tax_exemption` object defines the effect for buyers already verified as tax exempt; a raw checkout tax ID never approves its own exemption. Fires `tax_zones/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/tax-zones. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a tax zone in a market. Creates a tax zone. `name` is required and unique within the market. A regular zone needs at least one country or subdivision; every country must belong to the market, every subdivision must be a known ISO subdivision belonging to a selected country, and duplicate subdivision claims or duplicate whole-country claims are rejected. A whole-country zone with an empty `subdivisions` array can coexist with state-specific zones: state matches win, then the country zone covers the rest. For example, a zone with `countries: [\"IN\"]` and `subdivisions: [\"IN-UP\"]` handles Uttar Pradesh; a second zone with `countries: [\"IN\"]` and `subdivisions: []` handles the rest of India. Only the matching zone’s rates apply. Setting `is_default` instead creates the market's catch-all zone for unmatched addresses. The optional `tax_exemption` object sets the business treatment: `exempt` removes tax only for a buyer already verified as tax exempt, and `invoice_only` keeps tax and marks the order for a business invoice when such a buyer, or any buyer who enters a tax ID, checks out. Fires `tax_zones/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/tax-zones. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11857,7 +12194,7 @@
           ]
         },
         "tax_exemption": {
-          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, custom_label, custom_placeholder}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst`, `ein`, and `custom`. `effect` is `exempt` (charge 0% tax) or `invoice_only` (keep tax and mark the calculation for business invoicing), and applies only to a buyer already verified as tax exempt. A raw tax ID never approves its own exemption. `checkout_text` is limited to 100 characters. For `custom`, `custom_label` is required and limited to 50 characters; `custom_placeholder` is optional and limited to 50 characters.",
+          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, custom_label, custom_placeholder}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst`, `ein`, and `custom`. `effect` is `exempt` (charge 0% tax, only for a buyer already verified as tax exempt) or `invoice_only` (keep tax and mark the order for a business invoice, for a verified exempt buyer or any buyer who enters a tax ID at checkout). A tax ID never removes tax by itself. To turn the treatment off, send `{\"enabled\": false}`; leaving `tax_exemption` out keeps the saved treatment. `checkout_text` is limited to 100 characters. For `custom`, `custom_label` is required and limited to 50 characters; `custom_placeholder` is optional and limited to 50 characters.",
           "type": [
             "object",
             "null"
@@ -11953,7 +12290,7 @@
           ]
         },
         "tax_exemption": {
-          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, custom_label, custom_placeholder}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst`, `ein`, and `custom`. `effect` is `exempt` (charge 0% tax) or `invoice_only` (keep tax and mark the calculation for business invoicing), and applies only to a buyer already verified as tax exempt. A raw tax ID never approves its own exemption. `checkout_text` is limited to 100 characters. For `custom`, `custom_label` is required and limited to 50 characters; `custom_placeholder` is optional and limited to 50 characters.",
+          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, custom_label, custom_placeholder}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst`, `ein`, and `custom`. `effect` is `exempt` (charge 0% tax, only for a buyer already verified as tax exempt) or `invoice_only` (keep tax and mark the order for a business invoice, for a verified exempt buyer or any buyer who enters a tax ID at checkout). A tax ID never removes tax by itself. To turn the treatment off, send `{\"enabled\": false}`; leaving `tax_exemption` out keeps the saved treatment. `checkout_text` is limited to 100 characters. For `custom`, `custom_label` is required and limited to 50 characters; `custom_placeholder` is optional and limited to 50 characters.",
           "type": [
             "object",
             "null"
@@ -11981,7 +12318,7 @@
     "api_key": "tax-zones.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/markets/{marketId}/tax-zones/{taxZoneId}",
-    "description": "Delete a tax zone. Deletes the tax zone. If it still has rate lines, the first call returns `CONFIRMATION_REQUIRED`; retry with `confirmed` and the returned `confirmation_token`. Cascaded rate lines do not fire individual `tax_rates/delete` events, so re-sync rates after the `tax_zones/delete` event. The default zone can't be deleted while it is the default. After deletion, addresses are matched again: any remaining state-specific zone wins, then a whole-country zone, then the default zone. If none matches, no tax is applied. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/tax-zones/{taxZoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete a tax zone. Deletes the tax zone. If it still has rate lines, the first call returns `CONFIRMATION_REQUIRED`; retry with `confirmed` and the returned `confirmation_token`. The token is for that number of rate lines: if lines are added before the retry, the zone asks for confirmation again. Cascaded rate lines do not fire individual `tax_rates/delete` events, so re-sync rates after the `tax_zones/delete` event. The default zone can't be deleted while it is the default. After deletion, addresses are matched again: any remaining state-specific zone wins, then a whole-country zone, then the default zone. If none matches, no tax is applied. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/tax-zones/{taxZoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -12436,16 +12773,16 @@
     "api_key": "tax-price-rules.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/tax-price-rules",
-    "description": "Create a price-based tax rule. Requires a single-country, single-currency market and allows one rule per tax class. The threshold is a decimal string in the market currency. Below-threshold and at-or-above-threshold rates must differ, but either may be higher. The class must have ordinary zone rates wherever the rule should apply. Fires `tax_price_rules/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/tax-price-rules. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a price-based tax rule. Requires a single-country, single-currency market and allows one rule per tax class. The threshold is a decimal string in the market currency, compared with each item's unit price after discounts and before tax (for tax-inclusive prices, the price without tax at `below_rate`); at the threshold `below_rate` applies. The two rates must differ, but either may be higher. The class must have ordinary zone rates wherever the rule should apply: the rule's rate is shared between those rate lines in proportion to their ordinary rates, so CGST 9% + SGST 9% under a 5% rule are charged as 2.5% + 2.5%. Fires `tax_price_rules/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/tax-price-rules. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "above_rate": {
-          "description": "Percentage from 0 to 100 with at most 4 decimal places, for final unit prices at or above the threshold.",
+          "description": "Percentage from 0 to 100 with at most 4 decimal places, for items whose unit price after discounts and before tax is above the threshold.",
           "type": "string"
         },
         "below_rate": {
-          "description": "Percentage from 0 to 100 with at most 4 decimal places, for final unit prices below the threshold.",
+          "description": "Percentage from 0 to 100 with at most 4 decimal places, for items whose unit price after discounts and before tax is at or below the threshold.",
           "type": "string"
         },
         "market_id": {
@@ -12485,11 +12822,11 @@
       "additionalProperties": false,
       "properties": {
         "above_rate": {
-          "description": "Percentage from 0 to 100 with at most 4 decimal places, for final unit prices at or above the threshold.",
+          "description": "Percentage from 0 to 100 with at most 4 decimal places, for items whose unit price after discounts and before tax is above the threshold.",
           "type": "string"
         },
         "below_rate": {
-          "description": "Percentage from 0 to 100 with at most 4 decimal places, for final unit prices below the threshold.",
+          "description": "Percentage from 0 to 100 with at most 4 decimal places, for items whose unit price after discounts and before tax is at or below the threshold.",
           "type": "string"
         },
         "market_id": {
@@ -12555,7 +12892,7 @@
     "api_key": "discounts.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discounts/limits",
-    "description": "Learn which discount options and limits are available to this store. The response lists the accepted values and bounds for discount requests: the supported types, targeting and eligibility choices, percentage and priority ranges, relation caps, sort fields, page sizes, and the store's maximum number of discounts. Use list_default_limit for the initial page, page_size_options for page-size choices, list_max_limit as the upper bound for both per_page and bulk selections, and search_max_length for search text. The sample values below are illustrative; use the values returned for your store. Validate against these before sending a create or update so a request is rejected locally rather than by the API. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/limits. Only the connected store is accessible.",
+    "description": "Learn which discount options and limits are available to this store. The response lists the accepted values and bounds for discount requests: the supported types, targeting and eligibility choices, percentage and priority ranges, relation caps, sort fields, page sizes, and the store's maximum number of discounts. Use list_default_limit for the initial page, page_size_options for page-size choices, list_max_limit as the upper bound for both per_page and bulk selections, and search_max_length for search text. `type_capabilities` lists which fields each type supports. Limits are store-wide: every market returns the same values, and the market id in the path is not checked. The sample shows current production values; read the response rather than hard-coding them. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -12579,7 +12916,7 @@
     "api_key": "discounts.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discounts",
-    "description": "Browse the discounts configured for a market. Use this endpoint for a paginated discount list. You can filter by current status, discount type, or activation method, and search by name or coupon code. List records contain the discount definition; request one discount when you also need its product and customer targeting ids. Scheduled and expired statuses are calculated from the discount's dates when you read it. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible.",
+    "description": "Browse the discounts configured for a market. Use this endpoint for a paginated discount list. You can filter by current status, discount type, or activation method, and search by name or coupon code. Search matches any part of the name or code, ignoring case. List records carry the discount definition plus worded labels (`status_label`, `type_label`, `value_label`, `usage_summary` and others); their targeting, eligibility, Buy X Get Y, bundle and gift arrays are always empty and `can_view_products`/`can_view_customers` are false. Read one discount to get those. Scheduled and expired statuses are calculated from the discount's dates when you read it. A `per_page` above list_max_limit is reduced to it, and sorting by `ends_at` lists discounts without an end date last. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -12605,7 +12942,7 @@
           "type": "string"
         },
         "sort_by": {
-          "description": "Sort by `priority`, `name`, `type`, `activation`, `usage_count`, `created_at`, or `updated_at`. Defaults to `priority`.",
+          "description": "Sort by `priority`, `name`, `type`, `activation`, `usage_count`, `ends_at`, `created_at`, or `updated_at`. Defaults to `priority`. With `ends_at`, discounts without an end date sort last in either direction.",
           "type": "string"
         },
         "sort_direction": {
@@ -12635,7 +12972,7 @@
     "api_key": "discounts.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/discounts",
-    "description": "Add a merchandise discount to a market. Choose one discount type and provide the fields for that type. Percentage discounts use `value`; fixed-amount discounts use `amounts`; Buy X Get Y offers define qualifying and reward sets; bundles define every required component and either a set price or percentage reduction. Free gifts specify gift-only products and how they enter the cart; tiered discounts specify ascending base-currency subtotal thresholds and apply only the highest reached tier. Coupon discounts need a code that is unique within the market, while automatic discounts apply without one. Product, collection, category, customer, and group ids must belong to the same store. Free delivery is configured with the market's shipping methods. A successful create publishes `discounts/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a merchandise discount to a market. Choose one discount type and provide the fields for that type. `value`, `amounts`, Buy X Get Y, bundle and gift fields sent for another type are rejected; `tier_value_kind` and `tiers` sent for a type other than tiered are ignored, and so are unknown fields. Empty money maps (`{}`) are treated as not set, so money maps from a GET can be sent back unchanged for any type. Percentage discounts use `value`; fixed-amount discounts use `amounts`; Buy X Get Y offers define qualifying and reward sets; bundles define every required component and either a set price or percentage reduction. Free gifts specify gift-only products and how they enter the cart; tiered discounts specify ascending base-currency subtotal thresholds and apply only the highest reached tier. Coupon discounts need a code that is unique within the market, while automatic discounts apply without one. Product, collection, category, customer, and group ids must belong to the same store. Free delivery is configured with the market's shipping methods. The response is the saved discount, with `usage_count` and `usage_held_count` at 0 and a matching `usage_summary`. A successful create publishes `discounts/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -12644,7 +12981,7 @@
           "type": "string"
         },
         "amounts": {
-          "description": "Fixed discount amounts keyed by currency code. Include the store's base currency; additional entries must be currencies enabled for the market. Each amount must fit that currency's minor-unit precision.",
+          "description": "Fixed discount amounts keyed by currency code. Include the store's base currency; additional entries must be currencies enabled for the market. Each amount must be greater than 0, at most money_amount_max, and fit that currency's minor-unit precision. A market currency without its own amount uses the base amount converted at the market's rate.",
           "type": [
             "object",
             "null"
@@ -12655,7 +12992,7 @@
           "type": "string"
         },
         "bundle_items": {
-          "description": "The products or variants and quantities required for one complete bundle. Provide between 2 and 20 different components.",
+          "description": "The products or variants and quantities required for one complete bundle. Provide between bundle_components_min and bundle_components_max different components. A `product` component matches any variant of that product; a `variant` component matches only that variant.",
           "items": {
             "type": "object"
           },
@@ -12665,7 +13002,7 @@
           ]
         },
         "bundle_max_sets": {
-          "description": "The maximum number of complete bundle sets discounted on one order. Use -1 for no limit.",
+          "description": "The maximum number of complete bundle sets discounted on one order. Send -1 or null for no limit; an unlimited bundle is returned as null.",
           "type": [
             "integer",
             "null"
@@ -12679,7 +13016,7 @@
           ]
         },
         "bundle_prices": {
-          "description": "The price of one complete bundle, keyed by currency code. Include the base currency for fixed-price bundles.",
+          "description": "The price of one complete bundle, keyed by currency code. Include the base currency for fixed-price bundles; other market currencies without an entry use the converted base price.",
           "type": [
             "object",
             "null"
@@ -12693,7 +13030,7 @@
           ]
         },
         "bxgy_buy_items": {
-          "description": "Simple products, exact variants, collections, or categories that can satisfy Buy X. Each item contains `item_type` (product, variant, collection, category) and string `item_id`. Each side is an independent union of targets; buy and reward quantities use distinct units.",
+          "description": "Simple products, exact variants, collections, or categories that can satisfy Buy X. Each item contains `item_type` (product, variant, collection, category) and string `item_id`. An item qualifies when it matches any target in the list. Bought and reward items are always different units, even when the two lists overlap.",
           "items": {
             "type": "object"
           },
@@ -12727,7 +13064,7 @@
           ]
         },
         "bxgy_get_type": {
-          "description": "Make reward items `free`, reduce their remaining value by a `percentage`, or deduct a `fixed` amount from each reward item.",
+          "description": "Make reward items `free`, reduce their remaining value by a `percentage`, or deduct a `fixed` amount from each reward item. The cheapest qualifying items are the rewards, whatever their order in the cart.",
           "type": [
             "string",
             "null"
@@ -12741,7 +13078,7 @@
           ]
         },
         "bxgy_max_uses": {
-          "description": "The maximum number of complete Buy X Get Y sets that may apply to one order.",
+          "description": "The maximum number of complete Buy X Get Y sets that may apply to one order: a whole number from bxgy_max_uses_min through bxgy_max_uses_max in the limits response. Omit it or send null for no per-order cap; unlimited_sentinel (-1) is not accepted here.",
           "type": [
             "integer",
             "null"
@@ -12758,7 +13095,7 @@
           ]
         },
         "code": {
-          "description": "Required for coupon activation. Codes are unique within the market and comparisons are case-insensitive.",
+          "description": "Required for coupon activation. Use letters A–Z, digits, hyphens and underscores, up to code_max_length characters; the code is stored in upper case. Codes are unique within the market and matched without regard to case.",
           "type": [
             "string",
             "null"
@@ -12796,14 +13133,14 @@
           ]
         },
         "exclude_sale_items": {
-          "description": "Skip items already on sale.",
+          "description": "Skip items already on sale. Only percentage and fixed-amount discounts accept true; other types reject it with DISCOUNT_TARGETS_FORBIDDEN.",
           "type": [
             "boolean",
             "null"
           ]
         },
         "first_order_only": {
-          "description": "Restrict to a customer's first order.",
+          "description": "Restrict to a customer's first order. Earlier paid, cash-on-delivery or refunded orders under the same account or the same email address (ignoring case) disqualify; test and cancelled orders do not. Guests are recognised by email. An order with neither an account nor an email does not qualify.",
           "type": [
             "boolean",
             "null"
@@ -12820,7 +13157,7 @@
           ]
         },
         "gift_mode": {
-          "description": "For free_gift: offer or auto_add.",
+          "description": "For free_gift: offer or auto_add. On create, omitted or null means offer; on update, omitted or null keeps the current mode.",
           "type": [
             "string",
             "null"
@@ -12842,21 +13179,21 @@
           "type": "string"
         },
         "max_discount": {
-          "description": "Limit the amount saved through a percentage discount, keyed by currency code.",
+          "description": "Cap the amount saved, keyed by currency code. Percentage, bundle and tiered discounts accept it; fixed-amount, Buy X Get Y and free gift discounts reject it with DISCOUNT_MAX_DISCOUNT_FORBIDDEN.",
           "type": [
             "object",
             "null"
           ]
         },
         "min_quantity": {
-          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage and fixed-amount discounts accept this condition; Buy X Get Y and bundle offers define their own quantities and reject it.",
+          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage, fixed-amount and free gift discounts accept this condition; Buy X Get Y, bundle and tiered discounts reject it with DISCOUNT_MIN_QUANTITY_FORBIDDEN.",
           "type": [
             "integer",
             "null"
           ]
         },
         "min_subtotal": {
-          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition.",
+          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y, bundle and tiered discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Items left out by the market's quantity-pricing setting never count. Every type accepts it.",
           "type": [
             "object",
             "null"
@@ -12867,7 +13204,7 @@
           "type": "string"
         },
         "per_customer_limit": {
-          "description": "The number of redemptions allowed for each customer. Use unlimited_sentinel for no limit, or a whole number from quantity_min through max_per_customer_limit in the limits response.",
+          "description": "The number of uses allowed for each customer. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_per_customer_limit in the limits response; an unlimited discount is returned as null. A customer is recognised by account or by email address, ignoring case, so guest orders count toward that email's limit; an order with neither is not checked. Orders over the limit are refused with DISCOUNT_CUSTOMER_LIMIT_REACHED.",
           "type": [
             "integer",
             "null"
@@ -12890,8 +13227,15 @@
             "null"
           ]
         },
+        "refund_restores_usage": {
+          "description": "Give a use back to usage_limit and per_customer_limit when an order that used this discount is fully refunded. The use is returned shortly after the refund, following the setting the discount has at that moment.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "show_in_cart": {
-          "description": "Allow the storefront to surface this coupon before checkout. This option is not used by automatic discounts.",
+          "description": "Allow the storefront to show this coupon before checkout. Coupon discounts only; sending true for an automatic discount returns DISCOUNT_TARGETS_FORBIDDEN.",
           "type": [
             "boolean",
             "null"
@@ -12912,7 +13256,7 @@
           ]
         },
         "tiers": {
-          "description": "For tiered: 1–10 ascending nonnegative min_subtotal thresholds in base currency and positive value amounts. Only the highest reached tier applies. Percentage values cannot exceed 100. Fixed savings can exceed the threshold but are capped at remaining eligible merchandise at checkout; merchandise never becomes negative.",
+          "description": "For tiered: 1–10 tiers with strictly ascending min_subtotal thresholds from 0 to money_amount_max, and positive values, in the base currency and its precision. Only the highest reached tier applies, chosen from the merchandise subtotal before any discount. Percentage values cannot exceed 100. Fixed savings can exceed the threshold but are capped at remaining eligible merchandise at checkout; merchandise never becomes negative. Other markets use the base amounts converted at the market's rate.",
           "items": {
             "type": "object"
           },
@@ -12926,7 +13270,7 @@
           "type": "string"
         },
         "usage_limit": {
-          "description": "The total number of redemptions allowed. Use unlimited_sentinel for no limit, or a whole number from quantity_min through max_usage_limit in the limits response.",
+          "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit.",
           "type": [
             "integer",
             "null"
@@ -12969,7 +13313,7 @@
     "api_key": "discounts.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}",
-    "description": "Read one discount and its targeting choices. The response includes the complete discount definition and the ids it targets. Product-facing labels are included when your token has `read_products`; customer names and group labels are included with `read_customers`. The ids remain available without those additional scopes, and `can_view_products` and `can_view_customers` tell you whether labels were included. The returned status reflects the discount's current schedule. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible.",
+    "description": "Read one discount and its targeting choices. The response includes the complete discount definition and the ids it targets. Product-facing labels (products, variants, collections, categories, Buy X Get Y, bundle and gift items) are included when your token has `read_products`; customer names and group labels are included with `read_customers`. The ids remain available without those additional scopes, and `can_view_products` and `can_view_customers` tell you whether labels were included. The returned status reflects the discount's current schedule. `usage_count` includes uses held by unpaid checkouts; `usage_held_count` says how many of them are held, and `usage_summary` words both. `starts_at`, `ends_at`, `created_at` and `updated_at` are display strings in the store's time zone; `starts_at_iso` and `ends_at_iso` give the start and end as local store time in the `YYYY-MM-DDTHH:mm:ss` form that create and update accept. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -12999,7 +13343,7 @@
     "api_key": "discounts.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}",
-    "description": "Replace the editable definition of a discount. Send the complete definition you want to keep, including all targeting and eligibility lists. The same type-specific rules used during creation apply here. Updating a disabled discount does not enable it; use the enable endpoint when it is ready to run again. Sending an unchanged definition leaves the discount untouched and publishes no webhook. A successful change publishes `discounts/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace the editable definition of a discount. Send the complete definition you want to keep, including all targeting and eligibility lists; read them with GET first, because list records leave them empty. The same type-specific rules used during creation apply here. Updating a disabled discount does not enable it; use the enable endpoint when it is ready to run again. Sending an unchanged definition leaves the discount untouched and publishes no webhook. A successful change publishes `discounts/update`. The response is the saved discount with its current `usage_count`, `usage_held_count` and `usage_summary`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13008,7 +13352,7 @@
           "type": "string"
         },
         "amounts": {
-          "description": "Fixed discount amounts keyed by currency code. Include the store's base currency; additional entries must be currencies enabled for the market. Each amount must fit that currency's minor-unit precision.",
+          "description": "Fixed discount amounts keyed by currency code. Include the store's base currency; additional entries must be currencies enabled for the market. Each amount must be greater than 0, at most money_amount_max, and fit that currency's minor-unit precision. A market currency without its own amount uses the base amount converted at the market's rate.",
           "type": [
             "object",
             "null"
@@ -13019,7 +13363,7 @@
           "type": "string"
         },
         "bundle_items": {
-          "description": "The products or variants and quantities required for one complete bundle. Provide between 2 and 20 different components.",
+          "description": "The products or variants and quantities required for one complete bundle. Provide between bundle_components_min and bundle_components_max different components. A `product` component matches any variant of that product; a `variant` component matches only that variant.",
           "items": {
             "type": "object"
           },
@@ -13029,7 +13373,7 @@
           ]
         },
         "bundle_max_sets": {
-          "description": "The maximum number of complete bundle sets discounted on one order. Use -1 for no limit.",
+          "description": "The maximum number of complete bundle sets discounted on one order. Send -1 or null for no limit; an unlimited bundle is returned as null.",
           "type": [
             "integer",
             "null"
@@ -13043,7 +13387,7 @@
           ]
         },
         "bundle_prices": {
-          "description": "The price of one complete bundle, keyed by currency code. Include the base currency for fixed-price bundles.",
+          "description": "The price of one complete bundle, keyed by currency code. Include the base currency for fixed-price bundles; other market currencies without an entry use the converted base price.",
           "type": [
             "object",
             "null"
@@ -13057,7 +13401,7 @@
           ]
         },
         "bxgy_buy_items": {
-          "description": "Simple products, exact variants, collections, or categories that can satisfy Buy X. Each item contains `item_type` (product, variant, collection, category) and string `item_id`. Each side is an independent union of targets; buy and reward quantities use distinct units.",
+          "description": "Simple products, exact variants, collections, or categories that can satisfy Buy X. Each item contains `item_type` (product, variant, collection, category) and string `item_id`. An item qualifies when it matches any target in the list. Bought and reward items are always different units, even when the two lists overlap.",
           "items": {
             "type": "object"
           },
@@ -13091,7 +13435,7 @@
           ]
         },
         "bxgy_get_type": {
-          "description": "Make reward items `free`, reduce their remaining value by a `percentage`, or deduct a `fixed` amount from each reward item.",
+          "description": "Make reward items `free`, reduce their remaining value by a `percentage`, or deduct a `fixed` amount from each reward item. The cheapest qualifying items are the rewards, whatever their order in the cart.",
           "type": [
             "string",
             "null"
@@ -13105,7 +13449,7 @@
           ]
         },
         "bxgy_max_uses": {
-          "description": "The maximum number of complete Buy X Get Y sets that may apply to one order.",
+          "description": "The maximum number of complete Buy X Get Y sets that may apply to one order: a whole number from bxgy_max_uses_min through bxgy_max_uses_max in the limits response. Omit it or send null for no per-order cap; unlimited_sentinel (-1) is not accepted here.",
           "type": [
             "integer",
             "null"
@@ -13122,7 +13466,7 @@
           ]
         },
         "code": {
-          "description": "Required for coupon activation. Codes are unique within the market and comparisons are case-insensitive.",
+          "description": "Required for coupon activation. Use letters A–Z, digits, hyphens and underscores, up to code_max_length characters; the code is stored in upper case. Codes are unique within the market and matched without regard to case.",
           "type": [
             "string",
             "null"
@@ -13165,14 +13509,14 @@
           ]
         },
         "exclude_sale_items": {
-          "description": "Skip items already on sale.",
+          "description": "Skip items already on sale. Only percentage and fixed-amount discounts accept true; other types reject it with DISCOUNT_TARGETS_FORBIDDEN.",
           "type": [
             "boolean",
             "null"
           ]
         },
         "first_order_only": {
-          "description": "Restrict to a customer's first order.",
+          "description": "Restrict to a customer's first order. Earlier paid, cash-on-delivery or refunded orders under the same account or the same email address (ignoring case) disqualify; test and cancelled orders do not. Guests are recognised by email. An order with neither an account nor an email does not qualify.",
           "type": [
             "boolean",
             "null"
@@ -13189,7 +13533,7 @@
           ]
         },
         "gift_mode": {
-          "description": "For free_gift: offer or auto_add.",
+          "description": "For free_gift: offer or auto_add. On create, omitted or null means offer; on update, omitted or null keeps the current mode.",
           "type": [
             "string",
             "null"
@@ -13211,21 +13555,21 @@
           "type": "string"
         },
         "max_discount": {
-          "description": "Limit the amount saved through a percentage discount, keyed by currency code.",
+          "description": "Cap the amount saved, keyed by currency code. Percentage, bundle and tiered discounts accept it; fixed-amount, Buy X Get Y and free gift discounts reject it with DISCOUNT_MAX_DISCOUNT_FORBIDDEN.",
           "type": [
             "object",
             "null"
           ]
         },
         "min_quantity": {
-          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage and fixed-amount discounts accept this condition; Buy X Get Y and bundle offers define their own quantities and reject it.",
+          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage, fixed-amount and free gift discounts accept this condition; Buy X Get Y, bundle and tiered discounts reject it with DISCOUNT_MIN_QUANTITY_FORBIDDEN.",
           "type": [
             "integer",
             "null"
           ]
         },
         "min_subtotal": {
-          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition.",
+          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y, bundle and tiered discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Items left out by the market's quantity-pricing setting never count. Every type accepts it.",
           "type": [
             "object",
             "null"
@@ -13236,7 +13580,7 @@
           "type": "string"
         },
         "per_customer_limit": {
-          "description": "The number of redemptions allowed for each customer. Use unlimited_sentinel for no limit, or a whole number from quantity_min through max_per_customer_limit in the limits response.",
+          "description": "The number of uses allowed for each customer. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_per_customer_limit in the limits response; an unlimited discount is returned as null. A customer is recognised by account or by email address, ignoring case, so guest orders count toward that email's limit; an order with neither is not checked. Orders over the limit are refused with DISCOUNT_CUSTOMER_LIMIT_REACHED.",
           "type": [
             "integer",
             "null"
@@ -13259,8 +13603,15 @@
             "null"
           ]
         },
+        "refund_restores_usage": {
+          "description": "Give a use back to usage_limit and per_customer_limit when an order that used this discount is fully refunded. The use is returned shortly after the refund, following the setting the discount has at that moment.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "show_in_cart": {
-          "description": "Allow the storefront to surface this coupon before checkout. This option is not used by automatic discounts.",
+          "description": "Allow the storefront to show this coupon before checkout. Coupon discounts only; sending true for an automatic discount returns DISCOUNT_TARGETS_FORBIDDEN.",
           "type": [
             "boolean",
             "null"
@@ -13281,7 +13632,7 @@
           ]
         },
         "tiers": {
-          "description": "For tiered: 1–10 ascending nonnegative min_subtotal thresholds in base currency and positive value amounts. Only the highest reached tier applies. Percentage values cannot exceed 100. Fixed savings can exceed the threshold but are capped at remaining eligible merchandise at checkout; merchandise never becomes negative.",
+          "description": "For tiered: 1–10 tiers with strictly ascending min_subtotal thresholds from 0 to money_amount_max, and positive values, in the base currency and its precision. Only the highest reached tier applies, chosen from the merchandise subtotal before any discount. Percentage values cannot exceed 100. Fixed savings can exceed the threshold but are capped at remaining eligible merchandise at checkout; merchandise never becomes negative. Other markets use the base amounts converted at the market's rate.",
           "items": {
             "type": "object"
           },
@@ -13295,7 +13646,7 @@
           "type": "string"
         },
         "usage_limit": {
-          "description": "The total number of redemptions allowed. Use unlimited_sentinel for no limit, or a whole number from quantity_min through max_usage_limit in the limits response.",
+          "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit.",
           "type": [
             "integer",
             "null"
@@ -13406,7 +13757,7 @@
     "api_key": "discounts.enable",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}/enable",
-    "description": "Allow a disabled discount to follow its schedule again. After enabling, the returned status is `active`, `scheduled`, or `expired` according to the saved dates. Enabling a discount that is already enabled changes nothing. A successful state change publishes `discounts/update`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts/{discountId}/enable. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Allow a disabled discount to follow its schedule again. After enabling, the returned status is `active`, `scheduled`, or `expired` according to the saved dates. Enabling a discount that is already enabled changes nothing. The response is the discount with its current `usage_count`, `usage_held_count` and `usage_summary`. A successful state change publishes `discounts/update`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts/{discountId}/enable. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13436,7 +13787,7 @@
     "api_key": "discounts.disable",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}/disable",
-    "description": "Pause a discount without deleting its configuration. A disabled discount does not apply to new orders and remains disabled until it is enabled explicitly. Disabling a discount that is already disabled changes nothing. A successful state change publishes `discounts/update`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts/{discountId}/disable. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Pause a discount without deleting its configuration. A disabled discount does not apply to new orders and remains disabled until it is enabled explicitly. Disabling a discount that is already disabled changes nothing. The response is the discount with its current `usage_count`, `usage_held_count` and `usage_summary`. A successful state change publishes `discounts/update`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts/{discountId}/disable. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13466,7 +13817,7 @@
     "api_key": "discounts.settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discount-settings",
-    "description": "Read how discounts are allowed to combine in this market. In `single` mode, one eligible discount is selected. In `stack` mode, compatible offers may apply together, subject to the coupon and automatic-discount settings. Buy X Get Y and bundle offers reserve the units in each completed set, so another claiming offer cannot reuse them. Product-targeted savings apply before order-wide savings, and later percentages use the amount still remaining on each line. Read these settings before creating discounts so your integration knows whether a new offer will combine with existing ones. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discount-settings. Only the connected store is accessible.",
+    "description": "Read how discounts are allowed to combine in this market. In `single` mode, one discount applies: every eligible automatic discount and every entered code are ranked together by `priority_mode`, and the first one wins. In `stack` mode, every eligible automatic discount applies, plus entered codes in ranked order up to `coupon_limit`; with `auto_coupon_combine` false, codes apply only when no automatic discount does. `best_for_customer` ranks by each discount's own saving; `manual` ranks by priority number, lowest first. Buy X Get Y, bundle and claimed gift offers use specific cart units, and two of them cannot use the same units: the higher-ranked keeps them and the other does not apply at all. Offers apply in three steps (Buy X Get Y, bundle and gift; then product, collection and category discounts; then order-wide discounts), and each uses the amount left after the earlier ones. With `apply_to_quantity_priced` false, quantity-priced items get no discount and do not count toward minimum spend, minimum quantity or tiers. Settings take effect the next time a cart or checkout is priced; placed orders keep their discounts. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discount-settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13490,26 +13841,26 @@
     "api_key": "discounts.settings.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/discount-settings",
-    "description": "Change how discounts combine in this market. Send only the settings you want to change; omitted settings keep their current values. `stacking_mode` accepts `single` or `stack`, and `priority_mode` accepts `best_for_customer` or `manual`. `coupon_limit` must be at least 1 and no more than the platform maximum; a request above the maximum is rejected with `MARKET_COUPON_LIMIT_OUT_OF_RANGE`, and the error states the maximum. An unchanged request publishes no event; a successful change publishes `discount_settings/update` with the current combination settings. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/discount-settings. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change how discounts combine in this market. Send only the settings you want to change; omitted or null settings keep their current values. `stacking_mode` accepts `single` or `stack`, and `priority_mode` accepts `best_for_customer` or `manual`. `coupon_limit` must be a whole number from 1 to the platform maximum, currently 5, and is checked in either mode; a value outside that range is rejected with `MARKET_COUPON_LIMIT_OUT_OF_RANGE`, and the error states the maximum. A new market starts with `single`, `best_for_customer`, 1, true and false. An unchanged request publishes no event; a successful change publishes `discount_settings/update` with all five settings. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/discount-settings. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "apply_to_quantity_priced": {
-          "description": "Allow items that already received quantity pricing to receive merchandise discounts as well.",
+          "description": "When false, items with quantity pricing get no discount and do not count toward minimum spend, minimum quantity or tiers. When true, they are discounted like any other item, on top of their quantity price.",
           "type": [
             "boolean",
             "null"
           ]
         },
         "auto_coupon_combine": {
-          "description": "Allow coupons and automatic discounts to apply together in stack mode.",
+          "description": "In stack mode, true lets codes apply alongside automatic discounts; false lets codes apply only when no automatic discount applies. No effect in single mode.",
           "type": [
             "boolean",
             "null"
           ]
         },
         "coupon_limit": {
-          "description": "The maximum number of coupon codes that may apply to one order in stack mode.",
+          "description": "The maximum number of codes that may apply to one order in stack mode, from 1 to the platform maximum (currently 5). Automatic discounts do not count.",
           "type": [
             "integer",
             "null"
@@ -13521,14 +13872,14 @@
           "type": "string"
         },
         "priority_mode": {
-          "description": "Use `best_for_customer` to choose the greatest saving, or `manual` to choose the lower priority number when offers compete.",
+          "description": "How discounts are ranked: `best_for_customer` by each discount's own saving, `manual` by priority number, lowest first. The ranking picks the single discount, fills the coupon limit, and decides which offer keeps items two offers both need. It ranks discounts one by one rather than searching for the largest combined saving.",
           "type": [
             "string",
             "null"
           ]
         },
         "stacking_mode": {
-          "description": "Use `single` to select one discount or `stack` to allow compatible discounts to apply together.",
+          "description": "Use `single` to apply one discount per order, chosen by `priority_mode`, or `stack` to let every eligible automatic discount and up to `coupon_limit` codes apply together.",
           "type": [
             "string",
             "null"

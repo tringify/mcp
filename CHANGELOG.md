@@ -1,5 +1,14 @@
 # Changelog
 
+## Catalog lists, brands and vendors
+
+- Added `get_brand_limits`, `get_vendor_limits`, `search_brands`, `search_vendors`, `list_brand_metafields`, `list_vendor_metafields`, `set_brand_metafield` and `set_vendor_metafield`.
+- Brand, vendor, category and attribute lists hold at most 100 rows; `list_attributes` returns a 6-option preview unless `include` is `options` (replaces `summary`).
+- Category, attribute, brand and vendor creates accept `idempotency_key`.
+- Results are returned once as JSON text; a result over 256 KiB returns `LIST_RESPONSE_TOO_LARGE`, so repeat the call with a lower `limit`.
+- Regenerated the tool inventory and machine-readable catalog from the live catalog.
+
+
 ## Currencies and reference data
 
 - Documented the 14 Currencies tools and their `store:settings.currencies:read` / `store:settings.currencies:write` permissions.
