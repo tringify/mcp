@@ -258,6 +258,12 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `update_blog_list_seo` | `PUT /api/2025-01/blog/list-seo` | store:blog:write |
 | `get_blog_list_seo_translation` | `GET /api/2025-01/blog/list-seo/translations/{locale}` | store:blog:read, store:settings.languages:read |
 | `set_blog_list_seo_translation` | `PUT /api/2025-01/blog/list-seo/translations/{locale}` | store:blog:write, store:settings.languages:write |
+| `get_list_page_seo` | `GET /api/2025-01/list-page-seo/{pageType}` | store:products:read |
+| `update_list_page_seo` | `PUT /api/2025-01/list-page-seo/{pageType}` | store:products:write |
+| `get_list_page_seo_translation` | `GET /api/2025-01/list-page-seo/{pageType}/translations/{locale}` | store:products:read, store:settings.languages:read |
+| `set_list_page_seo_translation` | `PUT /api/2025-01/list-page-seo/{pageType}/translations/{locale}` | store:products:write, store:settings.languages:write |
+| `get_list_page_seo_translations` | `GET /api/2025-01/list-page-seo/translations/{locale}` | store:products:read, store:settings.languages:read |
+| `set_list_page_seo_translations` | `PUT /api/2025-01/list-page-seo/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `list_languages` | `GET /api/2025-01/languages` | store:settings.languages:read |
 | `set_languages` | `PUT /api/2025-01/languages` | store:settings.languages:write |
 | `set_default_language` | `PUT /api/2025-01/languages/default` | store:settings.languages:write |
