@@ -9,6 +9,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_product` | `GET /api/2025-01/products/{id}` | store:products:read |
 | `get_product_quantity_pricing` | `GET /api/2025-01/products/{id}/quantity-pricing` | store:products:read |
 | `list_product_variants` | `GET /api/2025-01/products/{id}/variants` | store:products:read |
+| `list_variants` | `GET /api/2025-01/variants` | store:products:read |
 | `get_product_variant` | `GET /api/2025-01/products/{id}/variants/{variantId}` | store:products:read |
 | `create_product` | `POST /api/2025-01/products` | store:products:write |
 | `update_product` | `PUT /api/2025-01/products/{id}` | store:products:write |
@@ -206,8 +207,12 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `set_tag_translation` | `PUT /api/2025-01/tags/{id}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `get_tag_translations` | `GET /api/2025-01/tags/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_tag_translations` | `PUT /api/2025-01/tags/translations/{locale}` | store:products:write, store:settings.languages:write |
+| `get_brand_limits` | `GET /api/2025-01/brands/limits` | store:products:read |
 | `list_brands` | `GET /api/2025-01/brands` | store:products:read |
+| `search_brands` | `GET /api/2025-01/brands/search` | store:products:read |
 | `get_brand` | `GET /api/2025-01/brands/{id}` | store:products:read |
+| `list_brand_metafields` | `GET /api/2025-01/brands/{id}/metafields` | store:products:read |
+| `set_brand_metafield` | `PUT /api/2025-01/brands/{id}/metafields` | store:products:write |
 | `get_brand_metafield_translation` | `GET /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_brand_metafield_translation` | `PUT /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `create_brand` | `POST /api/2025-01/brands` | store:products:write |
@@ -217,8 +222,12 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `set_brand_translation` | `PUT /api/2025-01/brands/{id}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `get_brand_translations` | `GET /api/2025-01/brands/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_brand_translations` | `PUT /api/2025-01/brands/translations/{locale}` | store:products:write, store:settings.languages:write |
+| `get_vendor_limits` | `GET /api/2025-01/vendors/limits` | store:products:read |
 | `list_vendors` | `GET /api/2025-01/vendors` | store:products:read |
+| `search_vendors` | `GET /api/2025-01/vendors/search` | store:products:read |
 | `get_vendor` | `GET /api/2025-01/vendors/{id}` | store:products:read |
+| `list_vendor_metafields` | `GET /api/2025-01/vendors/{id}/metafields` | store:products:read |
+| `set_vendor_metafield` | `PUT /api/2025-01/vendors/{id}/metafields` | store:products:write |
 | `get_vendor_metafield_translation` | `GET /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_vendor_metafield_translation` | `PUT /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `create_vendor` | `POST /api/2025-01/vendors` | store:products:write |
