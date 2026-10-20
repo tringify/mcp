@@ -5134,7 +5134,7 @@
           "type": "string"
         },
         "limit": {
-          "description": "Page size.",
+          "description": "Page size, up to `list_max_limit` from the Blog Post limits.",
           "type": "integer"
         },
         "page": {
@@ -6036,7 +6036,7 @@
       "additionalProperties": false,
       "properties": {
         "limit": {
-          "description": "Page size.",
+          "description": "Page size, up to `list_max_limit` from the Blog Category limits.",
           "type": "integer"
         },
         "page": {
@@ -6617,7 +6617,7 @@
       "additionalProperties": false,
       "properties": {
         "limit": {
-          "description": "Page size.",
+          "description": "Page size, up to `list_max_limit` from the Blog Tag limits.",
           "type": "integer"
         },
         "page": {
@@ -6976,7 +6976,7 @@
       "additionalProperties": false,
       "properties": {
         "limit": {
-          "description": "Page size.",
+          "description": "Page size, up to `list_max_limit` from the Blog Author limits.",
           "type": "integer"
         },
         "page": {
@@ -7225,7 +7225,7 @@
       "additionalProperties": false,
       "properties": {
         "limit": {
-          "description": "Page size.",
+          "description": "Page size, up to `list_max_limit` from the Blog Comment limits.",
           "type": "integer"
         },
         "page": {
@@ -9829,10 +9829,262 @@
     "site_assets_scope": "store:online_store.site_assets:write"
   },
   {
+    "api_key": "orders.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/orders",
+    "description": "Create an operational order. Order numbers are assigned automatically. Supplying order_number or order_number_seq, including null or an empty value, returns ORDER_NUMBER_READ_ONLY (400). Use external_order_id for the source system’s identifier. Creates an order through the same pricing, tax, duty, inventory, fulfillment, audit, and webhook pipeline as Store Admin. All create requests must send `Idempotency-Key`. App tokens must also send a stable `external_order_id`. A store-admin token scopes its retry key to that user and store. Repeating the same request returns the existing order; reusing the key for different details returns 409. Sales-channel attribution is derived from the app installation. Ordinary apps and store-admin tokens create channel-less orders. Do not send channel or creator fields. checkout_id, source_cart_id and source_cart_version_id are checkout-owned and rejected here. Historical CSV imports use a separate archival workflow and do not trigger operational order webhooks, inventory, fulfillment, or customer messages. The sample request creates an unpaid custom-item order. Replace the customer ID and address with values from your store. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "billing_address": {
+          "description": "Billing address snapshot. Its country selects the market when no shipping country is present.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "checkout_fee_overrides": {
+          "description": "Map of available checkout fee IDs to non-negative decimal-string amounts. Requires the fees override scope. Amounts must fit the order currency scale.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "cod_fee_override": {
+          "description": "Non-negative COD fee amount in the order currency; requires the cod override scope and an eligible COD order."
+        },
+        "coupon_codes": {
+          "description": "Coupon codes to evaluate through the pricing engine. A free-gift offer prices its gift at zero only when the gift is sent as an ordinary item line (product_id and, for a variant, variant_id), up to the offered quantity; extra units are charged.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "currency_code": {
+          "description": "Requested presentment currency. It must match the resolved market for the address country.",
+          "type": "string"
+        },
+        "customer_email": {
+          "description": "Customer email snapshot. Identity and current customer details resolve from customer_id.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "customer_first_name": {
+          "description": "Optional first-name snapshot; the existing customer record is authoritative.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "customer_id": {
+          "description": "Existing customer id in this store. Operational creation requires this customer; create the customer first when necessary. Customer snapshot fields resolve from this record.",
+          "type": "string"
+        },
+        "customer_last_name": {
+          "description": "Optional last-name snapshot; the existing customer record is authoritative.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "customer_note": {
+          "description": "Customer note stored on the order.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "customer_phone": {
+          "description": "Optional phone snapshot; the existing customer record is authoritative.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "customer_tax_exempt": {
+          "description": "Explicit staff approval for this order. Applies only in an enabled zone with effect=exempt and records source staff_order. Otherwise the merchant's customer tax_exempt flag supplies customer_flag. No live registration or exemption check is performed.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "customer_tax_id": {
+          "description": "Tax ID for the resolved tax zone. Uses the shared offline format/check-digit validation and normalization. Invalid values return TAX_ID_INVALID with field customer_tax_id. Does not grant exemption. Omit to use the customer's saved ID when its type matches the zone.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "duty_override": {
+          "description": "Non-negative duty amount in the order currency; requires the duties override scope. Currency precision is enforced."
+        },
+        "excluded_discount_ids": {
+          "description": "Automatic discounts to omit, up to 250 identifiers. These exclusions apply when the order is priced and saved.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "expected_total": {
+          "description": "Optional reviewed grand total in the order currency, before Store Credit or gift-card payment. Creation recalculates current prices and returns ORDER_TOTAL_CHANGED (409) if the total has changed. Review the new total before submitting a new request."
+        },
+        "external_order_id": {
+          "description": "Stable source order id. Required for app tokens; omit for a store-admin token creating a manual order.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "idempotency_key": {
+          "description": "Stable key for this exact order write. Reuse only for the same request after an uncertain response.",
+          "maxLength": 120,
+          "minLength": 1,
+          "type": "string"
+        },
+        "items": {
+          "description": "Order lines. product_id and variant_id are integer JSON numbers, not strings. A variable product requires an exact variant. Catalog prices and snapshots are resolved at creation; supplied prices cannot override a catalog price. For a custom line omit both IDs, provide title, quantity, unit_price, taxable and requires_shipping, and provide weight with weight_unit (g, kg, oz or lb), harmonized_code and country_of_origin when needed by shipping or duty rules. Custom unit_price is a non-negative plain decimal string, including zero, with no currency symbol, grouping or exponent. Non-zero digits beyond the currency scale return ORDER_AMOUNT_TOO_PRECISE. Each line may include manual_discount with type fixed or percentage, positive decimal-string value and optional name (100 characters). Percentage values are capped at 100 with at most two decimal places. Fixed values fit the currency scale.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "locale": {
+          "description": "Order language, such as fr or en-GB. It must be a language the store has enabled; customer emails and the payment page use it. Defaults to the store language.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "manual_discount": {
+          "description": "Order-level discount: type fixed or percentage, positive decimal-string value, and optional name (100 characters). Percentages allow at most 100 and two decimal places; fixed amounts use the order currency scale. Savings cannot exceed eligible merchandise.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "note": {
+          "description": "Merchant-visible internal note.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "order_confirmation": {
+          "description": "Order confirmation only: email and message are independent booleans, each defaulting to false. For example {\"email\":true,\"message\":false}. Null, non-boolean values and unknown keys are rejected. Choices are saved with the order and respected when payment completes. True requests sending subject to store notification settings, customer contact, template, sender/provider and allowance. Omission does not request confirmation. Other order notifications use the merchant’s independent event controls. Successful refunds distinguish partial from full repayment of captured funds. Cancellation does not move money and selects one cancellation notification based on completed refunds at cancellation; a refund completed later can notify separately. Pending or failed provider refunds do not send completed-refund notifications. Customer-facing refund amounts preserve settlement decimals in the order currency; API money remains exact decimal strings. Order history records the request and subsequent sending outcomes.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "override_scopes": {
+          "description": "Independent boolean exceptions: discounts, limits, cod, fees and duties. When this object is present it replaces legacy admin_override behavior; omitted members are false. Overriding one scope never enables another. The discounts scope lifts the market stacking rules (single mode, coupon limit, automatic-and-code combination) up to the platform code limit, but two offers still cannot use the same item units: a bundle, buy X get Y or free-gift offer whose items are already claimed by a higher-ranked offer does not apply. COD fee overrides do not bypass destination eligibility.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "payment": {
+          "description": "Initial payment record, not a request to charge a provider. Members: method (required; lowercase identifier such as card, upi, cash, bank_transfer or cod), status (required; pending, authorized, captured, failed, refunded or partially_refunded), provider (the gateway or channel that took the money, for example stripe or marketplace), provider_payment_id (that gateway's payment or transaction reference), currency_code (must match the order), amount, card_brand, card_last4, cash_given, cash_change, exchange_rate, processing_fee and processing_fee_currency (all decimals are plain strings). For operational creation, amount is replaced by the full authoritative order total. Use captured only when payment has actually been received. An absent payment leaves the balance unpaid. COD must be pending, and a pending COD record does not mark the order paid. A payment record cannot be combined with send_payment_link, or with store_credit_amount unless it is COD. On development and transfer stores every order is a test order and recorded payments are refused, except an app token's own checkout recording a payment that names provider (not manual) and provider_payment_id; cash on delivery is always refused there.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "selected_optional_fee_ids": {
+          "description": "Currently available optional checkout fees to apply. Invalid or unavailable selections are rejected.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "send_payment_link": {
+          "description": "Email the customer a link to pay this order on the store's hosted payment page, through the store's payment providers for the order's market (test providers on development and transfer stores). Requires a customer email and at least one payment provider for that market. Cannot be combined with payment.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "shipping_address": {
+          "description": "Shipping address snapshot. Its country selects the market when present.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "shipping_amount": {
+          "description": "Final shipping charge in currency_code. Used only when shipping_override is true."
+        },
+        "shipping_method": {
+          "description": "Customer-facing shipping method name. Required when shipping_override is true.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shipping_method_id": {
+          "description": "A shipping option previously resolved for these lines and this address. Required for shippable lines unless an external shipping override is supplied.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shipping_override": {
+          "description": "Set true when the connected sales channel supplies the final shipping charge instead of selecting a store shipping option.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "status_slug": {
+          "description": "Optional configured workflow status. New operational orders cannot start cancelled. Workflow labels do not set payment or fulfillment state.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "store_credit_amount": {
+          "description": "Store Credit payment in the order currency. Checked against the live customer balance, order total and merchant per-order allowance, then reserved atomically. It does not reduce the taxable base. Any remaining amount remains unpaid. It cannot be combined with a non-COD payment record."
+        },
+        "tags": {
+          "description": "Order tag names to assign.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "customer_id",
+        "currency_code",
+        "items",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "create_order",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
     "api_key": "orders.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders/{id}",
-    "description": "Fetch one order with fulfillment plans. Order numbers are assigned using the merchant’s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` is collected for verification and never proves an exemption by itself; `tax_exempt` and `invoice_only` are server-computed outcomes. When `duty_collection_mode` is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`; when it is `pay_on_delivery`, the amount is an informational estimate outside `grand_total`. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token’s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
+    "description": "Fetch one order with fulfillment plans. Order numbers are assigned using the merchant’s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` and `customer_tax_id_type` record the normalized, offline-validated ID and never prove registration or exemption. `tax_exemption_source` is customer_flag, staff_order or none, and `tax_id_state_mismatch` flags a GSTIN whose state differs from the Indian tax address. Merchant-approved customers use their stored tax ID when its type matches the zone; `tax_exempt` and `invoice_only` are server-computed outcomes. When `duty_collection_mode` is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`; when it is `pay_on_delivery`, the amount is an informational estimate outside `grand_total`. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token’s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Each entry in `discounts` lists its `allocations`: the part of that discount that reduced each order item (`order_item_id`, the `quantity` of units it reduced, `amount`, and `is_free` when it made those units free). A discount's allocations sum to its amount and an item's allocations sum to its `discount_amount`; an order-level manual discount is split in proportion to what each item has left after the other discounts. Quantity edits preserve discount shares consumed or reserved by refunds and prorate only the remaining aggregate discount over the remaining units; the saved allocations and pricing totals reconcile to those shares. Orders saved without pricing evidence have none. Each refund item reports `amount`, the refunded units at the item's unit price less their share of its discounts, and `discount_allocations`, each discount's share: the remaining aggregate line discount is prorated over the remaining units and rounded once, then distributed between discounts with each share capped at its remaining allocation. Successful and pending refunds consume shares; failed provider refunds release them. The final available units receive the unconsumed discount. Item amounts always subtract the authoritative line discount, even if historical per-discount allocations are unavailable. Historical refund breakdowns are reconstructed deterministically from the saved line allocations. The refund's own amount is what was returned and can differ from its items. An item that does not require shipping has no fulfillment: its `fulfillment_status` becomes `fulfilled` and `fulfilled_quantity` equals its quantity when captured payments cover the order total plus any returned surplus and the order is not cancelled. Refund status alone never fulfills a line. The order's `fulfillment_status` counts every item, so an unpaid order of only such items is `unfulfilled`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10107,7 +10359,7 @@
           "type": "string"
         },
         "idempotency_key": {
-          "description": "Stable key for this exact edit. Reuse it after an uncertain response.",
+          "description": "Stable key for this exact order write. Reuse only for the same request after an uncertain response.",
           "maxLength": 120,
           "minLength": 1,
           "type": "string"
@@ -10169,6 +10421,321 @@
     "name": "apply_order_edit",
     "scopes": [
       "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "customers.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/customers/limits",
+    "description": "Get Customer limits. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/customers/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_customer_limits",
+    "scopes": [
+      "store:customers:read"
+    ]
+  },
+  {
+    "api_key": "customers.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/customers",
+    "description": "List customers for the store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/customers. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "accepts_marketing": {
+          "description": "Filter by active email marketing consent.",
+          "type": "boolean"
+        },
+        "created_after": {
+          "description": "Inclusive lower bound: an RFC 3339 timestamp or YYYY-MM-DD resolved at the start of that day in the store timezone.",
+          "type": "string"
+        },
+        "created_before": {
+          "description": "Inclusive upper bound: an RFC 3339 timestamp or YYYY-MM-DD including the entire day in the store timezone, including daylight-saving changes.",
+          "type": "string"
+        },
+        "cursor": {
+          "description": "Opaque cursor returned by the previous list response.",
+          "type": "string"
+        },
+        "email_verified": {
+          "description": "Filter by email verification state.",
+          "type": "boolean"
+        },
+        "has_phone": {
+          "description": "Filter by whether a phone number is present.",
+          "type": "boolean"
+        },
+        "ids": {
+          "description": "Comma-separated customer IDs, up to the list maximum from Customer limits; returns only those customers. Use it to fetch a known set in one call instead of one call per customer. IDs that do not exist are left out.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "phone_verified": {
+          "description": "Filter by phone verification state.",
+          "type": "boolean"
+        },
+        "search": {
+          "description": "Search email, name, or phone.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort option returned by the Customer limits endpoint.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Filter by `active` or `disabled`.",
+          "type": "string"
+        },
+        "tag": {
+          "description": "Filter by Customer Tag name.",
+          "type": "string"
+        },
+        "text_marketing": {
+          "description": "Filter by active SMS or WhatsApp marketing consent for the customer's phone number. To reach every customer who agreed to marketing, list with accepts_marketing=true and then with text_marketing=true; a customer can appear in both.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_customers",
+    "scopes": [
+      "store:customers:read"
+    ]
+  },
+  {
+    "api_key": "customers.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/customers/{id}",
+    "description": "Get one customer. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/customers/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Customer UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_customer",
+    "scopes": [
+      "store:customers:read"
+    ]
+  },
+  {
+    "api_key": "customers.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/customers",
+    "description": "Create a customer. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/customers. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "accepts_marketing": {
+          "description": "Request email marketing consent. Double opt-in may require confirmation before the response becomes true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "date_of_birth": {
+          "description": "Date of birth in YYYY-MM-DD format.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email": {
+          "description": "Customer email address.",
+          "type": "string"
+        },
+        "first_name": {
+          "description": "First name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "last_name": {
+          "description": "Last name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "phone": {
+          "description": "Optional contact number. Use international +calling-code format, or supply phone_country_code for a national number. Saved in E.164 format. Length and number validity both apply; see [Phone numbers and country codes](/store-api/reference/phone-numbers).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "phone_country_code": {
+          "description": "Two-letter country/region hint for a national phone number, such as KR; not a calling code such as +82. An international number determines its own region. See [Phone numbers and country codes](/store-api/reference/phone-numbers).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "send_welcome_email": {
+          "description": "Request the configured welcome email for this new customer. Defaults to false. Does not verify email or change marketing consent. Not accepted on update.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "tax_exempt": {
+          "description": "Merchant-approved exemption. Defaults to false. Signed-in customers are exempt only in zones with effect=exempt. Tringify checks formats only; the merchant is responsible for approving exempt customers.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "tax_id": {
+          "description": "Stored tax ID, up to 100 characters after uppercase normalization and removal of spaces, dots and dashes. Supply tax_id_type with a new ID; clear both with empty strings. Format/check-digit checks are offline and do not verify registration. Custom customer IDs are free text; the matched zone's optional pattern is applied at checkout.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tax_id_type": {
+          "description": "eu_vat, uk_vat, gstin, abn, gst_hst, ein or custom. Required when tax_id is nonempty. Omitted fields on update remain unchanged.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "text_marketing": {
+          "description": "Record SMS and WhatsApp marketing consent for the customer's phone number. Requires phone. Only send true when the customer agreed to marketing texts.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "type": "object"
+    },
+    "name": "create_customer",
+    "scopes": [
+      "store:customers:write"
+    ]
+  },
+  {
+    "api_key": "customers.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/customers/{id}",
+    "description": "Update a customer. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/customers/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "accepts_marketing": {
+          "description": "Request email marketing consent with true, or cancel active or pending consent with false. Double opt-in requires confirmation before true is reflected in responses.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "date_of_birth": {
+          "description": "Date of birth in YYYY-MM-DD format. Send an empty string to clear it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "first_name": {
+          "description": "First name. Send an empty string to clear it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Customer UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "last_name": {
+          "description": "Last name. Send an empty string to clear it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "note": {
+          "description": "Merchant note. Send an empty string to clear it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "Customer status: `active` or `disabled`. Disabled customers cannot sign in or use authenticated account access. Profiles, addresses, and orders remain; status changes do not cancel orders or change marketing consent. Re-enable to restore account access.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tags": {
+          "description": "Complete Customer Tag name set.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "tax_exempt": {
+          "description": "Merchant-approved exemption. Defaults to false. Signed-in customers are exempt only in zones with effect=exempt. Tringify checks formats only; the merchant is responsible for approving exempt customers.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "tax_id": {
+          "description": "Stored tax ID, up to 100 characters after uppercase normalization and removal of spaces, dots and dashes. Supply tax_id_type with a new ID; clear both with empty strings. Format/check-digit checks are offline and do not verify registration. Custom customer IDs are free text; the matched zone's optional pattern is applied at checkout.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tax_id_type": {
+          "description": "eu_vat, uk_vat, gstin, abn, gst_hst, ein or custom. Required when tax_id is nonempty. Omitted fields on update remain unchanged.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "text_marketing": {
+          "description": "Give (true) or withdraw (false) SMS and WhatsApp marketing consent for the customer's phone number on both channels. Requires a phone number on the customer. To change one channel, use the text marketing consents endpoint.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_customer",
+    "scopes": [
+      "store:customers:write"
     ]
   },
   {
@@ -12482,7 +13049,7 @@
     "api_key": "tax-zones.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/tax-zones",
-    "description": "Create a tax zone in a market. Creates a tax zone. `name` is required and unique within the market. A regular zone needs at least one country or subdivision; every country must belong to the market, every subdivision must be a known ISO subdivision belonging to a selected country, and duplicate subdivision claims or duplicate whole-country claims are rejected. A whole-country zone with an empty `subdivisions` array can coexist with state-specific zones: state matches win, then the country zone covers the rest. For example, a zone with `countries: [\"IN\"]` and `subdivisions: [\"IN-UP\"]` handles Uttar Pradesh; a second zone with `countries: [\"IN\"]` and `subdivisions: []` handles the rest of India. Only the matching zone’s rates apply. Setting `is_default` instead creates the market's catch-all zone for unmatched addresses. The optional `tax_exemption` object sets the business treatment: `exempt` removes tax only for a buyer already verified as tax exempt, and `invoice_only` keeps tax and marks the order for a business invoice when such a buyer, or any buyer who enters a tax ID, checks out. Fires `tax_zones/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/tax-zones. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a tax zone in a market. Creates a tax zone. `name` is required and unique within the market. A regular zone needs at least one country or subdivision; every country must belong to the market, every subdivision must be a known ISO subdivision belonging to a selected country, and duplicate subdivision claims or duplicate whole-country claims are rejected. A whole-country zone with an empty `subdivisions` array can coexist with state-specific zones: state matches win, then the country zone covers the rest. For example, a zone with `countries: [\"IN\"]` and `subdivisions: [\"IN-UP\"]` handles Uttar Pradesh; a second zone with `countries: [\"IN\"]` and `subdivisions: []` handles the rest of India. Only the matching zone’s rates apply. Setting `is_default` instead creates the market's catch-all zone for unmatched addresses. The optional `tax_exemption` object sets the business treatment: `exempt` removes tax only for a buyer marked tax_exempt by the merchant, and `invoice_only` keeps tax and marks the order for a business invoice when such a buyer, or any buyer who enters a tax ID, checks out. Fires `tax_zones/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/tax-zones. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -12526,7 +13093,7 @@
           ]
         },
         "tax_exemption": {
-          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, custom_label, custom_placeholder}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst`, `ein`, and `custom`. `effect` is `exempt` (charge 0% tax, only for a buyer already verified as tax exempt) or `invoice_only` (keep tax and mark the order for a business invoice, for a verified exempt buyer or any buyer who enters a tax ID at checkout). A tax ID never removes tax by itself. To turn the treatment off, send `{\"enabled\": false}`; leaving `tax_exemption` out keeps the saved treatment. `checkout_text` is limited to 100 characters. For `custom`, `custom_label` is required and limited to 50 characters; `custom_placeholder` is optional and limited to 50 characters.",
+          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, custom_label, custom_placeholder, custom_pattern, custom_example, translations}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst`, `ein`, and `custom`. `effect` is `exempt` (charge 0% tax, only for a buyer marked tax_exempt by the merchant) or `invoice_only` (keep tax and mark the order for a business invoice, for a merchant-approved exempt customer or any buyer who enters a tax ID at checkout). A tax ID never removes tax by itself, including in an exempt zone: tax is charged and invoice_only is recorded. Tringify performs offline format and check-digit checks only, with no live registration or exemption verification; merchants are responsible for tax settings and exemption approvals. Types must fit at least one zone country (market country for a default zone): eu_vat in EU countries, uk_vat in GB, gstin in IN, abn in AU, gst_hst in CA, ein in US, custom anywhere. Existing mismatches are returned as tax_exemption.type_mismatch=true without modifying stored settings; saving such a zone is refused. To turn the treatment off, send `{\"enabled\": false}`; leaving `tax_exemption` out keeps the saved treatment. `checkout_text` is limited to 100 characters. For `custom`, `custom_label` is required and limited to 50 characters; `custom_placeholder` is optional and limited to 50 characters. custom_pattern is optional RE2, at most 256 UTF-8 bytes, matched against the entire normalized ID; no pattern permits free text. custom_example is optional, at most 100 characters, and must pass the pattern. translations maps en/de/es/fr/it to custom_label, custom_placeholder and checkout_text with the same limits. Built-in labels use checkout copy translations. Values are uppercased and spaces, dots and dashes removed before storing. EU VAT requires an EU country prefix (EL for Greece); UK VAT uses GB with 9 or 12 digits and mod-97/9755 checks; GSTIN checks 15 characters, state 01-38/97/99, PAN shape and base-36 checksum; ABN checks 11 digits with weighted modulus 89; GST/HST requires a 9-digit BN plus RT and four account digits; EIN accepts NN-NNNNNNN. A valid GSTIN with a different Indian tax-address state is accepted and records tax_id_state_mismatch=true on the order.",
           "type": [
             "object",
             "null"
@@ -12622,7 +13189,7 @@
           ]
         },
         "tax_exemption": {
-          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, custom_label, custom_placeholder}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst`, `ein`, and `custom`. `effect` is `exempt` (charge 0% tax, only for a buyer already verified as tax exempt) or `invoice_only` (keep tax and mark the order for a business invoice, for a verified exempt buyer or any buyer who enters a tax ID at checkout). A tax ID never removes tax by itself. To turn the treatment off, send `{\"enabled\": false}`; leaving `tax_exemption` out keeps the saved treatment. `checkout_text` is limited to 100 characters. For `custom`, `custom_label` is required and limited to 50 characters; `custom_placeholder` is optional and limited to 50 characters.",
+          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, custom_label, custom_placeholder, custom_pattern, custom_example, translations}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst`, `ein`, and `custom`. `effect` is `exempt` (charge 0% tax, only for a buyer marked tax_exempt by the merchant) or `invoice_only` (keep tax and mark the order for a business invoice, for a merchant-approved exempt customer or any buyer who enters a tax ID at checkout). A tax ID never removes tax by itself, including in an exempt zone: tax is charged and invoice_only is recorded. Tringify performs offline format and check-digit checks only, with no live registration or exemption verification; merchants are responsible for tax settings and exemption approvals. Types must fit at least one zone country (market country for a default zone): eu_vat in EU countries, uk_vat in GB, gstin in IN, abn in AU, gst_hst in CA, ein in US, custom anywhere. Existing mismatches are returned as tax_exemption.type_mismatch=true without modifying stored settings; saving such a zone is refused. To turn the treatment off, send `{\"enabled\": false}`; leaving `tax_exemption` out keeps the saved treatment. `checkout_text` is limited to 100 characters. For `custom`, `custom_label` is required and limited to 50 characters; `custom_placeholder` is optional and limited to 50 characters. custom_pattern is optional RE2, at most 256 UTF-8 bytes, matched against the entire normalized ID; no pattern permits free text. custom_example is optional, at most 100 characters, and must pass the pattern. translations maps en/de/es/fr/it to custom_label, custom_placeholder and checkout_text with the same limits. Built-in labels use checkout copy translations. Values are uppercased and spaces, dots and dashes removed before storing. EU VAT requires an EU country prefix (EL for Greece); UK VAT uses GB with 9 or 12 digits and mod-97/9755 checks; GSTIN checks 15 characters, state 01-38/97/99, PAN shape and base-36 checksum; ABN checks 11 digits with weighted modulus 89; GST/HST requires a 9-digit BN plus RT and four account digits; EIN accepts NN-NNNNNNN. A valid GSTIN with a different Indian tax-address state is accepted and records tax_id_state_mismatch=true on the order.",
           "type": [
             "object",
             "null"
@@ -13379,7 +13946,7 @@
           ]
         },
         "bxgy_get_items": {
-          "description": "Simple products, exact variants, collections, or categories that can be rewarded as Get Y, independently of Buy X targets. Whole variable products cannot be saved as product targets; select their exact variants.",
+          "description": "Simple products, exact variants, collections, or categories that can be rewarded as Get Y, independently of Buy X targets. The shopper adds reward items to the cart; the discount never adds them. Whole variable products cannot be saved as product targets; select their exact variants.",
           "items": {
             "type": "object"
           },
@@ -13403,7 +13970,7 @@
           ]
         },
         "bxgy_get_value": {
-          "description": "The percentage off each reward item, or the fixed amount deducted from each reward item in the store base currency. Fixed means an amount off, not a final selling price. The deduction is capped at the remaining reward-item value. Omit this field when rewards are free. Fixed amounts use the base currency precision and the live money_amount_max.",
+          "description": "The percentage off each reward item, or the fixed amount deducted from each reward item in the store base currency, converted to the order currency at the market's exchange rate. Fixed means an amount off, not a final selling price. The deduction is capped at the remaining reward-item value. Omit this field when rewards are free. Fixed amounts use the base currency precision and the live money_amount_max.",
           "type": [
             "number",
             "null"
@@ -13489,7 +14056,7 @@
           ]
         },
         "gift_mode": {
-          "description": "For free_gift: offer or auto_add. On create, omitted or null means offer; on update, omitted or null keeps the current mode.",
+          "description": "For free_gift: offer or auto_add. On create, omitted or null means offer; on update, omitted or null keeps the current mode. With best_for_customer ranking a gift ranks at its full value (each gift's quantity-specific unit price times its granted quantity) whether or not it is in the cart yet, including advertised coupons before entry. Gift-only units never qualify for other discounts or inflate their ranking. A gift grant is eligible only when its complete set is channel-available, priced, within quantity limits and in stock alongside all physical merchandise, including quantity-priced items excluded from discounts. Stacked gift sets share stock in ranking order; a set is granted only if its complete demand fits after higher-ranked gifts. When automatic discounts and codes don't combine, an offer the shopper hasn't claimed doesn't keep codes out; a code that applies withdraws the offer.",
           "type": [
             "string",
             "null"
@@ -13525,7 +14092,7 @@
           ]
         },
         "min_subtotal": {
-          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y, bundle and tiered discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Items left out by the market's quantity-pricing setting never count. Every type accepts it.",
+          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y, bundle and tiered discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Gift-only items and items left out by the market's quantity-pricing setting never count. Every type accepts it.",
           "type": [
             "object",
             "null"
@@ -13560,7 +14127,7 @@
           ]
         },
         "refund_restores_usage": {
-          "description": "Give a use back to usage_limit and per_customer_limit when an order that used this discount is fully refunded. The use is returned shortly after the refund, following the setting the discount has at that moment.",
+          "description": "Give a use back to usage_limit and per_customer_limit when every item this discount reduced on an order is refunded, or the whole order is refunded. The use is returned shortly after the refund, following the setting the discount has at that moment. The release is final for that order and discount: payment capture or retry cannot reclaim it.",
           "type": [
             "boolean",
             "null"
@@ -13602,7 +14169,7 @@
           "type": "string"
         },
         "usage_limit": {
-          "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit.",
+          "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit. A discount with no usage_limit and no per_customer_limit counts no uses.",
           "type": [
             "integer",
             "null"
@@ -13645,7 +14212,7 @@
     "api_key": "discounts.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}",
-    "description": "Read one discount and its targeting choices. The response includes the complete discount definition and the ids it targets. Product-facing labels (products, variants, collections, categories, Buy X Get Y, bundle and gift items) are included when your token has `read_products`; customer names and group labels are included with `read_customers`. The ids remain available without those additional scopes, and `can_view_products` and `can_view_customers` tell you whether labels were included. The returned status reflects the discount's current schedule. `usage_count` includes uses held by unpaid checkouts; `usage_held_count` says how many of them are held, and `usage_summary` words both. `starts_at`, `ends_at`, `created_at` and `updated_at` are display strings in the store's time zone; `starts_at_iso` and `ends_at_iso` give the start and end as local store time in the `YYYY-MM-DDTHH:mm:ss` form that create and update accept. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible.",
+    "description": "Read one discount and its targeting choices. The response includes the complete discount definition and the ids it targets. Product-facing labels (products, variants, collections, categories, Buy X Get Y, bundle and gift items) are included when your token has `read_products`; customer names and group labels are included with `read_customers`. The ids remain available without those additional scopes, and `can_view_products` and `can_view_customers` tell you whether labels were included. The returned status reflects the discount's current schedule. `usage_count` includes uses held by unpaid checkouts; `usage_held_count` says how many of them are held, and `usage_summary` words both. Uses are counted only while the discount has a `usage_limit` or a `per_customer_limit`: with neither, orders record no use, `usage_count` doesn't change and `usage_summary` says uses are not counted. Adding a limit later counts uses from then on. `starts_at`, `ends_at`, `created_at` and `updated_at` are display strings in the store's time zone; `starts_at_iso` and `ends_at_iso` give the start and end as local store time in the `YYYY-MM-DDTHH:mm:ss` form that create and update accept. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13750,7 +14317,7 @@
           ]
         },
         "bxgy_get_items": {
-          "description": "Simple products, exact variants, collections, or categories that can be rewarded as Get Y, independently of Buy X targets. Whole variable products cannot be saved as product targets; select their exact variants.",
+          "description": "Simple products, exact variants, collections, or categories that can be rewarded as Get Y, independently of Buy X targets. The shopper adds reward items to the cart; the discount never adds them. Whole variable products cannot be saved as product targets; select their exact variants.",
           "items": {
             "type": "object"
           },
@@ -13774,7 +14341,7 @@
           ]
         },
         "bxgy_get_value": {
-          "description": "The percentage off each reward item, or the fixed amount deducted from each reward item in the store base currency. Fixed means an amount off, not a final selling price. The deduction is capped at the remaining reward-item value. Omit this field when rewards are free. Fixed amounts use the base currency precision and the live money_amount_max.",
+          "description": "The percentage off each reward item, or the fixed amount deducted from each reward item in the store base currency, converted to the order currency at the market's exchange rate. Fixed means an amount off, not a final selling price. The deduction is capped at the remaining reward-item value. Omit this field when rewards are free. Fixed amounts use the base currency precision and the live money_amount_max.",
           "type": [
             "number",
             "null"
@@ -13865,7 +14432,7 @@
           ]
         },
         "gift_mode": {
-          "description": "For free_gift: offer or auto_add. On create, omitted or null means offer; on update, omitted or null keeps the current mode.",
+          "description": "For free_gift: offer or auto_add. On create, omitted or null means offer; on update, omitted or null keeps the current mode. With best_for_customer ranking a gift ranks at its full value (each gift's quantity-specific unit price times its granted quantity) whether or not it is in the cart yet, including advertised coupons before entry. Gift-only units never qualify for other discounts or inflate their ranking. A gift grant is eligible only when its complete set is channel-available, priced, within quantity limits and in stock alongside all physical merchandise, including quantity-priced items excluded from discounts. Stacked gift sets share stock in ranking order; a set is granted only if its complete demand fits after higher-ranked gifts. When automatic discounts and codes don't combine, an offer the shopper hasn't claimed doesn't keep codes out; a code that applies withdraws the offer.",
           "type": [
             "string",
             "null"
@@ -13901,7 +14468,7 @@
           ]
         },
         "min_subtotal": {
-          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y, bundle and tiered discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Items left out by the market's quantity-pricing setting never count. Every type accepts it.",
+          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y, bundle and tiered discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Gift-only items and items left out by the market's quantity-pricing setting never count. Every type accepts it.",
           "type": [
             "object",
             "null"
@@ -13936,7 +14503,7 @@
           ]
         },
         "refund_restores_usage": {
-          "description": "Give a use back to usage_limit and per_customer_limit when an order that used this discount is fully refunded. The use is returned shortly after the refund, following the setting the discount has at that moment.",
+          "description": "Give a use back to usage_limit and per_customer_limit when every item this discount reduced on an order is refunded, or the whole order is refunded. The use is returned shortly after the refund, following the setting the discount has at that moment. The release is final for that order and discount: payment capture or retry cannot reclaim it.",
           "type": [
             "boolean",
             "null"
@@ -13978,7 +14545,7 @@
           "type": "string"
         },
         "usage_limit": {
-          "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit.",
+          "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit. A discount with no usage_limit and no per_customer_limit counts no uses.",
           "type": [
             "integer",
             "null"

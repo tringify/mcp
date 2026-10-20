@@ -220,3 +220,5 @@ When reporting a problem, include the Codex version, the failing step, and the r
 - [Changelog](CHANGELOG.md)
 
 This repository contains connection instructions and configuration examples. The service runs at the hosted URL above.
+
+Customer tools expose `tax_exempt`, `tax_id` and `tax_id_type` on create, update and reads. Only a merchant-approved customer in an enabled exempt zone receives checkout exemption. Entering an ID alone records it and keeps tax charged. Order creation accepts `customer_tax_id` and explicit `customer_tax_exempt` staff approval, requires `idempotency_key`, and returns `tax_exemption_source` and `tax_id_state_mismatch`. Tax IDs are normalized and validated offline; no registration is checked.

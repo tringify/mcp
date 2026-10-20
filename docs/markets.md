@@ -60,3 +60,9 @@ Checkout limits compare merchandise after product/order discounts and exclude sh
 Show the returned impact before resending a delete or destructive configuration change with `confirmed` and the server's `confirmation_token`. Keep the target and selection unchanged. Do not confirm automatically. Protected/default records and dependencies can still block a confirmed request.
 
 Tax-rate saves, tax-class bulk deletion and currency/country assignment batches have their documented atomic behavior. Discount bulk actions commit per item: inspect every result and retry only failed IDs after resolving their cause. Current changes do not rewrite existing order pricing, tax, duty or payment snapshots.
+
+Tax IDs and customer exemptions use offline checks only. Tringify checks tax ID formats and check digits only. It does not verify registrations or exemptions with tax authorities. You are responsible for your tax settings and for approving exempt customers.
+
+Choose a tax ID type that fits at least one country in the zone: eu_vat for EU countries, uk_vat for GB, gstin for IN, abn for AU, gst_hst for CA, ein for US, or custom anywhere. A default zone uses its market's countries. Existing mismatched settings remain unchanged and the API returns tax_exemption.type_mismatch=true; correct the type or countries before saving the zone.
+
+For custom IDs, set a label and optionally a placeholder, example and RE2 pattern (maximum 256 UTF-8 bytes). The pattern must match the entire normalized ID; without a pattern, custom IDs are free text up to 100 characters. Examples must pass validation. Label and placeholder allow 50 characters each; checkout text allows 100. Supply translations for en, de, es, fr and it in tax_exemption.translations. Built-in labels use the checkout text system. The checkout editor preview shows the first exemption-enabled zone's field with an empty value; it shows none when no zone enables it.
