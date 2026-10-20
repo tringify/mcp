@@ -414,3 +414,9 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `list_catalog_metafield_definitions` | `GET /api/2025-01/metafield-definitions` | store:products:read |
 | `list_page_metafield_definitions` | `GET /api/2025-01/metafield-definitions` | store:pages:read |
 | `list_blog_metafield_definitions` | `GET /api/2025-01/metafield-definitions` | store:blog:read |
+| `create_order` | `POST /api/2025-01/orders` | store:orders:write |
+| `get_customer_limits` | `GET /api/2025-01/customers/limits` | store:customers:read |
+| `list_customers` | `GET /api/2025-01/customers` | store:customers:read |
+| `get_customer` | `GET /api/2025-01/customers/{id}` | store:customers:read |
+| `create_customer` | `POST /api/2025-01/customers` | store:customers:write |
+| `update_customer` | `PUT /api/2025-01/customers/{id}` | store:customers:write |
