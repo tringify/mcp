@@ -1,5 +1,12 @@
 # Changelog
 
+## Files
+
+- Added `request_file_preview` to start or retry a video or 3D preview. It needs the selected library's write permission.
+- `list_files` now lists the accepted `media_type` and `sort` values and the `limit` range in its input schema.
+- AI alt text, AI image generation and AI credits are not exposed through MCP.
+
+
 ## Catalog lists, brands and vendors
 
 - Added `get_brand_limits`, `get_vendor_limits`, `search_brands`, `search_vendors`, `list_brand_metafields`, `list_vendor_metafields`, `set_brand_metafield` and `set_vendor_metafield`.

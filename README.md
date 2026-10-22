@@ -90,7 +90,7 @@ All store-data tools use the corresponding Store API operations. The server retu
 | Languages | `list_languages`, `list_available_languages` | `set_languages`, `set_default_language`, `delete_language_translations` |
 | Currencies | `list_currencies`, `list_enabled_currencies`, `get_base_currency`, `get_currency`, `list_exchange_rates`, `get_exchange_rate` | `create_currency`, `update_currency`, `delete_currency`, `remove_currency_data`, `bulk_remove_currency_data`, `set_currency_rounding`, `set_multi_currency`, `set_auto_exchange_rates` |
 | Reference data | `list_countries`, `list_subdivisions`, `list_timezones`, `list_available_currencies`, `list_phone_country_codes`, `get_number_format_defaults`, `list_address_formats`, `get_address_format`, `list_store_api_scopes` | — |
-| Files | `list_files`, `get_file`, `get_file_limits`, `get_storage_quota` | `update_file`, `delete_file`, `create_file_uploads`, `finalize_file_uploads`, `get_file_upload_status` |
+| Files | `list_files`, `get_file`, `get_file_limits`, `get_storage_quota` | `update_file`, `delete_file`, `create_file_uploads`, `finalize_file_uploads`, `get_file_upload_status`, `request_file_preview` |
 
 Catalog reads require `store:products:read`; catalog writes require `store:products:write`. Binding new catalog images also requires `store:files:read`. `connection:read` permits the connection itself and grants no store-data access.
 
@@ -166,10 +166,11 @@ Codex needs a way to read the local file and make the upload request from the co
 3. The result contains `data.intents`. PUT the file bytes to the returned `url`, using its returned `headers`, before `expires_in` elapses. Treat that signed URL as a temporary credential; do not publish it.
 4. Call `finalize_file_uploads` with the same library and returned `intent_ids`.
 5. Check `get_file_upload_status` while processing. Attach the file only after its status is `ready` and the result includes the validated `file`.
+6. Video and 3D previews start automatically after validation. Read `get_file` for `preview_status`; if a preview failed, call `request_file_preview` to retry it. A failed preview leaves the original file available.
 
 Do not put binary data or base64 into MCP arguments. Starting an upload does not mean it has passed validation. Do not restart an upload just because validation is still processing.
 
-Files can be renamed or have their alt text changed with `update_file`. Clearing a catalog image reference does not delete its library file. `delete_file` checks use and may require impact confirmation; a file required by another record can block deletion.
+`list_files` filters by `media_type` and `search` and orders by `sort`. Files can be renamed or have their alt text changed with `update_file`. AI alt text suggestions, AI image generation and AI credit balances are not exposed through MCP. Clearing a catalog image reference does not delete its library file. `delete_file` checks use and may require impact confirmation; a file required by another record can block deletion.
 
 ## Update permissions
 

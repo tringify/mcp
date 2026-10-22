@@ -244,6 +244,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `finalize_file_uploads` | `POST /api/2025-01/files/upload-intents/finalize` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `get_file_upload_status` | `POST /api/2025-01/files/upload-intents/status` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `get_file` | `GET /api/2025-01/files/{id}` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
+| `request_file_preview` | `POST /api/2025-01/files/{id}/preview` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `update_file` | `PUT /api/2025-01/files/{id}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `delete_file` | `DELETE /api/2025-01/files/{id}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `get_order` | `GET /api/2025-01/orders/{id}` | store:orders:read |

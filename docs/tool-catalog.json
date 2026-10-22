@@ -9564,10 +9564,18 @@
         },
         "limit": {
           "description": "Page size, 1-200 (default 50).",
+          "maximum": 200,
+          "minimum": 1,
           "type": "integer"
         },
         "media_type": {
           "description": "Filter by media type: `image`, `video`, `document`, or `3d`.",
+          "enum": [
+            "image",
+            "video",
+            "document",
+            "3d"
+          ],
           "type": "string"
         },
         "search": {
@@ -9576,6 +9584,14 @@
         },
         "sort": {
           "description": "Order: `newest` (default), `oldest`, `name_asc`, `name_desc`, `size_desc` (largest first), or `size_asc`.",
+          "enum": [
+            "newest",
+            "oldest",
+            "name_asc",
+            "name_desc",
+            "size_desc",
+            "size_asc"
+          ],
           "type": "string"
         }
       },
@@ -9731,6 +9747,40 @@
       "store:files:read"
     ],
     "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "api_key": "files.preview.request",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/{id}/preview",
+    "description": "Request the thumbnail for a video or 3D model. Starts preview generation for the current source revision, or requests it again after failure. Repeating a request for an already pending or available current preview does not create another job. The response describes the current file state; it does not guarantee that preview generation has finished. Read the file to observe `preview_status`, and use `thumbnail_display_url` when present. A failed preview leaves the validated original available. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/{id}/preview. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Video or 3D file id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "request_file_preview",
+    "scopes": [
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
   },
   {
     "api_key": "files.update",
