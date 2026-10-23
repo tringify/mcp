@@ -443,3 +443,57 @@ Filter definitions are capped at 50 per store, including built-in and disabled f
 | `set_product_filter_translation` | `PUT /api/2025-01/product-filters/{id}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `get_product_filter_translations` | `GET /api/2025-01/product-filters/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_product_filter_translations` | `PUT /api/2025-01/product-filters/translations/{locale}` | store:products:write, store:settings.languages:write |
+
+## Inventory and locations
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_inventory_limits` | `GET /api/2025-01/inventory/limits` | store:inventory:read |
+| `list_inventory_levels` | `GET /api/2025-01/inventory/levels` | store:inventory:read |
+| `list_inventory_movements` | `GET /api/2025-01/inventory/movements` | store:inventory:read |
+| `list_inventory_low_stocks` | `GET /api/2025-01/inventory/low-stock` | store:inventory:read |
+| `list_inventory_commitments` | `GET /api/2025-01/inventory/commitments` | store:inventory:read |
+| `list_inventory_commitment_activitys` | `GET /api/2025-01/inventory/commitment-activity` | store:inventory:read |
+| `create_inventory_adjustments` | `POST /api/2025-01/inventory/adjustments` | store:inventory:write |
+| `list_inventory_transfers` | `GET /api/2025-01/transfers` | store:inventory:read |
+| `get_inventory_transfer` | `GET /api/2025-01/transfers/{transferId}` | store:inventory:read |
+| `create_inventory_transfer` | `POST /api/2025-01/transfers` | store:inventory:write |
+| `update_inventory_transfer_status` | `PUT /api/2025-01/transfers/{transferId}/status` | store:inventory:write |
+| `bulk_inventory_transfer_status` | `POST /api/2025-01/transfers/bulk-status` | store:inventory:write |
+| `receive_inventory_transfer` | `POST /api/2025-01/transfers/{transferId}/receive` | store:inventory:write |
+| `delete_inventory_transfer` | `DELETE /api/2025-01/transfers/{transferId}` | store:inventory:write |
+| `bulk_inventory_transfer_delete` | `POST /api/2025-01/transfers/bulk-delete` | store:inventory:write |
+| `list_inventory_restock_requests` | `GET /api/2025-01/inventory/restock-requests` | store:inventory:read |
+| `get_inventory_restock_request_limits` | `GET /api/2025-01/inventory/restock-requests/limits` | store:inventory:read |
+| `stats_inventory_restock_request` | `GET /api/2025-01/inventory/restock-requests/stats` | store:inventory:read |
+| `notify_inventory_restock_request` | `POST /api/2025-01/inventory/restock-requests/notify` | store:inventory:write |
+| `get_inventory_restock_alert_settings` | `GET /api/2025-01/inventory/restock-alert-settings` | store:inventory:read |
+| `update_inventory_restock_alert_settings` | `PUT /api/2025-01/inventory/restock-alert-settings` | store:inventory:write |
+| `get_inventory_group_limits` | `GET /api/2025-01/inventory-groups/limits` | store:inventory:read |
+| `list_inventory_groups` | `GET /api/2025-01/inventory-groups` | store:inventory:read |
+| `get_inventory_group` | `GET /api/2025-01/inventory-groups/{groupId}` | store:inventory:read |
+| `list_inventory_group_products` | `GET /api/2025-01/inventory-groups/{groupId}/products` | store:inventory:read, store:products:read |
+| `list_inventory_group_variants` | `GET /api/2025-01/inventory-groups/{groupId}/variants` | store:inventory:read, store:products:read |
+| `create_inventory_group` | `POST /api/2025-01/inventory-groups` | store:inventory:write |
+| `update_inventory_group` | `PUT /api/2025-01/inventory-groups/{groupId}` | store:inventory:write |
+| `delete_inventory_group` | `DELETE /api/2025-01/inventory-groups/{groupId}` | store:inventory:write |
+| `bulk_delete_inventory_groups` | `POST /api/2025-01/inventory-groups/bulk-delete` | store:inventory:write |
+| `set_inventory_group_quantity` | `POST /api/2025-01/inventory-groups/{groupId}/set-quantity` | store:inventory:write |
+| `adjust_inventory_group_quantity` | `POST /api/2025-01/inventory-groups/{groupId}/adjust` | store:inventory:write |
+| `set_inventory_group_threshold` | `POST /api/2025-01/inventory-groups/{groupId}/set-threshold` | store:inventory:write |
+| `list_inventory_group_movements` | `GET /api/2025-01/inventory-groups/{groupId}/movements` | store:inventory:read |
+| `list_inventory_group_commitments` | `GET /api/2025-01/inventory-groups/{groupId}/commitments` | store:inventory:read |
+| `list_inventory_group_commitment_activitys` | `GET /api/2025-01/inventory-groups/{groupId}/commitment-activity` | store:inventory:read |
+| `list_inventory_group_stocks` | `GET /api/2025-01/inventory-groups/{groupId}/stock` | store:inventory:read |
+| `bulk_add_inventory_group_stocks` | `POST /api/2025-01/inventory-groups/{groupId}/stock/bulk` | store:inventory:write |
+| `bulk_mutate_inventory_group_stock` | `POST /api/2025-01/inventory-groups/{groupId}/stock/bulk-mutate` | store:inventory:write |
+| `delete_inventory_group_stock` | `DELETE /api/2025-01/inventory-groups/{groupId}/stock/{locationId}` | store:inventory:write |
+| `get_location_limits` | `GET /api/2025-01/locations/limits` | store:locations:read |
+| `list_locations` | `GET /api/2025-01/locations` | store:locations:read |
+| `get_location` | `GET /api/2025-01/locations/{id}` | store:locations:read |
+| `create_location` | `POST /api/2025-01/locations` | store:locations:write |
+| `update_location` | `PUT /api/2025-01/locations/{id}` | store:locations:write |
+| `archive_location` | `POST /api/2025-01/locations/{id}/archive` | store:locations:write |
+| `restore_location` | `POST /api/2025-01/locations/{id}/restore` | store:locations:write |
+| `delete_location` | `DELETE /api/2025-01/locations/{id}` | store:locations:write |
+| `reorder_locations` | `POST /api/2025-01/locations/reorder` | store:locations:write |

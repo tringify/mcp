@@ -18542,5 +18542,1960 @@
     "scopes": [
       "store:reviews:write"
     ]
+  },
+  {
+    "api_key": "inventory.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory/limits",
+    "description": "Get stock limits and supported options. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_inventory_limits",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.levels.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory/levels",
+    "description": "List per-location stock for every tracked item. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/levels. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque `next_cursor` from the previous page; replaces `page`. Send the same filters and sorting with it. Page numbers reach the first 10,000 rows; read further with the cursor.",
+          "type": "string"
+        },
+        "item_type": {
+          "description": "`simple`, `variant`, or `group`.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Rows per page, up to the limits endpoint's `list_max_limit`.",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Only stock at this location (UUID).",
+          "type": "string"
+        },
+        "low_stock_only": {
+          "description": "Only rows at or below their low-stock threshold.",
+          "type": "boolean"
+        },
+        "page": {
+          "description": "Page number, starting at 1.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Matches SKU exactly or item title as a prefix search.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "One of the limits endpoint's `sort_columns`. Invalid values return a coded 400.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "`asc` or `desc`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_inventory_levels",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.movements.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory/movements",
+    "description": "List the unified stock movement ledger. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/movements. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "from_date": {
+          "description": "Inclusive start date, `YYYY-MM-DD` in the store timezone.",
+          "type": "string"
+        },
+        "item_type": {
+          "description": "`simple`, `variant`, or `group`.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Rows per page, up to the limits endpoint's `list_max_limit`.",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Only movements at this location (UUID).",
+          "type": "string"
+        },
+        "page": {
+          "description": "Page number, starting at 1.",
+          "type": "integer"
+        },
+        "reason": {
+          "description": "One movement reason (see the limits endpoint's `all_reasons`).",
+          "type": "string"
+        },
+        "search": {
+          "description": "Matches SKU or item title.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "One of the limits endpoint's `sort_columns`. Invalid values return a coded 400.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "`asc` or `desc`.",
+          "type": "string"
+        },
+        "to_date": {
+          "description": "Inclusive end date, `YYYY-MM-DD` in the store timezone.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_inventory_movements",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.low-stock.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory/low-stock",
+    "description": "List items at or below their low-stock threshold. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/low-stock. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Rows per page, up to the limits endpoint's `list_max_limit`.",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Only alerts at this location. Ignored when `scope=overall`.",
+          "type": "string"
+        },
+        "page": {
+          "description": "Page number, starting at 1.",
+          "type": "integer"
+        },
+        "scope": {
+          "description": "`location` or `overall`. Overall thresholds are supported for tracked simple products, variants, and inventory groups.",
+          "type": "string"
+        },
+        "search": {
+          "description": "Matches SKU or item title.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "One of the limits endpoint's `sort_columns`. Invalid values return a coded 400.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "`asc` or `desc`.",
+          "type": "string"
+        },
+        "type": {
+          "description": "`simple`, `variant`, or `group`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_inventory_low_stocks",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.commitments.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory/commitments",
+    "description": "List open order-inventory commitments across the store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/commitments. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque `next_cursor` of the previous page. Omit it for the first page.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size, 1 to 100. Defaults to 50.",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Filter to one visible location.",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Item id: the numeric product or variant id, or the inventory group UUID.",
+          "type": "string"
+        },
+        "source_type": {
+          "description": "Item type: `product` (a simple product), `variant`, or `group` (an inventory group). Required with `source_id`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_inventory_commitments",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.commitment-activity.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory/commitment-activity",
+    "description": "List applied order-inventory commitment activity across the store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/commitment-activity. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque `next_cursor` of the previous page. Omit it for the first page.",
+          "type": "string"
+        },
+        "event_type": {
+          "description": "Filter by `provisional_held`, `committed`, `released`, `reacquired`, `fulfilled`, or `fulfillment_reversed`.",
+          "type": "string"
+        },
+        "from_date": {
+          "description": "Inclusive start date, YYYY-MM-DD in the store timezone.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size, 1 to 100. Defaults to 50.",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Filter to one visible location.",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Item id: the numeric product or variant id, or the inventory group UUID.",
+          "type": "string"
+        },
+        "source_type": {
+          "description": "Item type: `product` (a simple product), `variant`, or `group` (an inventory group). Required with `source_id`.",
+          "type": "string"
+        },
+        "to_date": {
+          "description": "Inclusive end date, YYYY-MM-DD in the store timezone.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_inventory_commitment_activitys",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.adjustments.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory/adjustments",
+    "description": "Apply a batch of stock adjustments by SKU. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory/adjustments. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional on the first attempt and required for a safe retry. Scoped to the calling app or merchant actor, at most 200 characters. An identical replay within 7 days returns the original result without a second stock write, audit entry or webhook; reuse with different input returns 409 `STOCK_WRITE_IDEMPOTENCY_CONFLICT`.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "items": {
+          "description": "Up to the limits endpoint's `max_batch_size` rows. Each row: `sku` (string, required — resolves to a simple product, variant, or inventory group), optional `location_id` (UUID, overrides the batch location), exactly one of `adjust` (integer, signed delta) or `set` (integer ≥ 0, absolute), optional `expected_quantity` (integer ≥ 0, `set` rows only — the on-hand quantity you counted against), `reason` (string, required — one of the limits endpoint's `user_reasons`), and optional `notes`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "location_id": {
+          "description": "Default location for rows that do not name their own (UUID). Required unless every row has `location_id`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "type": "object"
+    },
+    "name": "create_inventory_adjustments",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.transfers.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/transfers",
+    "description": "List stock transfers. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/transfers. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "from_date": {
+          "description": "Inclusive start date, `YYYY-MM-DD` in the store timezone.",
+          "type": "string"
+        },
+        "from_location_id": {
+          "description": "Only transfers from this visible location.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Rows per page, up to the limits endpoint's `list_max_limit`.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number, starting at 1.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Matches the stable transfer number, transfer UUID, merchant reference, or source/destination location name.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "One of the limits endpoint's `sort_columns`. Invalid values return a coded 400.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "`asc` or `desc`.",
+          "type": "string"
+        },
+        "status": {
+          "description": "`pending`, `in_transit`, `completed`, or `cancelled`.",
+          "type": "string"
+        },
+        "to_date": {
+          "description": "Inclusive end date, `YYYY-MM-DD` in the store timezone.",
+          "type": "string"
+        },
+        "to_location_id": {
+          "description": "Only transfers to this visible location.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_inventory_transfers",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.transfers.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/transfers/{transferId}",
+    "description": "Fetch one transfer with its items. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/transfers/{transferId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "transferId": {
+          "description": "Transfer id (UUID).",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "transferId"
+      ],
+      "type": "object"
+    },
+    "name": "get_inventory_transfer",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.transfers.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/transfers",
+    "description": "Create a stock transfer between two locations. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/transfers. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "from_location_id": {
+          "description": "Source location (UUID). Must differ from the destination.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Stable retry key scoped to the calling app or merchant actor, maximum 200 characters. Reuse only with the identical request.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "items": {
+          "description": "Up to `max_items_per_transfer` rows. Each row contains `item_type` (`simple`, `variant`, or `group`), exactly one matching id field (`product_id`, `variant_id`, or `group_id`), and `quantity` (integer ≥ 1, validated against available stock at the source). Simple products and variants must have `inventory_source=track`; transfer the linked group for group-backed items.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "notes": {
+          "description": "Free-form notes, up to `notes_max_length`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reference_number": {
+          "description": "Your reference, up to the limits endpoint's `reference_number_max_length`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "to_location_id": {
+          "description": "Destination location (UUID).",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from_location_id",
+        "to_location_id",
+        "items"
+      ],
+      "type": "object"
+    },
+    "name": "create_inventory_transfer",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.transfers.status.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/transfers/{transferId}/status",
+    "description": "Advance or cancel a transfer. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/transfers/{transferId}/status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "description": "Target status: `in_transit` or `cancelled` from pending; `completed` (receive every remaining unit) or `cancelled` from in transit.",
+          "type": "string"
+        },
+        "transferId": {
+          "description": "Transfer id (UUID).",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "transferId",
+        "status"
+      ],
+      "type": "object"
+    },
+    "name": "update_inventory_transfer_status",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.transfers.status.bulk",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/transfers/bulk-status",
+    "description": "Advance or cancel multiple transfers atomically. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/transfers/bulk-status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "One to 100 unique transfer ids.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "status": {
+          "description": "One target status applied atomically to every selected transfer.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ids",
+        "status"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_inventory_transfer_status",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.transfers.receive",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/transfers/{transferId}/receive",
+    "description": "Record a full or partial receipt against an in-transit transfer. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/transfers/{transferId}/receive. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional on the first attempt and required for a safe retry. Scoped to the calling app or merchant actor, at most 200 characters. An identical replay within 7 days returns the original result without a second stock write, audit entry or webhook; reuse with different input returns 409 `STOCK_WRITE_IDEMPOTENCY_CONFLICT`.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "lines": {
+          "description": "One row per transfer line being accounted for, at most one per line. Each row: `transfer_item_id` (uuid, from the transfer's `items[].id`), `received_quantity`, `short_quantity`, `damaged_quantity` (integers ≥ 0, omitted means 0, at least one positive, total ≤ the line's `remaining_quantity`).",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "notes": {
+          "description": "Optional receipt note, up to the transfer `notes_max_length`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "transferId": {
+          "description": "Transfer id (UUID).",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "transferId",
+        "lines"
+      ],
+      "type": "object"
+    },
+    "name": "receive_inventory_transfer",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.transfers.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/transfers/{transferId}",
+    "description": "Delete a pending transfer. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/transfers/{transferId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "transferId": {
+          "description": "Transfer id (UUID).",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "transferId"
+      ],
+      "type": "object"
+    },
+    "name": "delete_inventory_transfer",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.transfers.delete.bulk",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/transfers/bulk-delete",
+    "description": "Delete multiple pending transfers atomically. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/transfers/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "One to 100 unique pending transfer ids.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_inventory_transfer_delete",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.restock-requests.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory/restock-requests",
+    "description": "List customer back-in-stock subscriptions. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/restock-requests. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_type": {
+          "description": "`email` or `sms`. SMS uses the requested channel and is not substituted with WhatsApp.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Rows per page, up to the limits endpoint's `list_max_limit`.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number, starting at 1.",
+          "type": "integer"
+        },
+        "product_id": {
+          "description": "Only requests for this product.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Matches the request email address or phone number. Requires `read_customers` in addition to `read_inventory`.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "One of the limits endpoint's `sort_columns`. Invalid values return a coded 400.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "`asc` or `desc`.",
+          "type": "string"
+        },
+        "status": {
+          "description": "`pending`, `queued`, `notified`, `failed`, `suppressed`, `converted`, `cancelled`, or `expired`. Queued means admitted but not yet accepted by the provider; notified means provider-accepted.",
+          "type": "string"
+        },
+        "variant_id": {
+          "description": "Only requests for this variant.",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_inventory_restock_requests",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.restock-requests.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory/restock-requests/limits",
+    "description": "Fetch restock-request list limits and enums. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/restock-requests/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_inventory_restock_request_limits",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.restock-requests.stats",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory/restock-requests/stats",
+    "description": "Fetch restock-request lifecycle totals. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/restock-requests/stats. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "stats_inventory_restock_request",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.restock-requests.notify",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory/restock-requests/notify",
+    "description": "Notify pending subscribers for one product or variant. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory/restock-requests/notify. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "description": "Product whose pending subscribers should be notified.",
+          "type": "integer"
+        },
+        "variant_id": {
+          "description": "Variant whose pending subscribers should be notified. Omit for product-level requests.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "type": "object"
+    },
+    "name": "notify_inventory_restock_request",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.restock-alert-settings.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory/restock-alert-settings",
+    "description": "Fetch Notify Me settings. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/restock-alert-settings. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_inventory_restock_alert_settings",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.restock-alert-settings.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/inventory/restock-alert-settings",
+    "description": "Update Notify Me settings. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/inventory/restock-alert-settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "auto_send_when_restocked": {
+          "description": "Whether Tringify automatically notifies eligible pending subscribers after stock becomes available.",
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Whether storefronts may capture new Notify Me requests.",
+          "type": "boolean"
+        },
+        "request_expiry_days": {
+          "description": "Days a new pending request remains eligible for notification.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enabled",
+        "request_expiry_days",
+        "auto_send_when_restocked"
+      ],
+      "type": "object"
+    },
+    "name": "update_inventory_restock_alert_settings",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory-groups/limits",
+    "description": "Fetch inventory group limits and field constraints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory-groups/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_inventory_group_limits",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory-groups",
+    "description": "List store inventory groups. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory-groups. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Filter to groups with stock at this location.",
+          "type": "string"
+        },
+        "low_stock_only": {
+          "description": "When true, return only low-stock groups.",
+          "type": "boolean"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search inventory groups by name, slug, or SKU.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field from the Inventory Group list contract.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction from the Inventory Group list contract.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_inventory_groups",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}",
+    "description": "Fetch one inventory group by id. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory-groups/{groupId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId"
+      ],
+      "type": "object"
+    },
+    "name": "get_inventory_group",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.products.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/products",
+    "description": "List simple products linked directly to one inventory group. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory-groups/{groupId}/products. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search linked products by product title or product SKU.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort by `title`, `status`, `sku`, or `created_at`.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction: `asc` or `desc`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId"
+      ],
+      "type": "object"
+    },
+    "name": "list_inventory_group_products",
+    "scopes": [
+      "store:inventory:read",
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.variants.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/variants",
+    "description": "List product variants linked directly to one inventory group. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory-groups/{groupId}/variants. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search linked variants by product title, variant title, or variant SKU.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort by `product_title`, `variant_title`, `sku`, or `created_at`.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction: `asc` or `desc`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId"
+      ],
+      "type": "object"
+    },
+    "name": "list_inventory_group_variants",
+    "scopes": [
+      "store:inventory:read",
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory-groups",
+    "description": "Create inventory group. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory-groups. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Optional internal description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Inventory Group name.",
+          "type": "string"
+        },
+        "overall_low_stock_threshold": {
+          "description": "Optional threshold for total available stock across all locations. Null disables the overall alert.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "sku": {
+          "description": "Unique SKU for the stock pool.",
+          "type": "string"
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "sku"
+      ],
+      "type": "object"
+    },
+    "name": "create_inventory_group",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}",
+    "description": "Update inventory group. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/inventory-groups/{groupId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "Optional internal description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "name": {
+          "description": "Inventory Group name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "overall_low_stock_threshold": {
+          "description": "Optional threshold for total available stock across all locations. Null disables the overall alert.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "sku": {
+          "description": "Unique SKU for the stock pool.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit to keep the current slug; an empty string is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "groupId"
+      ],
+      "type": "object"
+    },
+    "name": "update_inventory_group",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}",
+    "description": "Delete inventory group. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/inventory-groups/{groupId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId"
+      ],
+      "type": "object"
+    },
+    "name": "delete_inventory_group",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory-groups/bulk-delete",
+    "description": "Delete multiple inventory groups atomically. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory-groups/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "group_ids": {
+          "description": "Store-scoped inventory group ids to delete. Duplicates are rejected.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "group_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_inventory_groups",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.quantity.set",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/set-quantity",
+    "description": "Set absolute stock at one location. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory-groups/{groupId}/set-quantity. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_quantity": {
+          "description": "Optional compare-and-set guard: the on-hand quantity you counted against. A mismatch returns 409 and changes nothing.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional on the first attempt and required for a safe retry. Scoped to the calling app or merchant actor, at most 200 characters. An identical replay within 7 days returns the original result without a second stock write, audit entry or webhook; reuse with different input returns 409 `STOCK_WRITE_IDEMPOTENCY_CONFLICT`.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "location_id": {
+          "description": "Location id.",
+          "type": "string"
+        },
+        "notes": {
+          "description": "Optional movement note.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "quantity": {
+          "description": "Absolute quantity at the location.",
+          "type": "integer"
+        },
+        "reason": {
+          "description": "Inventory movement reason.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId",
+        "location_id",
+        "quantity",
+        "reason"
+      ],
+      "type": "object"
+    },
+    "name": "set_inventory_group_quantity",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.quantity.adjust",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/adjust",
+    "description": "Add or subtract stock at one location. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory-groups/{groupId}/adjust. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "adjustment": {
+          "description": "Signed quantity delta.",
+          "type": "integer"
+        },
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional on the first attempt and required for a safe retry. Scoped to the calling app or merchant actor, at most 200 characters. An identical replay within 7 days returns the original result without a second stock write, audit entry or webhook; reuse with different input returns 409 `STOCK_WRITE_IDEMPOTENCY_CONFLICT`.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "location_id": {
+          "description": "Location id.",
+          "type": "string"
+        },
+        "notes": {
+          "description": "Optional movement note.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason": {
+          "description": "Inventory movement reason.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId",
+        "location_id",
+        "adjustment",
+        "reason"
+      ],
+      "type": "object"
+    },
+    "name": "adjust_inventory_group_quantity",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.threshold.set",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/set-threshold",
+    "description": "Set or clear the per-location low-stock threshold. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory-groups/{groupId}/set-threshold. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "location_id": {
+          "description": "Location id.",
+          "type": "string"
+        },
+        "low_stock_threshold": {
+          "description": "Per-location threshold. Required: send a number to set it or null to clear it; 0 is valid.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "groupId",
+        "location_id",
+        "low_stock_threshold"
+      ],
+      "type": "object"
+    },
+    "name": "set_inventory_group_threshold",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.movements.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/movements",
+    "description": "List stock movement history for one inventory group. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory-groups/{groupId}/movements. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "from_date": {
+          "description": "Inclusive start date in the store timezone, YYYY-MM-DD. Cannot be in the future.",
+          "type": "string"
+        },
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Filter movements to one location.",
+          "type": "string"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "reason": {
+          "description": "Filter by movement reason.",
+          "type": "string"
+        },
+        "search": {
+          "description": "Search movement notes or location names.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort by `created_at`, `quantity_change`, or `location_name`.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction.",
+          "type": "string"
+        },
+        "to_date": {
+          "description": "Inclusive end date in the store timezone, YYYY-MM-DD. Cannot be in the future or before from_date.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId"
+      ],
+      "type": "object"
+    },
+    "name": "list_inventory_group_movements",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.commitments.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/commitments",
+    "description": "List open order-inventory commitments for one inventory group. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory-groups/{groupId}/commitments. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque `next_cursor` of the previous page. Omit it for the first page.",
+          "type": "string"
+        },
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size, 1 to 100. Defaults to 50.",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Filter commitments to one visible location.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId"
+      ],
+      "type": "object"
+    },
+    "name": "list_inventory_group_commitments",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.commitment-activity.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/commitment-activity",
+    "description": "List applied order-inventory commitment activity for one inventory group. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory-groups/{groupId}/commitment-activity. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque `next_cursor` of the previous page. Omit it for the first page.",
+          "type": "string"
+        },
+        "event_type": {
+          "description": "Filter by `provisional_held`, `committed`, `released`, `reacquired`, `fulfilled`, or `fulfillment_reversed`.",
+          "type": "string"
+        },
+        "from_date": {
+          "description": "Inclusive start date, YYYY-MM-DD in the store timezone.",
+          "type": "string"
+        },
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size, 1 to 100. Defaults to 50.",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Filter activity to one visible location.",
+          "type": "string"
+        },
+        "to_date": {
+          "description": "Inclusive end date, YYYY-MM-DD in the store timezone.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId"
+      ],
+      "type": "object"
+    },
+    "name": "list_inventory_group_commitment_activitys",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.stock.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/stock",
+    "description": "List inventory at each visible location for one inventory group. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory-groups/{groupId}/stock. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search stock rows by location name.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort by `location_name`, `quantity`, or `available`.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId"
+      ],
+      "type": "object"
+    },
+    "name": "list_inventory_group_stocks",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.stock.bulk-add",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/stock/bulk",
+    "description": "Create initial stored stock levels at multiple locations. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory-groups/{groupId}/stock/bulk. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional on the first attempt and required for a safe retry. Scoped to the calling app or merchant actor, at most 200 characters. An identical replay within 7 days returns the original result without a second stock write, audit entry or webhook; reuse with different input returns 409 `STOCK_WRITE_IDEMPOTENCY_CONFLICT`.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "stock": {
+          "description": "Stock rows to create. Each row needs location_id and quantity; low_stock_threshold is optional.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "groupId",
+        "stock"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_add_inventory_group_stocks",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.stock.bulk-mutate",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/stock/bulk-mutate",
+    "description": "Apply one inventory action to selected locations. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory-groups/{groupId}/stock/bulk-mutate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "One of set_quantity, adjust_quantity, or set_threshold.",
+          "type": "string"
+        },
+        "adjustment": {
+          "description": "Signed delta used by adjust_quantity.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "clear_threshold": {
+          "description": "Set true with set_threshold to clear selected thresholds.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "expected_quantities": {
+          "description": "Optional with set_quantity: location id → on-hand quantity you counted against. A mismatch at any location returns 409 and changes nothing.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional on the first attempt and required for a safe retry. Scoped to the calling app or merchant actor, at most 200 characters. An identical replay within 7 days returns the original result without a second stock write, audit entry or webhook; reuse with different input returns 409 `STOCK_WRITE_IDEMPOTENCY_CONFLICT`.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "location_ids": {
+          "description": "Selected location ids. Duplicates are rejected.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "low_stock_threshold": {
+          "description": "Threshold used by set_threshold; 0 is valid.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "notes": {
+          "description": "Optional movement note for quantity actions.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "quantity": {
+          "description": "Absolute quantity used by set_quantity.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "reason": {
+          "description": "Required movement reason for quantity actions.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "groupId",
+        "location_ids",
+        "action"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_mutate_inventory_group_stock",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory_groups.stock.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/inventory-groups/{groupId}/stock/{locationId}",
+    "description": "Clear an empty persisted stock level at one location. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/inventory-groups/{groupId}/stock/{locationId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "description": "Inventory Group id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locationId": {
+          "description": "Location id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "groupId",
+        "locationId"
+      ],
+      "type": "object"
+    },
+    "name": "delete_inventory_group_stock",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "locations.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/locations/limits",
+    "description": "Fetch location limits and per-field constraints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/locations/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_location_limits",
+    "scopes": [
+      "store:locations:read"
+    ]
+  },
+  {
+    "api_key": "locations.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/locations",
+    "description": "List store locations. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/locations. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "fulfills_online_orders": {
+          "description": "When true, return only locations that fulfill online orders. Combines with status.",
+          "type": "boolean"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search locations by name, slug, city, state/province, or address line.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field from the Location list contract.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Sort direction from the Location list contract.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Filter by active, inactive or archived. Archived locations appear only with `archived`.",
+          "type": "string"
+        },
+        "writable_only": {
+          "description": "When true, return only locations the authenticated caller may write. Merchant tokens exclude app-managed locations; app tokens retain merchant-managed locations and locations owned by that app.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_locations",
+    "scopes": [
+      "store:locations:read"
+    ]
+  },
+  {
+    "api_key": "locations.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/locations/{id}",
+    "description": "Fetch one location by id. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/locations/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Location id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_location",
+    "scopes": [
+      "store:locations:read"
+    ]
+  },
+  {
+    "api_key": "locations.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/locations",
+    "description": "Create a merchant-managed or app-managed location. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/locations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "address_line1": {
+          "description": "Street address line 1.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "address_line2": {
+          "description": "Street address line 2.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "city": {
+          "description": "City.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "country_code": {
+          "description": "Uppercase ISO 3166-1 alpha-2 country code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fulfills_online_orders": {
+          "description": "Whether this location fulfills online orders. Defaults to true when omitted on create.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Location name.",
+          "type": "string"
+        },
+        "phone": {
+          "description": "Phone number. Validated and normalized using the country code when provided.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "postal_code": {
+          "description": "Postal, ZIP, or PIN code. Validated against the selected country's format. India PINs are checked against the India Post directory; unknown PINs and PIN/state mismatches are rejected.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omit to generate from name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state_province": {
+          "description": "State, province, or region.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "create_location",
+    "scopes": [
+      "store:locations:write"
+    ]
+  },
+  {
+    "api_key": "locations.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/locations/{id}",
+    "description": "Update a location. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/locations/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "address_line1": {
+          "description": "Street address line 1.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "address_line2": {
+          "description": "Street address line 2.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "city": {
+          "description": "City.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "country_code": {
+          "description": "Uppercase ISO 3166-1 alpha-2 country code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fulfills_online_orders": {
+          "description": "Whether this location fulfills online orders. Omitted values are unchanged. It cannot be switched off while orders hold reservations there.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Location id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "is_active": {
+          "description": "Whether the location is active. Primary locations must remain active, and a location cannot be deactivated while orders hold reservations there or transfers are pending or in transit.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Location name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "phone": {
+          "description": "Phone number. Validated and normalized using the country code when provided.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "postal_code": {
+          "description": "Postal, ZIP, or PIN code. Validated against the selected country's format. India PINs are checked against the India Post directory; unknown PINs and PIN/state mismatches are rejected.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slug": {
+          "description": "Optional slug. Omitted values are unchanged; a supplied slug must be non-empty and valid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state_province": {
+          "description": "State, province, or region.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_location",
+    "scopes": [
+      "store:locations:write"
+    ]
+  },
+  {
+    "api_key": "locations.archive",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/locations/{id}/archive",
+    "description": "Archive an empty location. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/locations/{id}/archive. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Location id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "archive_location",
+    "scopes": [
+      "store:locations:write"
+    ]
+  },
+  {
+    "api_key": "locations.restore",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/locations/{id}/restore",
+    "description": "Restore an archived location. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/locations/{id}/restore. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Location id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "restore_location",
+    "scopes": [
+      "store:locations:write"
+    ]
+  },
+  {
+    "api_key": "locations.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/locations/{id}",
+    "description": "Delete a location. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/locations/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token returned by the first delete request.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set to `true` on the confirmation retry.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Location id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_location",
+    "scopes": [
+      "store:locations:write"
+    ]
+  },
+  {
+    "api_key": "locations.reorder",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/locations/reorder",
+    "description": "Set the full fulfillment priority order. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/locations/reorder. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ordered_ids": {
+          "description": "The complete location-id set from `GET /locations`, ordered from highest to lowest fulfillment priority.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "ordered_ids"
+      ],
+      "type": "object"
+    },
+    "name": "reorder_locations",
+    "scopes": [
+      "store:locations:write"
+    ]
   }
 ]
