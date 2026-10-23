@@ -1011,7 +1011,7 @@
           "type": "integer"
         },
         "title": {
-          "description": "Optional title for the copy. Defaults to `Copy of \u003csource title\u003e`.",
+          "description": "Optional title for the copy. Defaults to `Copy of <source title>`.",
           "type": [
             "string",
             "null"
@@ -2130,7 +2130,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "minLength": 1,
           "type": "string"
         }
@@ -2177,7 +2177,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "minLength": 1,
           "type": "string"
         },
@@ -8013,6 +8013,21 @@
     ]
   },
   {
+    "api_key": "tags.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/tags/limits",
+    "description": "Fetch tag limits and field constraints. Returns the field-length limits and request caps for tag endpoints. Use these values to validate requests before submitting them. `max_per_store` is this store's plan cap, `count` is how many exist now, and `usage` is the localized label. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/tags/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_tag_limits",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
     "api_key": "tags.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/tags",
@@ -8044,6 +8059,34 @@
       "type": "object"
     },
     "name": "list_tags",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "tags.search",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/tags/search",
+    "description": "Search tags for picker-style suggestions. Returns lightweight tag suggestions by query. This endpoint is intended for pickers and simple selection UIs. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/tags/search. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Suggestion count.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "q": {
+          "description": "Search query.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "search_tags",
     "scopes": [
       "store:products:read"
     ]
@@ -8103,6 +8146,32 @@
     ]
   },
   {
+    "api_key": "tags.bulk-create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/tags/bulk-create",
+    "description": "Create multiple tags by name. Creates multiple product tags from names. Slugs are generated automatically. Existing names are returned in `skipped`; invalid rows and store-limit failures are returned in `row_errors`, while other valid rows are still created. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/tags/bulk-create. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "names": {
+          "description": "Tag names to create.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "names"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_create_tags",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
     "api_key": "tags.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/tags/{id}",
@@ -8144,7 +8213,7 @@
     "api_key": "tags.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/tags/{id}",
-    "description": "Delete a tag. Deletes a tag. If the tag is assigned to products or used by collection rules, the first request returns `CONFIRMATION_REQUIRED`. A confirmed deletion removes those references atomically. If the tag has translations, the API emits one `tags/translations/delete` event per translated locale before `tags/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/tags/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete a tag. Deletes a tag. If the tag is assigned to products or used by collection rules, the first request returns `CONFIRMATION_REQUIRED`. A confirmed deletion affecting at most 250 products completes immediately. Larger deletions hide the tags and remove collection and cash-on-delivery rules immediately, then detach products in background batches; the final batch deletes the tag and emits deletion events. If the tag has translations, the API emits one `tags/translations/delete` event per translated locale before `tags/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/tags/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8174,6 +8243,46 @@
       "type": "object"
     },
     "name": "delete_tag",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "tags.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/tags/bulk-delete",
+    "description": "Delete multiple tags. Send the tag IDs in `tag_ids`. The first request needs only that array. If product assignments or collection rules will be removed, the API returns `CONFIRMATION_REQUIRED`; retry the same IDs with `confirmed: true` and its `confirmation_token`. The success response separates deleted IDs from missing or concurrently changed IDs in `deleted` and `failed`. At most 1000 IDs are accepted. Tags reported in `deleted` are unavailable immediately. When more than 250 products are affected, product detachments finish in background batches and deletion events follow final cleanup. The confirmation includes `collections_total` and the first 50 affected collections. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/tags/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "tag_ids": {
+          "description": "IDs of tags to delete from this store.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "tag_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_tags",
     "scopes": [
       "store:products:write"
     ]

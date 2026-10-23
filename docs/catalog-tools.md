@@ -198,11 +198,15 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `set_menu_item_translation` | `PUT /api/2025-01/menus/items/{itemId}/translations/{locale}` | store:menus:write, store:settings.languages:write |
 | `get_menu_item_translations` | `GET /api/2025-01/menus/items/translations/{locale}` | store:menus:read, store:settings.languages:read |
 | `set_menu_item_translations` | `PUT /api/2025-01/menus/items/translations/{locale}` | store:menus:write, store:settings.languages:write |
+| `get_tag_limits` | `GET /api/2025-01/tags/limits` | store:products:read |
 | `list_tags` | `GET /api/2025-01/tags` | store:products:read |
+| `search_tags` | `GET /api/2025-01/tags/search` | store:products:read |
 | `get_tag` | `GET /api/2025-01/tags/{id}` | store:products:read |
 | `create_tag` | `POST /api/2025-01/tags` | store:products:write |
+| `bulk_create_tags` | `POST /api/2025-01/tags/bulk-create` | store:products:write |
 | `update_tag` | `PUT /api/2025-01/tags/{id}` | store:products:write |
 | `delete_tag` | `DELETE /api/2025-01/tags/{id}` | store:products:write |
+| `bulk_delete_tags` | `POST /api/2025-01/tags/bulk-delete` | store:products:write |
 | `get_tag_translation` | `GET /api/2025-01/tags/{id}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_tag_translation` | `PUT /api/2025-01/tags/{id}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `get_tag_translations` | `GET /api/2025-01/tags/translations/{locale}` | store:products:read, store:settings.languages:read |
