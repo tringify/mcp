@@ -421,3 +421,21 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_customer` | `GET /api/2025-01/customers/{id}` | store:customers:read |
 | `create_customer` | `POST /api/2025-01/customers` | store:customers:write |
 | `update_customer` | `PUT /api/2025-01/customers/{id}` | store:customers:write |
+
+## Product filters
+
+Filter definitions are capped at 50 per store, including built-in and disabled filters. Source discovery pages accept at most 100 rows. Update requires the definition revision; reorder requires the complete list revision and every definition ID. Only labels are translatable; source values retain their filter tokens. Translation tools require both Products and Languages access.
+
+| Tool | Store API operation | OAuth scopes |
+| --- | --- | --- |
+| `get_product_filter_contract` | `GET /api/2025-01/product-filters/contract` | store:products:read |
+| `list_product_filter_sources` | `GET /api/2025-01/product-filters/sources` | store:products:read |
+| `list_product_filters` | `GET /api/2025-01/product-filters` | store:products:read |
+| `create_product_filter` | `POST /api/2025-01/product-filters` | store:products:write |
+| `reorder_product_filters` | `PUT /api/2025-01/product-filters/reorder` | store:products:write |
+| `update_product_filter` | `PUT /api/2025-01/product-filters/{id}` | store:products:write |
+| `delete_product_filter` | `DELETE /api/2025-01/product-filters/{id}` | store:products:write |
+| `get_product_filter_translation` | `GET /api/2025-01/product-filters/{id}/translations/{locale}` | store:products:read, store:settings.languages:read |
+| `set_product_filter_translation` | `PUT /api/2025-01/product-filters/{id}/translations/{locale}` | store:products:write, store:settings.languages:write |
+| `get_product_filter_translations` | `GET /api/2025-01/product-filters/translations/{locale}` | store:products:read, store:settings.languages:read |
+| `set_product_filter_translations` | `PUT /api/2025-01/product-filters/translations/{locale}` | store:products:write, store:settings.languages:write |
