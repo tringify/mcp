@@ -5133,6 +5133,10 @@
           "description": "Filter by assigned blog category id.",
           "type": "string"
         },
+        "cursor": {
+          "description": "Use next_cursor from the previous page with unchanged filters and sorting. Cursor pages reuse the first page totals and avoid deep offsets. Invalid or stale cursors return INVALID_INPUT on cursor; restart from the first page.",
+          "type": "string"
+        },
         "limit": {
           "description": "Page size, up to `list_max_limit` from the Blog Post limits.",
           "type": "integer"
@@ -6035,6 +6039,10 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "cursor": {
+          "description": "Use next_cursor from the previous page with unchanged filters and sorting. Cursor pages reuse the first page totals and avoid deep offsets. Invalid or stale cursors return INVALID_INPUT on cursor; restart from the first page.",
+          "type": "string"
+        },
         "limit": {
           "description": "Page size, up to `list_max_limit` from the Blog Category limits.",
           "type": "integer"
@@ -6616,6 +6624,10 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "cursor": {
+          "description": "Use next_cursor from the previous page with unchanged filters and sorting. Cursor pages reuse the first page totals and avoid deep offsets. Invalid or stale cursors return INVALID_INPUT on cursor; restart from the first page.",
+          "type": "string"
+        },
         "limit": {
           "description": "Page size, up to `list_max_limit` from the Blog Tag limits.",
           "type": "integer"
@@ -6975,6 +6987,10 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "cursor": {
+          "description": "Use next_cursor from the previous page with unchanged filters and sorting. Cursor pages reuse the first page totals and avoid deep offsets. Invalid or stale cursors return INVALID_INPUT on cursor; restart from the first page.",
+          "type": "string"
+        },
         "limit": {
           "description": "Page size, up to `list_max_limit` from the Blog Author limits.",
           "type": "integer"
@@ -7362,6 +7378,10 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "cursor": {
+          "description": "Use next_cursor from the previous page with unchanged filters and sorting. Cursor pages reuse the first page totals and avoid deep offsets. Invalid or stale cursors return INVALID_INPUT on cursor; restart from the first page.",
+          "type": "string"
+        },
         "limit": {
           "description": "Page size, up to `list_max_limit` from the Blog Comment limits.",
           "type": "integer"
