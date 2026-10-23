@@ -18077,5 +18077,470 @@
       "store:products:write",
       "store:settings.languages:write"
     ]
+  },
+  {
+    "api_key": "reviews.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reviews/limits",
+    "description": "Fetch review moderation limits and enums. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reviews/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_review_limits",
+    "scopes": [
+      "store:reviews:read"
+    ]
+  },
+  {
+    "api_key": "reviews.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reviews",
+    "description": "List the store-wide product review moderation queue. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reviews. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "next_cursor from the previous page, sent with the same filters and sort_by. Omit it for the first page.",
+          "type": "string"
+        },
+        "has_store_response": {
+          "description": "Only reviews with or without a merchant response.",
+          "type": "boolean"
+        },
+        "limit": {
+          "description": "Rows to return, from 1 through list_max_limit. Larger values are rejected.",
+          "type": "integer"
+        },
+        "product_id": {
+          "description": "Only reviews for this product.",
+          "type": "integer"
+        },
+        "rating": {
+          "description": "One rating from 1 through 5. Use ratings to match several.",
+          "type": "integer"
+        },
+        "ratings": {
+          "description": "Comma-separated ratings from 1 through 5, at most five values, for example 1,2. Cannot be combined with rating.",
+          "type": "string"
+        },
+        "search": {
+          "description": "Search title and content.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "newest, oldest, highest_rated, lowest_rated, or most_helpful.",
+          "type": "string"
+        },
+        "status": {
+          "description": "pending, approved, rejected, or hidden.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_reviews",
+    "scopes": [
+      "store:reviews:read"
+    ]
+  },
+  {
+    "api_key": "reviews.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reviews/{id}",
+    "description": "Fetch one review in this store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reviews/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Review id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_review",
+    "scopes": [
+      "store:reviews:read"
+    ]
+  },
+  {
+    "api_key": "reviews.moderate",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/reviews/{id}",
+    "description": "Approve, reject, or hide one review. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/reviews/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Review id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "reason": {
+          "description": "Optional moderation reason.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "approved, rejected, or hidden.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "status"
+      ],
+      "type": "object"
+    },
+    "name": "moderate_review",
+    "scopes": [
+      "store:reviews:write"
+    ]
+  },
+  {
+    "api_key": "reviews.respond",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/reviews/{id}/response",
+    "description": "Add or replace the merchant response. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/reviews/{id}/response. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Review id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "response": {
+          "description": "Merchant response text.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "response"
+      ],
+      "type": "object"
+    },
+    "name": "respond_review",
+    "scopes": [
+      "store:reviews:write"
+    ]
+  },
+  {
+    "api_key": "reviews.response.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/reviews/{id}/response",
+    "description": "Remove the store response from one review. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/reviews/{id}/response. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Review id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_review_response",
+    "scopes": [
+      "store:reviews:write"
+    ]
+  },
+  {
+    "api_key": "reviews.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/reviews/{id}",
+    "description": "Permanently delete one review. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/reviews/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Review id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_review",
+    "scopes": [
+      "store:reviews:write"
+    ]
+  },
+  {
+    "api_key": "reviews.bulk-moderate",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/reviews/bulk-moderate",
+    "description": "Queue approval, rejection, or hiding of selected reviews. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/reviews/bulk-moderate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "A new UUID for this bulk action. Reuse it only when submitting the same action after an interrupted request.",
+          "type": "string"
+        },
+        "reason": {
+          "description": "Optional moderation reason.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "review_ids": {
+          "description": "Unique review ids, capped by bulk_max.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "status": {
+          "description": "approved, rejected, or hidden.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id",
+        "review_ids",
+        "status"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_moderate_reviews",
+    "scopes": [
+      "store:reviews:write"
+    ]
+  },
+  {
+    "api_key": "reviews.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/reviews/bulk-delete",
+    "description": "Queue permanent deletion of selected reviews, their photos, and votes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/reviews/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "A new UUID for this bulk action. Reuse it only when submitting the same action after an interrupted request.",
+          "type": "string"
+        },
+        "review_ids": {
+          "description": "Unique review ids, capped by bulk_max.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "operation_id",
+        "review_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_reviews",
+    "scopes": [
+      "store:reviews:write"
+    ]
+  },
+  {
+    "api_key": "reviews.bulk-operation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reviews/bulk-operations/{operationId}",
+    "description": "Read a queued bulk action and its saved results. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reviews/bulk-operations/{operationId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operationId": {
+          "description": "Operation UUID, or current for your oldest unacknowledged operation.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operationId"
+      ],
+      "type": "object"
+    },
+    "name": "get_review_bulk_operation",
+    "scopes": [
+      "store:reviews:write"
+    ]
+  },
+  {
+    "api_key": "reviews.bulk-operation.acknowledge",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/reviews/bulk-operations/{operationId}/acknowledge",
+    "description": "Mark a finished result as seen. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/reviews/bulk-operations/{operationId}/acknowledge. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operationId": {
+          "description": "Finished operation UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operationId"
+      ],
+      "type": "object"
+    },
+    "name": "acknowledge_review_bulk_operation",
+    "scopes": [
+      "store:reviews:write"
+    ]
+  },
+  {
+    "api_key": "reviews.settings.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/reviews/settings",
+    "description": "Fetch the store's review submission, moderation, and display settings. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reviews/settings. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_review_settings",
+    "scopes": [
+      "store:reviews:read"
+    ]
+  },
+  {
+    "api_key": "reviews.settings.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/reviews/settings",
+    "description": "Patch review submission, moderation, and display settings. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/reviews/settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_anonymous": {
+          "description": "Accept reviews from guests who are not signed in. Guests must enter a name. Invited customers can always review what they bought. Default false.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "allow_images": {
+          "description": "Allow review photos. Default true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "auto_approve_guest_reviews": {
+          "description": "Let guest reviews follow moderation_mode like customers' reviews. While false, every guest review is pending until approved. Default false.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "block_emails": {
+          "description": "Refuse submissions whose title, text or reviewer name contains an email address, with STORE_REVIEW_EMAILS_NOT_ALLOWED. Default true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "block_urls": {
+          "description": "Refuse submissions whose title, text or reviewer name contains a web address, with STORE_REVIEW_LINKS_NOT_ALLOWED. Default true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "blocked_words": {
+          "description": "Complete blocked word list. A submission containing any of these words or phrases, in its title, text or reviewer name, is refused with STORE_REVIEW_BLOCKED_WORDS. Default [].",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "enable_responses": {
+          "description": "Allow public store responses to reviews. Default true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "flag_low_ratings": {
+          "description": "In auto_approve mode, keep 1- and 2-star reviews pending until they are approved. Has no effect in manual mode, where every review is pending. Default false.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "max_content_length": {
+          "description": "Maximum review text length, in characters. Default 1000.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "max_images": {
+          "description": "Maximum photos per review, from 1 through max_images_max. Default 3.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "min_content_length": {
+          "description": "Minimum review text length, in characters. Default 20.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "moderation_mode": {
+          "description": "auto_approve publishes each review that passes the content filters as soon as it is submitted, unless flag_low_ratings holds it for approval; manual keeps every review pending until it is approved; disabled stops new reviews and helpful votes and hides existing reviews from the storefront. Default auto_approve.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "require_purchase": {
+          "description": "Accept reviews only from customers whose order for the product counts as a purchase (paid, cash on delivery, or partly or fully refunded; never cancelled or test orders), or from a review invitation. Cannot be true while allow_anonymous is true. Default false.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "review_request_delay_days": {
+          "description": "Days after an order is fully delivered before the review request is sent (0-60). Default 3.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "reviewer_display": {
+          "description": "How reviewer names appear on the storefront: anonymous, first_name, full_name, or initials. Default first_name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "update_review_settings",
+    "scopes": [
+      "store:reviews:write"
+    ]
   }
 ]
