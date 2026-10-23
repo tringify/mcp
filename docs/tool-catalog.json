@@ -5133,6 +5133,10 @@
           "description": "Filter by assigned blog category id.",
           "type": "string"
         },
+        "cursor": {
+          "description": "Use next_cursor from the previous page with unchanged filters and sorting. Cursor pages reuse the first page totals and avoid deep offsets. Invalid or stale cursors return INVALID_INPUT on cursor; restart from the first page.",
+          "type": "string"
+        },
         "limit": {
           "description": "Page size, up to `list_max_limit` from the Blog Post limits.",
           "type": "integer"
@@ -6035,6 +6039,10 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "cursor": {
+          "description": "Use next_cursor from the previous page with unchanged filters and sorting. Cursor pages reuse the first page totals and avoid deep offsets. Invalid or stale cursors return INVALID_INPUT on cursor; restart from the first page.",
+          "type": "string"
+        },
         "limit": {
           "description": "Page size, up to `list_max_limit` from the Blog Category limits.",
           "type": "integer"
@@ -6616,6 +6624,10 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "cursor": {
+          "description": "Use next_cursor from the previous page with unchanged filters and sorting. Cursor pages reuse the first page totals and avoid deep offsets. Invalid or stale cursors return INVALID_INPUT on cursor; restart from the first page.",
+          "type": "string"
+        },
         "limit": {
           "description": "Page size, up to `list_max_limit` from the Blog Tag limits.",
           "type": "integer"
@@ -6975,6 +6987,10 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "cursor": {
+          "description": "Use next_cursor from the previous page with unchanged filters and sorting. Cursor pages reuse the first page totals and avoid deep offsets. Invalid or stale cursors return INVALID_INPUT on cursor; restart from the first page.",
+          "type": "string"
+        },
         "limit": {
           "description": "Page size, up to `list_max_limit` from the Blog Author limits.",
           "type": "integer"
@@ -7141,7 +7157,7 @@
     "api_key": "blog_authors.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/blog/authors/{id}",
-    "description": "Delete one blog author. If posts reference the author, the request must name `reassign_to_author_id`; otherwise it returns `BLOG_AUTHOR_REASSIGN_REQUIRED`. The named author takes over every assigned post in the same transaction as the delete. No post is deleted or left without an author. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/authors/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete one blog author. If posts reference the author, the request must name `reassign_to_author_id`; otherwise it returns `BLOG_AUTHOR_REASSIGN_REQUIRED`. Posts move to the replacement author. Large reassignments return a lifecycle job; wait for completion before treating the author as deleted. No post is deleted or left without an author. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/authors/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -7172,7 +7188,7 @@
     "api_key": "blog_authors.bulk_delete",
     "api_method": "POST",
     "api_path": "/api/2025-01/blog/authors/bulk-delete",
-    "description": "Delete multiple blog authors. Missing authors are reported in `failed`. If any selected author is assigned to posts, the request must name `reassign_to_author_id` (an author outside the selection); otherwise it returns `BLOG_AUTHOR_BULK_REASSIGN_REQUIRED`. The named author takes over every assigned post and the selected authors are deleted atomically. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/authors/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete multiple blog authors. Missing authors are reported in `failed`. If any selected author is assigned to posts, the request must name `reassign_to_author_id` (an author outside the selection); otherwise it returns `BLOG_AUTHOR_BULK_REASSIGN_REQUIRED`. Posts move to the replacement author. Large reassignments return `jobs`; inspect these as well as `deleted` and `failed`, and wait for job completion. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/authors/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -7202,6 +7218,144 @@
     ]
   },
   {
+    "api_key": "blog_authors.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/authors/{id}/translations/{locale}",
+    "description": "Fetch one blog author translation. Returns stored translated Blog Author fields for one locale, including whether the translation is out of date. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/authors/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Author id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_author_translation",
+    "scopes": [
+      "store:blog:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "blog_authors.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/authors/{id}/translations/{locale}",
+    "description": "Set one blog author translation. Writes translated Blog Author fields for one locale. Empty values clear the matching field translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/authors/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Author id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_author_translation",
+    "scopes": [
+      "store:blog:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "blog_authors.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/authors/translations/{locale}",
+    "description": "Fetch blog author translations in batch. Returns translated Blog Author fields for multiple author ids in one locale. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/authors/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated Blog Author ids.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_author_translations",
+    "scopes": [
+      "store:blog:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "blog_authors.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/authors/translations/{locale}",
+    "description": "Set blog author translations in batch. Writes translated Blog Author fields for multiple author ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/authors/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_blog_author_translations",
+    "scopes": [
+      "store:blog:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
     "api_key": "blog_comments.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/comments/limits",
@@ -7224,6 +7378,10 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "cursor": {
+          "description": "Use next_cursor from the previous page with unchanged filters and sorting. Cursor pages reuse the first page totals and avoid deep offsets. Invalid or stale cursors return INVALID_INPUT on cursor; restart from the first page.",
+          "type": "string"
+        },
         "limit": {
           "description": "Page size, up to `list_max_limit` from the Blog Comment limits.",
           "type": "integer"

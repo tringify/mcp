@@ -243,3 +243,9 @@ Tag slugs are source filter values; tags have no dedicated pages or merge tool.
 Large deletions detach products in background batches; review `collections_total`
 and the first 50 collection impacts before confirming. Staff translation tools
 require product access and the corresponding language-settings scope.
+
+## Blog author translations and deletion
+
+Author name and biography support individual and batch translations: `get_blog_author_translation`, `set_blog_author_translation`, `get_blog_author_translations`, and `set_blog_author_translations`. Reads require `store:blog:read` and `store:settings.languages:read`; writes require both corresponding write scopes. Empty values clear translations. Author slugs are not translatable.
+
+Deleting an assigned author requires `reassign_to_author_id` naming an author in the same store outside the deletion selection. Large reassignments return a `lifecycle` object (single deletion) or `jobs` (bulk). Wait for completion; queued work is not a completed deletion. Posts are never left without an author.

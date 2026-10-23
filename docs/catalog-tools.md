@@ -174,6 +174,10 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `update_blog_author` | `PUT /api/2025-01/blog/authors/{id}` | store:blog:write |
 | `delete_blog_author` | `DELETE /api/2025-01/blog/authors/{id}` | store:blog:write |
 | `bulk_delete_blog_authors` | `POST /api/2025-01/blog/authors/bulk-delete` | store:blog:write |
+| `get_blog_author_translation` | `GET /api/2025-01/blog/authors/{id}/translations/{locale}` | store:blog:read, store:settings.languages:read |
+| `set_blog_author_translation` | `PUT /api/2025-01/blog/authors/{id}/translations/{locale}` | store:blog:write, store:settings.languages:write |
+| `get_blog_author_translations` | `GET /api/2025-01/blog/authors/translations/{locale}` | store:blog:read, store:settings.languages:read |
+| `set_blog_author_translations` | `PUT /api/2025-01/blog/authors/translations/{locale}` | store:blog:write, store:settings.languages:write |
 | `get_blog_comment_limits` | `GET /api/2025-01/blog/comments/limits` | store:blog:read |
 | `list_blog_comments` | `GET /api/2025-01/blog/comments` | store:blog:read |
 | `get_blog_comment_counts` | `GET /api/2025-01/blog/comments/counts` | store:blog:read |
