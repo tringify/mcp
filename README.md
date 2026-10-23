@@ -100,7 +100,7 @@ Existing Products permissions cover the catalog tools. Translation operations al
 
 Order editing uses `get_order`, `get_order_edit_options`, `list_order_edit_shipping_options`, `preview_order_edit`, `apply_order_edit`, and `list_order_edits`. Reads need `store:orders:read`; previews, delivery quotes and applying need `store:orders:write`. Read current field permissions before editing. Preview item, price, manual discount, contact, address and shipping changes, review the resulting totals and settlement, then apply with the returned `preview_token`, current `order_version` and a stable `idempotency_key`. The server revalidates every write. Existing connections must approve the added Orders access. See the [Orders API reference](https://dev-docs.tringify.com/store-api/orders/orders).
 
-The [complete tool inventory](docs/catalog-tools.md) lists the supported operations and their API counterparts. The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation. Products, Collections, Categories, Attributes, Languages, and Currencies cover their documented merchant-authorized API endpoints. App-only purchase requirements remain outside user connections. Brands, Vendors, Tags, and Files support the tools shown above; their remaining API endpoints are not implied.
+The [complete tool inventory](docs/catalog-tools.md) lists the supported operations and their API counterparts. The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation. Products, Collections, Categories, Attributes, Tags, Languages, and Currencies cover their documented merchant-authorized API endpoints. App-only purchase requirements remain outside user connections. Brands, Vendors, and Files support the tools shown above; their remaining API endpoints are not implied.
 
 ## Pages, policies, and blogs
 
@@ -235,3 +235,11 @@ For destructive changes, first call without confirmed or confirmation_token. HTT
 Rates are positive decimal JSON strings, never numbers. conversion_rate and rate_inverse convert base currency to the selected currency; rate converts in the opposite direction. Read max_conversion_decimals and max_conversion_rate from list_currencies. Count decimal places after removing insignificant trailing zeros. Reference rates round toward six significant digits, capped at ten decimal places; large rates retain all integer digits. Automatic rates may carry more significant precision.
 
 set_languages accepts omitted or null locales as a read. A supplied array replaces the full set and must retain the default language. Default changes do not translate source content. A successful translation reset has no data field; physical cleanup continues asynchronously. Pass backend error codes, messages and details to the UI unchanged.
+
+Product Tag tools include limits, cursor lists (maximum 100 per page), picker search
+(maximum 50 suggestions), get/create/update/delete, bulk create (50 names), bulk
+delete (1000 IDs), and individual/batch translations. Only `name` is translatable.
+Tag slugs are source filter values; tags have no dedicated pages or merge tool.
+Large deletions detach products in background batches; review `collections_total`
+and the first 50 collection impacts before confirming. Staff translation tools
+require product access and the corresponding language-settings scope.
