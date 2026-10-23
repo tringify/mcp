@@ -243,3 +243,5 @@ Tag slugs are source filter values; tags have no dedicated pages or merge tool.
 Large deletions detach products in background batches; review `collections_total`
 and the first 50 collection impacts before confirming. Staff translation tools
 require product access and the corresponding language-settings scope.
+
+Product content translation tools use `store:products:read` / `store:products:write`, matching staff access in Store Admin. Product and variant pages are capped at 100. Delete confirmations return `details.preview.count` and at most 50 `items` (ID/title); show that preview and warnings before retrying with the token. Respect `bulk_max`, never more than 1,000 IDs. External Store API tokens still need translation scopes alongside product scopes.

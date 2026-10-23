@@ -17,12 +17,12 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `delete_product` | `DELETE /api/2025-01/products/{id}` | store:products:write |
 | `list_product_metafields` | `GET /api/2025-01/products/{id}/metafields` | store:products:read |
 | `set_product_metafield` | `PUT /api/2025-01/products/{id}/metafields` | store:products:write |
-| `get_product_metafield_translation` | `GET /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read, store:settings.languages:read |
-| `set_product_metafield_translation` | `PUT /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write, store:settings.languages:write |
+| `get_product_metafield_translation` | `GET /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read |
+| `set_product_metafield_translation` | `PUT /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write |
 | `list_product_variant_metafields` | `GET /api/2025-01/products/{id}/variants/{variantId}/metafields` | store:products:read |
 | `set_product_variant_metafield` | `PUT /api/2025-01/products/{id}/variants/{variantId}/metafields` | store:products:write |
-| `get_product_variant_metafield_translation` | `GET /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read, store:settings.languages:read |
-| `set_product_variant_metafield_translation` | `PUT /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write, store:settings.languages:write |
+| `get_product_variant_metafield_translation` | `GET /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read |
+| `set_product_variant_metafield_translation` | `PUT /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write |
 | `bulk_update_product_status` | `POST /api/2025-01/products/bulk-status` | store:products:write |
 | `bulk_update_product_tags` | `POST /api/2025-01/products/bulk-tags` | store:products:write |
 | `bulk_update_product_categories` | `POST /api/2025-01/products/bulk-categories` | store:products:write |
@@ -31,12 +31,12 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `bulk_set_product_brand` | `POST /api/2025-01/products/bulk-brand` | store:products:write |
 | `bulk_delete_products` | `POST /api/2025-01/products/bulk-delete` | store:products:write |
 | `bulk_delete_product_variants` | `POST /api/2025-01/products/variants/bulk-delete` | store:products:write |
-| `get_product_translation` | `GET /api/2025-01/products/{id}/translations/{locale}` | store:products:read, store:settings.languages:read |
-| `set_product_translation` | `PUT /api/2025-01/products/{id}/translations/{locale}` | store:products:write, store:settings.languages:write |
-| `get_product_translations` | `GET /api/2025-01/products/translations/{locale}` | store:products:read, store:settings.languages:read |
-| `set_product_translations` | `PUT /api/2025-01/products/translations/{locale}` | store:products:write, store:settings.languages:write |
-| `get_product_variant_translation` | `GET /api/2025-01/products/{id}/variants/{variantId}/translations/{locale}` | store:products:read, store:settings.languages:read |
-| `set_product_variant_translation` | `PUT /api/2025-01/products/{id}/variants/{variantId}/translations/{locale}` | store:products:write, store:settings.languages:write |
+| `get_product_translation` | `GET /api/2025-01/products/{id}/translations/{locale}` | store:products:read |
+| `set_product_translation` | `PUT /api/2025-01/products/{id}/translations/{locale}` | store:products:write |
+| `get_product_translations` | `GET /api/2025-01/products/translations/{locale}` | store:products:read |
+| `set_product_translations` | `PUT /api/2025-01/products/translations/{locale}` | store:products:write |
+| `get_product_variant_translation` | `GET /api/2025-01/products/{id}/variants/{variantId}/translations/{locale}` | store:products:read |
+| `set_product_variant_translation` | `PUT /api/2025-01/products/{id}/variants/{variantId}/translations/{locale}` | store:products:write |
 | `get_collection_limits` | `GET /api/2025-01/collections/limits` | store:products:read |
 | `list_collections` | `GET /api/2025-01/collections` | store:products:read |
 | `search_collections` | `GET /api/2025-01/collections/search` | store:products:read |
