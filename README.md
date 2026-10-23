@@ -243,3 +243,13 @@ Tag slugs are source filter values; tags have no dedicated pages or merge tool.
 Large deletions detach products in background batches; review `collections_total`
 and the first 50 collection impacts before confirming. Staff translation tools
 require product access and the corresponding language-settings scope.
+
+Inventory tools cover stock levels, movement history, low-stock alerts, commitments,
+inventory groups, transfers and receipts, restock requests/settings, and locations.
+Approve `store:inventory:read` / `store:inventory:write` and location access as needed.
+Order references need `store:orders:read`; restock contacts and contact search need
+`store:customers:read`. Linked group products/variants also need product read access.
+Stock writes accept `idempotency_key`: reuse the same key and identical input after
+an uncertain response. Adjustments are atomic batches. Partial receipts move received
+units, release short units and write off damaged units. Inventory groups have no
+resource translations or dedicated storefront pages in the current contract.
