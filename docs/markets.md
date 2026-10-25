@@ -39,7 +39,9 @@ Tax classes and zones belong to the market. Read rates and coverage gaps before 
 
 Price-based tax rules have a single country/currency eligibility requirement. Check eligibility before authoring, and adjust the rule before expanding that market. Tax-included pricing, tax display mode, tax basis and the default-class setting are independent settings.
 
-Duties use destination, origin and HS-code rules. Read a complete rule before editing, including all origin and HS rates. A de-minimis threshold is in the rule's saved destination currency; equality is not exempt. Review whether duties are collected at checkout or paid on delivery. Taxes and duties are calculated from the merchant's saved configuration.
+Duties use destination, origin and HS-code rules. Read a complete rule before editing, including all origin and HS rates. A de-minimis threshold is in the rule's saved destination currency, compares the goods' value only, and equality is not exempt. `duty_includes_shipping` adds shipping without its included tax to the customs value (on by default for CIF destinations, off for the US, Canada, Australia and New Zealand); a checkout fee with `counts_toward_customs_value` joins it too. COD fees never count.
+
+Each market answers who pays import duties on international shipments with `duty_collection_mode`: `pay_on_delivery` (the customer; any estimate shows below the total), `collect_at_checkout` (the customer at checkout; duty and its import tax are added to the total; needs `duties_enabled`, otherwise `MARKET_DUTY_COLLECT_NEEDS_ESTIMATES`) or `included_in_price` (the merchant; nothing is added and orders record the estimate as `duty_total` plus `duty_tax_estimate`, the merchant's estimated cost). `duties_enabled` only turns estimates from country rules on or off; the answer applies either way. Confirm the answer with the merchant before changing it: estimates come from their own rules, carriers and customs may charge differently (including handling fees), and the merchant is responsible for the choice.
 
 ## Shipping and payments
 

@@ -11638,7 +11638,7 @@
     "api_key": "orders.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders/{id}",
-    "description": "Fetch one order with fulfillment plans. Order numbers are assigned using the merchant’s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Tax is split across `items[].tax_lines`, `shipping_tax_lines`, `cod_fee_tax_lines`, `duty_tax_lines` and `checkout_fee_lines[].tax_lines`; these amounts sum to `tax_total`. Refunds expose `goods_total`, `tax_total` and `components` (actual returned amount, goods_amount, tax_amount, original tax_lines and item or charge identity). Item refunds also expose goods_amount, tax_amount and tax_lines. Components include amount-only allocations; quantities of zero do not return stock. Tax is prorated from the saved tax lines over remaining units or charge amounts, with the final unit taking the remainder, capped at collected tax less active refund reservations. Smaller refund amounts reduce tax proportionally. Money above selected units and charges is allocated across the remaining order without returning additional units. A component key identifies its source and can repeat for selected-unit and additional monetary allocations. Surplus money that was never sale value has no tax. Only completed refunds reduce tax reports. Base refund goods and tax consume each item's or charge's saved base allocations cumulatively, including its final remainder. Fully refunded products have zero net goods revenue. The signed base_rounding_amount reconciles settled cash with base_goods_amount plus base_tax_amount without moving revenue or tax between products. Snapshot items carry an immutable allocation_key, preserved when imports replace database IDs; supplied sale allocations and original refund evidence are validated and retained. Historical order CSV exports preserve refunds (per-refund components and original tax_lines), line_id and base_refunded_total. Imports reject missing or inconsistent refund evidence with ORDER_IMPORT_REFUND_EVIDENCE_INVALID; they never estimate taxable refund history from refunded_total. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` and `customer_tax_id_type` record the normalized, offline-validated ID and never prove registration or exemption. `tax_exemption_source` is customer_flag, staff_order or none, and `tax_id_state_mismatch` flags a GSTIN whose state differs from the Indian tax address. Saved customer IDs are used only when their type and validation match the zone; invalid saved IDs are ignored without blocking pricing or payment; `tax_exempt` and `invoice_only` are server-computed outcomes. `is_tax_included` records whether the order's prices include tax, and `tax_basis_applied` which address taxed it (`shipping` or `billing`). Each item's `tax_lines` list its taxes with `name`, `rate`, `amount`, `base_amount` (the amount in the store's base currency), `jurisdiction` (the ISO 3166-2 subdivision of the matched state zone, such as `IN-UP`, otherwise the tax country, such as `IN`) and `jurisdiction_type` (`subdivision` or `country`). Inclusive checkout shows VAT on duty as a separate added amount: 120 goods + 12 duty + 2.40 duty VAT = 134.40, with only 20 goods VAT labelled included. The item's `tax_rate` is the sum of its tax lines' rates (CGST 9% + SGST 9% is 18), on create and edit alike. Tax is calculated at full precision on discounted amounts across the order; `tax_total` is rounded once to currency precision (half to even), then allocated across item lines, shipping, COD, duty tax and checkout fees by largest remainder, so line amounts always add up. Cart and checkout use each line's allocated tax for display. Thus 100 separate exclusive 0.25 lines at 19% have 4.75 tax: 75 lines receive 0.05 and 25 receive 0.04, displaying 75 times 0.30 plus 25 times 0.29 = 29.75, exactly the amount charged, with zero savings. A single 100-unit line also has 4.75 tax and 29.75 payable. When a merchant-approved tax-exempt buyer orders in a tax-inclusive market, every amount is charged without its included tax: `tax_exempt` is `true`, `is_tax_included` stays `true` and `tax_total` is 0. An item's `duty_customs_value` is its value after discounts without the tax its price includes. When duty is collected at checkout, the import VAT on it is part of `tax_total` and listed in `pricing_snapshot.tax.duty_tax_lines`. When `duty_collection_mode` is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`; when it is `pay_on_delivery`, the amount is an informational estimate outside `grand_total`. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token’s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Each entry in `discounts` lists its `allocations`: the part of that discount that reduced each order item (`order_item_id`, the `quantity` of units it reduced, `amount`, and `is_free` when it made those units free). A discount's allocations sum to its amount and an item's allocations sum to its `discount_amount`; an order-level manual discount is split in proportion to what each item has left after the other discounts. Quantity edits preserve discount shares consumed or reserved by refunds and prorate only the remaining aggregate discount over the remaining units; the saved allocations and pricing totals reconcile to those shares. Orders saved without pricing evidence have none. Each refund item reports `amount`, the refunded units at the item's unit price less their share of its discounts, and `discount_allocations`, each discount's share: the remaining aggregate line discount is prorated over the remaining units and rounded once, then distributed between discounts with each share capped at its remaining allocation. Successful and pending refunds consume shares; failed provider refunds release them. The final available units receive the unconsumed discount. Item amounts always subtract the authoritative line discount, even if historical per-discount allocations are unavailable. Historical refund breakdowns are reconstructed deterministically from the saved line allocations. The refund's own amount is what was returned and can differ from its items. An item that does not require shipping has no fulfillment: its `fulfillment_status` becomes `fulfilled` and `fulfilled_quantity` equals its quantity when captured payments cover the order total plus any returned surplus and the order is not cancelled. Refund status alone never fulfills a line. The order's `fulfillment_status` counts every item, so an unpaid order of only such items is `unfulfilled`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
+    "description": "Fetch one order with fulfillment plans. Order numbers are assigned using the merchant’s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Tax is split across `items[].tax_lines`, `shipping_tax_lines`, `cod_fee_tax_lines`, `duty_tax_lines` and `checkout_fee_lines[].tax_lines`; these amounts sum to `tax_total`. Refunds expose `goods_total`, `tax_total` and `components` (actual returned amount, goods_amount, tax_amount, original tax_lines and item or charge identity). Item refunds also expose goods_amount, tax_amount and tax_lines. Components include amount-only allocations; quantities of zero do not return stock. Tax is prorated from the saved tax lines over remaining units or charge amounts, with the final unit taking the remainder, capped at collected tax less active refund reservations. Smaller refund amounts reduce tax proportionally. Money above selected units and charges is allocated across the remaining order without returning additional units. A component key identifies its source and can repeat for selected-unit and additional monetary allocations. Surplus money that was never sale value has no tax. Only completed refunds reduce tax reports. Base refund goods and tax consume each item's or charge's saved base allocations cumulatively, including its final remainder. Fully refunded products have zero net goods revenue. The signed base_rounding_amount reconciles settled cash with base_goods_amount plus base_tax_amount without moving revenue or tax between products. Snapshot items carry an immutable allocation_key, preserved when imports replace database IDs; supplied sale allocations and original refund evidence are validated and retained. Historical order CSV exports preserve refunds (per-refund components and original tax_lines), line_id and base_refunded_total. Imports reject missing or inconsistent refund evidence with ORDER_IMPORT_REFUND_EVIDENCE_INVALID; they never estimate taxable refund history from refunded_total. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` and `customer_tax_id_type` record the normalized, offline-validated ID and never prove registration or exemption. `tax_exemption_source` is customer_flag, staff_order or none, and `tax_id_state_mismatch` flags a GSTIN whose state differs from the Indian tax address. Saved customer IDs are used only when their type and validation match the zone; invalid saved IDs are ignored without blocking pricing or payment; `tax_exempt` and `invoice_only` are server-computed outcomes. `is_tax_included` records whether the order's prices include tax, and `tax_basis_applied` which address taxed it (`shipping` or `billing`). Each item's `tax_lines` list its taxes with `name`, `rate`, `amount`, `base_amount` (the amount in the store's base currency), `jurisdiction` (the ISO 3166-2 subdivision of the matched state zone, such as `IN-UP`, otherwise the tax country, such as `IN`) and `jurisdiction_type` (`subdivision` or `country`). Inclusive checkout shows VAT on duty as a separate added amount: 120 goods + 12 duty + 2.40 duty VAT = 134.40, with only 20 goods VAT labelled included. The item's `tax_rate` is the sum of its tax lines' rates (CGST 9% + SGST 9% is 18), on create and edit alike. Tax is calculated at full precision on discounted amounts across the order; `tax_total` is rounded once to currency precision (half to even), then allocated across item lines, shipping, COD, duty tax and checkout fees by largest remainder, so line amounts always add up. Cart and checkout use each line's allocated tax for display. Thus 100 separate exclusive 0.25 lines at 19% have 4.75 tax: 75 lines receive 0.05 and 25 receive 0.04, displaying 75 times 0.30 plus 25 times 0.29 = 29.75, exactly the amount charged, with zero savings. A single 100-unit line also has 4.75 tax and 29.75 payable. When a merchant-approved tax-exempt buyer orders in a tax-inclusive market, every amount is charged without its included tax: `tax_exempt` is `true`, `is_tax_included` stays `true` and `tax_total` is 0. An item's `duty_customs_value` is its value after discounts without the tax its price includes, plus its share of shipping (when the country rule includes shipping) and of checkout fees that count toward customs value. When duty is collected at checkout, the import VAT on it is part of `tax_total` and listed in `pricing_snapshot.tax.duty_tax_lines`. `duty_collection_mode` records who pays import duties on an international shipment and is empty for domestic orders. When it is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`. When it is `pay_on_delivery`, `duty_total` plus `duty_tax_estimate` is the customer's estimate, outside `grand_total`. When it is `included_in_price`, they are the merchant's estimated duty cost, outside `grand_total` and not revenue. Estimates come from the merchant's rules; carriers and customs may charge differently. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token’s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Each entry in `discounts` lists its `allocations`: the part of that discount that reduced each order item (`order_item_id`, the `quantity` of units it reduced, `amount`, and `is_free` when it made those units free). A discount's allocations sum to its amount and an item's allocations sum to its `discount_amount`; an order-level manual discount is split in proportion to what each item has left after the other discounts. Quantity edits preserve discount shares consumed or reserved by refunds and prorate only the remaining aggregate discount over the remaining units; the saved allocations and pricing totals reconcile to those shares. Orders saved without pricing evidence have none. Each refund item reports `amount`, the refunded units at the item's unit price less their share of its discounts, and `discount_allocations`, each discount's share: the remaining aggregate line discount is prorated over the remaining units and rounded once, then distributed between discounts with each share capped at its remaining allocation. Successful and pending refunds consume shares; failed provider refunds release them. The final available units receive the unconsumed discount. Item amounts always subtract the authoritative line discount, even if historical per-discount allocations are unavailable. Historical refund breakdowns are reconstructed deterministically from the saved line allocations. The refund's own amount is what was returned and can differ from its items. An item that does not require shipping has no fulfillment: its `fulfillment_status` becomes `fulfilled` and `fulfilled_quantity` equals its quantity when captured payments cover the order total plus any returned surplus and the order is not cancelled. Refund status alone never fulfills a line. The order's `fulfillment_status` counts every item, so an unpaid order of only such items is `unfulfilled`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -14087,7 +14087,7 @@
     "api_key": "currencies.exchange_rates.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/currencies/exchange-rates",
-    "description": "Current market rates for supported currencies, relative to the store's base. Returns current market rates for supported currencies relative to the store's base currency. Each entry carries `base_currency` and the rate in both directions as decimal strings: `rate` is the currency-to-base multiplier (`amount_in_base = amount_in_currency * rate`), while `rate_inverse` is the base-to-currency multiplier (`amount_in_currency = amount_in_base * rate_inverse`). Both are rounded toward six significant digits, capped at ten decimal places; all integer digits are retained for large rates. They may not multiply to exactly one. Automatic currency reads and rate-refresh webhooks can carry more significant precision than this reference table. `updated_at` is an RFC 3339 UTC timestamp for the complete rate snapshot. The request fails with HTTP 503 when no complete, unexpired snapshot is available. The store's base currency is not included in `rates`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/exchange-rates. Only the connected store is accessible.",
+    "description": "Current market rates for supported currencies, relative to the store's base. Returns current market rates for supported currencies relative to the store's base currency. Each entry carries `base_currency` and the rate in both directions as decimal strings: `rate` is the currency-to-base multiplier (`amount_in_base = amount_in_currency * rate`), while `rate_inverse` is the base-to-currency multiplier (`amount_in_currency = amount_in_base * rate_inverse`). Both are rounded toward six significant digits, capped at ten decimal places; all integer digits are retained for large rates. They may not multiply to exactly one. Automatic currency reads and rate-refresh webhooks can carry more significant precision than this reference table. `updated_at` is the complete rate snapshot's RFC 3339 timestamp in the store's timezone, with its offset. The request fails with HTTP 503 when no complete, unexpired snapshot is available. The store's base currency is not included in `rates`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/exchange-rates. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -14102,7 +14102,7 @@
     "api_key": "currencies.exchange_rates.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/currencies/exchange-rates/{code}",
-    "description": "Current market rate for one currency code. Returns the market rate for a single case-sensitive uppercase ISO currency code relative to the store's base. `rate` converts currency to base; `rate_inverse` converts base to currency, the same direction as `conversion_rate`. Requesting the base code returns both rates as `1`, but still requires a current snapshot. `updated_at` is the complete snapshot's RFC 3339 UTC timestamp. The request fails with HTTP 503 when no complete, unexpired snapshot is available. Useful when suggesting a rate while a merchant sets a manual one. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/exchange-rates/{code}. Only the connected store is accessible.",
+    "description": "Current market rate for one currency code. Returns the market rate for a single case-sensitive uppercase ISO currency code relative to the store's base. `rate` converts currency to base; `rate_inverse` converts base to currency, the same direction as `conversion_rate`. Requesting the base code returns both rates as `1`, but still requires a current snapshot. `updated_at` is the complete snapshot's RFC 3339 timestamp in the store's timezone, with its offset. The request fails with HTTP 503 when no complete, unexpired snapshot is available. Useful when suggesting a rate while a merchant sets a manual one. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/exchange-rates/{code}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -14583,14 +14583,14 @@
           ]
         },
         "duties_enabled": {
-          "description": "Whether duty calculation is enabled for this market.",
+          "description": "Estimate duties with country rules: whether the market's enabled duty rules price an estimate for international shipments. Estimates come from your own rules; carriers and customs may charge a different amount, including their own handling fees. Turning this off with `duty_collection_mode` `collect_at_checkout` fails with `MARKET_DUTY_COLLECT_NEEDS_ESTIMATES`.",
           "type": [
             "boolean",
             "null"
           ]
         },
         "duty_collection_mode": {
-          "description": "Whether estimated duties are collected at checkout (`collect_at_checkout`) or paid to the carrier on delivery (`pay_on_delivery`). Collected at checkout, import VAT is also charged on the duty at each item's tax rates, added on top and included in the tax total.",
+          "description": "Who pays import duties on international shipments (an item's country of origin differs from the destination). `pay_on_delivery`: the customer pays on delivery; checkout, order pages and emails say import duties and taxes may be due on delivery, with the estimate, when a rule prices one, shown below the total and never added to it. `collect_at_checkout`: the customer pays at checkout; the estimated duty and the import tax on it (at each item's tax rates) are added to the total, and shoppers are told nothing is due on delivery. Requires `duties_enabled`. `included_in_price`: you pay, and your prices already cover it; nothing is added to the total, shoppers are told duties and taxes are included, and an estimate a rule prices is recorded on the order as your estimated duty cost. The statement shows whether or not estimates are on; domestic orders show none. You are responsible for this choice.",
           "type": [
             "string",
             "null"
@@ -18225,7 +18225,7 @@
     "api_key": "duties.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/duty-country-rules",
-    "description": "Add a duty rule for one country in the market. The country must belong to the market, have a serving currency, and not already have a rule. Create an inactive rule while configuring rates; enable it once the required catalog data is ready. Default and HS-code rates may vary by origin country; use `*` as the fallback origin. Duty is charged on each line's customs value: its value after discounts, without the tax its price includes. In a tax-inclusive market, a line of 120 including 20% VAT at a 12% duty rate pays 12.00 duty, not 14.40. When the market's `duty_collection_mode` is `collect_at_checkout`, import VAT is charged on the goods plus their duty: 100 with 12 duty at 20% VAT is 22.40. Duty is calculated first; the VAT on duty uses each item's own tax rates, is always added on top of the duty (never included in a price), and is part of the order's tax total, so in a tax-inclusive market the total is prices plus duty plus VAT on duty. A successful create publishes `duty_rules/create` with the complete saved rule. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/duty-country-rules. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a duty rule for one country in the market. The country must belong to the market, have a serving currency, and not already have a rule. Create an inactive rule while configuring rates; enable it once the required catalog data is ready. Default and HS-code rates may vary by origin country; use `*` as the fallback origin. Duty is charged on each line's customs value: its value after discounts (including payment discounts), without the tax its price includes. When `duty_includes_shipping` is on, the shipping charge without its included tax joins the customs value, and so does every checkout fee marked `counts_toward_customs_value`; both are shared across the rated imported lines in proportion to their value. Cash on delivery fees never count. Example in a tax-inclusive market with 20% VAT and a 12% rate: two items at 10 each with a 20% discount are 16, a customs value of 13.33, duty 1.60 and tax on duty 0.32; with 5 shipping and `duty_includes_shipping` the customs value is 13.33 + 4.17 = 17.50, duty 2.10 and tax on duty 0.42. The tax on duty uses each item's own tax rates and is always on top of the duty, never included in a price. Only when the market's `duty_collection_mode` is `collect_at_checkout` are the duty and its tax added to the order total (the tax is then part of the tax total); with `pay_on_delivery` they are the customer's estimate and with `included_in_price` your estimated cost, recorded on the order as `duty_total` and `duty_tax_estimate` and never added to the total. Estimates come from your own rules; carriers and customs may charge a different amount, including their own handling fees. A successful create publishes `duty_rules/create` with the complete saved rule. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/duty-country-rules. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -18244,6 +18244,13 @@
           "description": "Origin-country to duty-rate map. Use `*` for the fallback origin. Percentages allow 0-999.99 with up to two decimals; specific/compound amounts are non-negative per-unit or per-kg tariff coefficients with up to four decimals, maximum 999999999999999.9999. These coefficients may be smaller than a currency minor unit. Calculated duties are finalized once at currency precision and line allocations reconcile to the total.",
           "type": [
             "object",
+            "null"
+          ]
+        },
+        "duty_includes_shipping": {
+          "description": "Whether the customs value adds the shipping charge (CIF). The shipping charge, without the tax it includes, is shared across the rated imported lines in proportion to their value. Omit it to use the destination's default: on for EU member states, the UK and other CIF countries; off for the US, Canada, Australia and New Zealand (FOB). De minimis compares the goods' value only.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
@@ -18376,6 +18383,13 @@
           "description": "Replace the complete origin-rate map in one transaction. Use `*` for the fallback origin.",
           "type": [
             "object",
+            "null"
+          ]
+        },
+        "duty_includes_shipping": {
+          "description": "Whether the customs value adds the shipping charge without its included tax (CIF), shared across rated imported lines by value.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
@@ -19355,6 +19369,13 @@
           "description": "Use `order` to charge once or `item` to multiply a fixed fee by total merchandise quantity. Percentage fees use `order`.",
           "type": "string"
         },
+        "counts_toward_customs_value": {
+          "description": "Whether the fee, without the tax it includes, joins the customs value import duty is charged on, shared across the rated imported lines by value. Use it for services that become part of the goods, such as gift wrap or packing. Defaults to `false`. Cash on delivery fees never count.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "description": {
           "description": "Optional explanation shown with an optional service.",
           "type": [
@@ -19438,6 +19459,13 @@
         "apply_per": {
           "description": "Use `order` to charge once or `item` to multiply a fixed fee by total merchandise quantity. Percentage fees use `order`.",
           "type": "string"
+        },
+        "counts_toward_customs_value": {
+          "description": "Whether the fee, without the tax it includes, joins the customs value import duty is charged on, shared across the rated imported lines by value. Use it for services that become part of the goods, such as gift wrap or packing. Defaults to `false`. Cash on delivery fees never count.",
+          "type": [
+            "boolean",
+            "null"
+          ]
         },
         "description": {
           "description": "Optional explanation shown with an optional service.",
@@ -20459,6 +20487,143 @@
       "type": "object"
     },
     "name": "list_inventory_commitment_activitys",
+    "scopes": [
+      "store:inventory:read"
+    ]
+  },
+  {
+    "api_key": "inventory.sync_jobs.upload_intents.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory/sync-jobs/upload-intents",
+    "description": "Get an upload URL for a bulk stock sync file. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory/sync-jobs/upload-intents. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "description": "Exactly one file: `original_filename`, `mime_type` (`text/csv`) and `size_bytes`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "type": "object"
+    },
+    "name": "create_inventory_sync_jobs_upload_intents",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.sync_jobs.upload_intents.finalize",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory/sync-jobs/upload-intents/finalize",
+    "description": "Finalize an uploaded stock sync file. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory/sync-jobs/upload-intents/finalize. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "intent_ids": {
+          "description": "The intent from the create step.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "intent_ids"
+      ],
+      "type": "object"
+    },
+    "name": "finalize_inventory_sync_jobs_upload_intents",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.sync_jobs.upload_intents.status",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory/sync-jobs/upload-intents/status",
+    "description": "Check whether an uploaded stock sync file is ready. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory/sync-jobs/upload-intents/status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "intent_ids": {
+          "description": "The intent from the create step.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "intent_ids"
+      ],
+      "type": "object"
+    },
+    "name": "status_inventory_sync_jobs_upload_intents",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.sync_jobs.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/inventory/sync-jobs",
+    "description": "Set on-hand stock at one location from an uploaded file, in the background. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/inventory/sync-jobs. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "file_id": {
+          "description": "The file id of the finalized upload intent.",
+          "type": "string"
+        },
+        "location_id": {
+          "description": "The location to set stock at.",
+          "type": "string"
+        },
+        "reason": {
+          "description": "Movement reason recorded for every change: one of the limits endpoint's `user_reasons`. Defaults to `correction`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "location_id",
+        "file_id"
+      ],
+      "type": "object"
+    },
+    "name": "create_inventory_sync_jobs",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "inventory.sync_jobs.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inventory/sync-jobs/{jobId}",
+    "description": "Read a stock sync job's progress and the rows it couldn't apply. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/sync-jobs/{jobId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "jobId": {
+          "description": "Sync job id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "jobId"
+      ],
+      "type": "object"
+    },
+    "name": "get_inventory_sync_jobs",
     "scopes": [
       "store:inventory:read"
     ]
