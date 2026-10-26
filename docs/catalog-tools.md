@@ -273,12 +273,18 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `update_blog_list_seo` | `PUT /api/2025-01/blog/list-seo` | store:blog:write |
 | `get_blog_list_seo_translation` | `GET /api/2025-01/blog/list-seo/translations/{locale}` | store:blog:read, store:settings.languages:read |
 | `set_blog_list_seo_translation` | `PUT /api/2025-01/blog/list-seo/translations/{locale}` | store:blog:write, store:settings.languages:write |
+| `get_blog_list_seo_country` | `GET /api/2025-01/blog/list-seo/countries/{countryCode}/{locale}` | store:blog:read |
+| `update_blog_list_seo_country` | `PUT /api/2025-01/blog/list-seo/countries/{countryCode}/{locale}` | store:blog:write |
+| `delete_blog_list_seo_country` | `DELETE /api/2025-01/blog/list-seo/countries/{countryCode}/{locale}` | store:blog:write |
 | `get_list_page_seo` | `GET /api/2025-01/list-page-seo/{pageType}` | store:products:read |
 | `update_list_page_seo` | `PUT /api/2025-01/list-page-seo/{pageType}` | store:products:write |
 | `get_list_page_seo_translation` | `GET /api/2025-01/list-page-seo/{pageType}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_list_page_seo_translation` | `PUT /api/2025-01/list-page-seo/{pageType}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `get_list_page_seo_translations` | `GET /api/2025-01/list-page-seo/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_list_page_seo_translations` | `PUT /api/2025-01/list-page-seo/translations/{locale}` | store:products:write, store:settings.languages:write |
+| `get_list_page_seo_country` | `GET /api/2025-01/list-page-seo/{pageType}/countries/{countryCode}/{locale}` | store:products:read |
+| `update_list_page_seo_country` | `PUT /api/2025-01/list-page-seo/{pageType}/countries/{countryCode}/{locale}` | store:products:write |
+| `delete_list_page_seo_country` | `DELETE /api/2025-01/list-page-seo/{pageType}/countries/{countryCode}/{locale}` | store:products:write |
 | `list_languages` | `GET /api/2025-01/languages` | store:settings.languages:read |
 | `set_languages` | `PUT /api/2025-01/languages` | store:settings.languages:write |
 | `set_default_language` | `PUT /api/2025-01/languages/default` | store:settings.languages:write |
@@ -574,7 +580,7 @@ Filter definitions are capped at 50 per store, including built-in and disabled f
 
 ## Online Store: storefronts
 
-Storefront tools read each storefront with its `go_live` verdict and `cache` state, and change page titles, the share image, status, password protection and languages. `update_storefront_mode` sets `live`, `maintenance` or `coming_soon`. Taking a live storefront offline returns `CONFIRMATION_REQUIRED` with warnings and a single-use `confirmation_token` bound to that storefront and mode; show the change, obtain approval, then repeat the same mode with `confirmed: true` and the token. Going live is refused with `STOREFRONT_NOT_READY_TO_GO_LIVE` and its `blockers` until the store is ready, and a status changed in the meantime returns `STOREFRONT_MODE_CONFLICT`. `update_storefront_password` takes effect at once with no confirmation: a password hides a live storefront from shoppers immediately. `clear_storefront_cache` clears every storefront of the store and is allowed once every 12 hours per store; an earlier attempt returns `STOREFRONT_CACHE_CLEAR_TOO_SOON` with `next_available_at`.
+Storefront tools read each storefront with its `go_live` verdict and `cache` state, and change page titles, the share image, status, password protection and languages. Page SEO for the home, shop and search pages (source, translations, country rows) and title pattern and share image overrides per language or language and country use the same storefront permissions; translations also need the Languages permission and assigning an image needs Site Assets read. A title saved on a page, translation or country row is final; a title pattern shapes generated titles only and replaces the automatic store-name suffix. Page SEO updates are patches: `null` or `*_is_default: true` returns a field, robots included, to its default, and reads report `*_default` and `*_is_default` for each field. In an override, `null` uses the next broader setting (language, then the storefront's pattern and the store's share image). `update_storefront_mode` sets `live`, `maintenance` or `coming_soon`. Taking a live storefront offline returns `CONFIRMATION_REQUIRED` with warnings and a single-use `confirmation_token` bound to that storefront and mode; show the change, obtain approval, then repeat the same mode with `confirmed: true` and the token. Going live is refused with `STOREFRONT_NOT_READY_TO_GO_LIVE` and its `blockers` until the store is ready, and a status changed in the meantime returns `STOREFRONT_MODE_CONFLICT`. `update_storefront_password` takes effect at once with no confirmation: a password hides a live storefront from shoppers immediately. `clear_storefront_cache` clears every storefront of the store and is allowed once every 12 hours per store; an earlier attempt returns `STOREFRONT_CACHE_CLEAR_TOO_SOON` with `next_available_at`.
 
 | Tool | Store API operation | Required access |
 | --- | --- | --- |
@@ -583,6 +589,18 @@ Storefront tools read each storefront with its `go_live` verdict and `cache` sta
 | `get_storefront` | `GET /api/2025-01/storefronts/{storefrontId}` | store:online_store.storefronts:read |
 | `update_storefront_mode` | `PUT /api/2025-01/storefronts/{storefrontId}/mode` | store:online_store.storefronts:write |
 | `update_storefront_seo` | `PUT /api/2025-01/storefronts/{storefrontId}/seo` | store:online_store.storefronts:write |
+| `list_storefront_seo_overrides` | `GET /api/2025-01/storefronts/{storefrontId}/seo/overrides` | store:online_store.storefronts:read |
+| `set_storefront_seo_override` | `PUT /api/2025-01/storefronts/{storefrontId}/seo/overrides/{locale}` | store:online_store.storefronts:write |
+| `delete_storefront_seo_override` | `DELETE /api/2025-01/storefronts/{storefrontId}/seo/overrides/{locale}` | store:online_store.storefronts:write |
+| `get_storefront_page_seo` | `GET /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}` | store:online_store.storefronts:read |
+| `update_storefront_page_seo` | `PUT /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}` | store:online_store.storefronts:write |
+| `get_storefront_page_seo_translation` | `GET /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/translations/{locale}` | store:online_store.storefronts:read, store:settings.languages:read |
+| `set_storefront_page_seo_translation` | `PUT /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/translations/{locale}` | store:online_store.storefronts:write, store:settings.languages:write |
+| `get_storefront_page_seo_translations` | `GET /api/2025-01/storefronts/{storefrontId}/page-seo/translations/{locale}` | store:online_store.storefronts:read, store:settings.languages:read |
+| `set_storefront_page_seo_translations` | `PUT /api/2025-01/storefronts/{storefrontId}/page-seo/translations/{locale}` | store:online_store.storefronts:write, store:settings.languages:write |
+| `get_storefront_page_seo_country` | `GET /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/countries/{countryCode}/{locale}` | store:online_store.storefronts:read |
+| `update_storefront_page_seo_country` | `PUT /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/countries/{countryCode}/{locale}` | store:online_store.storefronts:write |
+| `delete_storefront_page_seo_country` | `DELETE /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/countries/{countryCode}/{locale}` | store:online_store.storefronts:write |
 | `update_storefront_password` | `PUT /api/2025-01/storefronts/{storefrontId}/password` | store:online_store.storefronts:write |
 | `get_storefront_languages` | `GET /api/2025-01/storefronts/{storefrontId}/languages` | store:online_store.storefronts:read |
 | `set_storefront_languages` | `PUT /api/2025-01/storefronts/{storefrontId}/languages` | store:online_store.storefronts:write |

@@ -13798,7 +13798,7 @@
     "api_key": "blog-list-seo.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/list-seo",
-    "description": "Get source SEO for the public blog index. Returns the fixed blog_list resource and never exposes its database row id. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/list-seo. Only the connected store is accessible.",
+    "description": "Get source SEO for the public blog index. Returns the fixed blog_list resource and never exposes its database row id. Each field comes with its generated default and whether the page still uses it (`*_is_default`). These are the values for the store's default language. In another language the storefront uses that language's translation and, where a field has none, the generated default for that language, never the default-language text. Generated copy exists in ar, bn, cs, da, de, en, es, fi, fr, he, id, it, ja, ko, ms, nb, nl, no, pl, pt, pt-BR, pt-PT, ru, sv, th, tr, vi, zh, zh-CN and zh-TW; other languages get the English generated copy. A country row (Get country page SEO) overrides a field for shoppers in one country and language. A title saved here or in a translation or country row is final: the title pattern and the store-name suffix apply only to generated titles. A generated title is the page name formatted by the effective title pattern for that language and country; with no pattern, the store name is appended when `add_store_name_to_page_titles` is on. Robots settings and the social image are shared by all languages unless a country row sets them. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/list-seo. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -13813,7 +13813,7 @@
     "api_key": "blog-list-seo.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/list-seo",
-    "description": "Update source SEO for the public blog index. This is a patch. Empty text clears that field. Remove a source field’s translations before clearing it. A non-empty social_image_id additionally requires read_site_assets and a site-asset image from this store. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/list-seo. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update source SEO for the public blog index. This is a patch: omitted fields remain unchanged and an empty string clears a text field. To return a field to its generated default, send `null` for it or set its `*_is_default` flag to `true`; the flag wins over a value sent with it. The GET response carries the same flags, so sending it back unchanged keeps generated defaults generated instead of saving their current text. Remove a source field's translations before clearing it. Changing source text marks that field's translations outdated. A non-empty `social_image_id` additionally requires `read_site_assets` and a site-asset image from this store. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/list-seo. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13927,7 +13927,7 @@
     "api_key": "blog-list-seo.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/list-seo/translations/{locale}",
-    "description": "Get translated SEO for the public blog index. The locale must be enabled and cannot be the store default. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/list-seo/translations/{locale}. Only the connected store is accessible.",
+    "description": "Get translated SEO for the public blog index. The locale must be enabled and cannot be the store default. Fields without a translation in this locale are omitted from the response. The storefront does not show the source-language text for them: shoppers browsing in this locale get the generated default for this language. Generated copy exists in ar, bn, cs, da, de, en, es, fi, fr, he, id, it, ja, ko, ms, nb, nl, no, pl, pt, pt-BR, pt-PT, ru, sv, th, tr, vi, zh, zh-CN and zh-TW; other languages get the English generated copy, so write your own text for them. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/list-seo/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13952,7 +13952,7 @@
     "api_key": "blog-list-seo.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/list-seo/translations/{locale}",
-    "description": "Set or clear translated SEO fields for the public blog index. Empty values clear only that locale's field. The write is atomic. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/list-seo/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or clear translated SEO fields for the public blog index. Only `seo_title`, `seo_description`, `social_title` and `social_description` are translatable; the social image and robots settings are shared by all languages (set them per country with Update country page SEO). An empty value clears only that locale's field, after which the blog index shows the generated default for that language, not the source text. The write is atomic. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/list-seo/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13983,15 +13983,209 @@
     ]
   },
   {
+    "api_key": "blog-list-seo.country.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/list-seo/countries/{countryCode}/{locale}",
+    "description": "Get the SEO used for the public blog index in one country and language. A country row overrides individual fields for shoppers in one country browsing in one language, for example Italian in Switzerland. Each field reports whether the row sets it: `*_is_default` is true when it does not, and the page then uses `*_default`, the value for that language (its translation or, in the default language, the source value, else the generated default for that language). A country with no row returns every field as default. A title set on a country row is final: the title pattern and store-name suffix are not applied to it. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/list-seo/countries/{countryCode}/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language the values apply to in that country, including the store's default language.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "country_code",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_list_seo_country",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog-list-seo.country.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/blog/list-seo/countries/{countryCode}/{locale}",
+    "description": "Set SEO for the public blog index in one country and language. This is a patch: omitted fields keep their value. Send `null`, an empty string, or `*_is_default: true` to stop overriding a field, so the page uses the value for that language again; the flag wins over a value sent with it. Text fields, the social image and both robots settings can be set per country. Setting a non-empty `social_image_id` additionally requires `read_site_assets` and an image from this store's site-asset namespace. The response has the same shape as the GET. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/list-seo/countries/{countryCode}/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language the values apply to in that country, including the store's default language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "robots_follow": {
+          "description": "Whether search engines may follow links on the page for this country and language. Null uses the page's setting.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_follow_is_default": {
+          "description": "`true` stops overriding link following.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index": {
+          "description": "Whether search engines may index the page for this country and language. Null uses the page's setting.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index_is_default": {
+          "description": "`true` stops overriding indexing.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Search-result description for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description_is_default": {
+          "description": "`true` stops overriding the search-result description.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Search-result title for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title_is_default": {
+          "description": "`true` stops overriding the search-result title.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_description": {
+          "description": "Social-share description for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_description_is_default": {
+          "description": "`true` stops overriding the social-share description.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_image_id": {
+          "description": "Site-asset image UUID for this country and language. Empty or null uses the page's image.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_image_is_default": {
+          "description": "`true` stops overriding the social image.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_title": {
+          "description": "Social-share title for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_title_is_default": {
+          "description": "`true` stops overriding the social-share title.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "country_code",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "update_blog_list_seo_country",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog-list-seo.country.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/blog/list-seo/countries/{countryCode}/{locale}",
+    "description": "Remove the country SEO of the public blog index for one country and language. Shoppers in that country then see the values for the language again. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/list-seo/countries/{countryCode}/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language the values apply to in that country, including the store's default language.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "country_code",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "delete_blog_list_seo_country",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
     "api_key": "list-page-seo.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/list-page-seo/{pageType}",
-    "description": "Get source SEO for a catalog list page. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/list-page-seo/{pageType}. Only the connected store is accessible.",
+    "description": "Get source SEO for the brands, vendors, categories or collections list page. `pageType` is the stable public identity: `brand_list`, `vendor_list`, `category_list` or `collection_list`. Tringify resolves the store-scoped row and never exposes its numeric database id. Each field comes with its generated default and whether the page still uses it (`*_is_default`). These are the values for the store's default language. In another language the storefront uses that language's translation and, where a field has none, the generated default for that language, never the default-language text. Generated copy exists in ar, bn, cs, da, de, en, es, fi, fr, he, id, it, ja, ko, ms, nb, nl, no, pl, pt, pt-BR, pt-PT, ru, sv, th, tr, vi, zh, zh-CN and zh-TW; other languages get the English generated copy. A country row (Get country page SEO) overrides a field for shoppers in one country and language. A title saved here or in a translation or country row is final: the title pattern and the store-name suffix apply only to generated titles. A generated title is the page name formatted by the effective title pattern for that language and country; with no pattern, the store name is appended when `add_store_name_to_page_titles` is on. Robots settings and the social image are shared by all languages unless a country row sets them. A list page defaults to noindex while it lists nothing. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/list-page-seo/{pageType}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "pageType": {
           "description": "Catalog list page: `brand_list`, `vendor_list`, `category_list` or `collection_list`.",
+          "enum": [
+            "collection_list",
+            "category_list",
+            "brand_list",
+            "vendor_list"
+          ],
           "minLength": 1,
           "type": "string"
         }
@@ -14010,12 +14204,18 @@
     "api_key": "list-page-seo.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/list-page-seo/{pageType}",
-    "description": "Update source SEO for a catalog list page. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/{pageType}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update source SEO for a catalog list page. This is a patch: omitted fields remain unchanged and an empty string clears a text field. To return a field to its generated default, send `null` for it or set its `*_is_default` flag to `true`; the flag wins over a value sent with it. The GET response carries the same flags, so sending it back unchanged keeps generated defaults generated instead of saving their current text. A source field with stored translations cannot be cleared until those translations are removed. Changing source text marks that field's translations outdated. Setting a non-empty `social_image_id` additionally requires `read_site_assets` and an image from this store's site-asset namespace. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/{pageType}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "pageType": {
           "description": "Catalog list page: `brand_list`, `vendor_list`, `category_list` or `collection_list`.",
+          "enum": [
+            "collection_list",
+            "category_list",
+            "brand_list",
+            "vendor_list"
+          ],
           "minLength": 1,
           "type": "string"
         },
@@ -14132,7 +14332,7 @@
     "api_key": "list-page-seo.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/list-page-seo/{pageType}/translations/{locale}",
-    "description": "Get translated SEO for one list page and locale. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/list-page-seo/{pageType}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Get translated SEO for one list page and locale. The locale must be enabled and cannot be the store's default language. Fields without a translation in this locale are omitted from the response. The storefront does not show the source-language text for them: shoppers browsing in this locale get the generated default for this language. Generated copy exists in ar, bn, cs, da, de, en, es, fi, fr, he, id, it, ja, ko, ms, nb, nl, no, pl, pt, pt-BR, pt-PT, ru, sv, th, tr, vi, zh, zh-CN and zh-TW; other languages get the English generated copy, so write your own text for them. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/list-page-seo/{pageType}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -14143,6 +14343,12 @@
         },
         "pageType": {
           "description": "Catalog list page: `brand_list`, `vendor_list`, `category_list` or `collection_list`.",
+          "enum": [
+            "collection_list",
+            "category_list",
+            "brand_list",
+            "vendor_list"
+          ],
           "minLength": 1,
           "type": "string"
         }
@@ -14163,7 +14369,7 @@
     "api_key": "list-page-seo.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/list-page-seo/{pageType}/translations/{locale}",
-    "description": "Set or clear translated SEO fields for one list page. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/{pageType}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or clear translated SEO fields for one list page. Only `seo_title`, `seo_description`, `social_title` and `social_description` are translatable; the social image and robots settings are shared by all languages (set them per country with Update country page SEO). An empty value clears only that locale's translation, after which the page shows the generated default for that language, not the source text. Writes are atomic. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/{pageType}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -14178,6 +14384,12 @@
         },
         "pageType": {
           "description": "Catalog list page: `brand_list`, `vendor_list`, `category_list` or `collection_list`.",
+          "enum": [
+            "collection_list",
+            "category_list",
+            "brand_list",
+            "vendor_list"
+          ],
           "minLength": 1,
           "type": "string"
         },
@@ -14203,7 +14415,7 @@
     "api_key": "list-page-seo.translations.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/list-page-seo/translations/{locale}",
-    "description": "Get translations for several catalog list pages. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/list-page-seo/translations/{locale}. Only the connected store is accessible.",
+    "description": "Get translations for several catalog list pages. Omit `page_types` to return brand_list, vendor_list, category_list, and collection_list. Otherwise pass a comma-separated subset; duplicates and unknown values are rejected. Fields without a translation in this locale are omitted from the response. The storefront does not show the source-language text for them: shoppers browsing in this locale get the generated default for this language. Generated copy exists in ar, bn, cs, da, de, en, es, fi, fr, he, id, it, ja, ko, ms, nb, nl, no, pl, pt, pt-BR, pt-PT, ru, sv, th, tr, vi, zh, zh-CN and zh-TW; other languages get the English generated copy, so write your own text for them. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/list-page-seo/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -14232,7 +14444,7 @@
     "api_key": "list-page-seo.translations.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/list-page-seo/translations/{locale}",
-    "description": "Set translations for several catalog list pages atomically. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set translations for several catalog list pages atomically. The request accepts at most one row for each supported page type. If any row is invalid, none are written. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -14263,6 +14475,230 @@
     "scopes": [
       "store:products:write",
       "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "list-page-seo.country.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/list-page-seo/{pageType}/countries/{countryCode}/{locale}",
+    "description": "Get the SEO used for a catalog list page in one country and language. A country row overrides individual fields for shoppers in one country browsing in one language, for example Italian in Switzerland. Each field reports whether the row sets it: `*_is_default` is true when it does not, and the page then uses `*_default`, the value for that language (its translation or, in the default language, the source value, else the generated default for that language). A country with no row returns every field as default. A title set on a country row is final: the title pattern and store-name suffix are not applied to it. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/list-page-seo/{pageType}/countries/{countryCode}/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language the values apply to in that country, including the store's default language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "pageType": {
+          "description": "Catalog list page: `brand_list`, `vendor_list`, `category_list` or `collection_list`.",
+          "enum": [
+            "collection_list",
+            "category_list",
+            "brand_list",
+            "vendor_list"
+          ],
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "pageType",
+        "country_code",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_list_page_seo_country",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "list-page-seo.country.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/list-page-seo/{pageType}/countries/{countryCode}/{locale}",
+    "description": "Set SEO for a catalog list page in one country and language. This is a patch: omitted fields keep their value. Send `null`, an empty string, or `*_is_default: true` to stop overriding a field, so the page uses the value for that language again; the flag wins over a value sent with it. Text fields, the social image and both robots settings can be set per country. Setting a non-empty `social_image_id` additionally requires `read_site_assets` and an image from this store's site-asset namespace. The response has the same shape as the GET. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/{pageType}/countries/{countryCode}/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language the values apply to in that country, including the store's default language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "pageType": {
+          "description": "Catalog list page: `brand_list`, `vendor_list`, `category_list` or `collection_list`.",
+          "enum": [
+            "collection_list",
+            "category_list",
+            "brand_list",
+            "vendor_list"
+          ],
+          "minLength": 1,
+          "type": "string"
+        },
+        "robots_follow": {
+          "description": "Whether search engines may follow links on the page for this country and language. Null uses the page's setting.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_follow_is_default": {
+          "description": "`true` stops overriding link following.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index": {
+          "description": "Whether search engines may index the page for this country and language. Null uses the page's setting.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index_is_default": {
+          "description": "`true` stops overriding indexing.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Search-result description for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description_is_default": {
+          "description": "`true` stops overriding the search-result description.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Search-result title for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title_is_default": {
+          "description": "`true` stops overriding the search-result title.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_description": {
+          "description": "Social-share description for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_description_is_default": {
+          "description": "`true` stops overriding the social-share description.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_image_id": {
+          "description": "Site-asset image UUID for this country and language. Empty or null uses the page's image.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_image_is_default": {
+          "description": "`true` stops overriding the social image.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_title": {
+          "description": "Social-share title for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_title_is_default": {
+          "description": "`true` stops overriding the social-share title.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "pageType",
+        "country_code",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "update_list_page_seo_country",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "list-page-seo.country.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/list-page-seo/{pageType}/countries/{countryCode}/{locale}",
+    "description": "Remove the country SEO of a catalog list page for one country and language. Shoppers in that country then see the values for the language again. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/list-page-seo/{pageType}/countries/{countryCode}/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language the values apply to in that country, including the store's default language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "pageType": {
+          "description": "Catalog list page: `brand_list`, `vendor_list`, `category_list` or `collection_list`.",
+          "enum": [
+            "collection_list",
+            "category_list",
+            "brand_list",
+            "vendor_list"
+          ],
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "pageType",
+        "country_code",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "delete_list_page_seo_country",
+    "scopes": [
+      "store:products:write"
     ]
   },
   {
@@ -20615,12 +21051,12 @@
     "api_key": "storefronts.seo.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/seo",
-    "description": "Set the page-title template, the store-name suffix and the share image. `title_template` is required: send the complete template, or an empty string for the platform default. It may use only the tokens returned in `tokens` and is at most 200 characters. Omit `add_store_name_to_page_titles` or `share_image_id` to keep them. `share_image_id` takes a site asset image id; an empty string or null removes the image, and assigning an image also requires read_site_assets. The store-name suffix and share image apply to every storefront in the store. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/seo. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set the page-title template, the store-name suffix and the share image. These are the defaults for pages that have no title or image of their own. `title_template` is required: send the complete template, or an empty string for no pattern. It may use only the tokens returned in `tokens` (`{{ page_title }}` and `{{ shop_name }}`), every `{{` needs its `}}`, and it is at most 200 characters (Unicode code points). The pattern formats generated titles only: a title saved on a page, translation or country row is final, and the home page's generated title is the store name. A non-empty pattern replaces the automatic store-name suffix, so `add_store_name_to_page_titles` has no effect while one is set; without a pattern, the store name is appended to generated titles when it is on. Omit `add_store_name_to_page_titles` or `share_image_id` to keep them. `share_image_id` takes a site asset image id; an empty string or null removes the image, and assigning an image also requires read_site_assets. The store-name suffix and share image apply to every storefront in the store. This pattern and share image are the base for every language and country; set a different pattern or image for one language, or one language in one country, with Set an SEO override. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/seo. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "add_store_name_to_page_titles": {
-          "description": "Append the store name to page titles that still use their default title.",
+          "description": "Append the store name to generated page titles. Has no effect while a pattern is set.",
           "type": [
             "boolean",
             "null"
@@ -20639,7 +21075,7 @@
           "type": "string"
         },
         "title_template": {
-          "description": "Page title template. An empty string restores the default.",
+          "description": "Pattern for generated page titles. An empty string sets no pattern.",
           "type": "string"
         }
       },
@@ -20782,6 +21218,693 @@
       "type": "object"
     },
     "name": "clear_storefront_cache",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.seo.override.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/seo/overrides",
+    "description": "List a storefront's title pattern and share image overrides by language and country. Each override applies to one `locale` and, when `country_code` is set, only to shoppers in that country; an empty `country_code` applies in every country. A null field uses the next broader setting. For a page in a language and country the storefront takes each field from the override for that language and country, then the override for that language, then the storefront's `title_template` and the store's share image. An empty `title_template` means no pattern for that language: generated titles then follow `add_store_name_to_page_titles`, which is store-wide. A pattern replaces the automatic store-name suffix. Patterns shape generated titles only; titles saved on a page are final. Images include `share_image_url`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/seo/overrides. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_storefront_seo_overrides",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.seo.override.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/seo/overrides/{locale}",
+    "description": "Create or change the title pattern or share image for one language, or one language in one country. Omit `country_code`, or send an empty string, for the language-wide override; send a country code for that country only. This is a patch: an omitted field keeps its value (a new override starts with both null). `null` makes a field use the next broader setting. An empty `title_template` sets no pattern for this language; an empty `share_image_id` is the same as null. At least one field must stay set, otherwise the request fails with `SEO_OVERRIDE_EMPTY`: remove the override with Delete an SEO override instead. `title_template` may use only `{{ page_title }}` and `{{ shop_name }}` and is at most 200 characters (Unicode code points). Assigning a share image requires `read_site_assets` and a site-asset image from this store. A change sends storefront/seo_overrides/update. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/seo/overrides/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code. Omit or send an empty string for every country.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "locale": {
+          "description": "A language the storefront publishes, including its primary language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "share_image_id": {
+          "description": "Site-asset image shared by pages without their own image. Empty or null to use the next broader setting.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "title_template": {
+          "description": "Title pattern for this language or country. Empty for no pattern; null to use the next broader setting.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "storefront_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "set_storefront_seo_override",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.seo.override.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/seo/overrides/{locale}",
+    "description": "Remove the title pattern and share image override for one language, or one language in one country. Pass `country_code` to remove that country's override; omit it to remove the language-wide override. Removing the language-wide override keeps its country overrides. Pages then use the next broader setting. A removal sends storefront/seo_overrides/delete. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/storefronts/{storefrontId}/seo/overrides/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code of the override to remove. Omit for the language-wide override.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "A language the storefront publishes, including its primary language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "delete_storefront_seo_override",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.page-seo.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}",
+    "description": "Get source SEO for a storefront's home, shop or search page. Returns the search-result and social-share text, social image and robots settings with, for each, its generated default and whether the page still uses it (`*_is_default`). A page nobody has edited returns its generated defaults. These are the values for the store's default language. In another language the storefront uses that language's translation and, where a field has none, the generated default for that language, never the default-language text. Generated copy exists in ar, bn, cs, da, de, en, es, fi, fr, he, id, it, ja, ko, ms, nb, nl, no, pl, pt, pt-BR, pt-PT, ru, sv, th, tr, vi, zh, zh-CN and zh-TW; other languages get the English generated copy. A country row (Get country page SEO) overrides a field for shoppers in one country and language. A title saved here or in a translation or country row is final: the title pattern and the store-name suffix apply only to generated titles. A generated title is the page name formatted by the effective title pattern for that language and country; with no pattern, the store name is appended when `add_store_name_to_page_titles` is on. Robots settings and the social image are shared by all languages unless a country row sets them. The home page's generated title is the store name. The shop page defaults to noindex while it lists no products. A search with a query (`q`) is always `noindex,follow`; these settings apply to the search page without one. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "pageType": {
+          "description": "Storefront page: `home`, `shop` or `search`.",
+          "enum": [
+            "home",
+            "shop",
+            "search"
+          ],
+          "minLength": 1,
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "pageType"
+      ],
+      "type": "object"
+    },
+    "name": "get_storefront_page_seo",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.page-seo.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}",
+    "description": "Update source SEO for a storefront's home, shop or search page. This is a patch: omitted fields remain unchanged and an empty string clears a text field. To return a field to its generated default, send `null` for it or set its `*_is_default` flag to `true`; the flag wins over a value sent with it. The GET response carries the same flags, so sending it back unchanged keeps generated defaults generated instead of saving their current text. A title you save is final: the title pattern and store-name suffix are not applied to it. A source field with stored translations cannot be cleared until those translations are removed. Changing source text marks that field's translations outdated. Setting a non-empty `social_image_id` additionally requires `read_site_assets` and an image from this store's site-asset namespace. The response has the same shape as the GET. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "pageType": {
+          "description": "Storefront page: `home`, `shop` or `search`.",
+          "enum": [
+            "home",
+            "shop",
+            "search"
+          ],
+          "minLength": 1,
+          "type": "string"
+        },
+        "robots_follow": {
+          "description": "Whether search engines may follow links on the page. Null returns it to the default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_follow_is_default": {
+          "description": "`true` returns link following to the default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index": {
+          "description": "Whether search engines may index the page. Null returns it to the default: the shop page is not indexed while it lists no products, and a search with a query is never indexed.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index_is_default": {
+          "description": "`true` returns indexing to the default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Search-result description. Empty or null returns it to the generated default.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description_is_default": {
+          "description": "`true` returns the search-result description to the generated default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Search-result title. Empty or null returns it to the generated default.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title_is_default": {
+          "description": "`true` returns the search-result title to the generated default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_description": {
+          "description": "Social-share description. Empty or null returns it to the generated default.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_description_is_default": {
+          "description": "`true` returns the social-share description to the generated default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_image_id": {
+          "description": "Site-asset image UUID. Empty string or null returns it to the default share image.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_image_is_default": {
+          "description": "`true` returns the social image to the default share image.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_title": {
+          "description": "Social-share title. Empty or null returns it to the generated default.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_title_is_default": {
+          "description": "`true` returns the social-share title to the generated default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "pageType"
+      ],
+      "type": "object"
+    },
+    "name": "update_storefront_page_seo",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.page-seo.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/translations/{locale}",
+    "description": "Get translated SEO for a storefront's home, shop or search page in one locale. The locale must be enabled and cannot be the store's default language. Fields without a translation in this locale are omitted from the response. The storefront does not show the source-language text for them: shoppers browsing in this locale get the generated default for this language. Generated copy exists in ar, bn, cs, da, de, en, es, fi, fr, he, id, it, ja, ko, ms, nb, nl, no, pl, pt, pt-BR, pt-PT, ru, sv, th, tr, vi, zh, zh-CN and zh-TW; other languages get the English generated copy, so write your own text for them. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "pageType": {
+          "description": "Storefront page: `home`, `shop` or `search`.",
+          "enum": [
+            "home",
+            "shop",
+            "search"
+          ],
+          "minLength": 1,
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "pageType",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_storefront_page_seo_translation",
+    "scopes": [
+      "store:online_store.storefronts:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.page-seo.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/translations/{locale}",
+    "description": "Set or clear translated SEO fields for a storefront's home, shop or search page. Only `seo_title`, `seo_description`, `social_title` and `social_description` are translatable; the social image and robots settings are shared by all languages (set them per country with Update country page SEO). An empty value clears only that locale's translation, after which the page shows the generated default for that language. A page nobody has edited can be translated: its row is created without changing any source field. Writes are atomic. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "pageType": {
+          "description": "Storefront page: `home`, `shop` or `search`.",
+          "enum": [
+            "home",
+            "shop",
+            "search"
+          ],
+          "minLength": 1,
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translations.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "pageType",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_storefront_page_seo_translation",
+    "scopes": [
+      "store:online_store.storefronts:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.page-seo.translations.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/translations/{locale}",
+    "description": "Get translations for several of a storefront's system pages. Omit `page_types` to return home, shop and search. Otherwise pass a comma-separated subset; duplicates and unknown values are rejected. Fields without a translation in this locale are omitted from the response. The storefront does not show the source-language text for them: shoppers browsing in this locale get the generated default for this language. Generated copy exists in ar, bn, cs, da, de, en, es, fi, fr, he, id, it, ja, ko, ms, nb, nl, no, pl, pt, pt-BR, pt-PT, ru, sv, th, tr, vi, zh, zh-CN and zh-TW; other languages get the English generated copy, so write your own text for them. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/page-seo/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "page_types": {
+          "description": "Comma-separated page types from `home`, `shop` and `search`.",
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_storefront_page_seo_translations",
+    "scopes": [
+      "store:online_store.storefronts:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.page-seo.translations.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/translations/{locale}",
+    "description": "Set translations for several of a storefront's system pages atomically. The request accepts at most one row for each page type. If any row is invalid, none are written. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/page-seo/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows shaped as {page_type, fields}; page_type is `home`, `shop` or `search`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_storefront_page_seo_translations",
+    "scopes": [
+      "store:online_store.storefronts:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.page-seo.country.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/countries/{countryCode}/{locale}",
+    "description": "Get the SEO used for a storefront's home, shop or search page in one country and language. A country row overrides individual fields for shoppers in one country browsing in one language, for example Italian in Switzerland. Each field reports whether the row sets it: `*_is_default` is true when it does not, and the page then uses `*_default`, the value for that language (its translation or, in the default language, the source value, else the generated default for that language). A country with no row returns every field as default. A title set on a country row is final: the title pattern and store-name suffix are not applied to it. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/countries/{countryCode}/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language the values apply to in that country, including the store's default language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "pageType": {
+          "description": "Storefront page: `home`, `shop` or `search`.",
+          "enum": [
+            "home",
+            "shop",
+            "search"
+          ],
+          "minLength": 1,
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "pageType",
+        "country_code",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_storefront_page_seo_country",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.page-seo.country.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/countries/{countryCode}/{locale}",
+    "description": "Set SEO for a storefront's home, shop or search page in one country and language. This is a patch: omitted fields keep their value. Send `null`, an empty string, or `*_is_default: true` to stop overriding a field, so the page uses the value for that language again; the flag wins over a value sent with it. Text fields, the social image and both robots settings can be set per country. Setting a non-empty `social_image_id` additionally requires `read_site_assets` and an image from this store's site-asset namespace. The response has the same shape as the GET. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/countries/{countryCode}/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language the values apply to in that country, including the store's default language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "pageType": {
+          "description": "Storefront page: `home`, `shop` or `search`.",
+          "enum": [
+            "home",
+            "shop",
+            "search"
+          ],
+          "minLength": 1,
+          "type": "string"
+        },
+        "robots_follow": {
+          "description": "Whether search engines may follow links on the page for this country and language. Null uses the page's setting.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_follow_is_default": {
+          "description": "`true` stops overriding link following.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index": {
+          "description": "Whether search engines may index the page for this country and language. Null uses the page's setting.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "robots_index_is_default": {
+          "description": "`true` stops overriding indexing.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Search-result description for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description_is_default": {
+          "description": "`true` stops overriding the search-result description.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Search-result title for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title_is_default": {
+          "description": "`true` stops overriding the search-result title.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_description": {
+          "description": "Social-share description for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_description_is_default": {
+          "description": "`true` stops overriding the social-share description.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_image_id": {
+          "description": "Site-asset image UUID for this country and language. Empty or null uses the page's image.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_image_is_default": {
+          "description": "`true` stops overriding the social image.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "social_title": {
+          "description": "Social-share title for this country and language. Empty or null uses the language value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_title_is_default": {
+          "description": "`true` stops overriding the social-share title.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "pageType",
+        "country_code",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "update_storefront_page_seo_country",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.page-seo.country.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/countries/{countryCode}/{locale}",
+    "description": "Remove the country SEO of a storefront's home, shop or search page for one country and language. Shoppers in that country then see the values for the language again. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/storefronts/{storefrontId}/page-seo/{pageType}/countries/{countryCode}/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language the values apply to in that country, including the store's default language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "pageType": {
+          "description": "Storefront page: `home`, `shop` or `search`.",
+          "enum": [
+            "home",
+            "shop",
+            "search"
+          ],
+          "minLength": 1,
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "pageType",
+        "country_code",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "delete_storefront_page_seo_country",
     "scopes": [
       "store:online_store.storefronts:write"
     ]
