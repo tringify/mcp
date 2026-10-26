@@ -14803,7 +14803,7 @@
     "api_key": "languages.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/languages",
-    "description": "List the store's enabled languages with the default flagged. Returns every enabled language with `locale`, `label` (English), `native_name`, `selector_label`, `rtl`, `is_default`, and `created_at` (RFC 3339 in the store time zone). Selector labels use the native name followed by the English name in parentheses when they differ. This read returns `success` and `data`, without success `code` or `message`. The response also includes the store's language limit, `max_languages`, which counts distinct enabled languages, including the default language, and is never below 1. Once a downgrade is scheduled, it is the lower plan's limit. Locale codes use their canonical spelling, for example `pt-BR`. Content is authored in the default language and translated into the others. This list is the catalog a storefront can publish. Assigning those languages to a specific storefront is an Online Store Admin action and is not part of this resource. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/languages. Only the connected store is accessible.",
+    "description": "List the store's enabled languages with the default flagged. Returns every enabled language with `locale`, `label` (English), `native_name`, `selector_label`, `rtl`, `is_default`, and `created_at` (RFC 3339 in the store time zone). Selector labels use the native name followed by the English name in parentheses when they differ. This read returns `success` and `data`, without success `code` or `message`. The response also includes the store's language limit, `max_languages`, which counts distinct enabled languages, including the default language, and is never below 1. Once a downgrade is scheduled, it is the lower plan's limit. Locale codes use their canonical spelling, for example `pt-BR`. Content is authored in the default language and translated into the others. This list is the catalog a storefront can publish. Use Set storefront languages, then Set storefront country languages to finish shopper publication through this API. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/languages. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -14818,7 +14818,7 @@
     "api_key": "languages.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/languages",
-    "description": "Update the store's enabled language set. When `locales` is supplied, it is the complete set of locale codes the store should publish in. Repeated codes count once, and an identical set is a no-op that does not claim an update. Omitting `locales` or sending `null` returns the current list without changes. An unchanged set returns HTTP 200 with `success` and `data`, without `code` or `message`. Whitespace is trimmed, blank entries are ignored, and an empty resulting set is rejected. The default language must always be included in a supplied set — it cannot be removed here. Disabling a language permanently deletes its translations and requires confirmation: the first call that would remove locales returns `CONFIRMATION_REQUIRED` with warnings and a token bound to those locales; repeat with `confirmed: true` and that token. Adding languages does not require confirmation. Locale codes are matched without regard to letter case and stored in their canonical spelling, for example `pt-BR`. A language that is assigned to a storefront is protected (remove it from those storefronts first). The set size is capped by `max_languages`; once a downgrade is scheduled, the lower plan's limit applies. A store above the limit can keep or shrink its set. A replacement that adds any language must finish at or below the limit, even if it removes other languages at the same time. Disabling a language cancels its active translation work and publishes `store/locales/deleted` for each removed language, in addition to `store/locales/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update the store's enabled language set. When `locales` is supplied, it is the complete set of locale codes the store should publish in. Repeated codes count once, and an identical set is a no-op that does not claim an update. Omitting `locales` or sending `null` returns the current list without changes. An unchanged set returns HTTP 200 with `success` and `data`, without `code` or `message`. Whitespace is trimmed, blank entries are ignored, and an empty resulting set is rejected. The default language must always be included in a supplied set — it cannot be removed here. Disabling a language permanently deletes its translations and requires confirmation: the first call that would remove locales returns `CONFIRMATION_REQUIRED` with warnings and a token bound to those locales; repeat with `confirmed: true` and that token. Adding languages does not require confirmation. Locale codes are matched without regard to letter case and stored in their canonical spelling, for example `pt-BR`. A language that is assigned to a storefront is protected (remove it from those storefronts first). The set size is capped by `max_languages`; once a downgrade is scheduled, the lower plan's limit applies. A store above the limit can keep or shrink its set. A replacement that adds any language must finish at or below the limit, even if it removes other languages at the same time. Disabling a language cancels its active translation work and publishes `store/locales/deleted` for each removed language, in addition to `store/locales/update`. The confirmation impact includes translated_slugs and conflicts. Slug history is captured before reset and retained after cleanup; old links resolve the same resource at its current canonical slug. Collision owners and deleted resources are never guessed. Source-fallback pages may need search-engine recrawling. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -14858,7 +14858,7 @@
     "api_key": "languages.default.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/languages/default",
-    "description": "Change the store's default (source) language — a confirmed two-step. The selected language becomes the source language for store content. This does not translate existing source content into the new language. Any translations stored for the selected language are permanently removed because that language will now contain source content. The first call returns impact warnings and a confirmation token without making changes; repeat the request with `confirmed: true` and that token to continue. Tokens expire five minutes after issue and are single-use on a committed change. Selecting the current default returns HTTP 200 with `success` and `data.default_locale`, without confirmation, `code`, `message`, or events. The previous default remains enabled. The primary storefront switches its primary language to the new default and adds that language to its served set; other storefront assignments and country-language mappings stay unchanged. A successful change publishes `store/locales/update`. `store/translations/deleted` is published only when current content translations or translated storefront messages existed, or active translation CSV jobs were cancelled. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages/default. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change the store's default (source) language — a confirmed two-step. The selected language becomes the source language for store content. This does not translate existing source content into the new language. Any translations stored for the selected language are permanently removed because that language will now contain source content. The first call returns impact warnings and a confirmation token without making changes; repeat the request with `confirmed: true` and that token to continue. Tokens expire five minutes after issue and are single-use on a committed change. Selecting the current default returns HTTP 200 with `success` and `data.default_locale`, without confirmation, `code`, `message`, or events. The previous default remains enabled. The primary storefront switches its primary language to the new default and adds that language to its served set; other storefront assignments and country-language mappings stay unchanged. A successful change publishes `store/locales/update`. `store/translations/deleted` is published only when current content translations or translated storefront messages existed, or active translation CSV jobs were cancelled. The resulting primary storefront also publishes storefront/locales/update, including country assignments and primary-language inheritance. At cap one use Replace only language instead. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages/default. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -14895,7 +14895,7 @@
     "api_key": "languages.translations.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/languages/{locale}/translations",
-    "description": "Delete all translation data for one enabled language without disabling it. The first call returns warnings and a confirmation token without deleting anything. Repeat the request within five minutes with `confirmed: true` and that single-use token to permanently remove every stored content translation, translated storefront message, localized search document, pending AI suggestion, and translation CSV preview for the selected language. Active AI and CSV translation work is cancelled and cannot restore removed content. Completed import and export history remains available. The language remains enabled and its storefront assignments do not change. `store/translations/deleted` is published only when current content translations exist, storefront messages or search documents are deleted, or active translation CSV jobs are cancelled. Removing only AI staging or CSV previews does not emit this event. Translations become unavailable when the reset commits; physical catalog and staging cleanup continues asynchronously. A successful reset returns `success`, `code`, and `message`, with no `data` field, even when nothing needed removal. The default language cannot be selected because it contains source content rather than translations. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/languages/{locale}/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete all translation data for one enabled language without disabling it. The first call returns warnings and a confirmation token without deleting anything. Repeat the request within five minutes with `confirmed: true` and that single-use token to permanently remove every stored content translation, translated storefront message, localized search document, pending AI suggestion, and translation CSV preview for the selected language. Active AI and CSV translation work is cancelled and cannot restore removed content. Completed import and export history remains available. The language remains enabled and its storefront assignments do not change. `store/translations/deleted` is published only when current content translations exist, storefront messages or search documents are deleted, or active translation CSV jobs are cancelled. Removing only AI staging or CSV previews does not emit this event. Translations become unavailable when the reset commits; physical catalog and staging cleanup continues asynchronously. A successful reset returns `success`, `code`, and `message`, with no `data` field, even when nothing needed removal. The default language cannot be selected because it contains source content rather than translations. The confirmation impact includes translated_slugs and conflicts. Slug history is captured before reset and retained after cleanup; old links resolve the same resource at its current canonical slug. Collision owners and deleted resources are never guessed. Source-fallback pages may need search-engine recrawling. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/languages/{locale}/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -21402,7 +21402,7 @@
     "api_key": "storefronts.languages.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/languages",
-    "description": "Get the languages a storefront publishes. Returns the storefront's `primary_locale`, the `locales` it publishes, the enabled store languages it can publish (`available_locales`) and its country language rules (`country_locales`). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/languages. Only the connected store is accessible.",
+    "description": "Get the languages a storefront publishes. Returns the storefront's `primary_locale`, the `locales` it publishes, the enabled store languages it can publish (`available_locales`) and its country language rules (`country_locales`). Adding a language to this set does not make it selectable by shoppers: use Set storefront country languages to assign it to active-market countries and choose each default. Without an explicit country assignment only storefront primary is served. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/languages. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -21426,10 +21426,24 @@
     "api_key": "storefronts.languages.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/languages",
-    "description": "Replace the languages a storefront publishes. Send the complete list. It must include the storefront's primary language, and every code must be a language enabled for the store (enable it first with Set languages). Codes are matched without regard to case; blanks and repeats are ignored. An unchanged list changes nothing. A change publishes storefront/locales/update. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace the languages a storefront publishes. Send the complete list. It must include the storefront's primary language, and every code must be a language enabled for the store (enable it first with Set languages). Codes are matched without regard to case; blanks and repeats are ignored. An unchanged list changes nothing. A change publishes storefront/locales/update. Adding a language to this set does not make it selectable by shoppers: use Set storefront country languages to assign it to active-market countries and choose each default. Without an explicit country assignment only storefront primary is served. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries, ambiguous ownership and deleted resources return 404. Query strings are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "confirmation_token": {
+          "description": "Single-use token from the first request's error.details.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "True only after reviewing the returned impact and obtaining approval.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "locales": {
           "description": "Every language code the storefront publishes, including its primary language.",
           "items": {
@@ -21458,10 +21472,24 @@
     "api_key": "storefronts.languages.primary.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/primary",
-    "description": "Change a secondary storefront's primary language. The primary storefront's language always follows the store's default language; change that with Set default language. The language must be enabled for the store. Selecting the current primary language changes nothing. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages/primary. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change a secondary storefront's primary language. The primary storefront's language always follows the store's default language; change that with Set default language. The language must be enabled for the store. Selecting the current primary language changes nothing. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries, ambiguous ownership and deleted resources return 404. Query strings are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages/primary. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "confirmation_token": {
+          "description": "Single-use token from the first request's error.details.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "True only after reviewing the returned impact and obtaining approval.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "locale": {
           "description": "Language code enabled for the store.",
           "type": "string"
@@ -26864,7 +26892,7 @@
     "api_key": "storefronts.country_urls.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/country-urls",
-    "description": "Read canonical public addresses and diagnostics. Read-only public projection under read_storefront; apps need no domain or email-settings scopes. Returns one row per covered active-market country, with host, optional domain_id, currency_code, default_language, language_source, localized languages, mode, status, configuration_issues (stable codes), configuration_messages (backend wording), decisions, and addresses (locale, locale_name, url, is_default). Unavailable assignments remain dedicated and return no addresses; do not invent a shared fallback. address_revision is monotonic: restart pagination if it changes between pages. Counts reflect the search; total reflects the selected filter. Refresh on storefronts/update and domains events, comparing revisions. No DNS records, tokens or connection secrets are returned. The shared baseline uses the storefront primary locale at root; other country addresses use the backend-generated prefix. Dedicated roots use the current country default. Explicit country URLs override session/GeoIP. Invalid/removed combinations return 404 without changing country. Connected, assigned retired hosts redirect preserving country, still-served language, route and query. A default-language change deliberately changes root semantics; explicit paths for retained languages remain addressable. Do not construct URLs in an integration. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/country-urls. Only the connected store is accessible.",
+    "description": "Read canonical public addresses and diagnostics. Read-only public projection under read_storefront; apps need no domain or email-settings scopes. Returns one row per covered active-market country, with host, optional domain_id, currency_code, default_language, language_source, localized languages, mode, status, configuration_issues (stable codes), configuration_messages (backend wording), decisions, and addresses (locale, locale_name, url, is_default). Unavailable assignments remain dedicated and return no addresses; do not invent a shared fallback. address_revision is monotonic: restart pagination if it changes between pages. Counts reflect the search; total reflects the selected filter. Refresh on storefronts/update and domains events, comparing revisions. No DNS records, tokens or connection secrets are returned. The shared baseline uses the storefront primary locale at root; other country addresses use the backend-generated prefix. Dedicated roots use the current country default. Explicit country URLs override session/GeoIP. Invalid countries and never-served combinations return 404 without changing country. Retired language addresses resolve retained resource identity and redirect with 301 within the still-served country; ambiguous/deleted resources return 404. Shared regional-language addresses include the country, for example /pt-BR-us; /pt-br remains Portuguese in Brazil. Connected, assigned retired hosts redirect preserving country, still-served language, route and query. A default-language change deliberately changes root semantics; explicit paths for retained languages remain addressable. Do not construct URLs in an integration. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/country-urls. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -26904,12 +26932,26 @@
     "api_key": "storefronts.country_languages.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/country-languages",
-    "description": "Set allowed languages and the default for selected countries. Each mappings key is a covered country code; its value contains a non-empty locales array and an explicit default_language from that array. Only languages already served by this storefront are accepted. Omitted countries remain unchanged. No legacy string forms or automatic default selection. Uses the same transactional country-language command as Store Admin and sends storefront/locales/update plus an address revision in storefronts/update. Changing a dedicated country's default changes its root language immediately. Removed language addresses return 404; retained languages keep explicit addresses. Read Country URLs after saving. Returns the country language mapping page used by Store Admin, including effective defaults. Apps may use write_storefront; merchant connections also require online_store.storefronts:write. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/country-languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace selected countries' allowed languages and defaults. mappings maps uppercase country codes to {locales:[...],default_locale:...}. Send null for a country to remove its override and serve only storefront primary. Countries omitted from mappings are unchanged. Languages must already belong to this storefront. Writes are set-wise and atomic; a change publishes storefront/locales/update. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries, ambiguous ownership and deleted resources return 404. Query strings are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/country-languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "confirmation_token": {
+          "description": "Single-use token from the first request's error.details.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "True only after reviewing the returned impact and obtaining approval.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "mappings": {
-          "description": "Country code to {locales, default_language}. Non-empty, explicit selection required.",
+          "description": "Country code to language set with one explicit default; null removes the assignment.",
           "type": "object"
         },
         "storefront_id": {
@@ -27406,6 +27448,311 @@
     "name": "set_email_mail_from",
     "scopes": [
       "store:settings.email:write"
+    ]
+  },
+  {
+    "api_key": "languages.replace_only",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/languages/replace-only",
+    "description": "Atomically replace the store's sole enabled source language, including on one-language plans. Requires exactly one enabled language and a different supported target. Replaces it across every storefront primary/served language and country assignment in one transaction, with never two enabled languages at once. Source text is not translated. Old-language translations, message overrides and search content are removed, translation jobs cancelled, and old slug identities retained for durable redirects. Review all affected storefronts and countries before confirming. Publishes store/locales/update, store/locales/deleted, store/translations/deleted and storefront/locales/update for each storefront. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries, ambiguous ownership and deleted resources return 404. Query strings are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages/replace-only. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Five-minute single-use token from error.details.confirmation_token in the first call. Repeat the same action after approval; an expired or changed preview requires fresh review.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Omit on the first call. If confirmation is required, HTTP 409 returns CONFIRMATION_REQUIRED with impact warnings and confirmation_token in error.details. Set true only after approval of that impact and repeat the same action with its token. No-op requests may complete immediately.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "locale": {
+          "description": "New sole source language.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "replace_only_language",
+    "scopes": [
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "languages.readiness",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/languages/{locale}/readiness",
+    "description": "Review aggregate catalog, content, platform and theme translation coverage before publishing. Read-only and never blocks publication. Requires read_translations and read_storefront. Scans at most 500 source identities per call. When complete=false, pass next_cursor unchanged with the same locale and storefront_id until complete=true. Responses contain backend cumulative resources and total counts, not deltas. Cursors expire after five minutes and a content revision change returns STOREFRONT_LANGUAGES_CHANGED: restart without a cursor. Only complete=true and ready=true is a clean report. Counts are fields, exact, parent, source, missing, outdated and review_required. Exact locale then parent then source applies per field; slugs use exact locale only. Catalog outdated uses source hashes. Theme dictionaries lack source hashes, so newer source timestamps require review rather than claiming semantic freshness. Messages separately cover platform_messages, theme_messages and gate_messages for the selected live storefront theme. Source counts include fallback content. Catalog/content coverage is store-wide, not filtered to channel publication; storefront_id selects the theme, gates and platform messages (defaults to primary storefront). Labels and notices are backend-localized. A missing active theme requires review. Platform overrides apply only to their exact locale, matching the runtime; platform registry messages may use the parent. Counts contain no source/translated text. This report cannot certify linguistic quality. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/languages/{locale}/readiness. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque next_cursor from the preceding incomplete response.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled canonical language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront whose live theme is checked; omit for primary.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_language_readiness",
+    "scopes": [
+      "store:settings.languages:read",
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.languages.countries.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/countries",
+    "description": "Read shopper language publication by country. Active Markets supply countries; each storefront owns its allowed languages and one default. A country without an explicit assignment serves only the storefront primary language. Enabling a store language and adding it to the storefront are prerequisites, not complete shopper publication. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/languages/countries. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "filter": {
+          "description": "all, assigned or unassigned.",
+          "type": "string"
+        },
+        "page": {
+          "description": "Page number starting at 1.",
+          "type": "integer"
+        },
+        "per_page": {
+          "description": "Page size, bounded by backend limits.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Country search.",
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront to configure.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_storefront_country_languages",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.languages.countries.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/countries",
+    "description": "Replace selected countries' allowed languages and defaults. mappings maps uppercase country codes to {locales:[...],default_locale:...}. Send null for a country to remove its override and serve only storefront primary. Countries omitted from mappings are unchanged. Languages must already belong to this storefront. Writes are set-wise and atomic; a change publishes storefront/locales/update. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries, ambiguous ownership and deleted resources return 404. Query strings are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages/countries. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token from the first request's error.details.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "True only after reviewing the returned impact and obtaining approval.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "mappings": {
+          "description": "Country code to language set with one explicit default; null removes the assignment.",
+          "type": "object"
+        },
+        "storefront_id": {
+          "description": "Storefront to configure.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "mappings"
+      ],
+      "type": "object"
+    },
+    "name": "set_storefront_country_languages",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.languages.countries.bulk",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/countries/bulk",
+    "description": "Add a served language and make it default in selected countries. Other allowed languages remain available; country_codes must belong to active Markets. Returns updated country count. Publishes storefront/locales/update. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries, ambiguous ownership and deleted resources return 404. Query strings are preserved. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/languages/countries/bulk. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token from the first request's error.details.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "True only after reviewing the returned impact and obtaining approval.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "country_codes": {
+          "description": "Countries to change.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "locale": {
+          "description": "Served language to add and make default.",
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront to configure.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "country_codes",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "assign_country_default_language",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.languages.countries.all",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/countries/all",
+    "description": "Add a served language and make it default in every active-market country. The backend resolves current coverage and shows it for approval. Other allowed languages remain available. Returns updated country count. Publishes storefront/locales/update. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries, ambiguous ownership and deleted resources return 404. Query strings are preserved. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/languages/countries/all. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token from the first request's error.details.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "True only after reviewing the returned impact and obtaining approval.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "locale": {
+          "description": "Served language to add and make default everywhere.",
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront to configure.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "assign_all_country_default_languages",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.languages.prompt.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/localization-prompt",
+    "description": "Read country and language suggestion settings. Suggestions do not override an explicit country/language URL. Manual switching uses currently served country languages. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/languages/localization-prompt. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "storefront_id": {
+          "description": "Storefront to configure.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_localization_prompt",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.languages.prompt.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/localization-prompt",
+    "description": "Choose country suggestions, manual selector only, or off. Send the complete settings. mode is off, suggest_country or manual_selector_only; dismissal_days must be 1–365. This does not enable languages, assign countries or redirect shoppers automatically. Returns localized backend success wording. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages/localization-prompt. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "dismissal_days": {
+          "description": "Days to remember dismissal, from 1 to 365.",
+          "type": "integer"
+        },
+        "mode": {
+          "description": "off, suggest_country, manual_selector_only.",
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront to configure.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "mode",
+        "dismissal_days"
+      ],
+      "type": "object"
+    },
+    "name": "set_localization_prompt",
+    "scopes": [
+      "store:online_store.storefronts:write"
     ]
   }
 ]

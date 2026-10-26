@@ -288,6 +288,8 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `list_languages` | `GET /api/2025-01/languages` | store:settings.languages:read |
 | `set_languages` | `PUT /api/2025-01/languages` | store:settings.languages:write |
 | `set_default_language` | `PUT /api/2025-01/languages/default` | store:settings.languages:write |
+| `replace_only_language` | `PUT /api/2025-01/languages/replace-only` | store:settings.languages:write |
+| `get_language_readiness` | `GET /api/2025-01/languages/{locale}/readiness` | store:settings.languages:read, store:online_store.storefronts:read |
 | `delete_language_translations` | `DELETE /api/2025-01/languages/{locale}/translations` | store:settings.languages:write |
 | `list_available_languages` | `GET /api/2025-01/reference/languages` | Valid Store connection; no resource scope |
 | `list_currencies` | `GET /api/2025-01/currencies` | store:settings.currencies:read |
@@ -616,6 +618,25 @@ Storefront tools read each storefront with its `go_live` verdict and `cache` sta
 | `set_storefront_languages` | `PUT /api/2025-01/storefronts/{storefrontId}/languages` | store:online_store.storefronts:write |
 | `set_storefront_primary_language` | `PUT /api/2025-01/storefronts/{storefrontId}/languages/primary` | store:online_store.storefronts:write |
 | `clear_storefront_cache` | `POST /api/2025-01/storefront-cache/clear` | store:online_store.storefronts:write |
+
+Publishing a language requires enabling it for the store, adding it to the storefront, and assigning it to countries with one default per country. Unassigned countries serve only storefront primary. Markets provide countries, not language choices. These tools need no domain or email-settings scope.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_storefront_country_languages` | `GET /api/2025-01/storefronts/{storefrontId}/languages/countries` | store:online_store.storefronts:read |
+| `set_storefront_country_languages` | `PUT /api/2025-01/storefronts/{storefrontId}/languages/countries` | store:online_store.storefronts:write |
+| `assign_country_default_language` | `POST /api/2025-01/storefronts/{storefrontId}/languages/countries/bulk` | store:online_store.storefronts:write |
+| `assign_all_country_default_languages` | `POST /api/2025-01/storefronts/{storefrontId}/languages/countries/all` | store:online_store.storefronts:write |
+| `get_localization_prompt` | `GET /api/2025-01/storefronts/{storefrontId}/languages/localization-prompt` | store:online_store.storefronts:read |
+| `set_localization_prompt` | `PUT /api/2025-01/storefronts/{storefrontId}/languages/localization-prompt` | store:online_store.storefronts:write |
+
+Country mappings use `{ "FR": { "locales": ["en", "fr"], "default_locale": "fr" } }`; `null` removes an override. Bulk and all-country assignment add the chosen default while keeping other explicitly assigned languages. Changes return `CONFIRMATION_REQUIRED`: show `error.details.warnings` and the complete `impact`, then repeat the same request with `confirmed` and `confirmation_token` after approval. Country before/after lists use codes; `language_labels` supplies backend-localized display labels once per storefront. Include old/new defaults, implicit primary inheritance, retired country/language address-unit counts and affected translated slugs. Changed state or an expired token requires a fresh preview. Render backend success wording in the merchant's interface language. Unpublishing keeps translations.
+
+`replace_only_language` is the atomic operation for a store with exactly one enabled language, including a one-language plan. It replaces references across all storefronts without ever enabling two languages, resets old-language translation/search data and cancels translation work. Source text is not translated. Store-default changes publish the resulting primary storefront's `storefront/locales/update`; replace-only publishes it for every storefront, together with store lifecycle events.
+
+`get_language_readiness` scans up to 500 source identities per call and returns cumulative field counts and backend labels. Follow `next_cursor` until `complete=true`; only then consider `ready`. Content changes invalidate the cursor. It covers catalog/content, platform messages and the selected storefront's live theme and gate text; missing translations never block publication. Theme freshness can require review because author dictionaries do not carry source hashes. A missing active theme requires review. Counts do not certify linguistic quality.
+
+Reset/removal preserves translated slug identities before cleanup. Old links redirect with 301 to the same resource's current canonical address, preserving query strings and a still-served country. Unknown routes, deleted resources and ambiguous owners return 404. History cannot restore translations deleted before installation. On a shared host Brazilian Portuguese in the US uses `/pt-BR-us`; `/pt-br` remains Portuguese in Brazil. Catalog/gate fields use exact → parent → source; slugs remain exact-locale only.
 
 ## Online Store: pixels
 
