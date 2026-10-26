@@ -13060,6 +13060,44 @@
     ]
   },
   {
+    "api_key": "customers.marketing-subscribers.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/marketing-subscribers/{subscriberId}",
+    "description": "Permanently delete an email subscriber and its proof of consent. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/marketing-subscribers/{subscriberId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Every call without a confirmation returns CONFIRMATION_REQUIRED: show error.details.warnings and impact (proof-of-consent records deleted, linked customer that stops email marketing) and repeat with confirmed: true and confirmation_token only after the merchant approves. Cannot be undone: the proof of consent is gone and the address can be added again only with new consent.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "subscriberId": {
+          "description": "Subscriber id from List email subscribers.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscriberId"
+      ],
+      "type": "object"
+    },
+    "name": "delete_marketing_subscriber",
+    "scopes": [
+      "store:customers:write"
+    ]
+  },
+  {
     "api_key": "customer-tags.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/customer-tags/limits",

@@ -480,7 +480,9 @@ Filter definitions are capped at 50 per store, including built-in and disabled f
 
 ## Customers, customer tags and customer groups
 
-Email subscriber tools are read-only. `list_marketing_subscribers` filters by `status` (`active`, `pending_confirmation`, `unsubscribed`), `source` (`coming_soon` for sign-ups from a storefront's Coming Soon page) or `search`. `get_marketing_subscriber` returns `consent`, the latest proof stored with a sign-up (the consent wording the visitor agreed to, its `text_version`, language, time, IP address, user agent and page), or `null` when the sign-up carried none, and `consent_records` (up to 20, newest first). Times are RFC 3339 in the store's timezone. IP address and user agent are personal data: keep them only as long as the proof is needed.
+`list_marketing_subscribers` filters by `status` (`active`, `pending_confirmation`, `unsubscribed`), `source` (`coming_soon` for sign-ups from a storefront's Coming Soon page) or `search`. `get_marketing_subscriber` returns `consent`, the latest proof stored with a sign-up (the consent wording the visitor agreed to, its `text_version`, language, time, IP address, user agent and page), or `null` when the sign-up carried none, and `consent_records` (up to 20, newest first). Times are RFC 3339 in the store's timezone. IP address and user agent are personal data: keep them only as long as the proof is needed.
+
+`delete_marketing_subscriber` permanently deletes a subscriber and its proof of consent (`store:customers:write`). Every first call returns `CONFIRMATION_REQUIRED` with `error.details.warnings`, `error.details.impact` (`email`, `status`, `consent_records`, `customer_id`, `customer_stops_email_marketing`) and a single-use `confirmation_token`. Show the warnings to the merchant and repeat with `confirmed: true` and the token only after they approve. A linked active customer stops receiving marketing emails, the proof can no longer be shown, and the address can be added again only with new consent.
 
 Email subscriber lifecycle webhooks are `subscribers/create`, `subscribers/update` and `subscribers/delete` (app scope `read_customers`). Their `subscriber` payload is the GET resource, including `channel: email`, status, source, and consent proof (`text_version`, `captured_at`, `source_page`, `locale`). Creation includes pending confirmation; confirmation, unsubscribe and resubscription are updates. Delete carries the resource before deletion. Use `get_webhook_topic_schema` to inspect fields and projections.
 
@@ -500,6 +502,7 @@ Email subscriber lifecycle webhooks are `subscribers/create`, `subscribers/updat
 | `set_text_marketing_consent` | `PUT /api/2025-01/text-marketing-consents` | store:customers:write |
 | `list_marketing_subscribers` | `GET /api/2025-01/marketing-subscribers` | store:customers:read |
 | `get_marketing_subscriber` | `GET /api/2025-01/marketing-subscribers/{subscriberId}` | store:customers:read |
+| `delete_marketing_subscriber` | `DELETE /api/2025-01/marketing-subscribers/{subscriberId}` | store:customers:write |
 | `get_customer_tag_limits` | `GET /api/2025-01/customer-tags/limits` | store:customers:read |
 | `list_customer_tags` | `GET /api/2025-01/customer-tags` | store:customers:read |
 | `get_customer_tag` | `GET /api/2025-01/customer-tags/{id}` | store:customers:read |

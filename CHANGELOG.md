@@ -1,5 +1,11 @@
 # Changelog
 
+## Deleting email subscribers
+
+- Added `delete_marketing_subscriber` (`store:customers:write`). Every delete asks for confirmation first: it returns the warnings and impact (proof-of-consent records deleted, a linked customer that stops email marketing) and a single-use token for the retry with `confirmed: true`.
+- Synced the machine-readable catalog entry (638 tools).
+
+
 ## Email subscribers and storefront passwords
 
 - Added `list_marketing_subscribers` and `get_marketing_subscriber` (`store:customers:read`, read-only). Filter by `source: coming_soon` for Coming Soon page sign-ups; the detail returns the proof of consent stored with the sign-up (`consent`, `consent_records`).
