@@ -1,5 +1,11 @@
 # Changelog
 
+## Metafield follow-up — 26 October 2026
+
+- Added order, order-item, and store metafield list/set tools, plus store translation get/set: eight tools, 660 total.
+- Product and variant metafield translations now require owner access and Languages access at the matching read/write level; store translations preserve both permissions too.
+- Synced the hosted tool catalog and documented scopes, immediate writes, and translation clearing.
+
 ## Deleting email subscribers
 
 - Added `delete_marketing_subscriber` (`store:customers:write`). Every delete asks for confirmation first: it returns the warnings and impact (proof-of-consent records deleted, a linked customer that stops email marketing) and a single-use token for the retry with `confirmed: true`.

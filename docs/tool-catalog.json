@@ -1908,7 +1908,7 @@
           "type": "integer"
         },
         "title": {
-          "description": "Optional title for the copy. Defaults to `Copy of \u003csource title\u003e`.",
+          "description": "Optional title for the copy. Defaults to `Copy of <source title>`.",
           "type": [
             "string",
             "null"
@@ -2039,7 +2039,7 @@
     "api_key": "products.metafields.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/products/{id}/metafields",
-    "description": "Set or remove product metafield values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or remove product metafield values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -2069,7 +2069,7 @@
     "api_key": "products.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Fetch one translated product metafield value. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one translated product metafield value. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -2105,14 +2105,14 @@
     "name": "get_product_metafield_translation",
     "scopes": [
       "store:products:read",
-      "store:products:read"
+      "store:settings.languages:read"
     ]
   },
   {
     "api_key": "products.metafields.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Set one translated product metafield value. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set one translated product metafield value. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -2157,7 +2157,7 @@
     "name": "set_product_metafield_translation",
     "scopes": [
       "store:products:write",
-      "store:products:write"
+      "store:settings.languages:write"
     ]
   },
   {
@@ -2242,7 +2242,7 @@
     "api_key": "products.variants.metafields.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/products/{id}/variants/{variantId}/metafields",
-    "description": "Set or remove variant metafield values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/variants/{variantId}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or remove variant metafield values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/variants/{variantId}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -2278,7 +2278,7 @@
     "api_key": "products.variants.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Fetch one translated variant metafield value. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one translated variant metafield value. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -2320,14 +2320,14 @@
     "name": "get_product_variant_metafield_translation",
     "scopes": [
       "store:products:read",
-      "store:products:read"
+      "store:settings.languages:read"
     ]
   },
   {
     "api_key": "products.variants.metafields.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Set one translated variant metafield value. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set one translated variant metafield value. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -2378,7 +2378,7 @@
     "name": "set_product_variant_metafield_translation",
     "scopes": [
       "store:products:write",
-      "store:products:write"
+      "store:settings.languages:write"
     ]
   },
   {
@@ -3055,7 +3055,7 @@
     "api_key": "collections.metafields.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/collections/{id}/metafields",
-    "description": "Create, update, or delete collection custom-data values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create, update, or delete collection custom-data values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/{id}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -3087,7 +3087,7 @@
     "api_key": "collections.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Fetch one translated collection custom-data value. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one translated collection custom-data value. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -3107,7 +3107,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "minLength": 1,
           "type": "string"
         }
@@ -3130,7 +3130,7 @@
     "api_key": "collections.metafields.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Set or clear one translated collection custom-data value. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or clear one translated collection custom-data value. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -3154,7 +3154,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "minLength": 1,
           "type": "string"
         },
@@ -3997,7 +3997,7 @@
     "api_key": "categories.metafields.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/categories/{id}/metafields",
-    "description": "Create, update, or delete category custom-data values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create, update, or delete category custom-data values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/{id}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4029,7 +4029,7 @@
     "api_key": "categories.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Fetch one translated category custom-data value. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one translated category custom-data value. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4072,7 +4072,7 @@
     "api_key": "categories.metafields.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Set or clear one translated category custom-data value. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or clear one translated category custom-data value. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5312,7 +5312,7 @@
     "api_key": "pages.metafields.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/pages/{id}/metafields",
-    "description": "Create, update, or delete page custom-data values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. The complete value change succeeds or fails together. Omitted entries are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create, update, or delete page custom-data values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. The complete value change succeeds or fails together. Omitted entries are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/{id}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5344,7 +5344,7 @@
     "api_key": "pages.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Fetch one translated page custom-data value. Resolves the definition by namespace and key, verifies that it is translatable and visible to the token, then returns its value for the requested enabled non-default language. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one translated page custom-data value. Resolves the definition by namespace and key, verifies that it is translatable and visible to the token, then returns its value for the requested enabled non-default language. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5387,7 +5387,7 @@
     "api_key": "pages.metafields.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Set or clear one translated page custom-data value. The definition must permit writes and translations. Send an empty value to clear this locale’s translation. Send an explicit string in `value`; omit neither the field nor its value, and do not send null. An empty string clears the translation. For `list.string`, send a JSON-encoded string array with one translated item for each source item, in the same order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or clear one translated page custom-data value. The definition must permit writes and translations. Send an empty value to clear this locale’s translation. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. Send an explicit string in `value`; omit neither the field nor its value, and do not send null. An empty string clears the translation. For `list.string`, send a JSON-encoded string array with one translated item for each source item, in the same order. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6263,7 +6263,7 @@
     "api_key": "blog_posts.metafields.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/posts/{id}/metafields",
-    "description": "Create, update, or delete custom-data values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. The complete value change succeeds or fails together. Omitted entries are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create, update, or delete custom-data values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. The complete value change succeeds or fails together. Omitted entries are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/{id}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6295,7 +6295,7 @@
     "api_key": "blog_posts.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Fetch one translated custom-data value. The definition must be visible and translatable. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one translated custom-data value. The definition must be visible and translatable. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6338,7 +6338,7 @@
     "api_key": "blog_posts.metafields.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Set or clear one translated custom-data value. Send an empty value to clear the locale's translation. Send an explicit string in `value`; omit neither the field nor its value, and do not send null. An empty string clears the translation. For `list.string`, send a JSON-encoded string array with one translated item for each source item, in the same order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or clear one translated custom-data value. Send an empty value to clear the locale's translation. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. Send an explicit string in `value`; omit neither the field nor its value, and do not send null. An empty string clears the translation. For `list.string`, send a JSON-encoded string array with one translated item for each source item, in the same order. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -7133,7 +7133,7 @@
     "api_key": "blog_categories.metafields.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/categories/{id}/metafields",
-    "description": "Create, update, or delete custom-data values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. The complete value change succeeds or fails together. Omitted entries are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create, update, or delete custom-data values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. The complete value change succeeds or fails together. Omitted entries are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/{id}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -7165,7 +7165,7 @@
     "api_key": "blog_categories.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Fetch one translated custom-data value. The definition must be visible and translatable. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one translated custom-data value. The definition must be visible and translatable. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -7208,7 +7208,7 @@
     "api_key": "blog_categories.metafields.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Set or clear one translated custom-data value. Send an empty value to clear the locale's translation. Send an explicit string in `value`; omit neither the field nor its value, and do not send null. An empty string clears the translation. For `list.string`, send a JSON-encoded string array with one translated item for each source item, in the same order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or clear one translated custom-data value. Send an empty value to clear the locale's translation. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. Send an explicit string in `value`; omit neither the field nor its value, and do not send null. An empty string clears the translation. For `list.string`, send a JSON-encoded string array with one translated item for each source item, in the same order. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -9734,7 +9734,7 @@
     "api_key": "brands.metafields.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/brands/{id}/metafields",
-    "description": "Create, update, or delete brand metafield values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. Only definitions writable by this token can be changed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create, update, or delete brand metafield values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. Only definitions writable by this token can be changed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/{id}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -9766,7 +9766,7 @@
     "api_key": "brands.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Get one brand metafield translation. Returns the stored translation for a translatable metafield the token can read, in an enabled non-default language. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Get one brand metafield translation. Returns the stored translation for a translatable metafield the token can read, in an enabled non-default language. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -9809,7 +9809,7 @@
     "api_key": "brands.metafields.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Set or clear one brand metafield translation. Sets this metafield's translation in an enabled non-default locale without changing the source value. `value` is required. Send an empty string to clear it. For `list.string`, send a JSON-encoded string array with one item per source item, in the same order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or clear one brand metafield translation. Sets this metafield's translation in an enabled non-default locale without changing the source value. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. `value` is required. Send an empty string to clear it. For `list.string`, send a JSON-encoded string array with one item per source item, in the same order. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10391,7 +10391,7 @@
     "api_key": "vendors.metafields.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/vendors/{id}/metafields",
-    "description": "Create, update, or delete vendor metafield values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. Only definitions writable by this token can be changed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create, update, or delete vendor metafield values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. Only definitions writable by this token can be changed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/{id}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10423,7 +10423,7 @@
     "api_key": "vendors.metafields.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Get one vendor metafield translation. Returns the stored translation for a translatable metafield the token can read, in an enabled non-default language. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Get one vendor metafield translation. Returns the stored translation for a translatable metafield the token can read, in an enabled non-default language. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10466,7 +10466,7 @@
     "api_key": "vendors.metafields.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}",
-    "description": "Set or clear one vendor metafield translation. Sets this metafield's translation in an enabled non-default locale without changing the source value. `value` is required. Send an empty string to clear it. For `list.string`, send a JSON-encoded string array with one item per source item, in the same order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or clear one vendor metafield translation. Sets this metafield's translation in an enabled non-default locale without changing the source value. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. `value` is required. Send an empty string to clear it. For `list.string`, send a JSON-encoded string array with one item per source item, in the same order. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -12498,7 +12498,7 @@
     "api_key": "customers.metafields.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/customers/{id}/metafields",
-    "description": "Create, update, or delete Customer custom-data values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/customers/{id}/metafields. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create, update, or delete Customer custom-data values. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/customers/{id}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -20529,7 +20529,7 @@
     "api_key": "domains.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/domains",
-    "description": "List the store's custom domains. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/domains. Only the connected store is accessible.",
+    "description": "List the store's custom domains. Returns custom domains with their verification status, HTTPS connection status, DNS management and storefront role. The store's Tringify address is returned as `subdomain`. A domain that was never verified carries `unverified_expires_at`, when it is removed unless verified. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/domains. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -20557,7 +20557,7 @@
     "api_key": "domains.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/domains/{domainId}",
-    "description": "Get one custom domain. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/domains/{domainId}. Only the connected store is accessible.",
+    "description": "Get one custom domain. Includes the DNS records the domain needs while it is pending. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/domains/{domainId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -20578,13 +20578,52 @@
     ]
   },
   {
+    "api_key": "dns_operations.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/dns-zones/{zoneId}/operations/{operationId}",
+    "description": "Read a queued DNS operation’s durable result. Status is pending, retrying, processing, recovering, done, failed or cancelled. code and message describe a sanitized backend failure. Poll the operation id returned by the write; pending=false on a zone is not a success result. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/dns-zones/{zoneId}/operations/{operationId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operationId": {
+          "description": "Operation id returned by the queued mutation.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "zone_id": {
+          "description": "DNS zone id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "zone_id",
+        "operationId"
+      ],
+      "type": "object"
+    },
+    "name": "get_dns_operation",
+    "scopes": [
+      "store:settings.domains:read"
+    ]
+  },
+  {
     "api_key": "dns_zones.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/dns-zones",
-    "description": "List the DNS zones Tringify hosts for the store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/dns-zones. Only the connected store is accessible.",
+    "description": "List the DNS zones Tringify hosts for the store. A zone exists for each root domain whose DNS the merchant chose to manage with Tringify. Each zone lists its nameservers, without records; get one zone for records. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/dns-zones. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
-      "properties": {},
+      "properties": {
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "per_page": {
+          "description": "Page size, bounded by the returned limits.",
+          "type": "integer"
+        }
+      },
       "type": "object"
     },
     "name": "list_dns_zones",
@@ -20596,7 +20635,7 @@
     "api_key": "dns_zones.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/dns-zones/{zoneId}",
-    "description": "Get one hosted DNS zone with its records. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/dns-zones/{zoneId}. Only the connected store is accessible.",
+    "description": "Get one hosted DNS zone with its records. Records Tringify manages for the storefront connection and email sending are marked `editable: false`. Removing a subdomain under a DNS zone managed for the same store queues deletion of its storefront CNAME matching the routing target and its _tringify-verify TXT matching the removed claim’s verification token. Records with other values and other hostnames are kept. This cleanup also applies to unverified claims that expire or are released. DNS cleanup is asynchronous; a domains/delete event confirms the domain was removed, not that DNS cleanup has finished. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/dns-zones/{zoneId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -20620,7 +20659,7 @@
     "api_key": "dns_records.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/dns-zones/{zoneId}/records",
-    "description": "Add a record to a hosted DNS zone. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/dns-zones/{zoneId}/records. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a record to a hosted DNS zone. Supported types are A, AAAA, CNAME, MX, TXT, CAA, SRV and NS. NS records may delegate a child name inside the zone; protected root and storefront delegation cannot be changed. Names are within the zone (`@` is the root). A zone holds at most 200 records. Records Tringify manages for the storefront and email cannot be changed, and a record that conflicts with another at the same name is refused. HTTP 202 means queued. The response includes operation and requested_operation with a durable id. Poll GET /dns-zones/{zoneId}/operations/{operationId} for terminal done/failed/cancelled and sanitized code/message; dns_operations/update reports completion. A pending=false zone does not prove success. Only merchant credentials can hold either domains scope. Apps use storefront.urls under read_storefront. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/dns-zones/{zoneId}/records. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -20630,6 +20669,10 @@
         },
         "name": {
           "description": "Record name within the zone; @ for the root.",
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh action/target-bound dangerous-action verification code, using the same verification flow as domain deletion. Tokens and connected tools have no exemption. DNS create/update use action dns_save, delete uses dns_delete; target_type=dns_zone and target_id=zoneId.",
           "type": "string"
         },
         "priority": {
@@ -20660,7 +20703,8 @@
         "zone_id",
         "type",
         "name",
-        "content"
+        "content",
+        "otp_code"
       ],
       "type": "object"
     },
@@ -20673,7 +20717,7 @@
     "api_key": "dns_records.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/dns-zones/{zoneId}/records/{recordId}",
-    "description": "Change a record in a hosted DNS zone. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/dns-zones/{zoneId}/records/{recordId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change a record in a hosted DNS zone. Supported types are A, AAAA, CNAME, MX, TXT, CAA, SRV and NS. NS records may delegate a child name inside the zone; protected root and storefront delegation cannot be changed. Names are within the zone (`@` is the root). A zone holds at most 200 records. Records Tringify manages for the storefront and email cannot be changed, and a record that conflicts with another at the same name is refused. HTTP 202 means queued. The response includes operation and requested_operation with a durable id. Poll GET /dns-zones/{zoneId}/operations/{operationId} for terminal done/failed/cancelled and sanitized code/message; dns_operations/update reports completion. A pending=false zone does not prove success. Only merchant credentials can hold either domains scope. Apps use storefront.urls under read_storefront. Send `modified_on` from the record you read to refuse the change if someone edited it since. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/dns-zones/{zoneId}/records/{recordId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -20690,6 +20734,10 @@
         },
         "name": {
           "description": "Record name within the zone; @ for the root.",
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh action/target-bound dangerous-action verification code, using the same verification flow as domain deletion. Tokens and connected tools have no exemption. DNS create/update use action dns_save, delete uses dns_delete; target_type=dns_zone and target_id=zoneId.",
           "type": "string"
         },
         "priority": {
@@ -20726,7 +20774,8 @@
         "record_id",
         "type",
         "name",
-        "content"
+        "content",
+        "otp_code"
       ],
       "type": "object"
     },
@@ -20739,10 +20788,14 @@
     "api_key": "dns_records.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/dns-zones/{zoneId}/records/{recordId}",
-    "description": "Remove a record from a hosted DNS zone. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/dns-zones/{zoneId}/records/{recordId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Remove a record from a hosted DNS zone. Records Tringify manages cannot be removed. HTTP 202 means queued. Poll the returned `operation.id` for done, failed or cancelled; `pending=false` alone does not establish success. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/dns-zones/{zoneId}/records/{recordId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "otp_code": {
+          "description": "Fresh action/target-bound dangerous-action verification code, using the same verification flow as domain deletion. Tokens and connected tools have no exemption. DNS create/update use action dns_save, delete uses dns_delete; target_type=dns_zone and target_id=zoneId.",
+          "type": "string"
+        },
         "record_id": {
           "description": "DNS record id, from the zone's records.",
           "minLength": 1,
@@ -20756,7 +20809,8 @@
       },
       "required": [
         "zone_id",
-        "record_id"
+        "record_id",
+        "otp_code"
       ],
       "type": "object"
     },
@@ -20769,7 +20823,7 @@
     "api_key": "email_senders.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/email/senders",
-    "description": "List the addresses the store sends email from. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/senders. Only the connected store is accessible.",
+    "description": "List the addresses the store sends email from. `can_send` reports whether an address can send right now, with the same rule sending enforces. When the default transactional sender cannot send, order and account email goes out from the store's Tringify address. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/senders. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -20784,7 +20838,7 @@
     "api_key": "email_domains.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/email/domains",
-    "description": "List the store's custom sending domains. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/domains. Only the connected store is accessible.",
+    "description": "List the store's custom sending domains. Each domain shows its verification status and whether it can send. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/domains. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -20799,7 +20853,7 @@
     "api_key": "email_reply_to.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/email/reply-to",
-    "description": "Get where customer replies to store emails go. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/reply-to. Only the connected store is accessible.",
+    "description": "Get where customer replies to store emails go. `pending_reply_to` is an address waiting for its inbox to confirm the link sent to it. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/reply-to. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -20814,17 +20868,22 @@
     "api_key": "email_reply_to.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/email/reply-to",
-    "description": "Set where customer replies to store emails go. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/reply-to. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set where customer replies to store emails go. An empty value stops accepting replies. A new address takes effect once its inbox confirms the link Tringify emails to it; until then the response returns it as `pending_reply_to`. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/reply-to. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "customer_reply_to": {
           "description": "Email address for customer replies, or an empty string.",
           "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh action/target-bound dangerous-action verification code, using the same verification flow as domain deletion. Tokens and connected tools have no exemption. Use action email_reply_to, target_type=email_identity, target_id=storeId + | + the trimmed reply-to value (empty value clears replies).",
+          "type": "string"
         }
       },
       "required": [
-        "customer_reply_to"
+        "customer_reply_to",
+        "otp_code"
       ],
       "type": "object"
     },
@@ -20837,7 +20896,7 @@
     "api_key": "email_suppressions.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/email/suppressions",
-    "description": "Check whether the store's emails to an address are blocked. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/suppressions. Only the connected store is accessible.",
+    "description": "Check whether the store's emails to an address are blocked. Addresses that bounced permanently or reported the store's email as spam are suppressed. Suppressions are stored as hashes, so they are checked one address at a time. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/suppressions. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -21067,7 +21126,7 @@
     "api_key": "storefronts.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/storefronts",
-    "description": "List the store's storefronts. Returns every storefront with its mode, password protection, domains and `primary_url` (empty until a primary domain is active). Read a storefront's languages with Get storefront languages. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts. Only the connected store is accessible.",
+    "description": "List the store's storefronts. Returns every storefront with its mode, password protection, domains and `primary_url` (empty until a primary domain is active). Read a storefront's languages with Get storefront languages. urls is an array of active, HTTPS-ready public domain names, primary first, including the permanent mytringify address on the primary storefront. No schemes or paths are included. public_contact_email is the store’s explicitly public contact email, or empty when unset; it never falls back to a private login, sender or reply-to address. Both fields require read_storefront. Refresh urls on domains/create, domains/update and domains/delete; those events contain only domain, is_primary, status and storefront_id. The mytringify subdomain cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -21082,7 +21141,7 @@
     "api_key": "storefronts.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/storefronts/{storefrontId}",
-    "description": "Get one storefront and its page-title settings. Adds the store's `add_store_name_to_page_titles` and share image to the storefront. Next to `storefront` (not inside it), `data` carries `go_live`: whether the store can go live (`ready`) and, if not, the `blockers` to fix first; and `cache`: when the storefront cache was last cleared (`last_cleared_at`, null if never), when it can be cleared again (`next_available_at`, null if never cleared), whether it can be cleared now (`can_clear`, the server's verdict) and the wait between clears in hours (`cooldown_hours`). Times are RFC 3339 in UTC. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}. Only the connected store is accessible.",
+    "description": "Get one storefront and its page-title settings. Adds the store's `add_store_name_to_page_titles` and share image to the storefront. Next to `storefront` (not inside it), `data` carries `go_live`: whether the store can go live (`ready`) and, if not, the `blockers` to fix first; and `cache`: when the storefront cache was last cleared (`last_cleared_at`, null if never), when it can be cleared again (`next_available_at`, null if never cleared), whether it can be cleared now (`can_clear`, the server's verdict) and the wait between clears in hours (`cooldown_hours`). Times are RFC 3339 in UTC. urls is an array of active, HTTPS-ready public domain names, primary first, including the permanent mytringify address on the primary storefront. No schemes or paths are included. public_contact_email is the store’s explicitly public contact email, or empty when unset; it never falls back to a private login, sender or reply-to address. Both fields require read_storefront. Refresh urls on domains/create, domains/update and domains/delete; those events contain only domain, is_primary, status and storefront_id. The mytringify subdomain cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -21149,7 +21208,7 @@
     "api_key": "storefronts.seo.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/seo",
-    "description": "Set the page-title template, the store-name suffix and the share image. These are the defaults for pages that have no title or image of their own. `title_template` is required: send the complete template, or an empty string for no pattern. It may use only the tokens returned in `tokens` (`{{ page_title }}` and `{{ shop_name }}`), every `{{` needs its `}}`, and it is at most 200 characters (Unicode code points). The pattern formats generated titles only: a title saved on a page, translation or country row is final, and the home page's generated title is the store name. A non-empty pattern replaces the automatic store-name suffix, so `add_store_name_to_page_titles` has no effect while one is set; without a pattern, the store name is appended to generated titles when it is on. Omit `add_store_name_to_page_titles` or `share_image_id` to keep them. `share_image_id` takes a site asset image id; an empty string or null removes the image, and assigning an image also requires read_site_assets. The store-name suffix and share image apply to every storefront in the store. This pattern and share image are the base for every language and country; set a different pattern or image for one language, or one language in one country, with Set an SEO override. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/seo. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set the page-title template, the store-name suffix and the share image. These are the defaults for pages that have no title or image of their own. `title_template` is required: send the complete template, or an empty string for no pattern. It may use only the tokens returned in `tokens` (`{{ page_title }}` and `{{ shop_name }}`), every `{{` needs its `}}`, and it is at most 200 characters (Unicode code points). The pattern formats generated titles only: a title saved on a page, translation or country row is final, and the home page's generated title is the store name. A non-empty pattern replaces the automatic store-name suffix, so `add_store_name_to_page_titles` has no effect while one is set; without a pattern, the store name is appended to generated titles when it is on. Omit `add_store_name_to_page_titles` or `share_image_id` to keep them. `share_image_id` takes a site asset image id; an empty string or null removes the image, and assigning an image also requires read_site_assets. The store-name suffix and share image apply to every storefront in the store. This pattern and share image are the base for every language and country; set a different pattern or image for one language, or one language in one country, with Set an SEO override. The response includes `preview` for the saved settings in the storefront primary language. Each `preview.samples` item has `kind`, `page_name`, `title` and `description`; `description` is the computed plain-text meta description, with HTML removed, entities decoded and whitespace collapsed before limiting it to 160 Unicode code points (including the closing ellipsis when shortened). The samples are a generated example product, Shop and Home. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/seo. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -21378,12 +21437,12 @@
     "api_key": "custom_pixels.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels",
-    "description": "Add a custom pixel to a storefront. Every field is required. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `\u003cscript\u003e` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. A storefront has at most `custom_pixels.max_per_storefront` custom pixels (Storefront limits), disabled ones included; one more is refused with `CUSTOM_PIXEL_LIMIT_REACHED`. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/custom-pixels. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
+    "description": "Add a custom pixel to a storefront. Every field is required. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `<script>` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. A storefront has at most `custom_pixels.max_per_storefront` custom pixels (Storefront limits), disabled ones included; one more is refused with `CUSTOM_PIXEL_LIMIT_REACHED`. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/custom-pixels. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "code": {
-          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `\u003cscript\u003e` tags and no HTML snippets.",
+          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `<script>` tags and no HTML snippets.",
           "type": "string"
         },
         "consent_category": {
@@ -21395,7 +21454,7 @@
           "type": "boolean"
         },
         "name": {
-          "description": "Name shown in Online Store \u003e Pixels, 1 to `name_max_length` characters (100).",
+          "description": "Name shown in Online Store > Pixels, 1 to `name_max_length` characters (100).",
           "type": "string"
         },
         "storefront_id": {
@@ -21422,12 +21481,12 @@
     "api_key": "custom_pixels.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}",
-    "description": "Replace a custom pixel's name, code, consent category and enabled state. Send every field: the pixel is replaced as sent. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `\u003cscript\u003e` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. Disabling keeps the code; pages already open in a browser keep running the pixel until they are reloaded. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
+    "description": "Replace a custom pixel's name, code, consent category and enabled state. Send every field: the pixel is replaced as sent. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `<script>` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. Disabling keeps the code; pages already open in a browser keep running the pixel until they are reloaded. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "code": {
-          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `\u003cscript\u003e` tags and no HTML snippets.",
+          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `<script>` tags and no HTML snippets.",
           "type": "string"
         },
         "consent_category": {
@@ -21439,7 +21498,7 @@
           "type": "boolean"
         },
         "name": {
-          "description": "Name shown in Online Store \u003e Pixels, 1 to `name_max_length` characters (100).",
+          "description": "Name shown in Online Store > Pixels, 1 to `name_max_length` characters (100).",
           "type": "string"
         },
         "pixel_id": {
@@ -25424,7 +25483,7 @@
           "type": "string"
         },
         "stock_action": {
-          "description": "What to do with stock still on hand: `{\"mode\": \"move\", \"target_location_id\": \"\u003cid\u003e\"}` moves every unit to another active merchant location; `{\"mode\": \"clear\"}` sets it to zero. Send the same value on the confirmation retry.",
+          "description": "What to do with stock still on hand: `{\"mode\": \"move\", \"target_location_id\": \"<id>\"}` moves every unit to another active merchant location; `{\"mode\": \"clear\"}` sets it to zero. Send the same value on the confirmation retry.",
           "type": [
             "object",
             "null"
@@ -25717,7 +25776,7 @@
     "api_key": "products.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/products/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/products/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/products/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -25753,7 +25812,7 @@
     "api_key": "products.variants.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -25795,7 +25854,7 @@
     "api_key": "collections.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/collections/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/collections/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/collections/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -25831,7 +25890,7 @@
     "api_key": "categories.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/categories/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/categories/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/categories/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -25867,7 +25926,7 @@
     "api_key": "pages.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/pages/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/pages/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/pages/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -25903,7 +25962,7 @@
     "api_key": "blog_posts.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -25939,7 +25998,7 @@
     "api_key": "blog_categories.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -25975,7 +26034,7 @@
     "api_key": "brands.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/brands/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/brands/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/brands/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -26011,7 +26070,7 @@
     "api_key": "vendors.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/vendors/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/vendors/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/vendors/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -26047,7 +26106,7 @@
     "api_key": "orders.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/orders/{orderId}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/orders/{orderId}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/orders/{orderId}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -26083,7 +26142,7 @@
     "api_key": "orders.items.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/orders/{orderId}/items/{itemId}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/orders/{orderId}/items/{itemId}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/orders/{orderId}/items/{itemId}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -26125,7 +26184,7 @@
     "api_key": "customers.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/customers/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/customers/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/customers/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -26161,7 +26220,7 @@
     "api_key": "store.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/store/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/store/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Staff-created merchant API tokens also require the creator's current settings.metafield_definitions:write permission. Store owners are permitted; installed apps keep their scope and ownership checks. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/store/metafields/{namespace}/{key}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -26185,6 +26244,287 @@
     "name": "delete_store_metafield",
     "scopes": [
       "store:settings.metafield_definitions:write"
+    ]
+  },
+  {
+    "api_key": "orders.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/orders/{orderId}/metafields",
+    "description": "List definition-backed values on one order. Paginated values include only definitions visible to the authenticated app or merchant token. Search matches definition name, namespace or key. Order properties are separate from these values. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{orderId}/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size; capped by the metafield list limit.",
+          "type": "integer"
+        },
+        "orderId": {
+          "description": "Order ID in the token's store.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "page": {
+          "description": "Page number (default 1).",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search definition name, namespace or key.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "orderId"
+      ],
+      "type": "object"
+    },
+    "name": "list_order_metafields",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "orders.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/orders/{orderId}/metafields",
+    "description": "Set or remove definition-backed values in one atomic request. Supply namespace, key and value for every entry. Definitions must already exist for the target owner type. Values are checked against their declared types, limits, reference ownership and access rules. Null or an empty string removes a value; omitting value is invalid. Duplicate definitions are rejected. Use metafield_bulk_max from GET /orders/limits for the maximum batch size. All entries succeed together or none change. The response is the first page of the values your token can read, in the same envelope as the list endpoint. An actual change is recorded on the order timeline and emits the matching order_metafields/create, update or delete event (order_item_metafields for a line); resubmitting an unchanged value emits no change event. These edits do not change order-time line properties, prices, tax or totals. App tokens require write_orders, ownership of the definition; shared visibility does not allow another app to write it. Merchant tokens respect merchant access. A line must belong to the order in the URL. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/orders/{orderId}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "metafields": {
+          "description": "Entries containing namespace, key and value. Typed JSON scalars and objects are serialized without losing integer precision; canonical strings are also accepted.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "orderId": {
+          "description": "Order ID in the token's store.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "orderId",
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_order_metafield",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "orders.items.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/orders/{orderId}/items/{itemId}/metafields",
+    "description": "Set or remove definition-backed values in one atomic request. Supply namespace, key and value for every entry. Definitions must already exist for the target owner type. Values are checked against their declared types, limits, reference ownership and access rules. Null or an empty string removes a value; omitting value is invalid. Duplicate definitions are rejected. Use metafield_bulk_max from GET /orders/limits for the maximum batch size. All entries succeed together or none change. The response is the first page of the values your token can read, in the same envelope as the list endpoint. An actual change is recorded on the order timeline and emits the matching order_metafields/create, update or delete event (order_item_metafields for a line); resubmitting an unchanged value emits no change event. These edits do not change order-time line properties, prices, tax or totals. App tokens require write_orders, ownership of the definition; shared visibility does not allow another app to write it. Merchant tokens respect merchant access. A line must belong to the order in the URL. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/orders/{orderId}/items/{itemId}/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Order-line id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "metafields": {
+          "description": "Entries containing namespace, key and value. Typed JSON scalars and objects are serialized without losing integer precision; canonical strings are also accepted.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "orderId": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "orderId",
+        "item_id",
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_order_item_metafield",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "orders.items.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/orders/{orderId}/items/{itemId}/metafields",
+    "description": "List metafields attached to one order line. Returns only definitions visible to the authenticated app or store-admin token. Both the order and item identities are checked against the token's store, and the item must belong to the order in the URL. Metafield values describe the line; they do not grant access to private app files. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{orderId}/items/{itemId}/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Order-line id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size; capped by the metafield list limit.",
+          "type": "integer"
+        },
+        "orderId": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "page": {
+          "description": "Page number (default 1).",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search definition name, namespace, or key.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "orderId",
+        "item_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_order_item_metafields",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "store.metafields.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/store/metafields",
+    "description": "List the store's shop-level custom-data values visible to the token. Returns the store's shop-level values, paginated, for definitions the token can read. App tokens see values of their own definitions, merchant-owned definitions, and other apps' definitions shared with `app_access: shared`. Staff-created merchant API tokens also require the creator's current settings.metafield_definitions:read permission. Store owners are permitted; installed apps keep their scope and ownership checks. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/store/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size; capped by the metafield list limit.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number (default 1).",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_store_metafields",
+    "scopes": [
+      "store:settings.metafield_definitions:read"
+    ]
+  },
+  {
+    "api_key": "store.metafields.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/store/metafields",
+    "description": "Create, update, or delete shop-level custom-data values. Send namespace-and-key entries. A string value creates or replaces a value; `null` or an empty string deletes it. App tokens can write only definitions their app owns. The complete value change succeeds or fails together, and omitted entries are preserved. Each change sends the matching `store_metafields/*` webhook. Staff-created merchant API tokens also require the creator's current settings.metafield_definitions:write permission. Store owners are permitted; installed apps keep their scope and ownership checks. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/store/metafields. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "metafields": {
+          "description": "Entries shaped as `{namespace, key, value}`. `value` is required in every entry; send `null` or an empty string to delete the stored value.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "metafields"
+      ],
+      "type": "object"
+    },
+    "name": "set_store_metafield",
+    "scopes": [
+      "store:settings.metafield_definitions:write"
+    ]
+  },
+  {
+    "api_key": "store.metafields.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Fetch one translated shop-level custom-data value. The definition must be visible to the token and translatable. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Staff-created merchant API tokens also require the creator's current settings.metafield_definitions:read permission. Store owners are permitted; installed apps keep their scope and ownership checks. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "description": "Metafield definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:<slug>`.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "key",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_store_metafield_translation",
+    "scopes": [
+      "store:settings.metafield_definitions:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "store.metafields.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}",
+    "description": "Set or clear one translated shop-level custom-data value. Sets this value's translation in an enabled non-default locale without changing the source value. App tokens can translate only definitions their app owns. Reading a value translation requires both the owner read scope and read_translations. Setting or clearing it requires both the owner write scope and write_translations; an empty value does not bypass either scope. Staff permissions and hosted MCP grants likewise require owner access plus settings.languages access at the matching read/write level. Send an explicit string in `value`; omit neither the field nor its value, and do not send null. An empty string clears the translation. For `list.string`, send a JSON-encoded string array with one translated item for each source item, in the same order. Staff-created merchant API tokens also require the creator's current settings.metafield_definitions:write permission. Store owners are permitted; installed apps keep their scope and ownership checks. Reading requires both owner read and store:settings.languages:read; setting or clearing requires both owner write and store:settings.languages:write. Store values use store:settings.metafield_definitions as their owner permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}. Only the connected store is accessible. Changes take effect immediately; no confirmation token is used. Preserve omitted values and do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Metafield definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:<slug>`.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "value": {
+          "description": "Translated value; an empty string clears it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "key",
+        "locale",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "set_store_metafield_translation",
+    "scopes": [
+      "store:settings.metafield_definitions:write",
+      "store:settings.languages:write"
     ]
   }
 ]

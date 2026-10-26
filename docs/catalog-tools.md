@@ -695,3 +695,18 @@ Pixel tools manage a storefront's custom pixels and the merchant's switch for ea
 | `set_file_translation` | `PUT /api/2025-01/files/{id}/translations/{locale}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `bulk_delete_files` | `POST /api/2025-01/files/bulk-delete` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `health_market_duty_country_rule` | `GET /api/2025-01/markets/duty-health` | store:markets:read, store:products:read |
+
+## Order and store metafield values
+
+Value translations require both owner and Languages access: read for get, write for set or clear, including product and variant values. Store values use `store:settings.metafield_definitions:read/write`; order and order-item values use `store:orders:read/write`. Orders and order items have no value translations. These tools use the existing Store API endpoints and validation, preserve omitted values, and require no confirmation token. Sharing and merchant-access restrictions still apply.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_order_metafields` | `GET /api/2025-01/orders/{orderId}/metafields` | store:orders:read |
+| `set_order_metafield` | `PUT /api/2025-01/orders/{orderId}/metafields` | store:orders:write |
+| `set_order_item_metafield` | `PUT /api/2025-01/orders/{orderId}/items/{itemId}/metafields` | store:orders:write |
+| `list_order_item_metafields` | `GET /api/2025-01/orders/{orderId}/items/{itemId}/metafields` | store:orders:read |
+| `list_store_metafields` | `GET /api/2025-01/store/metafields` | store:settings.metafield_definitions:read |
+| `set_store_metafield` | `PUT /api/2025-01/store/metafields` | store:settings.metafield_definitions:write |
+| `get_store_metafield_translation` | `GET /api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}` | store:settings.metafield_definitions:read, store:settings.languages:read |
+| `set_store_metafield_translation` | `PUT /api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}` | store:settings.metafield_definitions:write, store:settings.languages:write |

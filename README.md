@@ -147,7 +147,7 @@ Languages use `store:settings.languages:read` and `store:settings.languages:writ
 
 Removing a language can permanently delete translations and requires confirmation. A language assigned to a storefront is protected until its assignments are removed. Adding a language does not publish it on a storefront or translate content automatically. Review the returned warnings before confirming destructive changes.
 
-Content translation tools are already available for **Products, variant titles, Collections, Categories, Attributes, attribute options, Tags, Brands, Vendors, Pages, Policies, Blog Posts, Blog Tags, Blog Categories, and supported product, variant, category, collection, brand, vendor, page, blog post, and blog category metafields**. Product, collection, category, attribute, option, tag, brand, vendor, page, policy, blog post, blog tag, and blog category translations also have batch tools. Variant titles and metafields use individual tools. **Files translations, AI translation jobs, and translation CSV import/export are not exposed through MCP.**
+Content translation tools are already available for **Products, variant titles, Collections, Categories, Attributes, attribute options, Tags, Brands, Vendors, Pages, Policies, Blog Posts, Blog Tags, Blog Categories, and supported product, variant, category, collection, brand, vendor, page, blog post, blog category, and store metafields**. Product, collection, category, attribute, option, tag, brand, vendor, page, policy, blog post, blog tag, and blog category translations also have batch tools. Variant titles and metafields use individual tools. **Files translations, AI translation jobs, and translation CSV import/export are not exposed through MCP.**
 
 ## Currencies
 
@@ -271,3 +271,9 @@ require product access and the corresponding language-settings scope.
 Author name and biography support individual and batch translations: `get_blog_author_translation`, `set_blog_author_translation`, `get_blog_author_translations`, and `set_blog_author_translations`. Reads require `store:blog:read` and `store:settings.languages:read`; writes require both corresponding write scopes. Empty values clear translations. Author slugs are not translatable.
 
 Deleting an assigned author requires `reassign_to_author_id` naming an author in the same store outside the deletion selection. Large reassignments return a `lifecycle` object (single deletion) or `jobs` (bulk). Wait for completion; queued work is not a completed deletion. Posts are never left without an author.
+
+## Metafield values and translation permissions
+
+Value translations require both owner and Languages access: read for get, write for set or clear, including product and variant values. Store values use `store:settings.metafield_definitions:read/write`; order and order-item values use `store:orders:read/write`. Orders and order items have no value translations. These tools use the existing Store API endpoints and validation, preserve omitted values, and require no confirmation token. Sharing and merchant-access restrictions still apply.
+
+Use `list_order_metafields` / `set_order_metafield`, `list_order_item_metafields` / `set_order_item_metafield`, and `list_store_metafields` / `set_store_metafield`. Store translations use `get_store_metafield_translation` / `set_store_metafield_translation`. Existing connections need an approved access update to add Languages access; refresh tool discovery after approval.
