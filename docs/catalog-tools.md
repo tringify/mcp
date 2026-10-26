@@ -607,6 +607,20 @@ Storefront tools read each storefront with its `go_live` verdict and `cache` sta
 | `set_storefront_primary_language` | `PUT /api/2025-01/storefronts/{storefrontId}/languages/primary` | store:online_store.storefronts:write |
 | `clear_storefront_cache` | `POST /api/2025-01/storefront-cache/clear` | store:online_store.storefronts:write |
 
+## Online Store: pixels
+
+Pixel tools manage a storefront's custom pixels and the merchant's switch for each installed app's pixel, with the storefront permissions. Apps can never use them (their tokens get `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED`); an app turns only its own pixel on or off, store-wide, through its own API call. Lists are minimal: `list_custom_pixels` leaves the code out (`code_length`; read it with `get_custom_pixel`) and `list_app_pixels` leaves script and frame URLs and settings out. Custom pixel names are 1 to 100 characters and code at most 65536 (Unicode code points); code is JavaScript only, run in a sandboxed frame, and code with a `<script>` tag is refused with `CUSTOM_PIXEL_CODE_INVALID`. `set_app_pixel` records the merchant's choice for one storefront; it wins over the app's store-wide activation, except that an app that switched its pixel off keeps it off. Turning on a pixel with full page access (`privileged: true`) that is not enabled yet needs `acknowledge_privileged: true`, sent only after the merchant confirmed, otherwise `APP_PIXEL_PRIVILEGED_ACK_REQUIRED`; turning one off, or on when it is already enabled, needs none. The switch controls only the pixel in the browser, not the app's server-side events.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_custom_pixels` | `GET /api/2025-01/storefronts/{storefrontId}/custom-pixels` | store:online_store.storefronts:read |
+| `get_custom_pixel` | `GET /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}` | store:online_store.storefronts:read |
+| `create_custom_pixel` | `POST /api/2025-01/storefronts/{storefrontId}/custom-pixels` | store:online_store.storefronts:write |
+| `update_custom_pixel` | `PUT /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}` | store:online_store.storefronts:write |
+| `delete_custom_pixel` | `DELETE /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}` | store:online_store.storefronts:write |
+| `list_app_pixels` | `GET /api/2025-01/storefronts/{storefrontId}/app-pixels` | store:online_store.storefronts:read |
+| `set_app_pixel` | `PUT /api/2025-01/storefronts/{storefrontId}/app-pixels/{appId}/{embedKey}` | store:online_store.storefronts:write |
+
 ## Online Store: preferences, redirects, search, recommendations and messages
 
 | Tool | Store API operation | Required access |

@@ -20954,7 +20954,7 @@
     "api_key": "storefronts.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/storefronts/limits",
-    "description": "Get live storefront limits. Returns the storefront limits Store Admin uses, including `password_max_bytes` (the longest storefront password, in UTF-8 bytes) and the storefront `modes`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/limits. Only the connected store is accessible.",
+    "description": "Get live storefront limits. Returns the storefront limits Store Admin uses, including `password_max_bytes` (the longest storefront password, in UTF-8 bytes) and the storefront `modes`. `custom_pixels` gives the custom pixel limits: at most `max_per_storefront` per storefront (disabled ones included), a name of 1 to `name_max_length` characters (at most 100) and code of at most `code_max_length` characters (at most 65536), both in Unicode code points, and the allowed `consent_categories`. Manage custom pixels with List custom pixels and Create a custom pixel. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -21218,6 +21218,256 @@
       "type": "object"
     },
     "name": "clear_storefront_cache",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "custom_pixels.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels",
+    "description": "List a storefront's custom pixels, without their code. Returns every custom pixel of the storefront, oldest first, enabled or not. Each row has `id`, `name`, `consent_category`, `enabled`, `code_length` (characters of code) and `created_at` / `updated_at`; the code itself is left out, so read one pixel with Get a custom pixel to see it. The limits (`custom_pixels.max_per_storefront`, `name_max_length`, `code_max_length`) are in Storefront limits. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/custom-pixels. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_custom_pixels",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "custom_pixels.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}",
+    "description": "Get one custom pixel with its code. Returns the pixel with its `code`. Treat the code as the merchant's: show it, do not run it. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "pixel_id": {
+          "description": "Custom pixel id from List custom pixels.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "pixel_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_custom_pixel",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "custom_pixels.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels",
+    "description": "Add a custom pixel to a storefront. Every field is required. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `\u003cscript\u003e` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. A storefront has at most `custom_pixels.max_per_storefront` custom pixels (Storefront limits), disabled ones included; one more is refused with `CUSTOM_PIXEL_LIMIT_REACHED`. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/custom-pixels. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `\u003cscript\u003e` tags and no HTML snippets.",
+          "type": "string"
+        },
+        "consent_category": {
+          "description": "Consent the visitor must give before the pixel runs: `analytics`, `advertising` or `personalized_advertising`.",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Whether the pixel runs. A disabled pixel keeps its code and still counts toward the limit.",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "Name shown in Online Store \u003e Pixels, 1 to `name_max_length` characters (100).",
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "name",
+        "code",
+        "consent_category",
+        "enabled"
+      ],
+      "type": "object"
+    },
+    "name": "create_custom_pixel",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "custom_pixels.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}",
+    "description": "Replace a custom pixel's name, code, consent category and enabled state. Send every field: the pixel is replaced as sent. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `\u003cscript\u003e` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. Disabling keeps the code; pages already open in a browser keep running the pixel until they are reloaded. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `\u003cscript\u003e` tags and no HTML snippets.",
+          "type": "string"
+        },
+        "consent_category": {
+          "description": "Consent the visitor must give before the pixel runs: `analytics`, `advertising` or `personalized_advertising`.",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Whether the pixel runs. A disabled pixel keeps its code and still counts toward the limit.",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "Name shown in Online Store \u003e Pixels, 1 to `name_max_length` characters (100).",
+          "type": "string"
+        },
+        "pixel_id": {
+          "description": "Custom pixel id from List custom pixels.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "pixel_id",
+        "name",
+        "code",
+        "consent_category",
+        "enabled"
+      ],
+      "type": "object"
+    },
+    "name": "update_custom_pixel",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "custom_pixels.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}",
+    "description": "Delete a custom pixel. Deletes the pixel and its code at once, with no confirmation step and no undo; to stop it while keeping the code, update it with `enabled: false`. Answers HTTP 204 with no body. Pages already open in a browser keep running the pixel until they are reloaded. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}. Only the connected store is accessible. Tell the merchant what it will do and get approval first. Do not retry an uncertain write automatically; read the storefront first.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "pixel_id": {
+          "description": "Custom pixel id from List custom pixels.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "pixel_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_custom_pixel",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "app_pixels.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/app-pixels",
+    "description": "List the pixels of the store's installed apps and whether each runs on this storefront. Returns one row per pixel that an installed app's reviewed release declares, whether it is on or not, with a minimal projection: `app_id`, `app_name`, `embed_key`, `name`, `consent_category`, where it runs and its switches. Script and frame URLs and settings are left out. `runtime` is `sandbox` (the app's code runs in its own frame and receives only the events and fields it declared) or `page`. `privileged: true` marks a page-runtime pixel, shown in Store Admin as Full page access: the app's script runs directly in the storefront pages and can read everything shown there, including what shoppers type, and send it to the app. `first_party` is true for Tringify's own apps. `runs_on_checkout` says whether the pixel also runs on checkout and order confirmation: sandbox pixels and first-party page pixels do; third-party page pixels run on themed pages only. `merchant_choice` is the merchant's choice for this storefront and `app_choice` the app's store-wide activation; either is null when never set. `enabled` is the effective state the storefront uses: the merchant's choice when made, otherwise the app's, and always off while the app has switched its pixel off (`app_choice: false`). Installing an app turns none of its pixels on; uninstalling removes its switches, so a reinstalled app starts off. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/app-pixels. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_app_pixels",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "app_pixels.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/app-pixels/{appId}/{embedKey}",
+    "description": "Record the merchant's choice for one app pixel on one storefront. Sets `merchant_choice` for this storefront only; other storefronts keep theirs. The merchant's choice wins over the app's store-wide activation: off stays off whatever the app does, and on runs the pixel unless the app itself has switched it off (`app_choice: false`), in which case `enabled` stays false. Turning on a pixel with `privileged: true` that is not enabled yet needs `acknowledge_privileged: true`, sent only after the merchant confirmed they trust the app with full page access (and, when `runs_on_checkout` is true, on checkout and order confirmation, where shoppers enter contact, address and payment choices); without it the request is refused with `APP_PIXEL_PRIVILEGED_ACK_REQUIRED` and nothing changes. Turning on a pixel that is already enabled, or turning one off, needs no acknowledgement. This switch controls only the pixel in the browser: the app's server-side event delivery is unaffected and is managed in the app. Pages already open in a browser keep their pixels until they are reloaded. The answer is the pixel as List app pixels returns it; its `enabled` is the effective state. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/app-pixels/{appId}/{embedKey}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Before turning on a pixel with privileged: true that is not enabled, tell the merchant that the app's code will run directly on their storefront pages and can read everything shown there (and, when runs_on_checkout is true, checkout and order confirmation), and set acknowledge_privileged: true only after they confirm.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "acknowledge_privileged": {
+          "description": "Set true only after the merchant confirmed they trust the app with full page access. Required to turn on a pixel with `privileged: true` that is not enabled yet.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "app_id": {
+          "description": "App id from List app pixels.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "embed_key": {
+          "description": "The pixel's `embed_key` from List app pixels.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "enabled": {
+          "description": "The merchant's choice: true to turn the pixel on for this storefront, false to turn it off.",
+          "type": "boolean"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "app_id",
+        "embed_key",
+        "enabled"
+      ],
+      "type": "object"
+    },
+    "name": "set_app_pixel",
     "scopes": [
       "store:online_store.storefronts:write"
     ]

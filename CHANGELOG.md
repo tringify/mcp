@@ -1,5 +1,13 @@
 # Changelog
 
+## Pixels
+
+- Added `list_custom_pixels`, `get_custom_pixel`, `create_custom_pixel`, `update_custom_pixel`, `delete_custom_pixel`, `list_app_pixels` and `set_app_pixel` (Online Store storefront permissions; apps can never use them).
+- Lists are minimal: custom pixels without their code, app pixels without URLs or settings. `set_app_pixel` needs `acknowledge_privileged: true`, after the merchant confirmed, to turn on a full-page-access pixel that is not enabled yet.
+- `get_storefront_limits` describes the custom pixel limits.
+- Synced the machine-readable catalog from the live catalog (635 tools).
+
+
 ## Files
 
 - Added `request_file_preview` to start or retry a video or 3D preview. It needs the selected library's write permission.
