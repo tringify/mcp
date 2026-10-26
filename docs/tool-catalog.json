@@ -13000,6 +13000,66 @@
     ]
   },
   {
+    "api_key": "customers.marketing-subscribers.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/marketing-subscribers",
+    "description": "List the store's email newsletter subscribers. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/marketing-subscribers. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size; a value above the subscriber list maximum is refused.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number, from 1.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search email addresses and customer names.",
+          "type": "string"
+        },
+        "source": {
+          "description": "Where the subscription came from: `website`, `checkout`, `customer_account`, `import`, `api`, `admin_added` or `coming_soon`.",
+          "type": "string"
+        },
+        "status": {
+          "description": "`active`, `pending_confirmation` or `unsubscribed`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_marketing_subscribers",
+    "scopes": [
+      "store:customers:read"
+    ]
+  },
+  {
+    "api_key": "customers.marketing-subscribers.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/marketing-subscribers/{subscriberId}",
+    "description": "Read one email subscriber with its proof of consent. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/marketing-subscribers/{subscriberId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "subscriberId": {
+          "description": "Subscriber id from List email subscribers.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscriberId"
+      ],
+      "type": "object"
+    },
+    "name": "get_marketing_subscriber",
+    "scopes": [
+      "store:customers:read"
+    ]
+  },
+  {
     "api_key": "customer-tags.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/customer-tags/limits",
@@ -20954,7 +21014,7 @@
     "api_key": "storefronts.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/storefronts/limits",
-    "description": "Get live storefront limits. Returns the storefront limits Store Admin uses, including `password_max_bytes` (the longest storefront password, in UTF-8 bytes) and the storefront `modes`. `custom_pixels` gives the custom pixel limits: at most `max_per_storefront` per storefront (disabled ones included), a name of 1 to `name_max_length` characters (at most 100) and code of at most `code_max_length` characters (at most 65536), both in Unicode code points, and the allowed `consent_categories`. Manage custom pixels with List custom pixels and Create a custom pixel. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/limits. Only the connected store is accessible.",
+    "description": "Get live storefront limits. Returns the storefront limits Store Admin uses, including `password_min_length` (the shortest new storefront password, in characters) and `password_max_bytes` (the longest storefront password, in UTF-8 bytes) and the storefront `modes`. `custom_pixels` gives the custom pixel limits: at most `max_per_storefront` per storefront (disabled ones included), a name of 1 to `name_max_length` characters (at most 100) and code of at most `code_max_length` characters (at most 65536), both in Unicode code points, and the allowed `consent_categories`. Manage custom pixels with List custom pixels and Create a custom pixel. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -21094,12 +21154,12 @@
     "api_key": "storefronts.password.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/password",
-    "description": "Turn password protection on, change the password, or turn it off. Takes effect at once, with no confirmation step. Send a non-empty `password` to protect the storefront with it: from then on every visitor must enter it, so a live storefront is hidden from shoppers immediately, and visitors who unlocked it with an earlier password must enter the new one. Send an empty string or null to remove protection and make the storefront public again. Leading and trailing spaces are removed; a password made only of spaces is rejected with `INVALID_INPUT`. Sending the password already set, or removing protection that is not on, changes nothing. Development and transfer stores always stay password protected (`password_locked`). Password protection and the storefront's mode are separate; change the mode with Change storefront status. The password is never returned. The response has the same shape as Get a storefront (`storefront` with `password_protected`, `go_live`, `cache`). A change sends storefronts/update. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/password. Only the connected store is accessible. Tell the merchant what it will do and get approval first. Do not retry an uncertain write automatically; read the storefront first.",
+    "description": "Turn password protection on, change the password, or turn it off. Takes effect at once, with no confirmation step. Send a non-empty `password` to protect the storefront with it: from then on every visitor must enter it, so a live storefront is hidden from shoppers immediately, and visitors who unlocked it with an earlier password must enter the new one. Send an empty string or null to remove protection and make the storefront public again. Leading and trailing spaces are removed; a password made only of spaces is rejected with `INVALID_INPUT`. A new password needs at least `password_min_length` (8) characters, counted as Unicode characters after removing those spaces; a shorter one is rejected with `STOREFRONT_PASSWORD_TOO_SHORT`. A password set before this minimum keeps working until it is changed. Sending the password already set, or removing protection that is not on, changes nothing. Development and transfer stores always stay password protected (`password_locked`). Password protection and the storefront's mode are separate; change the mode with Change storefront status. The password is never returned. The response has the same shape as Get a storefront (`storefront` with `password_protected`, `go_live`, `cache`). A change sends storefronts/update. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/password. Only the connected store is accessible. Tell the merchant what it will do and get approval first. Do not retry an uncertain write automatically; read the storefront first.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "password": {
-          "description": "New storefront password, or an empty string or null to remove protection. Only spaces is rejected.",
+          "description": "New storefront password, at least 8 characters and at most 72 UTF-8 bytes, or an empty string or null to remove protection. Only spaces is rejected.",
           "type": [
             "string",
             "null"

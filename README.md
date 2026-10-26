@@ -241,6 +241,8 @@ This repository contains connection instructions and configuration examples. The
 
 Customer tools expose `tax_exempt`, `tax_id` and `tax_id_type` on create, update and reads. Only a merchant-approved customer in an enabled exempt zone receives checkout exemption. Entering an ID alone records it and keeps tax charged. Order creation accepts `customer_tax_id` and explicit `customer_tax_exempt` staff approval, requires `idempotency_key`, and returns `tax_exemption_source` and `tax_id_state_mismatch`. Tax IDs are normalized and validated offline; no registration is checked. Invalid saved IDs are ignored at checkout; shopper-entered IDs receive field errors. CSV update previews validate the effective saved and incoming ID/type pair before approval.
 
+Email subscriber tools `list_marketing_subscribers` and `get_marketing_subscriber` read the store's email newsletter subscribers with `store:customers:read`; they are read-only. `source: coming_soon` lists sign-ups from a storefront's Coming Soon page, and the detail returns the proof of consent stored with the sign-up (wording, version, language, time, IP address, user agent and page). Storefront passwords set with `update_storefront_password` need at least 8 characters (`password_min_length` in `get_storefront_limits`).
+
 Order reads retain named tax components for items, shipping, COD, checkout fees and collected-duty VAT. These amounts reconcile to `tax_total`. Refunds expose `goods_total`, `tax_total` and `components`, including quantity-zero monetary allocations. Tax comes from the original sale evidence: pending refunds reserve shares and only completed refunds reduce tax reports.
 
 ## Currency and language request contract
