@@ -91,6 +91,8 @@ All store-data tools use the corresponding Store API operations. The server retu
 | Currencies | `list_currencies`, `list_enabled_currencies`, `get_base_currency`, `get_currency`, `list_exchange_rates`, `get_exchange_rate` | `create_currency`, `update_currency`, `delete_currency`, `remove_currency_data`, `bulk_remove_currency_data`, `set_currency_rounding`, `set_multi_currency`, `set_auto_exchange_rates` |
 | Reference data | `list_countries`, `list_subdivisions`, `list_timezones`, `list_available_currencies`, `list_phone_country_codes`, `get_number_format_defaults`, `list_address_formats`, `get_address_format`, `list_store_api_scopes` | — |
 | Files | `list_files`, `get_file`, `get_file_limits`, `get_storage_quota` | `update_file`, `delete_file`, `create_file_uploads`, `finalize_file_uploads`, `get_file_upload_status`, `request_file_preview` |
+| Storefronts | `list_storefronts`, `get_storefront` (with `go_live` and `cache`), `get_storefront_limits`, `get_storefront_languages` | `update_storefront_mode` (confirmation to take a live storefront offline), `update_storefront_password`, `update_storefront_seo`, `set_storefront_languages`, `set_storefront_primary_language`, `clear_storefront_cache` (once every 12 hours per store) |
+| Online Store settings | Preferences, age gate, express checkout, URL redirects, search settings and index jobs, search synonyms, recommendations, storefront messages | The matching updates; see the [tool inventory](docs/catalog-tools.md) |
 
 Catalog reads require `store:products:read`; catalog writes require `store:products:write`. Binding new catalog images also requires `store:files:read`. `connection:read` permits the connection itself and grants no store-data access.
 
@@ -117,6 +119,14 @@ Markets require `store:markets:read` and `store:markets:write`, independently of
 Start with `get_market_limits`, `get_assigned_market_countries`, `list_markets` and `get_market`. Read each specialist's live limits and complete saved definition before changing it. Market PATCH changes supplied fields; specialist PUT requests follow their replacement contract. Amount maps and fields declared as decimal strings retain currency precision. Buy X Get Y `fixed` means an amount off each reward item; a bundle fixed price is the complete set's price.
 
 The [Markets integration guide](docs/markets.md) covers dependencies, calculation behavior, confirmation and bulk results. The same guide is available through MCP `resources/read` at `https://dev-docs.tringify.com/store-api/markets/markets`. CSV tax import/export and its asynchronous jobs are available in Store Admin and mobile.
+
+## Online Store
+
+Online Store tools need the Store Admin permission of the page that manages them. Storefront tools use `store:online_store.storefronts:read` or `store:online_store.storefronts:write`.
+
+- `update_storefront_mode` sets `live`, `maintenance` or `coming_soon`. Taking a live storefront offline first returns `CONFIRMATION_REQUIRED` with warnings and a single-use `confirmation_token`; show the change, get approval, then repeat the same mode with `confirmed: true` and the token. Never confirm automatically. Going live is refused with `STOREFRONT_NOT_READY_TO_GO_LIVE` and the `blockers` to fix (the same list as `go_live` in `get_storefront`). `STOREFRONT_MODE_CONFLICT` means someone else changed the status: read the storefront again.
+- `update_storefront_password` acts at once, without confirmation. Setting a password hides a live storefront from shoppers immediately; an empty string or `null` removes it; a password of only spaces is rejected.
+- `clear_storefront_cache` clears the cached pages of every storefront in the store. It is allowed once every 12 hours per store; check `cache.can_clear` in `get_storefront`. An earlier call returns `STOREFRONT_CACHE_CLEAR_TOO_SOON` with `next_available_at`.
 
 ## Languages and translations
 

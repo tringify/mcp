@@ -621,10 +621,17 @@
     "api_key": "reviews.bulk-moderate",
     "api_method": "POST",
     "api_path": "/api/2025-01/reviews/bulk-moderate",
-    "description": "Queue approval, rejection, or hiding of selected reviews. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/reviews/bulk-moderate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Queue approval, rejection, or hiding of selected reviews, or of every review matching a filter. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/reviews/bulk-moderate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "filter": {
+          "description": "Select every matching review instead of review_ids. Fields, all optional and combined with AND: status (pending, approved, rejected, hidden), ratings (array of 1-5), product_id (integer), search (text in title or content), has_store_response (boolean). An empty object selects every review.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
         "operation_id": {
           "description": "A new UUID for this bulk action. Reuse it only when submitting the same action after an interrupted request.",
           "type": "string"
@@ -637,11 +644,14 @@
           ]
         },
         "review_ids": {
-          "description": "Unique review ids, capped by bulk_max.",
+          "description": "Unique review ids, capped by bulk_max. Send review_ids or filter, not both.",
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": [
+            "array",
+            "null"
+          ]
         },
         "status": {
           "description": "approved, rejected, or hidden.",
@@ -650,7 +660,6 @@
       },
       "required": [
         "operation_id",
-        "review_ids",
         "status"
       ],
       "type": "object"
@@ -664,25 +673,34 @@
     "api_key": "reviews.bulk-delete",
     "api_method": "POST",
     "api_path": "/api/2025-01/reviews/bulk-delete",
-    "description": "Queue permanent deletion of selected reviews, their photos, and votes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/reviews/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Queue permanent deletion of selected reviews, or of every review matching a filter, with their photos and votes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/reviews/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "filter": {
+          "description": "Select every matching review instead of review_ids. Fields, all optional and combined with AND: status (pending, approved, rejected, hidden), ratings (array of 1-5), product_id (integer), search (text in title or content), has_store_response (boolean). An empty object selects every review.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
         "operation_id": {
           "description": "A new UUID for this bulk action. Reuse it only when submitting the same action after an interrupted request.",
           "type": "string"
         },
         "review_ids": {
-          "description": "Unique review ids, capped by bulk_max.",
+          "description": "Unique review ids, capped by bulk_max. Send review_ids or filter, not both.",
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": [
+            "array",
+            "null"
+          ]
         }
       },
       "required": [
-        "operation_id",
-        "review_ids"
+        "operation_id"
       ],
       "type": "object"
     },
@@ -938,7 +956,7 @@
           "type": "string"
         },
         "include_total": {
-          "description": "Set to false to omit `total` from a filtered page. Defaults to true on every page. Unfiltered lists always include `total`.",
+          "description": "Set to false to omit `total` from a filtered first page. Pages read with `cursor` never include a filtered `total`. Unfiltered lists always include `total`.",
           "type": "boolean"
         },
         "is_gift_card": {
@@ -1978,6 +1996,46 @@
     ]
   },
   {
+    "api_key": "products.metafields.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/metafields",
+    "description": "Read metafield values for many products at once. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "next_cursor from the previous page of a walk.",
+          "type": "string"
+        },
+        "ids": {
+          "description": "Comma-separated product IDs, at most 100. Send ids, or namespace and key.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Definition key, sent with namespace.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Values per page of a walk. Omission uses the configured default; values above the metafield maximum are reduced to that maximum.",
+          "type": "integer"
+        },
+        "namespace": {
+          "description": "Definition namespace. With key: only that field; without ids: walk it across the store.",
+          "type": "string"
+        },
+        "updated_after": {
+          "description": "RFC 3339 time; the walk returns only values changed after it. Not used with ids.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "get_product_metafields",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
     "api_key": "products.metafields.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/products/{id}/metafields",
@@ -2136,6 +2194,46 @@
       "type": "object"
     },
     "name": "list_product_variant_metafields",
+    "scopes": [
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "products.variants.metafields.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/products/variants/metafields",
+    "description": "Read metafield values for many variants at once. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/products/variants/metafields. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "next_cursor from the previous page of a walk.",
+          "type": "string"
+        },
+        "ids": {
+          "description": "Comma-separated variant IDs, at most 100. Send ids, or namespace and key.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Definition key, sent with namespace.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Values per page of a walk. Omission uses the configured default; values above the metafield maximum are reduced to that maximum.",
+          "type": "integer"
+        },
+        "namespace": {
+          "description": "Definition namespace. With key: only that field; without ids: walk it across the store.",
+          "type": "string"
+        },
+        "updated_after": {
+          "description": "RFC 3339 time; the walk returns only values changed after it. Not used with ids.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "get_product_variant_metafields",
     "scopes": [
       "store:products:read"
     ]
@@ -11638,7 +11736,7 @@
     "api_key": "orders.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders/{id}",
-    "description": "Fetch one order with fulfillment plans. Order numbers are assigned using the merchant’s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Tax is split across `items[].tax_lines`, `shipping_tax_lines`, `cod_fee_tax_lines`, `duty_tax_lines` and `checkout_fee_lines[].tax_lines`; these amounts sum to `tax_total`. Refunds expose `goods_total`, `tax_total` and `components` (actual returned amount, goods_amount, tax_amount, original tax_lines and item or charge identity). Item refunds also expose goods_amount, tax_amount and tax_lines. Components include amount-only allocations; quantities of zero do not return stock. Tax is prorated from the saved tax lines over remaining units or charge amounts, with the final unit taking the remainder, capped at collected tax less active refund reservations. Smaller refund amounts reduce tax proportionally. Money above selected units and charges is allocated across the remaining order without returning additional units. A component key identifies its source and can repeat for selected-unit and additional monetary allocations. Surplus money that was never sale value has no tax. Only completed refunds reduce tax reports. Base refund goods and tax consume each item's or charge's saved base allocations cumulatively, including its final remainder. Fully refunded products have zero net goods revenue. The signed base_rounding_amount reconciles settled cash with base_goods_amount plus base_tax_amount without moving revenue or tax between products. Snapshot items carry an immutable allocation_key, preserved when imports replace database IDs; supplied sale allocations and original refund evidence are validated and retained. Historical order CSV exports preserve refunds (per-refund components and original tax_lines), line_id and base_refunded_total. Imports reject missing or inconsistent refund evidence with ORDER_IMPORT_REFUND_EVIDENCE_INVALID; they never estimate taxable refund history from refunded_total. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` and `customer_tax_id_type` record the normalized, offline-validated ID and never prove registration or exemption. `tax_exemption_source` is customer_flag, staff_order or none, and `tax_id_state_mismatch` flags a GSTIN whose state differs from the Indian tax address. Saved customer IDs are used only when their type and validation match the zone; invalid saved IDs are ignored without blocking pricing or payment; `tax_exempt` and `invoice_only` are server-computed outcomes. `is_tax_included` records whether the order's prices include tax, and `tax_basis_applied` which address taxed it (`shipping` or `billing`). Each item's `tax_lines` list its taxes with `name`, `rate`, `amount`, `base_amount` (the amount in the store's base currency), `jurisdiction` (the ISO 3166-2 subdivision of the matched state zone, such as `IN-UP`, otherwise the tax country, such as `IN`) and `jurisdiction_type` (`subdivision` or `country`). Inclusive checkout shows VAT on duty as a separate added amount: 120 goods + 12 duty + 2.40 duty VAT = 134.40, with only 20 goods VAT labelled included. The item's `tax_rate` is the sum of its tax lines' rates (CGST 9% + SGST 9% is 18), on create and edit alike. Tax is calculated at full precision on discounted amounts across the order; `tax_total` is rounded once to currency precision (half to even), then allocated across item lines, shipping, COD, duty tax and checkout fees by largest remainder, so line amounts always add up. Cart and checkout use each line's allocated tax for display. Thus 100 separate exclusive 0.25 lines at 19% have 4.75 tax: 75 lines receive 0.05 and 25 receive 0.04, displaying 75 times 0.30 plus 25 times 0.29 = 29.75, exactly the amount charged, with zero savings. A single 100-unit line also has 4.75 tax and 29.75 payable. When a merchant-approved tax-exempt buyer orders in a tax-inclusive market, every amount is charged without its included tax: `tax_exempt` is `true`, `is_tax_included` stays `true` and `tax_total` is 0. An item's `duty_customs_value` is its value after discounts without the tax its price includes, plus its share of shipping (when the country rule includes shipping) and of checkout fees that count toward customs value. When duty is collected at checkout, the import VAT on it is part of `tax_total` and listed in `pricing_snapshot.tax.duty_tax_lines`. `duty_collection_mode` records who pays import duties on an international shipment and is empty for domestic orders. When it is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`. When it is `pay_on_delivery`, `duty_total` plus `duty_tax_estimate` is the customer's estimate, outside `grand_total`. When it is `included_in_price`, they are the merchant's estimated duty cost, outside `grand_total` and not revenue. Estimates come from the merchant's rules; carriers and customs may charge differently. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token’s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Each entry in `discounts` lists its `allocations`: the part of that discount that reduced each order item (`order_item_id`, the `quantity` of units it reduced, `amount`, and `is_free` when it made those units free). A discount's allocations sum to its amount and an item's allocations sum to its `discount_amount`; an order-level manual discount is split in proportion to what each item has left after the other discounts. Quantity edits preserve discount shares consumed or reserved by refunds and prorate only the remaining aggregate discount over the remaining units; the saved allocations and pricing totals reconcile to those shares. Orders saved without pricing evidence have none. Each refund item reports `amount`, the refunded units at the item's unit price less their share of its discounts, and `discount_allocations`, each discount's share: the remaining aggregate line discount is prorated over the remaining units and rounded once, then distributed between discounts with each share capped at its remaining allocation. Successful and pending refunds consume shares; failed provider refunds release them. The final available units receive the unconsumed discount. Item amounts always subtract the authoritative line discount, even if historical per-discount allocations are unavailable. Historical refund breakdowns are reconstructed deterministically from the saved line allocations. The refund's own amount is what was returned and can differ from its items. An item that does not require shipping has no fulfillment: its `fulfillment_status` becomes `fulfilled` and `fulfilled_quantity` equals its quantity when captured payments cover the order total plus any returned surplus and the order is not cancelled. Refund status alone never fulfills a line. The order's `fulfillment_status` counts every item, so an unpaid order of only such items is `unfulfilled`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
+    "description": "Fetch one order with fulfillment plans. Order numbers are assigned using the merchant’s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Tax is split across `items[].tax_lines`, `shipping_tax_lines`, `cod_fee_tax_lines`, `duty_tax_lines` and `checkout_fee_lines[].tax_lines`; these amounts sum to `tax_total`. Refunds expose `goods_total`, `tax_total` and `components` (actual returned amount, goods_amount, tax_amount, original tax_lines and item or charge identity). Item refunds also expose goods_amount, tax_amount and tax_lines. Components include amount-only allocations; quantities of zero do not return stock. Tax is prorated from the saved tax lines over remaining units or charge amounts, with the final unit taking the remainder, capped at collected tax less active refund reservations. Smaller refund amounts reduce tax proportionally. Money above selected units and charges is allocated across the remaining order without returning additional units. A component key identifies its source and can repeat for selected-unit and additional monetary allocations. Surplus money that was never sale value has no tax. Only completed refunds reduce tax reports. Base refund goods and tax consume each item's or charge's saved base allocations cumulatively, including its final remainder. Fully refunded products have zero net goods revenue. The signed base_rounding_amount reconciles settled cash with base_goods_amount plus base_tax_amount without moving revenue or tax between products. Snapshot items carry an immutable allocation_key, preserved when imports replace database IDs; supplied sale allocations and original refund evidence are validated and retained. Historical order CSV exports preserve refunds (per-refund components and original tax_lines), line_id and base_refunded_total. Imports reject missing or inconsistent refund evidence with ORDER_IMPORT_REFUND_EVIDENCE_INVALID; they never estimate taxable refund history from refunded_total. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` and `customer_tax_id_type` record the normalized, offline-validated ID and never prove registration or exemption. `tax_exemption_source` is customer_flag, staff_order or none, and `tax_id_state_mismatch` flags a GSTIN whose state differs from the Indian tax address. Saved customer IDs are used only when their type and validation match the zone; invalid saved IDs are ignored without blocking pricing or payment; `tax_exempt` and `invoice_only` are server-computed outcomes. `is_tax_included` records whether the order's prices include tax, and `tax_basis_applied` which address taxed it (`shipping` or `billing`). Each item's `tax_lines` list its taxes with `name`, `rate`, `amount`, `base_amount` (the amount in the store's base currency), `jurisdiction` (the ISO 3166-2 subdivision of the matched state zone, such as `IN-UP`, otherwise the tax country, such as `IN`) and `jurisdiction_type` (`subdivision` or `country`). Inclusive checkout shows VAT on duty as a separate added amount: 120 goods + 12 duty + 2.40 duty VAT = 134.40, with only 20 goods VAT labelled included. The item's `tax_rate` is the sum of its tax lines' rates (CGST 9% + SGST 9% is 18), on create and edit alike. Tax is calculated at full precision on discounted amounts across the order; `tax_total` is rounded once to currency precision (half to even), then allocated across item lines, shipping, COD, duty tax and checkout fees by largest remainder, so line amounts always add up. Cart and checkout use each line's allocated tax for display. Thus 100 separate exclusive 0.25 lines at 19% have 4.75 tax: 75 lines receive 0.05 and 25 receive 0.04, displaying 75 times 0.30 plus 25 times 0.29 = 29.75, exactly the amount charged, with zero savings. A single 100-unit line also has 4.75 tax and 29.75 payable. When a merchant-approved tax-exempt buyer orders in a tax-inclusive market, every amount is charged without its included tax: `tax_exempt` is `true`, `is_tax_included` stays `true` and `tax_total` is 0. An item's `duty_customs_value` is its value after discounts without the tax its price includes, plus its share of shipping (when the country rule includes shipping) and of checkout fees that count toward customs value. When duty is collected at checkout, the import VAT on it is part of `tax_total` and listed in `pricing_snapshot.tax.duty_tax_lines`. `duty_collection_mode` records who pays import duties on an international shipment and is empty for domestic orders. When it is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`. When it is `pay_on_delivery`, `duty_total` plus `duty_tax_estimate` is the customer's estimate, outside `grand_total`. When it is `included_in_price`, they are the merchant's estimated duty cost, outside `grand_total` and not revenue. Estimates come from the merchant's rules; carriers and customs may charge differently. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token’s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Each entry in `discounts` lists its `allocations`: the part of that discount that reduced each order item (`order_item_id`, the `quantity` of units it reduced, `amount`, and `is_free` when it made those units free). A discount's allocations sum to its amount and an item's allocations sum to its `discount_amount`; an order-level manual discount is split in proportion to what each item has left after the other discounts. Quantity edits preserve discount shares consumed or reserved by refunds and prorate only the remaining aggregate discount over the remaining units; the saved allocations and pricing totals reconcile to those shares. Orders saved without pricing evidence have none. Each refund item reports `amount`, the refunded units at the item's unit price less their share of its discounts, and `discount_allocations`, each discount's share: the remaining aggregate line discount is prorated over the remaining units and rounded once, then distributed between discounts with each share capped at its remaining allocation. Successful and pending refunds consume shares; failed provider refunds release them. The final available units receive the unconsumed discount. Item amounts always subtract the authoritative line discount, even if historical per-discount allocations are unavailable. Historical refund breakdowns are reconstructed deterministically from the saved line allocations. The refund's own amount is what was returned and can differ from its items. An item that does not require shipping has no fulfillment: its `fulfillment_status` becomes `fulfilled` and `fulfilled_quantity` equals its quantity when captured payments cover the order total plus any returned surplus and the order is not cancelled. Refund status alone never fulfills a line. The order's `fulfillment_status` counts every item, so an unpaid order of only such items is `unfulfilled`. A pickup order carries `pickup_location`: the store location the customer collects it from, as chosen at checkout (`id`, `name`, address fields, `phone`, `ready_in`, `instructions`, `hours`); it is null for a delivery order. A pickup order's fulfillments move `pending` → `ready_for_pickup` → `picked_up` (or `cancelled`), with `ready_for_pickup_at` and `picked_up_at`; `picked_up` counts as delivered. A delivery order never takes a pickup status, and a pickup order never a delivery one. `checkout_answers` lists the shopper's answers to the store's checkout question, frozen when the order was placed: `block_id`, `kind` (`text` or `checkbox`), `label` (the question in the store's default language), `value` (what the shopper entered, `yes` for a ticked checkbox) and `locale` (the shopper's checkout language); it is empty when checkout asked nothing. Nobody can change answers after the order exists. Each entry in `payments` carries `label`, the payment method's name in the request language: a payment app's payment is named by the app that collected it, the platform's own methods by their name (for example Gift card or Cash on Delivery), and any other recorded method reads Other payment method. Show `label`; `method` stays the recorded identifier. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -14475,12 +14573,26 @@
     "api_key": "markets.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets",
-    "description": "Create a market for one or more countries. Provide a name and at least one country. Every store starts with a primary market, created with the store and named after its base currency, that serves every country. Each country can belong to only one market, so first remove the new market's countries from the primary market (or whichever market serves them) with Update a market; otherwise the request fails with `MARKET_COUNTRY_CONFLICT`, which identifies the country and its current market. You may provide a URL-safe slug or let Tringify generate one from the name, adding `-2`, `-3` and so on when that slug is taken. New markets begin with the store's base currency. They are active by default, calculate tax from the shipping address using tax-exclusive catalog prices, use the default tax class, and leave duties disabled. A successful request returns the created market and publishes `markets/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a market for one or more countries. Provide a name and at least one country. Every store starts with a primary market, created with the store and named after its base currency, that serves every country. Each country can belong to only one market. Countries another market serves move to the new market: the first request returns `CONFIRMATION_REQUIRED`, whose warnings name each country and the market it leaves; repeat it with `confirmed: true` and the `confirmation_token` to create the market and move them in one transaction, so they are never left without a market. A market that would be left with no countries refuses the move with `MARKET_COUNTRY_MOVE_EMPTIES_MARKET`, and a country still used by one of its tax, shipping, or cash-on-delivery zones cannot leave it. You may provide a URL-safe slug or let Tringify generate one from the name, adding `-2`, `-3` and so on when that slug is taken. New markets begin with the store's base currency. They are active by default, calculate tax from the shipping address using tax-exclusive catalog prices, use the default tax class, and leave duties disabled. A successful request returns the created market and publishes `markets/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "confirmation_token": {
+          "description": "Token returned with `CONFIRMATION_REQUIRED` when the new market takes countries from other markets.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set to `true`, with `confirmation_token`, to repeat a create that returned `CONFIRMATION_REQUIRED` because it moves countries from other markets.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "countries": {
-          "description": "Uppercase ISO 3166-1 alpha-2 codes for the countries served by this market. Repeated codes are ignored. Each country can belong to only one market.",
+          "description": "Uppercase ISO 3166-1 alpha-2 codes for the countries served by this market. Repeated codes are ignored. Each country can belong to only one market; countries another market serves move here after confirmation.",
           "items": {
             "type": "string"
           },
@@ -14544,19 +14656,19 @@
     "api_key": "markets.update",
     "api_method": "PATCH",
     "api_path": "/api/2025-01/markets/{marketId}",
-    "description": "Change a market's settings. Send only the fields you want to change. To avoid overwriting someone else's change, send the `revision` you last read as `expected_revision`: if the market changed since, the request fails with `MARKET_CHANGED` and nothing is saved. When provided, `countries` and `currency_codes` replace their complete existing lists. Always retain the store's base currency in `currency_codes`; other currencies require a store plan with multi-currency support. Every market country has a serving currency, and newly added countries initially use the store's base currency. A country cannot be removed while a tax, shipping, or cash-on-delivery zone still uses it, and a currency cannot be removed while a country or duty rule uses it. Removing a currency also removes its exact shipping overrides; adding it back later converts blank shipping values from the base again. A single update can add or remove at most the market-currency bulk limit. While the market has price-based tax rules, replacing its currency is refused with `TAX_PRICE_RULE_BLOCKS_CURRENCY_CHANGE`, because rule thresholds are amounts in the current currency. `tax_included` controls whether catalog prices already contain tax, while `tax_display_mode` controls how storefront prices are presented. Tax is calculated on the order total, rounded once and allocated across lines by largest remainder, so line amounts always add up. Cart and checkout display each line using its allocated tax and represent mixed-display discounts as signed differences. For 100 separate exclusive 0.25 lines at 19%, tax is 4.75 and both display and charge total 29.75, with zero savings. Inclusive 1100 discounted to 1045 across a 1000 threshold at 5%/12% displays exclusive 982.14 minus a signed discount of -13.10 = 995.24, plus 49.76 tax = 1045. A negative displayed discount is a tax adjustment, not additional savings; render it as an increase instead of hiding or clamping it. Two changes first return `CONFIRMATION_REQUIRED` with `details.warnings` and `details.confirmation_token`; repeat the request with `confirmed: true` and that `confirmation_token` to proceed. Confirmation is checked against the current market row under its transaction lock; a concurrent change cannot bypass it, even without expected_revision. Changing `tax_included` always asks: every price keeps its number, so the warning (`MARKET_TAX_INCLUDED_ON_WARNING` or `MARKET_TAX_INCLUDED_OFF_WARNING`) explains that a price of 100 then means 100 with tax included, or 100 before tax. Deactivating a market asks when checkout orders in it are still waiting for payment. A request that does both returns one set of warnings, and one token confirms it. Successful changes return the updated market and publish `markets/update`. Sending only values that are already saved changes nothing and publishes no event, unless a market country was missing its serving currency, in which case that country is given the base currency. Uses the documented Store API fields, validation and permissions for PATCH /api/2025-01/markets/{marketId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change a market's settings. Send only the fields you want to change. To avoid overwriting someone else's change, send the `revision` you last read as `expected_revision`: if the market changed since, the request fails with `MARKET_CHANGED` and nothing is saved. When provided, `countries` and `currency_codes` replace their complete existing lists. Always retain the store's base currency in `currency_codes`; other currencies require a store plan with multi-currency support. Every market country has a serving currency, and newly added countries initially use the store's base currency. Countries another market serves move to this one: the request asks for confirmation naming each country and the market it leaves, then moves them in the same transaction. A market left with no countries refuses with `MARKET_COUNTRY_MOVE_EMPTIES_MARKET`. A country cannot be removed while a tax, shipping, or cash-on-delivery zone still uses it, and a currency cannot be removed while a country or duty rule uses it. Removing a currency also removes its exact shipping overrides; adding it back later converts blank shipping values from the base again. A single update can add or remove at most the market-currency bulk limit. While the market has price-based tax rules, replacing its currency is refused with `TAX_PRICE_RULE_BLOCKS_CURRENCY_CHANGE`, because rule thresholds are amounts in the current currency. `tax_included` controls whether catalog prices already contain tax, while `tax_display_mode` controls how storefront prices are presented. Tax is calculated on the order total, rounded once and allocated across lines by largest remainder, so line amounts always add up. Cart and checkout display each line using its allocated tax and represent mixed-display discounts as signed differences. For 100 separate exclusive 0.25 lines at 19%, tax is 4.75 and both display and charge total 29.75, with zero savings. Inclusive 1100 discounted to 1045 across a 1000 threshold at 5%/12% displays exclusive 982.14 minus a signed discount of -13.10 = 995.24, plus 49.76 tax = 1045. A negative displayed discount is a tax adjustment, not additional savings; render it as an increase instead of hiding or clamping it. Moving countries from other markets, changing `tax_included`, and deactivating a market with unpaid checkout orders first return `CONFIRMATION_REQUIRED` with `details.warnings` and `details.confirmation_token`; repeat the request with `confirmed: true` and that `confirmation_token` to proceed. Confirmation is checked against the current market row under its transaction lock; a concurrent change cannot bypass it, even without expected_revision. Changing `tax_included` always asks: every price keeps its number, so the warning (`MARKET_TAX_INCLUDED_ON_WARNING` or `MARKET_TAX_INCLUDED_OFF_WARNING`) explains that a price of 100 then means 100 with tax included, or 100 before tax. Deactivating a market asks when checkout orders in it are still waiting for payment. A request that does several returns one set of warnings, and one token confirms it. Successful changes return the updated market and publish `markets/update`. Sending only values that are already saved changes nothing and publishes no event, unless a market country was missing its serving currency, in which case that country is given the base currency. Uses the documented Store API fields, validation and permissions for PATCH /api/2025-01/markets/{marketId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "confirmation_token": {
-          "description": "Token returned with `CONFIRMATION_REQUIRED` when changing `tax_included` or deactivating a market that has checkout orders waiting for payment. One token covers a request that does both.",
+          "description": "Token returned with `CONFIRMATION_REQUIRED` when moving countries from other markets, changing `tax_included`, or deactivating a market that has checkout orders waiting for payment. One token covers everything the request asks for.",
           "type": [
             "string",
             "null"
           ]
         },
         "confirmed": {
-          "description": "Set to `true`, with `confirmation_token`, to repeat a `tax_included` change or deactivation that returned `CONFIRMATION_REQUIRED`.",
+          "description": "Set to `true`, with `confirmation_token`, to repeat a country move, `tax_included` change or deactivation that returned `CONFIRMATION_REQUIRED`.",
           "type": [
             "boolean",
             "null"
@@ -19942,7 +20054,7 @@
     "api_key": "preferences.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/preferences/limits",
-    "description": "Get live Preferences limits. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/preferences/limits. Only the connected store is accessible.",
+    "description": "Get live Preferences limits. Returns the current maximum length for every permalink segment. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/preferences/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -19950,14 +20062,14 @@
     },
     "name": "get_permalink_limits",
     "scopes": [
-      "store:online_store.storefronts:read"
+      "store:online_store.preferences:read"
     ]
   },
   {
     "api_key": "preferences.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/preferences",
-    "description": "Get the store-wide favicon and permalink structure. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/preferences. Only the connected store is accessible.",
+    "description": "Get the store-wide favicon and permalink structure. These settings apply to every storefront in the store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/preferences. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -19965,14 +20077,14 @@
     },
     "name": "get_preferences",
     "scopes": [
-      "store:online_store.storefronts:read"
+      "store:online_store.preferences:read"
     ]
   },
   {
     "api_key": "preferences.favicon.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/preferences/favicon",
-    "description": "Set or remove the store-wide favicon. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/preferences/favicon. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or remove the store-wide favicon. Pass a site asset image id, or null to remove the favicon. Assigning an image also requires read_site_assets. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/preferences/favicon. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -19991,14 +20103,14 @@
     },
     "name": "set_favicon",
     "scopes": [
-      "store:online_store.storefronts:write"
+      "store:online_store.preferences:write"
     ]
   },
   {
     "api_key": "preferences.permalinks.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/preferences/permalinks",
-    "description": "Get every storefront permalink segment. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/preferences/permalinks. Only the connected store is accessible.",
+    "description": "Get every storefront permalink segment. Returns all detail and listing route segments used by the storefront URL resolver. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/preferences/permalinks. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -20006,14 +20118,14 @@
     },
     "name": "get_permalinks",
     "scopes": [
-      "store:online_store.storefronts:read"
+      "store:online_store.preferences:read"
     ]
   },
   {
     "api_key": "preferences.permalinks.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/preferences/permalinks",
-    "description": "Replace the full storefront permalink structure. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/preferences/permalinks. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace the full storefront permalink structure. Send all permalink fields. Values must be unique unless the corresponding detail and listing routes are allowed to share a segment. Unknown fields are rejected. Renames create URL redirects transactionally. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/preferences/permalinks. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -20029,14 +20141,14 @@
     },
     "name": "update_permalinks",
     "scopes": [
-      "store:online_store.storefronts:write"
+      "store:online_store.preferences:write"
     ]
   },
   {
     "api_key": "preferences.age-gate.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/preferences/age-gate/limits",
-    "description": "Get the allowed age gate values. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/preferences/age-gate/limits. Only the connected store is accessible.",
+    "description": "Get the allowed age gate values. Returns the minimum age and remember-days ranges, the copy length limits, the country limit, the allowed modes, and `default_copy`: the platform text an empty copy field shows, with `{age}` standing for `min_age`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/preferences/age-gate/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -20044,14 +20156,14 @@
     },
     "name": "get_age_gate_limits",
     "scopes": [
-      "store:online_store.storefronts:read"
+      "store:settings.compliance:read"
     ]
   },
   {
     "api_key": "preferences.age-gate.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/preferences/age-gate",
-    "description": "Get the store-wide age gate. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/preferences/age-gate. Only the connected store is accessible.",
+    "description": "Get the store-wide age gate. The age gate is shown on every storefront in the store when a visitor enters, to all visitors or to visitors from `countries`. A visitor whose country is unknown sees it in selected-countries mode. Empty copy fields use the platform text in the shopper's language. `revision` changes on every saved change. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/preferences/age-gate. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -20059,14 +20171,14 @@
     },
     "name": "get_age_gate",
     "scopes": [
-      "store:online_store.storefronts:read"
+      "store:settings.compliance:read"
     ]
   },
   {
     "api_key": "preferences.age-gate.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/preferences/age-gate",
-    "description": "Replace the store-wide age gate. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/preferences/age-gate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace the store-wide age gate. Send every field of `age_gate`; unknown fields are rejected. Country codes are ISO 3166-1 alpha-2, upper-cased and deduplicated; they are cleared when `show_to` is `all`. `remember_days` is used when `remember_mode` is `days`. `decline_url` is required when `decline_action` is `redirect`; it must be an absolute `https://` address. `{age}` in the copy is replaced with `min_age`. Send `expected_revision` to refuse the change when someone saved in between. Storefront pages show the change at once. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/preferences/age-gate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -20089,7 +20201,1231 @@
     },
     "name": "update_age_gate",
     "scopes": [
+      "store:settings.compliance:write"
+    ]
+  },
+  {
+    "api_key": "preferences.express-checkout.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/preferences/express-checkout",
+    "description": "Get the store-wide express checkout setting and the payment providers that offer it. `express_checkout_enabled` is the store's \"Show express buttons\" switch: express checkout wallet buttons (such as Apple Pay and Google Pay) on product and cart pages, where the theme places them. It is on by default; buttons appear only once a payment provider in `providers` is `ready` for the shopper's market and currency. `providers` lists the store's active payment providers whose app offers express checkout: their wallets, the currencies they take, the markets they serve (`market_ids`) and `ready`, false while the provider has not finished setting up express checkout. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/preferences/express-checkout. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_express_checkout",
+    "scopes": [
+      "store:online_store.preferences:read"
+    ]
+  },
+  {
+    "api_key": "preferences.express-checkout.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/preferences/express-checkout",
+    "description": "Turn express checkout buttons on or off for the store. Send `express_checkout_enabled`. Storefront pages show the change within seconds. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/preferences/express-checkout. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "express_checkout_enabled": {
+          "description": "true shows express checkout buttons where the theme places them; false hides them everywhere.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "express_checkout_enabled"
+      ],
+      "type": "object"
+    },
+    "name": "update_express_checkout",
+    "scopes": [
+      "store:online_store.preferences:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/limits",
+    "description": "Get live storefront limits. Returns the storefront limits Store Admin uses, including `password_max_bytes` (the longest storefront password, in UTF-8 bytes) and the storefront `modes`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_storefront_limits",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts",
+    "description": "List the store's storefronts. Returns every storefront with its mode, password protection, domains and `primary_url` (empty until a primary domain is active). Read a storefront's languages with Get storefront languages. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_storefronts",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}",
+    "description": "Get one storefront and its page-title settings. Adds the store's `add_store_name_to_page_titles` and share image to the storefront. Next to `storefront` (not inside it), `data` carries `go_live`: whether the store can go live (`ready`) and, if not, the `blockers` to fix first; and `cache`: when the storefront cache was last cleared (`last_cleared_at`, null if never), when it can be cleared again (`next_available_at`, null if never cleared), whether it can be cleared now (`can_clear`, the server's verdict) and the wait between clears in hours (`cooldown_hours`). Times are RFC 3339 in UTC. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_storefront",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.mode.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/mode",
+    "description": "Set a storefront live, in maintenance or coming soon. `mode` is `live`, `maintenance` or `coming_soon`; the current one is `mode` in Get a storefront. Maintenance and coming soon take the storefront offline at once: shoppers see the maintenance or coming-soon page instead of the store. Taking a live storefront offline needs confirmation. The first request returns HTTP 409 `CONFIRMATION_REQUIRED` with `error.details`: `warnings` (English), `confirmation_token`, `action`, `current_mode` and `target_mode`. Show the change to the merchant and, after approval, repeat the same `mode` with `confirmed: true` and that `confirmation_token`. The token is single use, valid for five minutes and good only for this storefront and this target mode; a request that fails does not use it up. Switching to `live`, or between maintenance and coming soon, needs no confirmation. Going live is refused with `STOREFRONT_NOT_READY_TO_GO_LIVE` until the store is ready: `error.details.blockers` lists what to fix, the same list as `go_live` in Get a storefront. Sending the current mode changes nothing. If the status changed after you read it, the request returns `STOREFRONT_MODE_CONFLICT`: read the storefront again and decide anew. Password protection is separate and stays as it is. The response has the same shape as Get a storefront (`storefront`, `go_live`, `cache`). A change sends storefronts/update. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/mode. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token from the `CONFIRMATION_REQUIRED` response. Omit it on the first request.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true only when repeating the request after `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "mode": {
+          "description": "New status: `live`, `maintenance` or `coming_soon`.",
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "mode"
+      ],
+      "type": "object"
+    },
+    "name": "update_storefront_mode",
+    "scopes": [
       "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.seo.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/seo",
+    "description": "Set the page-title template, the store-name suffix and the share image. `title_template` is required: send the complete template, or an empty string for the platform default. It may use only the tokens returned in `tokens` and is at most 200 characters. Omit `add_store_name_to_page_titles` or `share_image_id` to keep them. `share_image_id` takes a site asset image id; an empty string or null removes the image, and assigning an image also requires read_site_assets. The store-name suffix and share image apply to every storefront in the store. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/seo. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "add_store_name_to_page_titles": {
+          "description": "Append the store name to page titles that still use their default title.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "share_image_id": {
+          "description": "Site asset image shown when a page is shared. Empty or null removes it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "title_template": {
+          "description": "Page title template. An empty string restores the default.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "title_template"
+      ],
+      "type": "object"
+    },
+    "name": "update_storefront_seo",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.password.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/password",
+    "description": "Turn password protection on, change the password, or turn it off. Takes effect at once, with no confirmation step. Send a non-empty `password` to protect the storefront with it: from then on every visitor must enter it, so a live storefront is hidden from shoppers immediately, and visitors who unlocked it with an earlier password must enter the new one. Send an empty string or null to remove protection and make the storefront public again. Leading and trailing spaces are removed; a password made only of spaces is rejected with `INVALID_INPUT`. Sending the password already set, or removing protection that is not on, changes nothing. Development and transfer stores always stay password protected (`password_locked`). Password protection and the storefront's mode are separate; change the mode with Change storefront status. The password is never returned. The response has the same shape as Get a storefront (`storefront` with `password_protected`, `go_live`, `cache`). A change sends storefronts/update. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/password. Only the connected store is accessible. Tell the merchant what it will do and get approval first. Do not retry an uncertain write automatically; read the storefront first.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "password": {
+          "description": "New storefront password, or an empty string or null to remove protection. Only spaces is rejected.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "password"
+      ],
+      "type": "object"
+    },
+    "name": "update_storefront_password",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.languages.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/languages",
+    "description": "Get the languages a storefront publishes. Returns the storefront's `primary_locale`, the `locales` it publishes, the enabled store languages it can publish (`available_locales`) and its country language rules (`country_locales`). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/languages. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_storefront_languages",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.languages.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/languages",
+    "description": "Replace the languages a storefront publishes. Send the complete list. It must include the storefront's primary language, and every code must be a language enabled for the store (enable it first with Set languages). Codes are matched without regard to case; blanks and repeats are ignored. An unchanged list changes nothing. A change publishes storefront/locales/update. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locales": {
+          "description": "Every language code the storefront publishes, including its primary language.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "locales"
+      ],
+      "type": "object"
+    },
+    "name": "set_storefront_languages",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.languages.primary.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/primary",
+    "description": "Change a secondary storefront's primary language. The primary storefront's language always follows the store's default language; change that with Set default language. The language must be enabled for the store. Selecting the current primary language changes nothing. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages/primary. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "Language code enabled for the store.",
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id from List storefronts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "set_storefront_primary_language",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.cache.clear",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/storefront-cache/clear",
+    "description": "Clear the cached pages of every storefront in the store. Clears the cache of all the store's storefronts, not just one: each page is built again on its next visit, so the first visits after a clear are slower. Saved changes publish on their own; clear the cache only when shoppers still see outdated pages. The cache can be cleared once every 12 hours per store, whoever cleared it last (Store Admin, the mobile app, an app or this API). Read `cache` in Get a storefront to see whether it can be cleared now. A clear inside the 12 hours is refused with HTTP 429 `STOREFRONT_CACHE_CLEAR_TOO_SOON`, a `Retry-After` header and `error.details`: `last_cleared_at`, `next_available_at` and `retry_after_seconds`; do not retry before `next_available_at`. Send no body or an empty object. The response reports `last_cleared_at`, `next_available_at`, `can_clear` and `cooldown_hours`; times are RFC 3339 in UTC. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefront-cache/clear. Only the connected store is accessible. Tell the merchant what it will do and get approval first. Do not retry an uncertain write automatically; read the storefront first.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "clear_storefront_cache",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "redirects.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/redirects/limits",
+    "description": "Get redirect limits and current usage. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/redirects/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_redirect_limits",
+    "scopes": [
+      "store:online_store.redirects:read"
+    ]
+  },
+  {
+    "api_key": "redirects.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/redirects",
+    "description": "List URL redirects for the store. Search paths and targets or filter by kind. `manual` and `prefix` rows are merchant-managed. `auto_slug` and `system_prefix` rows explain platform-generated routing history and are read-only. Usage fields come from storefront analytics: `hit_count` is the approximate number of times the redirect was served over the last 90 days, including responses served from the edge cache; counts are aggregated, may be sampled at high volume, and include new visits within a few minutes. `last_used_at` is the most recent counted use within the last 90 days and is omitted when there was none. Usage recorded before analytics-based counting is not carried over. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/redirects. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "description": "Filter by manual, prefix, auto_slug, or system_prefix.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size, bounded by the limits response.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search path or target.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_redirects",
+    "scopes": [
+      "store:online_store.redirects:read"
+    ]
+  },
+  {
+    "api_key": "redirects.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/redirects/{redirectId}",
+    "description": "Get one store-scoped URL redirect. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/redirects/{redirectId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "redirect_id": {
+          "description": "Redirect id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "redirect_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_redirect",
+    "scopes": [
+      "store:online_store.redirects:read"
+    ]
+  },
+  {
+    "api_key": "redirects.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/redirects",
+    "description": "Create a manual redirect or prefix rule. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/redirects. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "description": "manual (default) or prefix.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "path": {
+          "description": "Dead logical path. Prefix rules must end in /*.",
+          "type": "string"
+        },
+        "redirect_type": {
+          "description": "301 for permanent or 302 for temporary.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "target": {
+          "description": "Internal path or full HTTPS URL. Prefix targets may end in /*.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "target"
+      ],
+      "type": "object"
+    },
+    "name": "create_redirect",
+    "scopes": [
+      "store:online_store.redirects:write"
+    ]
+  },
+  {
+    "api_key": "redirects.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/redirects/{redirectId}",
+    "description": "Update a merchant-managed redirect. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/redirects/{redirectId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "Dead logical path. Prefix rules must end in /*.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "redirect_id": {
+          "description": "Redirect id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "redirect_type": {
+          "description": "301 for permanent or 302 for temporary.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "target": {
+          "description": "Internal path or full HTTPS URL. Prefix targets may end in /*.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "redirect_id"
+      ],
+      "type": "object"
+    },
+    "name": "update_redirect",
+    "scopes": [
+      "store:online_store.redirects:write"
+    ]
+  },
+  {
+    "api_key": "redirects.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/redirects/{redirectId}",
+    "description": "Delete a merchant-managed redirect. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/redirects/{redirectId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "redirect_id": {
+          "description": "Redirect id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "redirect_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_redirect",
+    "scopes": [
+      "store:online_store.redirects:write"
+    ]
+  },
+  {
+    "api_key": "redirects.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/redirects/bulk-delete",
+    "description": "Delete several merchant-managed redirects in one request. The configured bulk cap is returned by the limits endpoint. The request is atomic: an invalid or platform-generated id rejects the selection without deleting the other rows. Unknown ids are ignored, duplicate ids are deleted once, and deleted reports the actual count. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/redirects/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Redirect ids to delete.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_redirects",
+    "scopes": [
+      "store:online_store.redirects:write"
+    ]
+  },
+  {
+    "api_key": "search.settings.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/search/settings",
+    "description": "Get the store's storefront search settings. Returns whether storefront search and predictive search are on, the result types search returns, and `revision`: send it back when you update. `options.result_types` lists every selectable result type. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/search/settings. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_search_settings",
+    "scopes": [
+      "store:online_store.search:read"
+    ]
+  },
+  {
+    "api_key": "search.settings.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/search/settings",
+    "description": "Change the store's storefront search settings. Send `revision` from Get search settings and at least one setting; omitted settings stay unchanged. `search_result_types` replaces the whole list; repeats count once. A save that changes nothing returns the current settings. A change made since `revision` was read returns `SEARCH_SETTINGS_CHANGED_DURING_EDIT`: read the settings again before saving. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/search/settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "predictive_search_enabled": {
+          "description": "Show suggestions while shoppers type.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "revision": {
+          "description": "`revision` from Get search settings.",
+          "type": "string"
+        },
+        "search_enabled": {
+          "description": "Turn storefront search on or off.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "search_result_types": {
+          "description": "Result types storefront search returns, in any order.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "revision"
+      ],
+      "type": "object"
+    },
+    "name": "update_search_settings",
+    "scopes": [
+      "store:online_store.search:write"
+    ]
+  },
+  {
+    "api_key": "search.reindex",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/search/reindex",
+    "description": "Rebuild the store's storefront search index. Starts a background rebuild of every searchable resource in every store language and returns its `job_id`. Storefront search keeps answering from the current index while it runs. Only one rebuild runs at a time; follow it with Get a search index rebuild. Product, page and other edits already reach the index on their own; a rebuild is for repairing it. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/search/reindex. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "rebuild_search_index",
+    "scopes": [
+      "store:online_store.search:write"
+    ]
+  },
+  {
+    "api_key": "search.jobs.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/search/jobs/limits",
+    "description": "Get the rebuild list page sizes. `jobs_list_page_size` is the default `limit`; `jobs_list_max_limit` is the largest accepted. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/search/jobs/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_search_index_job_limits",
+    "scopes": [
+      "store:online_store.search:read"
+    ]
+  },
+  {
+    "api_key": "search.jobs.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/search/jobs",
+    "description": "List the store's search index rebuilds, newest first. Finished rebuilds are kept for a limited time. A failed rebuild carries `failure_message` with a support reference. `completed_types` of `total_types` resource types are done; `document_count` is the number of documents indexed so far. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/search/jobs. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size, up to jobs_list_max_limit.",
+          "type": "integer"
+        },
+        "offset": {
+          "description": "Number of rebuilds to skip.",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_search_index_jobs",
+    "scopes": [
+      "store:online_store.search:read"
+    ]
+  },
+  {
+    "api_key": "search.jobs.active",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/search/jobs/active",
+    "description": "Get the rebuild that is running now. `job` is null when no rebuild is running. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/search/jobs/active. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_active_search_index_job",
+    "scopes": [
+      "store:online_store.search:read"
+    ]
+  },
+  {
+    "api_key": "search.jobs.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/search/jobs/{job_id}",
+    "description": "Get one search index rebuild. `status` is `processing`, `completed` or `failed`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/search/jobs/{job_id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "Rebuild job id from Rebuild the search index or List search index rebuilds.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_search_index_job",
+    "scopes": [
+      "store:online_store.search:read"
+    ]
+  },
+  {
+    "api_key": "search_synonyms.locales",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/search-synonyms/locales",
+    "description": "List enabled languages for synonym groups. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/search-synonyms/locales. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_search_synonym_languages",
+    "scopes": [
+      "store:online_store.search:read"
+    ]
+  },
+  {
+    "api_key": "search_synonyms.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/search-synonyms/limits",
+    "description": "Get search synonym limits. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/search-synonyms/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_search_synonym_limits",
+    "scopes": [
+      "store:online_store.search:read"
+    ]
+  },
+  {
+    "api_key": "search_synonyms.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/search-synonyms",
+    "description": "List the store's search synonym groups. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/search-synonyms. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "Enabled store language code, matched without case sensitivity. Omit or leave empty for all languages. The wildcard * is not supported.",
+          "type": "string"
+        },
+        "page": {
+          "description": "Positive page number. Missing or empty uses the default; zero, negative and non-integer values are rejected.",
+          "type": "integer"
+        },
+        "per_page": {
+          "description": "Any integer from 1 to 100. Missing or empty uses the default.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Case-insensitive substring of a term or locale code; at most 100 Unicode code points. Percent and underscore are treated literally.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "created_at, updated_at, or locale; other values are rejected.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Lowercase asc or desc; other values are rejected.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_search_synonyms",
+    "scopes": [
+      "store:online_store.search:read"
+    ]
+  },
+  {
+    "api_key": "search_synonyms.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/search-synonyms",
+    "description": "Create a search synonym group. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/search-synonyms. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "Enabled store language code, matched without case sensitivity. Surrounding whitespace is trimmed; * is not supported.",
+          "type": "string"
+        },
+        "terms": {
+          "description": "Complete group of 2–25 distinct, nonempty words or phrases; at most 64 Unicode code points per trimmed term.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "terms"
+      ],
+      "type": "object"
+    },
+    "name": "create_search_synonym",
+    "scopes": [
+      "store:online_store.search:write"
+    ]
+  },
+  {
+    "api_key": "search_synonyms.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/search-synonyms/{synonymId}",
+    "description": "Update a search synonym group. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/search-synonyms/{synonymId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "New enabled store language code. Omit or use null to retain the current language.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "synonym_id": {
+          "description": "The group's UUID, returned by list or create. Use an ID from the token's store.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "terms": {
+          "description": "Complete replacement group, using the create limits. Omit or use null to retain the current terms.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "synonym_id"
+      ],
+      "type": "object"
+    },
+    "name": "update_search_synonym",
+    "scopes": [
+      "store:online_store.search:write"
+    ]
+  },
+  {
+    "api_key": "search_synonyms.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/search-synonyms/{synonymId}",
+    "description": "Delete a search synonym group. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/search-synonyms/{synonymId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "synonym_id": {
+          "description": "The group's UUID, returned by list or create. Use an ID from the token's store.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "synonym_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_search_synonym",
+    "scopes": [
+      "store:online_store.search:write"
+    ]
+  },
+  {
+    "api_key": "recommendations.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/recommendations/limits",
+    "description": "Get recommendation limits and supported modes. Use this response to build controls; do not hardcode limits or enum values. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_recommendation_limits",
+    "scopes": [
+      "store:online_store.recommendations:read"
+    ]
+  },
+  {
+    "api_key": "recommendations.settings.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/recommendations/settings",
+    "description": "Get store-wide recommendation settings. These settings govern related-product and recently-viewed rails across storefronts. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/settings. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_recommendation_settings",
+    "scopes": [
+      "store:online_store.recommendations:read"
+    ]
+  },
+  {
+    "api_key": "recommendations.settings.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/recommendations/settings",
+    "description": "Replace store-wide recommendation settings. Send the complete settings object returned by GET. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/recommendations/settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cross_device_history": {
+          "description": "Cross-device mode from limits.",
+          "type": "string"
+        },
+        "exclude_free_products": {
+          "description": "Exclude zero-price products automatically.",
+          "type": "boolean"
+        },
+        "hide_out_of_stock": {
+          "description": "Exclude sold-out products automatically.",
+          "type": "boolean"
+        },
+        "history_window_days": {
+          "description": "History window from limits.",
+          "type": "integer"
+        },
+        "recently_viewed_enabled": {
+          "description": "Whether Recently viewed is enabled.",
+          "type": "boolean"
+        },
+        "recently_viewed_limit": {
+          "description": "Products in Recently viewed.",
+          "type": "integer"
+        },
+        "related_limit": {
+          "description": "Products in the related rail.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "related_limit",
+        "recently_viewed_enabled",
+        "recently_viewed_limit",
+        "history_window_days",
+        "hide_out_of_stock",
+        "exclude_free_products",
+        "cross_device_history"
+      ],
+      "type": "object"
+    },
+    "name": "update_recommendation_settings",
+    "scopes": [
+      "store:online_store.recommendations:write"
+    ]
+  },
+  {
+    "api_key": "recommendations.rules.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/recommendations/rules",
+    "description": "Get the ordered automatic recommendation rule chain. Rules run after pinned products and fill the rail in position order. An empty list uses the default category best-seller rule. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/rules. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_recommendation_rules",
+    "scopes": [
+      "store:online_store.recommendations:read"
+    ]
+  },
+  {
+    "api_key": "recommendations.rules.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/recommendations/rules",
+    "description": "Replace the ordered recommendation rule chain. Send rules in display order. `same_attribute` requires an attribute id in match_value; include_subcategories applies only to same_category. Send an empty array to restore the default category best-seller rule. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/recommendations/rules. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "rules": {
+          "description": "Complete ordered rule list.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "rules"
+      ],
+      "type": "object"
+    },
+    "name": "set_recommendation_rules",
+    "scopes": [
+      "store:online_store.recommendations:write"
+    ]
+  },
+  {
+    "api_key": "recommendations.pins.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/recommendations/pins",
+    "description": "List products that have pinned recommendation lists. Compact product references are included so clients do not need one product request per row. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/pins. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size bounded by the limits response.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_recommendation_pins",
+    "scopes": [
+      "store:online_store.recommendations:read"
+    ]
+  },
+  {
+    "api_key": "recommendations.pins.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/recommendations/pins/{productId}",
+    "description": "Get one product's ordered pinned recommendations. The products array follows pin order and contains display identity. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/pins/{productId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "description": "Store-scoped product id.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_recommendation_pins",
+    "scopes": [
+      "store:online_store.recommendations:read"
+    ]
+  },
+  {
+    "api_key": "recommendations.pins.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/recommendations/pins/{productId}",
+    "description": "Replace one product's ordered pinned recommendations. A product cannot pin itself or repeat a related product. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/recommendations/pins/{productId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "description": "Store-scoped product id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "related_ids": {
+          "description": "Related product ids in display order.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "product_id",
+        "related_ids"
+      ],
+      "type": "object"
+    },
+    "name": "set_recommendation_pins",
+    "scopes": [
+      "store:online_store.recommendations:write"
+    ]
+  },
+  {
+    "api_key": "recommendations.exclusions.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/recommendations/exclusions",
+    "description": "List products excluded from all recommendations. Compact product references are returned with the ID list. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/exclusions. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size bounded by the limits response.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_recommendation_exclusions",
+    "scopes": [
+      "store:online_store.recommendations:read"
+    ]
+  },
+  {
+    "api_key": "recommendations.exclusions.add",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/recommendations/exclusions",
+    "description": "Exclude a product from all recommendations. Exclusions apply to pinned products as well as automatic and recently-viewed recommendations. They do not unpublish the product. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/recommendations/exclusions. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "description": "Product id.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "type": "object"
+    },
+    "name": "add_recommendation_exclusion",
+    "scopes": [
+      "store:online_store.recommendations:write"
+    ]
+  },
+  {
+    "api_key": "recommendations.exclusions.remove",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/recommendations/exclusions/{productId}",
+    "description": "Allow a product to be recommended automatically again. The operation is idempotent. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/recommendations/exclusions/{productId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "description": "Store-scoped product id.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "type": "object"
+    },
+    "name": "remove_recommendation_exclusion",
+    "scopes": [
+      "store:online_store.recommendations:write"
+    ]
+  },
+  {
+    "api_key": "storefront_messages.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefront-messages",
+    "description": "List storefront response messages and locale overrides. Messages are keyed by stable code. The response distinguishes inherited defaults from merchant overrides and lists required placeholders. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefront-messages. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "locale": {
+          "description": "Enabled store locale.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Message namespace.",
+          "type": "string"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search code or effective message.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sortable column.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "Asc or desc.",
+          "type": "string"
+        },
+        "surface": {
+          "description": "Storefront surface.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_storefront_messages",
+    "scopes": [
+      "store:online_store.storefront_messages:read"
+    ]
+  },
+  {
+    "api_key": "storefront_messages.save",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefront-messages/overrides",
+    "description": "Create or replace one localized message override. The override must preserve exactly the placeholders declared for the message code. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefront-messages/overrides. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Stable message code.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled store locale.",
+          "type": "string"
+        },
+        "message_template": {
+          "description": "Localized message with required placeholders.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "code",
+        "message_template"
+      ],
+      "type": "object"
+    },
+    "name": "save_storefront_message",
+    "scopes": [
+      "store:online_store.storefront_messages:write"
+    ]
+  },
+  {
+    "api_key": "storefront_messages.reset",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/storefront-messages/overrides/{code}",
+    "description": "Remove one locale override and return to the platform default. Pass the locale as a query parameter. The message code is URL encoded in the path. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/storefront-messages/overrides/{code}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Stable message code.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled store locale.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "reset_storefront_message",
+    "scopes": [
+      "store:online_store.storefront_messages:write"
     ]
   },
   {
@@ -21976,6 +23312,10 @@
           "description": "Page size.",
           "type": "integer"
         },
+        "offers_pickup": {
+          "description": "When true, return only locations that offer pickup. Combines with status.",
+          "type": "boolean"
+        },
         "page": {
           "description": "Page number.",
           "type": "integer"
@@ -22103,10 +23443,45 @@
           "description": "Location name.",
           "type": "string"
         },
+        "offers_pickup": {
+          "description": "Whether shoppers can choose this location for in-store pickup. Only active, merchant-managed locations can switch pickup on, the location needs a complete address (it is the pickup address), and `pickup_ready_in` is required while pickup is on. A pickup location does not need `fulfills_online_orders`: with it off, the location serves pickup only. A location deactivated later keeps the setting, hidden from shoppers until it is active again. The storefront offers it only while the location is active and only to shoppers in a market that includes its country. Defaults to false.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "phone": {
           "description": "Phone number. Validated and normalized using the country code when provided.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "pickup_hours": {
+          "description": "Pickup opening hours as free text, in the store's default language; translatable like the instructions. An empty string clears it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pickup_instructions": {
+          "description": "Pickup instructions shown to shoppers, in the store's default language; translate it through the translations API (resource type `location`). An empty string clears it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pickup_ready_in": {
+          "description": "When pickup orders are usually ready: one of `1_hour`, `2_hours`, `4_hours`, `24_hours`, `2_4_days`. Required while `offers_pickup` is true. Shoppers see it as a translated label. An empty string clears it, which is refused while pickup is on.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pickup_stocked_only": {
+          "description": "While a shopper shops for pickup at this location, list only products it stocks: products with stock records here, sold-out ones included (shown as sold out), and products that do not track stock. When false (the default), every product is listed and those not stocked here show as unavailable for pickup. Shoppers always see which location they are shopping. Delivery shopping is never narrowed.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
@@ -22204,10 +23579,45 @@
             "null"
           ]
         },
+        "offers_pickup": {
+          "description": "Whether shoppers can choose this location for in-store pickup. Only active, merchant-managed locations can switch pickup on, the location needs a complete address (it is the pickup address), and `pickup_ready_in` is required while pickup is on. A pickup location does not need `fulfills_online_orders`: with it off, the location serves pickup only. A location deactivated later keeps the setting, hidden from shoppers until it is active again. The storefront offers it only while the location is active and only to shoppers in a market that includes its country. Defaults to false.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "phone": {
           "description": "Phone number. Validated and normalized using the country code when provided.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "pickup_hours": {
+          "description": "Pickup opening hours as free text, in the store's default language; translatable like the instructions. An empty string clears it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pickup_instructions": {
+          "description": "Pickup instructions shown to shoppers, in the store's default language; translate it through the translations API (resource type `location`). An empty string clears it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pickup_ready_in": {
+          "description": "When pickup orders are usually ready: one of `1_hour`, `2_hours`, `4_hours`, `24_hours`, `2_4_days`. Required while `offers_pickup` is true. Shoppers see it as a translated label. An empty string clears it, which is refused while pickup is on.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pickup_stocked_only": {
+          "description": "While a shopper shops for pickup at this location, list only products it stocks: products with stock records here, sold-out ones included (shown as sold out), and products that do not track stock. When false (the default), every product is listed and those not stocked here show as unavailable for pickup. Shoppers always see which location they are shopping. Delivery shopping is never narrowed.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
@@ -22286,6 +23696,144 @@
     "name": "delete_location",
     "scopes": [
       "store:locations:write"
+    ]
+  },
+  {
+    "api_key": "locations.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/locations/{id}/translations/{locale}",
+    "description": "Fetch one location's translation. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/locations/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Location id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_location_translation",
+    "scopes": [
+      "store:locations:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "locations.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/locations/{id}/translations/{locale}",
+    "description": "Set one location's translation. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/locations/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Location id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values: `name`, `pickup_instructions`, `pickup_hours`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_location_translation",
+    "scopes": [
+      "store:locations:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "locations.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/locations/translations/{locale}",
+    "description": "Fetch location translations in batch. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/locations/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated location IDs.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_location_translations",
+    "scopes": [
+      "store:locations:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "locations.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/locations/translations/{locale}",
+    "description": "Set location translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/locations/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Rows with `id` and `fields`. Allowed field keys are `name`, `pickup_instructions` and `pickup_hours`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_location_translations",
+    "scopes": [
+      "store:locations:write",
+      "store:settings.languages:write"
     ]
   },
   {

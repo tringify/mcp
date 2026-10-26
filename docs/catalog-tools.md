@@ -447,3 +447,203 @@ Filter definitions are capped at 50 per store, including built-in and disabled f
 | `set_product_filter_translation` | `PUT /api/2025-01/product-filters/{id}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `get_product_filter_translations` | `GET /api/2025-01/product-filters/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_product_filter_translations` | `PUT /api/2025-01/product-filters/translations/{locale}` | store:products:write, store:settings.languages:write |
+
+## Reviews
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_review_limits` | `GET /api/2025-01/reviews/limits` | store:reviews:read |
+| `list_reviews` | `GET /api/2025-01/reviews` | store:reviews:read |
+| `get_review` | `GET /api/2025-01/reviews/{id}` | store:reviews:read |
+| `moderate_review` | `PUT /api/2025-01/reviews/{id}` | store:reviews:write |
+| `respond_review` | `PUT /api/2025-01/reviews/{id}/response` | store:reviews:write |
+| `delete_review_response` | `DELETE /api/2025-01/reviews/{id}/response` | store:reviews:write |
+| `delete_review` | `DELETE /api/2025-01/reviews/{id}` | store:reviews:write |
+| `bulk_moderate_reviews` | `POST /api/2025-01/reviews/bulk-moderate` | store:reviews:write |
+| `bulk_delete_reviews` | `POST /api/2025-01/reviews/bulk-delete` | store:reviews:write |
+| `get_review_bulk_operation` | `GET /api/2025-01/reviews/bulk-operations/{operationId}` | store:reviews:write |
+| `acknowledge_review_bulk_operation` | `POST /api/2025-01/reviews/bulk-operations/{operationId}/acknowledge` | store:reviews:write |
+| `get_review_settings` | `GET /api/2025-01/reviews/settings` | store:reviews:read |
+| `update_review_settings` | `PUT /api/2025-01/reviews/settings` | store:reviews:write |
+
+## Customers, customer tags and customer groups
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_customer_metafields` | `GET /api/2025-01/customers/{id}/metafields` | store:customers:read |
+| `set_customer_metafield` | `PUT /api/2025-01/customers/{id}/metafields` | store:customers:write |
+| `delete_customer` | `DELETE /api/2025-01/customers/{id}` | store:customers:write |
+| `get_customer_store_credit_limits` | `GET /api/2025-01/customers/store-credit/limits` | store:customers:read |
+| `get_customer_store_credit_settings` | `GET /api/2025-01/customers/store-credit/settings` | store:customers:read |
+| `get_customer_store_credit` | `GET /api/2025-01/customers/{id}/store-credit` | store:customers:read |
+| `list_customer_store_credit_ledger` | `GET /api/2025-01/customers/{id}/store-credit/ledger` | store:customers:read |
+| `grant_customer_store_credit` | `POST /api/2025-01/customers/{id}/store-credit-grants` | store:customers:write |
+| `revoke_customer_store_credit` | `POST /api/2025-01/customers/{id}/store-credit-revocations` | store:customers:write |
+| `get_text_marketing_consent` | `GET /api/2025-01/text-marketing-consents` | store:customers:read |
+| `set_text_marketing_consent` | `PUT /api/2025-01/text-marketing-consents` | store:customers:write |
+| `get_customer_tag_limits` | `GET /api/2025-01/customer-tags/limits` | store:customers:read |
+| `list_customer_tags` | `GET /api/2025-01/customer-tags` | store:customers:read |
+| `get_customer_tag` | `GET /api/2025-01/customer-tags/{id}` | store:customers:read |
+| `create_customer_tag` | `POST /api/2025-01/customer-tags` | store:customers:write |
+| `bulk_create_customer_tags` | `POST /api/2025-01/customer-tags/bulk-create` | store:customers:write |
+| `update_customer_tag` | `PUT /api/2025-01/customer-tags/{id}` | store:customers:write |
+| `delete_customer_tag` | `DELETE /api/2025-01/customer-tags/{id}` | store:customers:write |
+| `bulk_delete_customer_tags` | `POST /api/2025-01/customer-tags/bulk-delete` | store:customers:write |
+| `get_customer_group_limits` | `GET /api/2025-01/customer-groups/limits` | store:customers:read |
+| `get_customer_group_purchase_rule_readiness` | `GET /api/2025-01/customer-groups/purchase-rule-readiness` | store:customers:read |
+| `list_customer_groups` | `GET /api/2025-01/customer-groups` | store:customers:read |
+| `get_customer_group` | `GET /api/2025-01/customer-groups/{id}` | store:customers:read |
+| `create_customer_group` | `POST /api/2025-01/customer-groups` | store:customers:write |
+| `update_customer_group` | `PUT /api/2025-01/customer-groups/{id}` | store:customers:write |
+| `delete_customer_group` | `DELETE /api/2025-01/customer-groups/{id}` | store:customers:write |
+| `preview_customer_group_rules` | `POST /api/2025-01/customer-groups/preview-rules` | store:customers:read |
+| `list_customer_group_members` | `GET /api/2025-01/customer-groups/{id}/members` | store:customers:read |
+| `list_customer_group_candidates` | `GET /api/2025-01/customer-groups/{id}/candidate-members` | store:customers:read |
+| `get_customer_group_membership_snapshot` | `GET /api/2025-01/customer-groups/{id}/membership-snapshot` | store:customers:read |
+| `list_customer_group_membership_changes` | `GET /api/2025-01/customer-groups/{id}/membership-changes` | store:customers:read |
+| `add_customer_group_members` | `POST /api/2025-01/customer-groups/{id}/members` | store:customers:write |
+| `remove_customer_group_members` | `POST /api/2025-01/customer-groups/{id}/members/remove` | store:customers:write |
+
+## Inventory, inventory groups and locations
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_inventory_limits` | `GET /api/2025-01/inventory/limits` | store:inventory:read |
+| `list_inventory_levels` | `GET /api/2025-01/inventory/levels` | store:inventory:read |
+| `list_inventory_movements` | `GET /api/2025-01/inventory/movements` | store:inventory:read |
+| `list_inventory_low_stocks` | `GET /api/2025-01/inventory/low-stock` | store:inventory:read |
+| `list_inventory_commitments` | `GET /api/2025-01/inventory/commitments` | store:inventory:read |
+| `list_inventory_commitment_activitys` | `GET /api/2025-01/inventory/commitment-activity` | store:inventory:read |
+| `create_inventory_sync_jobs_upload_intents` | `POST /api/2025-01/inventory/sync-jobs/upload-intents` | store:inventory:write |
+| `finalize_inventory_sync_jobs_upload_intents` | `POST /api/2025-01/inventory/sync-jobs/upload-intents/finalize` | store:inventory:write |
+| `status_inventory_sync_jobs_upload_intents` | `POST /api/2025-01/inventory/sync-jobs/upload-intents/status` | store:inventory:write |
+| `create_inventory_sync_jobs` | `POST /api/2025-01/inventory/sync-jobs` | store:inventory:write |
+| `get_inventory_sync_jobs` | `GET /api/2025-01/inventory/sync-jobs/{jobId}` | store:inventory:read |
+| `create_inventory_adjustments` | `POST /api/2025-01/inventory/adjustments` | store:inventory:write |
+| `list_inventory_transfers` | `GET /api/2025-01/transfers` | store:inventory:read |
+| `get_inventory_transfer` | `GET /api/2025-01/transfers/{transferId}` | store:inventory:read |
+| `create_inventory_transfer` | `POST /api/2025-01/transfers` | store:inventory:write |
+| `update_inventory_transfer_status` | `PUT /api/2025-01/transfers/{transferId}/status` | store:inventory:write |
+| `bulk_inventory_transfer_status` | `POST /api/2025-01/transfers/bulk-status` | store:inventory:write |
+| `receive_inventory_transfer` | `POST /api/2025-01/transfers/{transferId}/receive` | store:inventory:write |
+| `delete_inventory_transfer` | `DELETE /api/2025-01/transfers/{transferId}` | store:inventory:write |
+| `bulk_inventory_transfer_delete` | `POST /api/2025-01/transfers/bulk-delete` | store:inventory:write |
+| `list_inventory_restock_requests` | `GET /api/2025-01/inventory/restock-requests` | store:inventory:read |
+| `get_inventory_restock_request_limits` | `GET /api/2025-01/inventory/restock-requests/limits` | store:inventory:read |
+| `stats_inventory_restock_request` | `GET /api/2025-01/inventory/restock-requests/stats` | store:inventory:read |
+| `notify_inventory_restock_request` | `POST /api/2025-01/inventory/restock-requests/notify` | store:inventory:write |
+| `get_inventory_restock_alert_settings` | `GET /api/2025-01/inventory/restock-alert-settings` | store:inventory:read |
+| `update_inventory_restock_alert_settings` | `PUT /api/2025-01/inventory/restock-alert-settings` | store:inventory:write |
+| `get_inventory_group_limits` | `GET /api/2025-01/inventory-groups/limits` | store:inventory:read |
+| `list_inventory_groups` | `GET /api/2025-01/inventory-groups` | store:inventory:read |
+| `get_inventory_group` | `GET /api/2025-01/inventory-groups/{groupId}` | store:inventory:read |
+| `list_inventory_group_products` | `GET /api/2025-01/inventory-groups/{groupId}/products` | store:inventory:read, store:products:read |
+| `list_inventory_group_variants` | `GET /api/2025-01/inventory-groups/{groupId}/variants` | store:inventory:read, store:products:read |
+| `create_inventory_group` | `POST /api/2025-01/inventory-groups` | store:inventory:write |
+| `update_inventory_group` | `PUT /api/2025-01/inventory-groups/{groupId}` | store:inventory:write |
+| `delete_inventory_group` | `DELETE /api/2025-01/inventory-groups/{groupId}` | store:inventory:write |
+| `bulk_delete_inventory_groups` | `POST /api/2025-01/inventory-groups/bulk-delete` | store:inventory:write |
+| `set_inventory_group_quantity` | `POST /api/2025-01/inventory-groups/{groupId}/set-quantity` | store:inventory:write |
+| `adjust_inventory_group_quantity` | `POST /api/2025-01/inventory-groups/{groupId}/adjust` | store:inventory:write |
+| `set_inventory_group_threshold` | `POST /api/2025-01/inventory-groups/{groupId}/set-threshold` | store:inventory:write |
+| `list_inventory_group_movements` | `GET /api/2025-01/inventory-groups/{groupId}/movements` | store:inventory:read |
+| `list_inventory_group_commitments` | `GET /api/2025-01/inventory-groups/{groupId}/commitments` | store:inventory:read |
+| `list_inventory_group_commitment_activitys` | `GET /api/2025-01/inventory-groups/{groupId}/commitment-activity` | store:inventory:read |
+| `list_inventory_group_stocks` | `GET /api/2025-01/inventory-groups/{groupId}/stock` | store:inventory:read |
+| `bulk_add_inventory_group_stocks` | `POST /api/2025-01/inventory-groups/{groupId}/stock/bulk` | store:inventory:write |
+| `bulk_mutate_inventory_group_stock` | `POST /api/2025-01/inventory-groups/{groupId}/stock/bulk-mutate` | store:inventory:write |
+| `delete_inventory_group_stock` | `DELETE /api/2025-01/inventory-groups/{groupId}/stock/{locationId}` | store:inventory:write |
+| `get_location_limits` | `GET /api/2025-01/locations/limits` | store:locations:read |
+| `list_locations` | `GET /api/2025-01/locations` | store:locations:read |
+| `get_location` | `GET /api/2025-01/locations/{id}` | store:locations:read |
+| `impact_location` | `GET /api/2025-01/locations/{id}/impact` | store:locations:read |
+| `create_location` | `POST /api/2025-01/locations` | store:locations:write |
+| `update_location` | `PUT /api/2025-01/locations/{id}` | store:locations:write |
+| `delete_location` | `DELETE /api/2025-01/locations/{id}` | store:locations:write |
+| `get_location_translation` | `GET /api/2025-01/locations/{id}/translations/{locale}` | store:locations:read, store:settings.languages:read |
+| `set_location_translation` | `PUT /api/2025-01/locations/{id}/translations/{locale}` | store:locations:write, store:settings.languages:write |
+| `get_location_translations` | `GET /api/2025-01/locations/translations/{locale}` | store:locations:read, store:settings.languages:read |
+| `set_location_translations` | `PUT /api/2025-01/locations/translations/{locale}` | store:locations:write, store:settings.languages:write |
+| `reorder_locations` | `POST /api/2025-01/locations/reorder` | store:locations:write |
+
+## Online Store: storefronts
+
+Storefront tools read each storefront with its `go_live` verdict and `cache` state, and change page titles, the share image, status, password protection and languages. `update_storefront_mode` sets `live`, `maintenance` or `coming_soon`. Taking a live storefront offline returns `CONFIRMATION_REQUIRED` with warnings and a single-use `confirmation_token` bound to that storefront and mode; show the change, obtain approval, then repeat the same mode with `confirmed: true` and the token. Going live is refused with `STOREFRONT_NOT_READY_TO_GO_LIVE` and its `blockers` until the store is ready, and a status changed in the meantime returns `STOREFRONT_MODE_CONFLICT`. `update_storefront_password` takes effect at once with no confirmation: a password hides a live storefront from shoppers immediately. `clear_storefront_cache` clears every storefront of the store and is allowed once every 12 hours per store; an earlier attempt returns `STOREFRONT_CACHE_CLEAR_TOO_SOON` with `next_available_at`.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_storefront_limits` | `GET /api/2025-01/storefronts/limits` | store:online_store.storefronts:read |
+| `list_storefronts` | `GET /api/2025-01/storefronts` | store:online_store.storefronts:read |
+| `get_storefront` | `GET /api/2025-01/storefronts/{storefrontId}` | store:online_store.storefronts:read |
+| `update_storefront_mode` | `PUT /api/2025-01/storefronts/{storefrontId}/mode` | store:online_store.storefronts:write |
+| `update_storefront_seo` | `PUT /api/2025-01/storefronts/{storefrontId}/seo` | store:online_store.storefronts:write |
+| `update_storefront_password` | `PUT /api/2025-01/storefronts/{storefrontId}/password` | store:online_store.storefronts:write |
+| `get_storefront_languages` | `GET /api/2025-01/storefronts/{storefrontId}/languages` | store:online_store.storefronts:read |
+| `set_storefront_languages` | `PUT /api/2025-01/storefronts/{storefrontId}/languages` | store:online_store.storefronts:write |
+| `set_storefront_primary_language` | `PUT /api/2025-01/storefronts/{storefrontId}/languages/primary` | store:online_store.storefronts:write |
+| `clear_storefront_cache` | `POST /api/2025-01/storefront-cache/clear` | store:online_store.storefronts:write |
+
+## Online Store: preferences, redirects, search, recommendations and messages
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_permalink_limits` | `GET /api/2025-01/preferences/limits` | store:online_store.preferences:read |
+| `get_preferences` | `GET /api/2025-01/preferences` | store:online_store.preferences:read |
+| `set_favicon` | `PUT /api/2025-01/preferences/favicon` | store:online_store.preferences:write |
+| `get_permalinks` | `GET /api/2025-01/preferences/permalinks` | store:online_store.preferences:read |
+| `update_permalinks` | `PUT /api/2025-01/preferences/permalinks` | store:online_store.preferences:write |
+| `get_age_gate_limits` | `GET /api/2025-01/preferences/age-gate/limits` | store:settings.compliance:read |
+| `get_age_gate` | `GET /api/2025-01/preferences/age-gate` | store:settings.compliance:read |
+| `update_age_gate` | `PUT /api/2025-01/preferences/age-gate` | store:settings.compliance:write |
+| `get_express_checkout` | `GET /api/2025-01/preferences/express-checkout` | store:online_store.preferences:read |
+| `update_express_checkout` | `PUT /api/2025-01/preferences/express-checkout` | store:online_store.preferences:write |
+| `get_redirect_limits` | `GET /api/2025-01/redirects/limits` | store:online_store.redirects:read |
+| `list_redirects` | `GET /api/2025-01/redirects` | store:online_store.redirects:read |
+| `get_redirect` | `GET /api/2025-01/redirects/{redirectId}` | store:online_store.redirects:read |
+| `create_redirect` | `POST /api/2025-01/redirects` | store:online_store.redirects:write |
+| `update_redirect` | `PUT /api/2025-01/redirects/{redirectId}` | store:online_store.redirects:write |
+| `delete_redirect` | `DELETE /api/2025-01/redirects/{redirectId}` | store:online_store.redirects:write |
+| `bulk_delete_redirects` | `POST /api/2025-01/redirects/bulk-delete` | store:online_store.redirects:write |
+| `get_search_settings` | `GET /api/2025-01/search/settings` | store:online_store.search:read |
+| `update_search_settings` | `PUT /api/2025-01/search/settings` | store:online_store.search:write |
+| `rebuild_search_index` | `POST /api/2025-01/search/reindex` | store:online_store.search:write |
+| `get_search_index_job_limits` | `GET /api/2025-01/search/jobs/limits` | store:online_store.search:read |
+| `list_search_index_jobs` | `GET /api/2025-01/search/jobs` | store:online_store.search:read |
+| `get_active_search_index_job` | `GET /api/2025-01/search/jobs/active` | store:online_store.search:read |
+| `get_search_index_job` | `GET /api/2025-01/search/jobs/{job_id}` | store:online_store.search:read |
+| `list_search_synonym_languages` | `GET /api/2025-01/search-synonyms/locales` | store:online_store.search:read |
+| `get_search_synonym_limits` | `GET /api/2025-01/search-synonyms/limits` | store:online_store.search:read |
+| `list_search_synonyms` | `GET /api/2025-01/search-synonyms` | store:online_store.search:read |
+| `create_search_synonym` | `POST /api/2025-01/search-synonyms` | store:online_store.search:write |
+| `update_search_synonym` | `PUT /api/2025-01/search-synonyms/{synonymId}` | store:online_store.search:write |
+| `delete_search_synonym` | `DELETE /api/2025-01/search-synonyms/{synonymId}` | store:online_store.search:write |
+| `get_recommendation_limits` | `GET /api/2025-01/recommendations/limits` | store:online_store.recommendations:read |
+| `get_recommendation_settings` | `GET /api/2025-01/recommendations/settings` | store:online_store.recommendations:read |
+| `update_recommendation_settings` | `PUT /api/2025-01/recommendations/settings` | store:online_store.recommendations:write |
+| `get_recommendation_rules` | `GET /api/2025-01/recommendations/rules` | store:online_store.recommendations:read |
+| `set_recommendation_rules` | `PUT /api/2025-01/recommendations/rules` | store:online_store.recommendations:write |
+| `list_recommendation_pins` | `GET /api/2025-01/recommendations/pins` | store:online_store.recommendations:read |
+| `get_recommendation_pins` | `GET /api/2025-01/recommendations/pins/{productId}` | store:online_store.recommendations:read |
+| `set_recommendation_pins` | `PUT /api/2025-01/recommendations/pins/{productId}` | store:online_store.recommendations:write |
+| `list_recommendation_exclusions` | `GET /api/2025-01/recommendations/exclusions` | store:online_store.recommendations:read |
+| `add_recommendation_exclusion` | `POST /api/2025-01/recommendations/exclusions` | store:online_store.recommendations:write |
+| `remove_recommendation_exclusion` | `DELETE /api/2025-01/recommendations/exclusions/{productId}` | store:online_store.recommendations:write |
+| `list_storefront_messages` | `GET /api/2025-01/storefront-messages` | store:online_store.storefront_messages:read |
+| `save_storefront_message` | `PUT /api/2025-01/storefront-messages/overrides` | store:online_store.storefront_messages:write |
+| `reset_storefront_message` | `DELETE /api/2025-01/storefront-messages/overrides/{code}` | store:online_store.storefront_messages:write |
+
+## Other catalog, file and market tools
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_product_metafields` | `GET /api/2025-01/products/metafields` | store:products:read |
+| `get_product_variant_metafields` | `GET /api/2025-01/products/variants/metafields` | store:products:read |
+| `bulk_create_brands` | `POST /api/2025-01/brands/bulk-create` | store:products:write |
+| `bulk_delete_brands` | `POST /api/2025-01/brands/bulk-delete` | store:products:write |
+| `bulk_create_vendors` | `POST /api/2025-01/vendors/bulk-create` | store:products:write |
+| `bulk_delete_vendors` | `POST /api/2025-01/vendors/bulk-delete` | store:products:write |
+| `bulk_info_file` | `POST /api/2025-01/files/bulk-info` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
+| `get_file_translation` | `GET /api/2025-01/files/{id}/translations/{locale}` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
+| `set_file_translation` | `PUT /api/2025-01/files/{id}/translations/{locale}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `bulk_delete_files` | `POST /api/2025-01/files/bulk-delete` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `health_market_duty_country_rule` | `GET /api/2025-01/markets/duty-health` | store:markets:read, store:products:read |
