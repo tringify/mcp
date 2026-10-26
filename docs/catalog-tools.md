@@ -17,10 +17,12 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `delete_product` | `DELETE /api/2025-01/products/{id}` | store:products:write |
 | `list_product_metafields` | `GET /api/2025-01/products/{id}/metafields` | store:products:read |
 | `set_product_metafield` | `PUT /api/2025-01/products/{id}/metafields` | store:products:write |
+| `delete_product_metafield` | `DELETE /api/2025-01/products/{id}/metafields/{namespace}/{key}` | store:products:write |
 | `get_product_metafield_translation` | `GET /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_product_metafield_translation` | `PUT /api/2025-01/products/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `list_product_variant_metafields` | `GET /api/2025-01/products/{id}/variants/{variantId}/metafields` | store:products:read |
 | `set_product_variant_metafield` | `PUT /api/2025-01/products/{id}/variants/{variantId}/metafields` | store:products:write |
+| `delete_product_variant_metafield` | `DELETE /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}` | store:products:write |
 | `get_product_variant_metafield_translation` | `GET /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_product_variant_metafield_translation` | `PUT /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `bulk_update_product_status` | `POST /api/2025-01/products/bulk-status` | store:products:write |
@@ -43,6 +45,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_collection` | `GET /api/2025-01/collections/{id}` | store:products:read |
 | `list_collection_metafields` | `GET /api/2025-01/collections/{id}/metafields` | store:products:read |
 | `set_collection_metafield` | `PUT /api/2025-01/collections/{id}/metafields` | store:products:write |
+| `delete_collection_metafield` | `DELETE /api/2025-01/collections/{id}/metafields/{namespace}/{key}` | store:products:write |
 | `get_collection_metafield_translation` | `GET /api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_collection_metafield_translation` | `PUT /api/2025-01/collections/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `create_collection` | `POST /api/2025-01/collections` | store:products:write |
@@ -66,6 +69,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_category` | `GET /api/2025-01/categories/{id}` | store:products:read |
 | `list_category_metafields` | `GET /api/2025-01/categories/{id}/metafields` | store:products:read |
 | `set_category_metafield` | `PUT /api/2025-01/categories/{id}/metafields` | store:products:write |
+| `delete_category_metafield` | `DELETE /api/2025-01/categories/{id}/metafields/{namespace}/{key}` | store:products:write |
 | `get_category_metafield_translation` | `GET /api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_category_metafield_translation` | `PUT /api/2025-01/categories/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `create_category` | `POST /api/2025-01/categories` | store:products:write |
@@ -101,6 +105,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_page` | `GET /api/2025-01/pages/{id}` | store:pages:read |
 | `list_page_metafields` | `GET /api/2025-01/pages/{id}/metafields` | store:pages:read |
 | `set_page_metafield` | `PUT /api/2025-01/pages/{id}/metafields` | store:pages:write |
+| `delete_page_metafield` | `DELETE /api/2025-01/pages/{id}/metafields/{namespace}/{key}` | store:pages:write |
 | `get_page_metafield_translation` | `GET /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:pages:read, store:settings.languages:read |
 | `set_page_metafield_translation` | `PUT /api/2025-01/pages/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:pages:write, store:settings.languages:write |
 | `create_page` | `POST /api/2025-01/pages` | store:pages:write |
@@ -125,6 +130,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_blog_post` | `GET /api/2025-01/blog/posts/{id}` | store:blog:read |
 | `list_blog_post_metafields` | `GET /api/2025-01/blog/posts/{id}/metafields` | store:blog:read |
 | `set_blog_post_metafield` | `PUT /api/2025-01/blog/posts/{id}/metafields` | store:blog:write |
+| `delete_blog_post_metafield` | `DELETE /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}` | store:blog:write |
 | `get_blog_post_metafield_translation` | `GET /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:blog:read, store:settings.languages:read |
 | `set_blog_post_metafield_translation` | `PUT /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:blog:write, store:settings.languages:write |
 | `create_blog_post` | `POST /api/2025-01/blog/posts` | store:blog:write |
@@ -145,6 +151,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_blog_category` | `GET /api/2025-01/blog/categories/{id}` | store:blog:read |
 | `list_blog_category_metafields` | `GET /api/2025-01/blog/categories/{id}/metafields` | store:blog:read |
 | `set_blog_category_metafield` | `PUT /api/2025-01/blog/categories/{id}/metafields` | store:blog:write |
+| `delete_blog_category_metafield` | `DELETE /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}` | store:blog:write |
 | `get_blog_category_metafield_translation` | `GET /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:blog:read, store:settings.languages:read |
 | `set_blog_category_metafield_translation` | `PUT /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:blog:write, store:settings.languages:write |
 | `create_blog_category` | `POST /api/2025-01/blog/categories` | store:blog:write |
@@ -221,6 +228,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_brand` | `GET /api/2025-01/brands/{id}` | store:products:read |
 | `list_brand_metafields` | `GET /api/2025-01/brands/{id}/metafields` | store:products:read |
 | `set_brand_metafield` | `PUT /api/2025-01/brands/{id}/metafields` | store:products:write |
+| `delete_brand_metafield` | `DELETE /api/2025-01/brands/{id}/metafields/{namespace}/{key}` | store:products:write |
 | `get_brand_metafield_translation` | `GET /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_brand_metafield_translation` | `PUT /api/2025-01/brands/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `create_brand` | `POST /api/2025-01/brands` | store:products:write |
@@ -236,6 +244,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_vendor` | `GET /api/2025-01/vendors/{id}` | store:products:read |
 | `list_vendor_metafields` | `GET /api/2025-01/vendors/{id}/metafields` | store:products:read |
 | `set_vendor_metafield` | `PUT /api/2025-01/vendors/{id}/metafields` | store:products:write |
+| `delete_vendor_metafield` | `DELETE /api/2025-01/vendors/{id}/metafields/{namespace}/{key}` | store:products:write |
 | `get_vendor_metafield_translation` | `GET /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_vendor_metafield_translation` | `PUT /api/2025-01/vendors/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `create_vendor` | `POST /api/2025-01/vendors` | store:products:write |
@@ -493,6 +502,7 @@ Email subscriber lifecycle webhooks are `subscribers/create`, `subscribers/updat
 | --- | --- | --- |
 | `list_customer_metafields` | `GET /api/2025-01/customers/{id}/metafields` | store:customers:read |
 | `set_customer_metafield` | `PUT /api/2025-01/customers/{id}/metafields` | store:customers:write |
+| `delete_customer_metafield` | `DELETE /api/2025-01/customers/{id}/metafields/{namespace}/{key}` | store:customers:write |
 | `delete_customer` | `DELETE /api/2025-01/customers/{id}` | store:customers:write |
 | `get_customer_store_credit_limits` | `GET /api/2025-01/customers/store-credit/limits` | store:customers:read |
 | `get_customer_store_credit_settings` | `GET /api/2025-01/customers/store-credit/settings` | store:customers:read |
@@ -725,9 +735,12 @@ Value translations require both owner and Languages access: read for get, write 
 | --- | --- | --- |
 | `list_order_metafields` | `GET /api/2025-01/orders/{orderId}/metafields` | store:orders:read |
 | `set_order_metafield` | `PUT /api/2025-01/orders/{orderId}/metafields` | store:orders:write |
+| `delete_order_metafield` | `DELETE /api/2025-01/orders/{orderId}/metafields/{namespace}/{key}` | store:orders:write |
 | `set_order_item_metafield` | `PUT /api/2025-01/orders/{orderId}/items/{itemId}/metafields` | store:orders:write |
+| `delete_order_item_metafield` | `DELETE /api/2025-01/orders/{orderId}/items/{itemId}/metafields/{namespace}/{key}` | store:orders:write |
 | `list_order_item_metafields` | `GET /api/2025-01/orders/{orderId}/items/{itemId}/metafields` | store:orders:read |
 | `list_store_metafields` | `GET /api/2025-01/store/metafields` | store:settings.metafield_definitions:read |
 | `set_store_metafield` | `PUT /api/2025-01/store/metafields` | store:settings.metafield_definitions:write |
+| `delete_store_metafield` | `DELETE /api/2025-01/store/metafields/{namespace}/{key}` | store:settings.metafield_definitions:write |
 | `get_store_metafield_translation` | `GET /api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}` | store:settings.metafield_definitions:read, store:settings.languages:read |
 | `set_store_metafield_translation` | `PUT /api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}` | store:settings.metafield_definitions:write, store:settings.languages:write |

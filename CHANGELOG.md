@@ -1,5 +1,9 @@
 # Changelog
 
+## Metafield value clear tools
+
+- Documented the 13 `delete_<owner>_metafield` tools in the catalog table and README. The variant tool is `delete_product_variant_metafield`, matching `set_product_variant_metafield` (it was briefly listed as `delete_variant_metafield`).
+
 ## Metafield follow-up — 26 October 2026
 
 - Added order, order-item, and store metafield list/set tools, plus store translation get/set: eight tools, 660 total.
