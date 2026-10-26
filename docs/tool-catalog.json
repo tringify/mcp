@@ -21035,102 +21035,6 @@
     ]
   },
   {
-    "api_key": "email_senders.list",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/email/senders",
-    "description": "List the addresses the store sends email from. `can_send` reports whether an address can send right now, with the same rule sending enforces. When the default transactional sender cannot send, order and account email goes out from the store's Tringify address. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/senders. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {},
-      "type": "object"
-    },
-    "name": "list_email_senders",
-    "scopes": [
-      "store:settings.email:read"
-    ]
-  },
-  {
-    "api_key": "email_domains.list",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/email/domains",
-    "description": "List the store's custom sending domains. Each domain shows its verification status and whether it can send. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/domains. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {},
-      "type": "object"
-    },
-    "name": "list_email_domains",
-    "scopes": [
-      "store:settings.email:read"
-    ]
-  },
-  {
-    "api_key": "email_reply_to.get",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/email/reply-to",
-    "description": "Get where customer replies to store emails go. `pending_reply_to` is an address waiting for its inbox to confirm the link sent to it. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/reply-to. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {},
-      "type": "object"
-    },
-    "name": "get_email_reply_to",
-    "scopes": [
-      "store:settings.email:read"
-    ]
-  },
-  {
-    "api_key": "email_reply_to.update",
-    "api_method": "PUT",
-    "api_path": "/api/2025-01/email/reply-to",
-    "description": "Set where customer replies to store emails go. An empty value stops accepting replies. A new address takes effect once its inbox confirms the link Tringify emails to it; until then the response returns it as `pending_reply_to`. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/reply-to. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "customer_reply_to": {
-          "description": "Email address for customer replies, or an empty string.",
-          "type": "string"
-        },
-        "otp_code": {
-          "description": "Fresh action/target-bound dangerous-action verification code, using the same verification flow as domain deletion. Tokens and connected tools have no exemption. Use action email_reply_to, target_type=email_identity, target_id=storeId + | + the trimmed reply-to value (empty value clears replies).",
-          "type": "string"
-        }
-      },
-      "required": [
-        "customer_reply_to",
-        "otp_code"
-      ],
-      "type": "object"
-    },
-    "name": "update_email_reply_to",
-    "scopes": [
-      "store:settings.email:write"
-    ]
-  },
-  {
-    "api_key": "email_suppressions.get",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/email/suppressions",
-    "description": "Check whether the store's emails to an address are blocked. Addresses that bounced permanently or reported the store's email as spam are suppressed. Suppressions are stored as hashes, so they are checked one address at a time. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/suppressions. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "email": {
-          "description": "The address to check.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "email"
-      ],
-      "type": "object"
-    },
-    "name": "get_email_suppression",
-    "scopes": [
-      "store:settings.email:read"
-    ]
-  },
-  {
     "api_key": "preferences.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/preferences/limits",
@@ -27023,6 +26927,485 @@
     "name": "set_country_languages",
     "scopes": [
       "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "email_senders.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/senders",
+    "description": "List the addresses the store sends email from. `is_verified` reports whether an address can send right now, with the same rule sending enforces. When the default transactional sender cannot send, order and account email goes out from the store's Tringify address. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/senders. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_email_senders",
+    "scopes": [
+      "store:settings.email:read"
+    ]
+  },
+  {
+    "api_key": "email_domains.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/domains",
+    "description": "List the store's custom sending domains. Each domain shows its verification status and whether it can send. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/domains. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_email_domains",
+    "scopes": [
+      "store:settings.email:read"
+    ]
+  },
+  {
+    "api_key": "email_reply_to.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/reply-to",
+    "description": "Get where customer replies to store emails go. `pending_reply_to` is an address waiting for its inbox to confirm the link sent to it. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/reply-to. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_email_reply_to",
+    "scopes": [
+      "store:settings.email:read"
+    ]
+  },
+  {
+    "api_key": "email_reply_to.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/email/reply-to",
+    "description": "Set where customer replies to store emails go. An empty value removes the Reply-To override. It does not disable an externally hosted From mailbox. A new address takes effect once its inbox confirms the link Tringify emails to it; until then the response returns it as `pending_reply_to`, with pending_requested_at, pending_expires_at, resend_available_at and pending_expired. Save the active value to cancel and revoke the pending link; save the pending value to resend after cooldown. Links expire after seven days. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/reply-to. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_reply_to": {
+          "description": "Email address for customer replies, or an empty string.",
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh action/target-bound dangerous-action verification code, using the same verification flow as domain deletion. Tokens and connected tools have no exemption. Use action email_reply_to, target_type=email_identity, target_id=storeId + | + the trimmed reply-to value (empty value clears replies).",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_reply_to",
+        "otp_code"
+      ],
+      "type": "object"
+    },
+    "name": "update_email_reply_to",
+    "scopes": [
+      "store:settings.email:write"
+    ]
+  },
+  {
+    "api_key": "email_suppressions.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/suppressions",
+    "description": "Check whether the store's emails to an address are blocked. Addresses that bounced permanently or reported the store's email as spam are suppressed. Suppression lookup is scoped to this store. Complaint suppressions cannot be lifted. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/suppressions. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "description": "The address to check.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "type": "object"
+    },
+    "name": "get_email_suppression",
+    "scopes": [
+      "store:settings.email:read"
+    ]
+  },
+  {
+    "api_key": "email_senders.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/email/senders",
+    "description": "Create sender Owner-admin credentials only. The provided Tringify noreply sender is permanent. Mutations return backend-localized code/message; show these verbatim. Request fresh dangerous-action verification using action add_email_address; target_type=email_identity; target_id=storeId|local_part@domain. Send the returned code as otp_code; connected tools have no exemption.  Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/senders. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "description": "Verified sending domain.",
+          "type": "string"
+        },
+        "email_type": {
+          "description": "transactional or marketing.",
+          "type": "string"
+        },
+        "local_part": {
+          "description": "Sender local part.",
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh action/target-bound verification code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain",
+        "local_part",
+        "email_type",
+        "otp_code"
+      ],
+      "type": "object"
+    },
+    "name": "create_email_sender",
+    "scopes": [
+      "store:settings.email:write"
+    ]
+  },
+  {
+    "api_key": "email_senders.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/email/senders/{addressId}",
+    "description": "Delete sender Owner-admin credentials only. The provided Tringify noreply sender is permanent. Mutations return backend-localized code/message; show these verbatim. Request fresh dangerous-action verification using action delete_email_address; target_type=email_address; target_id=addressId. Send the returned code as otp_code; connected tools have no exemption.  Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email/senders/{addressId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "addressId": {
+          "description": "Store-scoped resource UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh action/target-bound verification code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "addressId",
+        "otp_code"
+      ],
+      "type": "object"
+    },
+    "name": "delete_email_sender",
+    "scopes": [
+      "store:settings.email:write"
+    ]
+  },
+  {
+    "api_key": "email_senders.set_default",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/email/senders/{addressId}/default",
+    "description": "Choose default sender Owner-admin credentials only. The provided Tringify noreply sender is permanent. Mutations return backend-localized code/message; show these verbatim. Request fresh dangerous-action verification using action set_default_email_address; target_type=email_address; target_id=addressId. Send the returned code as otp_code; connected tools have no exemption.  Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/senders/{addressId}/default. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "addressId": {
+          "description": "Store-scoped resource UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh action/target-bound verification code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "addressId",
+        "otp_code"
+      ],
+      "type": "object"
+    },
+    "name": "set_default_email_sender",
+    "scopes": [
+      "store:settings.email:write"
+    ]
+  },
+  {
+    "api_key": "email_domains.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/email/domains",
+    "description": "Register sending domain Owner-admin credentials only. The provided Tringify noreply sender is permanent. Mutations return backend-localized code/message; show these verbatim. Request fresh dangerous-action verification using action add_email_domain; target_type=email_identity; target_id=storeId|domain. Send the returned code as otp_code; connected tools have no exemption.  Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "description": "Sending domain under a verified registrable base.",
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh action/target-bound verification code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain",
+        "otp_code"
+      ],
+      "type": "object"
+    },
+    "name": "create_email_domain",
+    "scopes": [
+      "store:settings.email:write"
+    ]
+  },
+  {
+    "api_key": "email_domains.records",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/domains/{domainId}/records",
+    "description": "Get DNS records Owner-admin credentials only. The provided Tringify noreply sender is permanent. Mutations return backend-localized code/message; show these verbatim.  Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/domains/{domainId}/records. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_id": {
+          "description": "Store-scoped resource UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_email_domain_records",
+    "scopes": [
+      "store:settings.email:read"
+    ]
+  },
+  {
+    "api_key": "email_domains.verify",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/email/domains/{domainId}/verify",
+    "description": "Check domain verification Owner-admin credentials only. The provided Tringify noreply sender is permanent. Mutations return backend-localized code/message; show these verbatim.  Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains/{domainId}/verify. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_id": {
+          "description": "Store-scoped resource UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_id"
+      ],
+      "type": "object"
+    },
+    "name": "verify_email_domain",
+    "scopes": [
+      "store:settings.email:write"
+    ]
+  },
+  {
+    "api_key": "email_domains.restart",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/email/domains/{domainId}/restart",
+    "description": "Restart domain verification Owner-admin credentials only. The provided Tringify noreply sender is permanent. Mutations return backend-localized code/message; show these verbatim. Request fresh dangerous-action verification using action restart_email_domain; target_type=email_domain; target_id=domainId. Send the returned code as otp_code; connected tools have no exemption.  Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains/{domainId}/restart. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_id": {
+          "description": "Store-scoped resource UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh action/target-bound verification code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_id",
+        "otp_code"
+      ],
+      "type": "object"
+    },
+    "name": "restart_email_domain",
+    "scopes": [
+      "store:settings.email:write"
+    ]
+  },
+  {
+    "api_key": "email_domains.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/email/domains/{domainId}",
+    "description": "Remove sending domain Owner-admin credentials only. The provided Tringify noreply sender is permanent. Mutations return backend-localized code/message; show these verbatim. Request fresh dangerous-action verification using action delete_email_domain; target_type=email_domain; target_id=domainId. Send the returned code as otp_code; connected tools have no exemption.  Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email/domains/{domainId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_id": {
+          "description": "Store-scoped resource UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh action/target-bound verification code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_id",
+        "otp_code"
+      ],
+      "type": "object"
+    },
+    "name": "delete_email_domain",
+    "scopes": [
+      "store:settings.email:write"
+    ]
+  },
+  {
+    "api_key": "email_history.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/history",
+    "description": "List email history Owner-admin credentials only. The provided Tringify noreply sender is permanent. Mutations return backend-localized code/message; show these verbatim. Use has_more and next_cursor; never derive navigation from totals. History is retained for 90 days. Unknown submissions must not be automatically resent. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/history. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque next_cursor from the preceding history page; omit for first page.",
+          "type": "string"
+        },
+        "date_from": {
+          "description": "Store-local YYYY-MM-DD inclusive start, or complete timestamp.",
+          "type": "string"
+        },
+        "date_to": {
+          "description": "Store-local YYYY-MM-DD inclusive calendar end; timestamps are exclusive bounds.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "History page size; at most the returned service limit.",
+          "type": "integer"
+        },
+        "status": {
+          "description": "queued, sent, failed, bounced or complained.",
+          "type": "string"
+        },
+        "type": {
+          "description": "transactional, marketing, test or welcome.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_email_history",
+    "scopes": [
+      "store:settings.email:read"
+    ]
+  },
+  {
+    "api_key": "email_statistics.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/statistics",
+    "description": "Get email statistics Owner-admin credentials only. The provided Tringify noreply sender is permanent. Mutations return backend-localized code/message; show these verbatim. Uses the same type/status/date filters as history. Sent means sent+bounced+complained; delivered means recipient server acceptance; delivery_rate=delivered/sent*100. Failed statistics must be displayed as unavailable. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/statistics. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "date_from": {
+          "description": "Store-local YYYY-MM-DD inclusive start, or complete timestamp.",
+          "type": "string"
+        },
+        "date_to": {
+          "description": "Store-local YYYY-MM-DD inclusive calendar end; timestamps are exclusive bounds.",
+          "type": "string"
+        },
+        "status": {
+          "description": "queued, sent, failed, bounced or complained.",
+          "type": "string"
+        },
+        "type": {
+          "description": "transactional, marketing, test or welcome.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "get_email_statistics",
+    "scopes": [
+      "store:settings.email:read"
+    ]
+  },
+  {
+    "api_key": "email_suppressions.lift",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/email/suppressions/lift",
+    "description": "Lift bounce suppression Owner-admin credentials only. The provided Tringify noreply sender is permanent. Mutations return backend-localized code/message; show these verbatim.  Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/suppressions/lift. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "description": "Recipient address. Only bounce suppressions may be lifted.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "type": "object"
+    },
+    "name": "lift_email_suppression",
+    "scopes": [
+      "store:settings.email:write"
+    ]
+  },
+  {
+    "api_key": "email_suppressions.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/suppression-history",
+    "description": "Browse recipient suppressions. Store-scoped cursor listing. Recipient addresses and send links are available only while the associated 90-day history is retained. A missing recipient_email means the address is no longer retained, not an empty mailbox. Use has_more and next_cursor; complaints cannot be lifted. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/suppression-history. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "Opaque next_cursor.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size from 1 to 100.",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_email_suppressions",
+    "scopes": [
+      "store:settings.email:read"
+    ]
+  },
+  {
+    "api_key": "email_domains.mail_from",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/email/domains/{domainId}/mail-from",
+    "description": "Configure a dedicated envelope subdomain. Use an unused subdomain of the sending identity. Publish its returned MX and SPF records; never replace the root MX/SPF. Failed MX verification rejects sends: there is no automatic envelope fallback. Empty mail_from_domain explicitly removes this setting. Request action email_mail_from, target_type=email_identity, target_id=storeId|domainId|normalized mail_from_domain. Uses fresh step-up; app credentials are excluded. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/domains/{domainId}/mail-from. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_id": {
+          "description": "Sending domain UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "mail_from_domain": {
+          "description": "Dedicated unused subdomain, or empty to remove.",
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh action/target-bound verification code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_id",
+        "mail_from_domain",
+        "otp_code"
+      ],
+      "type": "object"
+    },
+    "name": "set_email_mail_from",
+    "scopes": [
+      "store:settings.email:write"
     ]
   }
 ]
