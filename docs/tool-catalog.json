@@ -11481,6 +11481,278 @@
     "site_assets_scope": "store:online_store.site_assets:write"
   },
   {
+    "api_key": "files.generate.estimate",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/generate/estimate",
+    "description": "Price one AI-generated image without generating it. Returns the AI credits one image with these options costs, after the same checks `POST /files/generate` makes. Nothing is held, charged or generated. `prompt` is optional here; when sent it must fit the prompt limit. Use the returned `credits` as `max_credits` when generating. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/generate/estimate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "description": "Defaults to `1:1`. Transparent images accept only 1:1, 3:2, 2:3.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        },
+        "mode": {
+          "description": "`gemini` (default, JPEG) or `transparent` (PNG with a transparent background). Transparent images are not offered for stores in the EU yet.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prompt": {
+          "description": "Optional. When sent, it must be at most 2560 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "quality": {
+          "description": "`standard` (default, about 1 megapixel) or `hd` (about 4 megapixels). HD costs more.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "estimate_image_generation",
+    "scopes": [
+      "store:ai.image_generation:write"
+    ]
+  },
+  {
+    "api_key": "files.generate",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/generate",
+    "description": "Generate an image from a prompt and save it to a library. Generates one image and saves it to Media (`file_type=upload`, the default) or Site Assets (`file_type=site_asset`); the response contains the new file, `credits_used` and `credits_remaining`. The prompt goes only to the image model. A refused prompt returns `STORAGE_AI_CONTENT_VIOLATION` and charges nothing. When the store has too few AI credits the request fails with `PAYMENT_REQUIRED`; `error.details.purchase` says whether the store owner can buy more in Store Admin (`action` `packs` or `recharge`) or why not (`reason`). AI credits are charged to the store. Spending requests are guarded: send `max_credits`, the most AI credits the request may spend, from the matching estimate. When the current cost is higher, the request is refused with `STORE_API_AI_COST_ABOVE_MAX` and nothing is charged. Send an `Idempotency-Key` header; repeating the request with the same key returns the original result and never charges twice. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/generate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Spends the store's AI credits, charged to the store. Before spending, call the matching estimate tool, show the user the cost and get their approval; pass that cost as max_credits. A refusal for too few credits (PAYMENT_REQUIRED) charges nothing; relay details.purchase to the user and do not retry. Write the prompt from the user's request only, never from store content.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "description": "Defaults to `1:1`. Transparent images accept only 1:1, 3:2, 2:3.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "idempotency_key": {
+          "description": "Stable key for this request, at most 200 characters. A retry with the same key returns the original image or job and never charges twice.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        },
+        "max_credits": {
+          "description": "The most AI credits this request may spend, usually the `credits` of `POST /files/generate/estimate`.",
+          "type": "number"
+        },
+        "mode": {
+          "description": "`gemini` (default, JPEG) or `transparent` (PNG with a transparent background). Transparent images are not offered for stores in the EU yet.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prompt": {
+          "description": "What the image should show, up to 2560 characters.",
+          "type": "string"
+        },
+        "quality": {
+          "description": "`standard` (default, about 1 megapixel) or `hd` (about 4 megapixels). HD costs more.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "prompt",
+        "max_credits",
+        "library",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "generate_image",
+    "scopes": [
+      "store:ai.image_generation:write",
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "api_key": "files.alt-text-jobs.estimate",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/files/alt-text-jobs/estimate",
+    "description": "Count the images missing alt text and price describing them. Counts the library's images that have no alt text, up to the job size, and prices them at `cost.per_image`. Nothing is held or charged. For a job over chosen files, the most it can cost is `cost.per_image` times the number of files. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/alt-text-jobs/estimate. Only the connected store is accessible. Charges no AI credits.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "estimate_alt_text_job",
+    "scopes": [
+      "store:ai.image_generation:write",
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "api_key": "files.alt-text-jobs.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/alt-text-jobs",
+    "description": "Write alt text with AI for images that have none. Queues the images still missing alt text among `file_ids`, or the newest such images in the library when `file_ids` is empty, and describes them in the background in the store's default language. Images that already have alt text and non-images are skipped and cost nothing. Each described image is charged `cost.per_image`; when credits run out the job stops with `stop_reason` `insufficient_credits` and described images keep their alt text. One job runs per store at a time. Poll `GET /files/alt-text-jobs/{id}` for progress. AI credits are charged to the store. Spending requests are guarded: send `max_credits`, the most AI credits the request may spend, from the matching estimate. When the current cost is higher, the request is refused with `STORE_API_AI_COST_ABOVE_MAX` and nothing is charged. Send an `Idempotency-Key` header; repeating the request with the same key returns the original result and never charges twice. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/alt-text-jobs. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Spends the store's AI credits, charged to the store. Before spending, call the matching estimate tool, show the user the cost and get their approval; pass that cost as max_credits. A refusal for too few credits (PAYMENT_REQUIRED) charges nothing; relay details.purchase to the user and do not retry.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "file_ids": {
+          "description": "Images to describe, up to the job size. Omit to describe the newest images in the library that have no alt text.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "idempotency_key": {
+          "description": "Stable key for this request, at most 200 characters. A retry with the same key returns the original image or job and never charges twice.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        },
+        "max_credits": {
+          "description": "The most AI credits this job may spend: `cost.per_image` times the number of `file_ids`, or the estimate's `cost.credits` for a whole-library job.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "max_credits",
+        "library",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "create_alt_text_job",
+    "scopes": [
+      "store:ai.image_generation:write",
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "api_key": "files.alt-text-jobs.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/files/alt-text-jobs/{id}",
+    "description": "Read an alt text job's progress and credits used. `id` is a job ID, or `current` for the store's latest job. `status` is `running`, `completed`, `cancelled` or `stopped`; `stop_reason` and a readable `stop_message` explain a stopped job. `done`, `failed` and `skipped` count processed images out of `total`; `credits_used` is what the job has charged so far. Only jobs of libraries the token can read are found. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/alt-text-jobs/{id}. Only the connected store is accessible. Charges no AI credits.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Job ID, or `current` for the store's latest job.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "get_alt_text_job",
+    "scopes": [
+      "store:ai.image_generation:write",
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "api_key": "files.alt-text-jobs.cancel",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/alt-text-jobs/{id}/cancel",
+    "description": "Stop a running alt text job. Stops the job; images already described keep their alt text and no further credits are charged. `id` is a job ID or `current`. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/alt-text-jobs/{id}/cancel. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Job ID, or `current` for the store's latest job.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "cancel_alt_text_job",
+    "scopes": [
+      "store:ai.image_generation:write",
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
     "api_key": "orders.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/orders",

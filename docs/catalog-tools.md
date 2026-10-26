@@ -255,6 +255,12 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `request_file_preview` | `POST /api/2025-01/files/{id}/preview` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `update_file` | `PUT /api/2025-01/files/{id}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `delete_file` | `DELETE /api/2025-01/files/{id}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `estimate_image_generation` | `POST /api/2025-01/files/generate/estimate` | store:ai.image_generation:write |
+| `generate_image` | `POST /api/2025-01/files/generate` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `estimate_alt_text_job` | `GET /api/2025-01/files/alt-text-jobs/estimate` | store:ai.image_generation:write, and store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
+| `create_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `get_alt_text_job` | `GET /api/2025-01/files/alt-text-jobs/{id}` | store:ai.image_generation:write, and store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
+| `cancel_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs/{id}/cancel` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `get_order` | `GET /api/2025-01/orders/{id}` | store:orders:read |
 | `list_order_edits` | `GET /api/2025-01/orders/{id}/edits` | store:orders:read |
 | `get_order_edit_options` | `GET /api/2025-01/orders/{id}/edit-options` | store:orders:read |
