@@ -429,6 +429,12 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `create_dns_record` | `POST /api/2025-01/dns-zones/{zoneId}/records` | store:settings.domains:write |
 | `update_dns_record` | `PUT /api/2025-01/dns-zones/{zoneId}/records/{recordId}` | store:settings.domains:write |
 | `delete_dns_record` | `DELETE /api/2025-01/dns-zones/{zoneId}/records/{recordId}` | store:settings.domains:write |
+| `list_assignable_domains` | `GET /api/2025-01/domains/assignable` | store:settings.domains:write |
+| `assign_storefront_domain` | `PUT /api/2025-01/domains/{domainId}/storefront` | store:settings.domains:write |
+| `set_country_domain` | `PUT /api/2025-01/domains/{domainId}/country` | store:settings.domains:write |
+| `clear_country_domain` | `DELETE /api/2025-01/domains/{domainId}/country` | store:settings.domains:write |
+| `set_primary_domain` | `PUT /api/2025-01/domains/{domainId}/primary` | store:settings.domains:write |
+| `clear_primary_domain` | `DELETE /api/2025-01/storefronts/{storefrontId}/primary-domain` | store:settings.domains:write |
 | `list_email_senders` | `GET /api/2025-01/email/senders` | store:settings.email:read |
 | `list_email_domains` | `GET /api/2025-01/email/domains` | store:settings.email:read |
 | `get_email_reply_to` | `GET /api/2025-01/email/reply-to` | store:settings.email:read |
@@ -627,6 +633,7 @@ Storefront tools read each storefront with its `go_live` verdict and `cache` sta
 | `get_storefront_languages` | `GET /api/2025-01/storefronts/{storefrontId}/languages` | store:online_store.storefronts:read |
 | `set_storefront_languages` | `PUT /api/2025-01/storefronts/{storefrontId}/languages` | store:online_store.storefronts:write |
 | `set_storefront_primary_language` | `PUT /api/2025-01/storefronts/{storefrontId}/languages/primary` | store:online_store.storefronts:write |
+| `list_country_urls` | `GET /api/2025-01/storefronts/{storefrontId}/country-urls` | store:online_store.storefronts:read |
 | `clear_storefront_cache` | `POST /api/2025-01/storefront-cache/clear` | store:online_store.storefronts:write |
 
 Publishing a language requires enabling it for the store, adding it to the storefront, and assigning it to countries with one default per country. Unassigned countries serve only storefront primary. Markets provide countries, not language choices. These tools need no domain or email-settings scope.
