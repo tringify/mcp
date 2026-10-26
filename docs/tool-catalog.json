@@ -13039,7 +13039,7 @@
     "api_key": "customers.marketing-subscribers.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/marketing-subscribers/{subscriberId}",
-    "description": "Read one email subscriber with its proof of consent. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/marketing-subscribers/{subscriberId}. Only the connected store is accessible.",
+    "description": "Read one email subscriber with channel and proof of consent. Subscribe to marketing_subscribers/create, marketing_subscribers/update and marketing_subscribers/delete with read_customers for changes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/marketing-subscribers/{subscriberId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {

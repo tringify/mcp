@@ -243,6 +243,9 @@ Customer tools expose `tax_exempt`, `tax_id` and `tax_id_type` on create, update
 
 Email subscriber tools `list_marketing_subscribers` and `get_marketing_subscriber` read the store's email newsletter subscribers with `store:customers:read`; they are read-only. `source: coming_soon` lists sign-ups from a storefront's Coming Soon page, and the detail returns the proof of consent stored with the sign-up (wording, version, language, time, IP address, user agent and page). Storefront passwords set with `update_storefront_password` need at least 8 characters (`password_min_length` in `get_storefront_limits`).
 
+Email subscriber lifecycle webhooks are `marketing_subscribers/create`, `marketing_subscribers/update` and `marketing_subscribers/delete` (app scope `read_customers`). Their `subscriber` payload is the GET resource, including `channel: email`, status, source, and consent proof (`text_version`, `captured_at`, `source_page`, `locale`). Creation includes pending confirmation; confirmation, unsubscribe and resubscription are updates. Delete carries the resource before deletion. Use `get_webhook_topic_schema` to inspect fields and projections. The existing `subscribers/create` activation event remains available.
+
+
 Order reads retain named tax components for items, shipping, COD, checkout fees and collected-duty VAT. These amounts reconcile to `tax_total`. Refunds expose `goods_total`, `tax_total` and `components`, including quantity-zero monetary allocations. Tax comes from the original sale evidence: pending refunds reserve shares and only completed refunds reduce tax reports.
 
 ## Currency and language request contract

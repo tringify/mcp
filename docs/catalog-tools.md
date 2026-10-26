@@ -482,6 +482,9 @@ Filter definitions are capped at 50 per store, including built-in and disabled f
 
 Email subscriber tools are read-only. `list_marketing_subscribers` filters by `status` (`active`, `pending_confirmation`, `unsubscribed`), `source` (`coming_soon` for sign-ups from a storefront's Coming Soon page) or `search`. `get_marketing_subscriber` returns `consent`, the latest proof stored with a sign-up (the consent wording the visitor agreed to, its `text_version`, language, time, IP address, user agent and page), or `null` when the sign-up carried none, and `consent_records` (up to 20, newest first). Times are RFC 3339 in the store's timezone. IP address and user agent are personal data: keep them only as long as the proof is needed.
 
+Email subscriber lifecycle webhooks are `marketing_subscribers/create`, `marketing_subscribers/update` and `marketing_subscribers/delete` (app scope `read_customers`). Their `subscriber` payload is the GET resource, including `channel: email`, status, source, and consent proof (`text_version`, `captured_at`, `source_page`, `locale`). Creation includes pending confirmation; confirmation, unsubscribe and resubscription are updates. Delete carries the resource before deletion. Use `get_webhook_topic_schema` to inspect fields and projections. The existing `subscribers/create` activation event remains available.
+
+
 | Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `list_customer_metafields` | `GET /api/2025-01/customers/{id}/metafields` | store:customers:read |
