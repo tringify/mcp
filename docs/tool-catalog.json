@@ -14946,7 +14946,7 @@
     "api_key": "currencies.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/currencies",
-    "description": "List the store's currencies with their settings. Returns the store's complete currency set, including the base currency and any added currencies. Each currency includes its conversion rate, `rate_source`, rounding mode, the rounding modes it can use, enabled state, and timestamps. The base currency keeps its original prices and cannot be rounded, so its `rounding_modes` is always empty. `conversion_rate` converts base to currency: `amount_in_currency = amount_in_base * conversion_rate`. This is the direction of exchange-rate `rate_inverse`, the opposite of exchange-rate `rate`. It is the rate prices use right now: in manual mode it is the merchant's stored rate (`rate_source: \"manual\"`); in automatic-rate mode it is the live market cross-rate from the current exchange-rate snapshot (`rate_source: \"automatic\"`), and when no current snapshot exists it is the stored placeholder with `rate_source: \"automatic_unavailable\"`—prices in that currency cannot be charged until rates refresh. Exchange rates always use `.` as the decimal separator. Use All exchange rates for the live market table. Live rate refreshes do not fire `currencies/update`; re-read currencies when you need the current automatic rate. The response also shows whether multi-currency is enabled and available on the store's plan, whether rates are automatic, every rounding mode the platform supports, and the store's currency limits. The top-level `rounding_modes` includes `nearest_99`, `nearest_95` and `nearest_50`, which zero-decimal currencies such as JPY reject; offer each currency its own `rounding_modes` instead. `max_conversion_decimals` is the service constant (10); `max_conversion_rate`, `max_per_store` (including the base currency), and `bulk_max` come from the service configuration keys `CURRENCY_MAX_CONVERSION_RATE`, `CURRENCY_MAX_PER_STORE`, and `CURRENCY_BULK_MAX`. Example values are illustrative; read the response to validate manual rates and limits. `bulk_max` caps currency batches, including the bulk data-removal endpoint. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies. Only the connected store is accessible.",
+    "description": "List the store's currencies with their settings. Returns the store's complete currency set, including the base currency and any added currencies. Each currency includes its conversion rate, `rate_source`, rounding mode, the rounding modes it can use, enabled state, and timestamps. The base currency keeps its original prices and cannot be rounded, so its `rounding_modes` is always empty. `conversion_rate` converts base to currency: `amount_in_currency = amount_in_base * conversion_rate`. This is the direction of exchange-rate `rate_inverse`, the opposite of exchange-rate `rate`. It is the rate prices use right now: in manual mode it is the merchant's stored rate (`rate_source: \"manual\"`); in automatic-rate mode it is the live market cross-rate from the current exchange-rate snapshot (`rate_source: \"automatic\"`), and when no current snapshot exists it is empty with `rate_source: \"automatic_unavailable\"`—prices in that currency cannot be charged until rates refresh. Exchange rates always use `.` as the decimal separator. Use conversion_rate from currency reads for the effective rate, never the rounded reference table. Names and rate_message are backend-localized; show rate_message verbatim. Use All exchange rates only for reference. Live rate refreshes do not fire `currencies/update`; re-read currencies when you need the current automatic rate. The response also shows whether multi-currency is enabled and available on the store's plan, whether rates are automatic, every rounding mode the platform supports, and the store's currency limits. The top-level `rounding_modes` includes `nearest_99`, `nearest_95` and `nearest_50`, which zero-decimal currencies such as JPY reject; offer each currency its own `rounding_modes` instead. `max_conversion_decimals` is the service constant (10); `max_conversion_rate`, `max_per_store` (including the base currency), and `bulk_max` come from the service configuration keys `CURRENCY_MAX_CONVERSION_RATE`, `CURRENCY_MAX_PER_STORE`, and `CURRENCY_BULK_MAX`. Example values are illustrative; read the response to validate manual rates and limits. `bulk_max` caps currency batches, including the bulk data-removal endpoint. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -14961,7 +14961,7 @@
     "api_key": "currencies.enabled",
     "api_method": "GET",
     "api_path": "/api/2025-01/currencies/enabled",
-    "description": "Currencies enabled at the store level for pricing and market assignment. Returns only the enabled currencies with their ids, display fields, conversion rate and `rate_source`, rounding configuration, timestamps, and the store's multi-currency enabled state. `conversion_rate` converts base to currency: `amount_in_currency = amount_in_base * conversion_rate`. This is the direction of exchange-rate `rate_inverse`, the opposite of exchange-rate `rate`. It is the rate prices use right now: in manual mode it is the merchant's stored rate (`rate_source: \"manual\"`); in automatic-rate mode it is the live market cross-rate from the current exchange-rate snapshot (`rate_source: \"automatic\"`), and when no current snapshot exists it is the stored placeholder with `rate_source: \"automatic_unavailable\"`—prices in that currency cannot be charged until rates refresh. Exchange rates always use `.` as the decimal separator. Use All exchange rates for the live market table. Live rate refreshes do not fire `currencies/update`; re-read currencies when you need the current automatic rate. Market assignment still determines which currencies a shopper may use. Use the resolved active market—not this store-wide list alone—to build a shopper-facing currency selector. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/enabled. Only the connected store is accessible.",
+    "description": "Currencies enabled at the store level for pricing and market assignment. Returns only the enabled currencies with their ids, display fields, conversion rate and `rate_source`, rounding configuration, timestamps, and the store's multi-currency enabled state. `conversion_rate` converts base to currency: `amount_in_currency = amount_in_base * conversion_rate`. This is the direction of exchange-rate `rate_inverse`, the opposite of exchange-rate `rate`. It is the rate prices use right now: in manual mode it is the merchant's stored rate (`rate_source: \"manual\"`); in automatic-rate mode it is the live market cross-rate from the current exchange-rate snapshot (`rate_source: \"automatic\"`), and when no current snapshot exists it is empty with `rate_source: \"automatic_unavailable\"`—prices in that currency cannot be charged until rates refresh. Exchange rates always use `.` as the decimal separator. Use conversion_rate from currency reads for the effective rate, never the rounded reference table. Names and rate_message are backend-localized; show rate_message verbatim. Use All exchange rates only for reference. Live rate refreshes do not fire `currencies/update`; re-read currencies when you need the current automatic rate. Market assignment still determines which currencies a shopper may use. Use the resolved active market—not this store-wide list alone—to build a shopper-facing currency selector. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/enabled. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -15258,7 +15258,7 @@
     "api_key": "currencies.multi_currency.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/currencies/multi-currency",
-    "description": "Turn selling in additional currencies on or off. Enables or disables multi-currency for the store. Enabling requires the store's plan to include multi-currency. Disabling requires every additional currency to be removed first. A change returns `CURRENCY_UPDATED` and queues `currencies/update`; requesting the current value returns `data.success` without `code` or `message` and records nothing. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/multi-currency. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Turn selling in additional currencies on or off. Enables or disables multi-currency for the store. Enabling requires the store's plan to include multi-currency. Disabling requires every additional currency to be removed first. A change returns a backend-localized success message and queues `currencies/update`; requesting the current value returns `data.success` without `code` or `message` and records nothing. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/multi-currency. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -15281,7 +15281,7 @@
     "api_key": "currencies.auto_rates.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/currencies/auto-rates",
-    "description": "Switch between market-managed and manual exchange rates. Switches exchange rates between market-managed automatic rates and merchant-managed manual rates. Turning automatic rates on requires the store to have no additional currencies. In automatic mode, selecting additional currencies is a Store Admin workflow, and currency reads report the live market rate with `rate_source: \"automatic\"`. Each market-rate refresh that changes those rates fires `currencies/rates_updated`. Turning automatic rates off writes the current market rate onto every additional currency, enabled or disabled, in the same transaction; those values then become the store's manual rates. It fails with `CURRENCY_EXCHANGE_RATE_UNAVAILABLE` (503) and changes nothing when a current rate is missing for any additional currency. The response echoes `use_auto_exchange_rates`. A change returns `CURRENCY_UPDATED` and queues `currencies/update`; requesting the current value returns without `code` or `message` and records nothing. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/auto-rates. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Switch between market-managed and manual exchange rates. Switches exchange rates between market-managed automatic rates and merchant-managed manual rates. Turning automatic rates on requires the store to have no additional currencies. In automatic mode, use POST /currencies/enable or /currencies/bulk-enable to select additional currencies, and currency reads report the live market rate with `rate_source: \"automatic\"`. Each market-rate refresh that changes those rates fires `currencies/rates_updated`. Turning automatic rates off saves full-precision current snapshot cross-rates onto every additional currency, enabled or disabled, rounded once to ten storage decimals in the same transaction; those values then become the store's manual rates. It fails with `CURRENCY_EXCHANGE_RATE_UNAVAILABLE` (503) and changes nothing when a current rate is missing for any additional currency. The response echoes `use_auto_exchange_rates`. A successful switch to manual returns CURRENCY_RATES_SNAPSHOT_SAVED with a localized explanation; re-read currency values. Country selections are unchanged. A change returns a backend-localized success message and queues `currencies/update`; requesting the current value returns without `code` or `message` and records nothing. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/currencies/auto-rates. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -15296,6 +15296,221 @@
       "type": "object"
     },
     "name": "set_auto_exchange_rates",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.enable",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/currencies/enable",
+    "description": "Select one currency in automatic-rate mode. Requires automatic rates and multi-currency. Enabling creates a missing supported currency with rounding_mode none, or enables an existing one. Its rate is supplied by the current complete unexpired snapshot; never use a stored placeholder for prices. Disabling requires an existing non-base currency and is blocked by market assignments or active Gift Card balances. Assign the enabled currency to a market, then select it for countries in Pricing. This operation does not remap countries. The response returns the effective rate, rate_source and localized display fields; an unavailable rate does not become a manual rate. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/enable. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "ISO currency code; normalized to uppercase.",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Explicitly enable or disable; omission or null is rejected.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "enabled"
+      ],
+      "type": "object"
+    },
+    "name": "set_automatic_currency_enabled",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.bulk-enable",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/currencies/bulk-enable",
+    "description": "Select several automatic currencies atomically. The automatic-mode counterpart of Enable or disable an automatic currency. Codes are normalized and deduplicated before the bulk_max limit applies. Enabling creates missing currencies with rounding_mode none. Disabling rejects missing currencies, market dependencies and active Gift Card balances. The base currency is rejected. Either all selected changes commit or none do; updated counts currencies actually changed. Re-read List currencies for effective rates and localized messages. No country selection changes automatically. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-enable. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "codes": {
+          "description": "Supported ISO currency codes; at most bulk_max unique codes.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "enabled": {
+          "description": "Explicitly enable or disable; omission or null is rejected.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "codes",
+        "enabled"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_set_automatic_currencies_enabled",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.bulk-create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/currencies/bulk-create",
+    "description": "Add several currencies with explicit manual rates atomically. Manual mode only. Each currencies entry contains exactly code and conversion_rate, a positive decimal string obeying max_conversion_rate and max_conversion_decimals from List currencies. Duplicate or existing codes and invalid rates reject the entire batch. At most bulk_max entries; max_per_store includes the base currency. New currencies are enabled with rounding_mode none. Returns created and the currencies with their effective rates and localized display fields. Enabling currencies never assigns them to countries. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-create. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "currencies": {
+          "description": "Entries with required code (string) and conversion_rate (decimal string), and no other fields.",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "conversion_rate": {
+                "description": "Positive decimal string, within the limits returned by list_currencies.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "conversion_rate"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "currencies"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_create_currencies",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.bulk-delete",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/currencies/bulk-delete",
+    "description": "Remove selected unused non-base currencies atomically. Manual mode only. Every ID must belong to the connected store and none may be the base currency. Live data and active Gift Card balances block removal. Use the separate confirmation-based data-cleanup operation first when needed. Historical orders and financial records are retained. Returns the number deleted; any failure rolls back the whole batch. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Unique currency UUIDs in this store, at most bulk_max from List currencies. Unknown IDs and the base currency reject the whole batch.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_delete_currencies",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.bulk-update-rate",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/currencies/bulk-update-rate",
+    "description": "Set or multiply saved rates atomically. Manual mode only. operation is set or multiply; value is a positive decimal string. Each resulting rate is rounded once to max_conversion_decimals and checked against the bounds from List currencies. All IDs must belong to this store and the base currency is rejected. Returns updated; any invalid resulting rate rejects the whole batch. Unchanged currencies emit no mutation event. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-update-rate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Unique currency UUIDs in this store, at most bulk_max from List currencies. Unknown IDs and the base currency reject the whole batch.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "operation": {
+          "description": "set or multiply.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Positive decimal-string rate or multiplier.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ids",
+        "operation",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_update_currency_rates",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.bulk-update",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/currencies/bulk-update",
+    "description": "Change rounding, availability or manual rates atomically. Supply at least one change. rate_operation and rate_value must be supplied together and require manual mode; set replaces rates and multiply scales them. Derived rates are rounded once to storage precision. enabled changes existing availability; disabling is blocked by market assignments and active Gift Card balances. rounding_mode must be supported by every selected currency. Unknown IDs, the base currency, invalid rounding or unavailable rates reject the whole batch. Returns updated; requesting existing values makes no mutation event. This does not add currencies or change country selections. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-update. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "description": "Explicit availability of existing currencies.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "ids": {
+          "description": "Unique currency UUIDs in this store, at most bulk_max from List currencies. Unknown IDs and the base currency reject the whole batch.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "rate_operation": {
+          "description": "set or multiply; requires rate_value.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rate_value": {
+          "description": "Positive decimal string; requires rate_operation.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rounding_mode": {
+          "description": "One of every selected currency's rounding_modes.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_update_currencies",
     "scopes": [
       "store:settings.currencies:write"
     ]

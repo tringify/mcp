@@ -1,0 +1,21 @@
+{
+  "title": "Currencies and country pricing",
+  "permission": "store:settings.currencies:write",
+  "read_permission": "store:settings.currencies:read",
+  "workflow": [
+    "Read list_currencies for the base currency, plan availability, current mode and bulk_max.",
+    "Enable multi-currency with set_multi_currency. Choose automatic mode with set_auto_exchange_rates before adding additional currencies.",
+    "In automatic mode, use set_automatic_currency_enabled or bulk_set_automatic_currencies_enabled with explicit enabled. Enabling a missing currency creates it with rounding_mode none. Display the returned rate_message and re-read list_currencies after bulk operations.",
+    "In manual mode, use create_currency or bulk_create_currencies with explicit decimal-string conversion_rate values. Use bulk_update_currency_rates to set or multiply rates, bulk_update_currencies for availability and rounding, and bulk_delete_currencies only after live dependencies are cleared.",
+    "Enablement does not assign a currency to countries. Assign the currency to the market, then select it for each country in Pricing. New countries initially use the base currency.",
+    "When MARKET_CURRENCY_NOT_READY is returned, show its backend-localized message. Configure the new currency's enabled checkout limits and fixed fees, COD fees and thresholds including zones, and fixed payment adjustments. A conflicting duty rule must be reviewed, removed and recreated explicitly.",
+    "Recheck storefront Coverage and open the existing country address. Connecting a domain does not create these commercial assignments. Currency tools never require domain or email-settings scopes."
+  ],
+  "rates": {
+    "effective": "Use conversion_rate and rate_source from currency reads. Show the backend-provided name and rate_message in the merchant's language. automatic_unavailable returns an empty conversion_rate and cannot be priced.",
+    "reference": "list_exchange_rates and get_exchange_rate are shortened reference displays, not effective pricing rates. Do not substitute their rate_inverse for automatic currency reads.",
+    "switch_to_manual": "The backend snapshots all additional currencies, including disabled ones, from one complete current snapshot and rounds once to ten storage decimals. Missing rates reject the whole switch. Display CURRENCY_RATES_SNAPSHOT_SAVED's localized message and re-read the saved rates; country selections stay unchanged."
+  },
+  "batches": "Read bulk_max rather than hardcoding it. All selected changes are atomic; unknown IDs and the base currency reject the whole batch. Currency data cleanup retains its separate impact-preview and single-use confirmation-token workflow. Historical orders and financial snapshots are retained.",
+  "notifications": "currencies/rates_updated uses a durable GLOBAL refresh handoff and bounded store pages. The store cursor commits with outbox admission; restarts and uncertain commits resume from persisted progress. Each refresh/store event ID is deterministic. Delivery is asynchronous and may lag pricing. Deduplicate event IDs, compare updated_at and read current rates to reconcile. Subscription, automatic mode and enabled currency eligibility are evaluated while processing the store page."
+}
