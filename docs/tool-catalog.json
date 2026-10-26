@@ -25712,5 +25712,479 @@
     "scopes": [
       "store:blog:read"
     ]
+  },
+  {
+    "api_key": "products.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/products/{id}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/products/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_product_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "products.variants.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "variant_id": {
+          "description": "Variant ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "variant_id",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_variant_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "collections.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/collections/{id}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/collections/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Collection id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_collection_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "categories.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/categories/{id}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/categories/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Category id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_category_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "pages.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/pages/{id}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/pages/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Page id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_page_metafield",
+    "scopes": [
+      "store:pages:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Post id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_blog_post_metafield",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_categories.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Blog Category id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_blog_category_metafield",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "brands.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/brands/{id}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/brands/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Brand id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_brand_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "vendors.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/vendors/{id}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/vendors/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Vendor id.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_vendor_metafield",
+    "scopes": [
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "orders.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/orders/{orderId}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/orders/{orderId}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "orderId": {
+          "description": "Order ID in the token's store.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "orderId",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_order_metafield",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "orders.items.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/orders/{orderId}/items/{itemId}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/orders/{orderId}/items/{itemId}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "description": "Order-line id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "orderId": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "orderId",
+        "item_id",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_order_item_metafield",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "customers.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/customers/{id}/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/customers/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Customer UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_customer_metafield",
+    "scopes": [
+      "store:customers:write"
+    ]
+  },
+  {
+    "api_key": "store.metafields.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/store/metafields/{namespace}/{key}",
+    "description": "Clear one metafield value and its translations, preserving its definition. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/store/metafields/{namespace}/{key}. Only the connected store is accessible. Clears the value immediately; no confirmation token is used.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "description": "Definition key.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Definition namespace; URL-encode reserved characters.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "key"
+      ],
+      "type": "object"
+    },
+    "name": "delete_store_metafield",
+    "scopes": [
+      "store:settings.metafield_definitions:write"
+    ]
   }
 ]
