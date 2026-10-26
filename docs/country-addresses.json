@@ -1,0 +1,14 @@
+{
+  "title": "Country address setup",
+  "read": "list_country_urls requires store:online_store.storefronts:read. Use canonical addresses and backend diagnostics; do not construct country prefixes.",
+  "languages": "set_country_languages requires store:online_store.storefronts:write and explicit locales/default_language per country.",
+  "domains": "list_assignable_domains requires store:settings.domains:write. assign_storefront_domain, set_country_domain, clear_country_domain, set_primary_domain and clear_primary_domain require store:settings.domains:write and merchant approval. Installed apps cannot hold domain or email-settings scopes.",
+  "verification": "Primary changes use existing confirmation plus fresh set_primary_domain or clear_primary_domain verification. Every unassign uses unassign_domain verification. Show returned impact and never confirm automatically.",
+  "prerequisite": "Connect each hostname in Settings > Domains first. DNS/provider setup remains admin-only.",
+  "policy": [
+    "Country URLs reports the chosen public host, language source and configuration messages. A dedicated domain must be Connected and ready for HTTPS. If it stops being ready, the country remains assigned to it and its addresses are unavailable; a shared address is not substituted. Country and language names and search follow your interface language. Fix the displayed issue, then refresh.",
+    "Changing a country’s default language changes the language at its dedicated domain root. Other retained languages remain available at their explicit addresses. Replacing or reverting a country domain preserves the country, the old root’s language, the route and query parameters on old links while the old domain remains connected and assigned. Removed languages return 404. An old host cannot serve a different country, storefront or primary address while preserving those links. Unassigning or disconnecting it ends redirects.",
+    "An explicit country URL or dedicated country host takes precedence over the shopper’s session and GeoIP location. A shared root or language-only address does not express an explicit country choice, so an existing shopper session can affect its commercial context. Invalid countries and unsupported or removed country-language combinations return 404 without moving the shopper to another market.",
+    "Each sitemap lists the country-language addresses whose canonical host is that sitemap’s host, including shared-country prefixes and languages offered only outside the baseline country. Dedicated hosts have their own sitemaps. Files contain at most 45,000 URLs; country currency determines product visibility. Canonical and hreflang links stay within the current storefront and its dedicated country hosts. Address changes invalidate the affected storefront caches; verify again after propagation."
+  ]
+}

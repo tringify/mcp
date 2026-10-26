@@ -21341,7 +21341,7 @@
     "api_key": "storefronts.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/storefronts",
-    "description": "List the store's storefronts. Returns every storefront with its mode, password protection, domains and `primary_url` (empty until a primary domain is active). Read a storefront's languages with Get storefront languages. urls is an array of active, HTTPS-ready public domain names, primary first, including the permanent mytringify address on the primary storefront. No schemes or paths are included. public_contact_email is the store’s explicitly public contact email, or empty when unset; it never falls back to a private login, sender or reply-to address. Both fields require read_storefront. Refresh urls on domains/create, domains/update and domains/delete; those events contain only domain, is_primary, status and storefront_id. The mytringify subdomain cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts. Only the connected store is accessible.",
+    "description": "List the store's storefronts. Returns every storefront with its mode, password protection, domains and `primary_url` (empty until a primary domain is active). Read a storefront's languages with Get storefront languages. urls is an array of active, HTTPS-ready public domain names, primary first, including the permanent mytringify address on the primary storefront. No schemes or paths are included. public_contact_email is the store’s explicitly public contact email, or empty when unset; it never falls back to a private login, sender or reply-to address. Both fields require read_storefront. Refresh urls on domains/create, domains/update and domains/delete; those events also include default_country, default_locale, retired_country, retired_locale, public_ready and address_revision. Read Country URLs for complete canonical addresses and diagnostics. The mytringify subdomain cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -21356,7 +21356,7 @@
     "api_key": "storefronts.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/storefronts/{storefrontId}",
-    "description": "Get one storefront and its page-title settings. Adds the store's `add_store_name_to_page_titles` and share image to the storefront. Next to `storefront` (not inside it), `data` carries `go_live`: whether the store can go live (`ready`) and, if not, the `blockers` to fix first; and `cache`: when the storefront cache was last cleared (`last_cleared_at`, null if never), when it can be cleared again (`next_available_at`, null if never cleared), whether it can be cleared now (`can_clear`, the server's verdict) and the wait between clears in hours (`cooldown_hours`). Times are RFC 3339 in UTC. urls is an array of active, HTTPS-ready public domain names, primary first, including the permanent mytringify address on the primary storefront. No schemes or paths are included. public_contact_email is the store’s explicitly public contact email, or empty when unset; it never falls back to a private login, sender or reply-to address. Both fields require read_storefront. Refresh urls on domains/create, domains/update and domains/delete; those events contain only domain, is_primary, status and storefront_id. The mytringify subdomain cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}. Only the connected store is accessible.",
+    "description": "Get one storefront and its page-title settings. Adds the store's `add_store_name_to_page_titles` and share image to the storefront. Next to `storefront` (not inside it), `data` carries `go_live`: whether the store can go live (`ready`) and, if not, the `blockers` to fix first; and `cache`: when the storefront cache was last cleared (`last_cleared_at`, null if never), when it can be cleared again (`next_available_at`, null if never cleared), whether it can be cleared now (`can_clear`, the server's verdict) and the wait between clears in hours (`cooldown_hours`). Times are RFC 3339 in UTC. urls is an array of active, HTTPS-ready public domain names, primary first, including the permanent mytringify address on the primary storefront. No schemes or paths are included. public_contact_email is the store’s explicitly public contact email, or empty when unset; it never falls back to a private login, sender or reply-to address. Both fields require read_storefront. Refresh urls on domains/create, domains/update and domains/delete; those events also include default_country, default_locale, retired_country, retired_locale, public_ready and address_revision. Read Country URLs for complete canonical addresses and diagnostics. The mytringify subdomain cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -26740,6 +26740,289 @@
     "scopes": [
       "store:settings.metafield_definitions:write",
       "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "domains.assignable",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/domains/assignable",
+    "description": "Browse ready unassigned domain inventory. Search and paginate Connected inventory. Requires settings.domains:write because it prepares assignment; no connection is provisioned by this read. Merchant credentials only; installed apps cannot hold domain or email-settings scopes. Connect the hostname in Settings > Domains and wait for Connected before assigning it. Root and www require separate connections. Responses include backend-localized address_impact; show it to the merchant. Read Country URLs to verify the resulting addresses. Retired country aliases cannot become primary or move to another country/storefront; disconnecting them ends old-link redirects. DNS connection, verification, disconnection and provider setup remain Store Admin-only. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/domains/assignable. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "per_page": {
+          "description": "Page size, bounded by the returned limits.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search domain names.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_assignable_domains",
+    "scopes": [
+      "store:settings.domains:write"
+    ]
+  },
+  {
+    "api_key": "domains.assignment.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/domains/{domainId}/storefront",
+    "description": "Assign ready inventory or unassign an alias. storefront_id is the destination UUID; an empty string unassigns. Unassigning any domain requires the existing action-bound verification. Pinned/retired domains cannot be moved while retaining links. Merchant credentials only; installed apps cannot hold domain or email-settings scopes. Connect the hostname in Settings > Domains and wait for Connected before assigning it. Root and www require separate connections. Responses include backend-localized address_impact; show it to the merchant. Read Country URLs to verify the resulting addresses. Retired country aliases cannot become primary or move to another country/storefront; disconnecting them ends old-link redirects. DNS connection, verification, disconnection and provider setup remain Store Admin-only. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/domains/{domainId}/storefront. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_id": {
+          "description": "Connected domain id from List domains or assignable inventory.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Required by the existing unassign_domain verification when removing an assignment.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "storefront_id": {
+          "description": "Destination storefront UUID, or empty to unassign.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_id",
+        "storefront_id"
+      ],
+      "type": "object"
+    },
+    "name": "assign_storefront_domain",
+    "scopes": [
+      "store:settings.domains:write"
+    ]
+  },
+  {
+    "api_key": "domains.country.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/domains/{domainId}/country",
+    "description": "Pin or replace a dedicated country domain. Requires a Connected non-primary custom domain assigned to this storefront and plan entitlement. country_code must be covered with a valid default language. To replace a pin, pass replace_domain_id from domain_id in the current Country URLs row; stale holders fail. The old connected host retains its country and old root language and redirects to the new canonical address; both sides publish events. Merchant credentials only; installed apps cannot hold domain or email-settings scopes. Connect the hostname in Settings > Domains and wait for Connected before assigning it. Root and www require separate connections. Responses include backend-localized address_impact; show it to the merchant. Read Country URLs to verify the resulting addresses. Retired country aliases cannot become primary or move to another country/storefront; disconnecting them ends old-link redirects. DNS connection, verification, disconnection and provider setup remain Store Admin-only. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/domains/{domainId}/country. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "Covered country code.",
+          "type": "string"
+        },
+        "domain_id": {
+          "description": "Connected domain id from List domains or assignable inventory.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "replace_domain_id": {
+          "description": "Expected existing holder, required for replacement.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "domain_id",
+        "country_code"
+      ],
+      "type": "object"
+    },
+    "name": "set_country_domain",
+    "scopes": [
+      "store:settings.domains:write"
+    ]
+  },
+  {
+    "api_key": "domains.country.clear",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/domains/{domainId}/country",
+    "description": "Revert a country to shared addresses. Retains old-host redirects while the domain stays connected and assigned. The previous default language is retained for old root links; removed languages fail with 404. The shared host must be available. Merchant credentials only; installed apps cannot hold domain or email-settings scopes. Connect the hostname in Settings > Domains and wait for Connected before assigning it. Root and www require separate connections. Responses include backend-localized address_impact; show it to the merchant. Read Country URLs to verify the resulting addresses. Retired country aliases cannot become primary or move to another country/storefront; disconnecting them ends old-link redirects. DNS connection, verification, disconnection and provider setup remain Store Admin-only. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/domains/{domainId}/country. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_id": {
+          "description": "Connected domain id from List domains or assignable inventory.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_id"
+      ],
+      "type": "object"
+    },
+    "name": "clear_country_domain",
+    "scopes": [
+      "store:settings.domains:write"
+    ]
+  },
+  {
+    "api_key": "domains.primary.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/domains/{domainId}/primary",
+    "description": "Choose the storefront's primary host. Uses the existing confirmation and fresh action/target verification. First send confirmed=false, show returned warnings, then repeat with confirmation_token and otp_code. Never confirm automatically. Merchant credentials only; installed apps cannot hold domain or email-settings scopes. Connect the hostname in Settings > Domains and wait for Connected before assigning it. Root and www require separate connections. Responses include backend-localized address_impact; show it to the merchant. Read Country URLs to verify the resulting addresses. Retired country aliases cannot become primary or move to another country/storefront; disconnecting them ends old-link redirects. DNS connection, verification, disconnection and provider setup remain Store Admin-only. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/domains/{domainId}/primary. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token from confirmation response.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "True after the merchant approves the returned warning.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "domain_id": {
+          "description": "Connected domain id from List domains or assignable inventory.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "otp_code": {
+          "description": "Fresh verification: set_primary_domain, target_type domain, target_id domainId.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "domain_id"
+      ],
+      "type": "object"
+    },
+    "name": "set_primary_domain",
+    "scopes": [
+      "store:settings.domains:write"
+    ]
+  },
+  {
+    "api_key": "domains.primary.clear",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/primary-domain",
+    "description": "Restore the primary storefront's platform host. Only the primary storefront can restore its materialized platform domain. Uses the existing confirmation and fresh action/target verification; show warnings before confirming. Merchant credentials only; installed apps cannot hold domain or email-settings scopes. Connect the hostname in Settings > Domains and wait for Connected before assigning it. Root and www require separate connections. Responses include backend-localized address_impact; show it to the merchant. Read Country URLs to verify the resulting addresses. Retired country aliases cannot become primary or move to another country/storefront; disconnecting them ends old-link redirects. DNS connection, verification, disconnection and provider setup remain Store Admin-only. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/storefronts/{storefrontId}/primary-domain. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use confirmation token.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "True after merchant approval.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "otp_code": {
+          "description": "Fresh verification: clear_primary_domain, target_type storefront, target_id storefrontId.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "storefront_id": {
+          "description": "Primary storefront id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id"
+      ],
+      "type": "object"
+    },
+    "name": "clear_primary_domain",
+    "scopes": [
+      "store:settings.domains:write"
+    ]
+  },
+  {
+    "api_key": "storefronts.country_urls.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/country-urls",
+    "description": "Read canonical public addresses and diagnostics. Read-only public projection under read_storefront; apps need no domain or email-settings scopes. Returns one row per covered active-market country, with host, optional domain_id, currency_code, default_language, language_source, localized languages, mode, status, configuration_issues (stable codes), configuration_messages (backend wording), decisions, and addresses (locale, locale_name, url, is_default). Unavailable assignments remain dedicated and return no addresses; do not invent a shared fallback. address_revision is monotonic: restart pagination if it changes between pages. Counts reflect the search; total reflects the selected filter. Refresh on storefronts/update and domains events, comparing revisions. No DNS records, tokens or connection secrets are returned. The shared baseline uses the storefront primary locale at root; other country addresses use the backend-generated prefix. Dedicated roots use the current country default. Explicit country URLs override session/GeoIP. Invalid/removed combinations return 404 without changing country. Connected, assigned retired hosts redirect preserving country, still-served language, route and query. A default-language change deliberately changes root semantics; explicit paths for retained languages remain addressable. Do not construct URLs in an integration. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/storefronts/{storefrontId}/country-urls. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "filter": {
+          "description": "all, shared, dedicated or errors.",
+          "type": "string"
+        },
+        "page": {
+          "description": "One-based country page; default 1.",
+          "type": "integer"
+        },
+        "per_page": {
+          "description": "Country rows per page; default 25, capped by the live domain list limit.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Country or language code, localized/English/native language name, currency or assigned hostname.",
+          "type": "string"
+        },
+        "storefront_id": {
+          "description": "Storefront id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_country_urls",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "storefronts.country_languages.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/country-languages",
+    "description": "Set allowed languages and the default for selected countries. Each mappings key is a covered country code; its value contains a non-empty locales array and an explicit default_language from that array. Only languages already served by this storefront are accepted. Omitted countries remain unchanged. No legacy string forms or automatic default selection. Uses the same transactional country-language command as Store Admin and sends storefront/locales/update plus an address revision in storefronts/update. Changing a dedicated country's default changes its root language immediately. Removed language addresses return 404; retained languages keep explicit addresses. Read Country URLs after saving. Returns the country language mapping page used by Store Admin, including effective defaults. Apps may use write_storefront; merchant connections also require online_store.storefronts:write. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/country-languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "mappings": {
+          "description": "Country code to {locales, default_language}. Non-empty, explicit selection required.",
+          "type": "object"
+        },
+        "storefront_id": {
+          "description": "Storefront id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "mappings"
+      ],
+      "type": "object"
+    },
+    "name": "set_country_languages",
+    "scopes": [
+      "store:online_store.storefronts:write"
     ]
   }
 ]
