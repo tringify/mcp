@@ -1,5 +1,14 @@
 # Changelog
 
+## Email setup steps — 27 October 2026
+
+- Added `get_email_overview`: the store's email setup in order (sending domain, sender address, default sender, reply-to), the single `next_action` with the `tool` and `arguments` to call, and sending health (bounce rate, spam complaint rate, addresses Tringify no longer emails, each problem with its cause and fix).
+- Added `get_email_domain`. Every sending domain now carries `badge`, `actions`, `setup` (path, five steps, the six records with what public DNS shows, last and next check, `poll_after_ms`), `next_action` and `issue`. When Tringify hosts the domain's DNS it writes every record itself.
+- Removed `get_email_domain_records`: the records are `setup.records` on the domain.
+- `verify_email_domain` returns the sending domain (code `EMAIL_LIFE_CHECKED`) and never fails while DNS is still updating. Don't call it in a loop; look again after `next_action.after`.
+- Added `check_email_domain_removal` and `check_email_sender_removal`: `confirm`, `impacts`, `verification` and `next_action` (`request_verification_code`). Removing the default sender, or a sending domain that holds it, is allowed; the Tringify address takes over. `EMAIL_ADDRESS_DELETE_DEFAULT` and `EMAIL_DOMAIN_DELETE_WITH_DEFAULT` are gone.
+- Removed the sending provider from every email result: `provider`, `sending_provider`, `ses`, `ses_is_verified`, `can_delete`, `permanent`, `dns_records`, `status` and the other raw fields, and the `provider` argument.
+
 ## Email times and send history — 27 October 2026
 
 - `verify_email_domain` returns `next_check_at` as RFC 3339 in the store's timezone with its offset, and `next_check`, the same time as text to show. Sending domains no longer return the raw UTC `ses.last_check_at` and `ses.verified_at`; read the domain's `last_check_at` and `verified_at`.

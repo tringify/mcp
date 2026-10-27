@@ -95,6 +95,7 @@ All store-data tools use the corresponding Store API operations. The server retu
 | Storefront page SEO | Home, shop and search pages: `get_storefront_page_seo`, individual and batch translations, country SEO | `update_storefront_page_seo` (`null` or a `*_is_default` flag returns a field, robots included, to its default), individual and batch translations, country SEO |
 | Pixels | `list_custom_pixels` (without code), `get_custom_pixel`, `list_app_pixels` (minimal projection) | `create_custom_pixel`, `update_custom_pixel`, `delete_custom_pixel`, `set_app_pixel` (turning on a full-page-access pixel needs the merchant's acknowledgement) |
 | Online Store settings | Preferences, age gate, express checkout, URL redirects, search settings and index jobs, search synonyms, recommendations, storefront messages | The matching updates; see the [tool inventory](docs/catalog-tools.md) |
+| Email settings | `get_email_overview`, `list_email_domains`, `get_email_domain`, `check_email_domain_removal`, `check_email_sender_removal`, senders, reply-to, history, statistics, suppressions | Sending domains, senders, default sender, reply-to, MAIL FROM, suppression lifts (changes need a verification code) |
 
 Catalog reads require `store:products:read`; catalog writes require `store:products:write`. Binding new catalog images also requires `store:files:read`. `connection:read` permits the connection itself and grants no store-data access.
 
@@ -134,6 +135,10 @@ Online Store tools need the Store Admin permission of the page that manages them
 - `update_storefront_mode` sets `live`, `maintenance` or `coming_soon`. Taking a live storefront offline first returns `CONFIRMATION_REQUIRED` with warnings and a single-use `confirmation_token`; show the change, get approval, then repeat the same mode with `confirmed: true` and the token. Never confirm automatically. Going live is refused with `STOREFRONT_NOT_READY_TO_GO_LIVE` and the `blockers` to fix (the same list as `go_live` in `get_storefront`). `STOREFRONT_MODE_CONFLICT` means someone else changed the status: read the storefront again.
 - `update_storefront_password` acts at once, without confirmation. Setting a password hides a live storefront from shoppers immediately; an empty string or `null` removes it; a password of only spaces is rejected.
 - `clear_storefront_cache` clears the cached pages of every storefront in the store. It is allowed once every 12 hours per store; check `cache.can_clear` in `get_storefront`. An earlier call returns `STOREFRONT_CACHE_CLEAR_TOO_SOON` with `next_available_at`.
+
+## Email settings
+
+Email settings tools use `store:settings.email:read` or `store:settings.email:write`; installed apps can never use them. Start with `get_email_overview`: it shows the four setup steps (sending domain, sender address, default sender, reply-to), the single `next_action` with the `tool` and `arguments` to call, and sending health. Follow `next_action`; call `verify_email_domain` once after the merchant adds DNS records and otherwise look again after `next_action.after` instead of calling it in a loop. Before removing a sending domain or sender, call `check_email_domain_removal` or `check_email_sender_removal`, show the confirmation and impacts, then `request_verification_code` and delete with `otp_code`. See [Email settings](docs/catalog-tools.md#email-settings).
 
 ## Languages and translations
 

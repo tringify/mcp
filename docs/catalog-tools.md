@@ -665,6 +665,25 @@ Walk the merchant through a domain like this; the [Connect a domain walkthrough]
 
 Removing a domain, setting up hosted DNS, creating, updating, deleting, bulk deleting or importing records, unassigning a domain, and setting or clearing the primary domain need `otp_code`: a verification code bound to the action and target the tool names (see Verification codes). Adding, checking, assigning, country domains, refreshing, scanning, retrying, exporting and reading need no code.
 
+## Email settings
+
+The email settings tools do everything Store Admin › Settings › Email does, for the merchant's own connection only; installed apps can never hold email access. Reads need `store:settings.email:read`, every change `store:settings.email:write`. Every response carries the text Store Admin and the mobile app show, in the request language; show it as given and never work out labels, eligibility or next steps yourself. No response names the sending provider.
+
+- `get_email_overview`: how the store sends now (`badge`), the four `steps` in order (sending domain, sender address, default sender, reply-to), `next_action` (the single next step with the `tool` and `arguments` to call) and `health` (bounce rate, spam complaint rate, addresses Tringify no longer emails, and `issues` with cause and fix).
+- `get_email_domain` / `list_email_domains`: each sending domain with `badge`, `actions`, `setup` (`path` `tringify_dns` or `your_dns`, the five steps, the six `records` with what public DNS shows, `last_checked`, `next_check`, `next_check_at`, `poll_after_ms`), `next_action` and `issue`. The records are on the domain; `get_email_domain_records` was removed.
+- `check_email_domain_removal` / `check_email_sender_removal`: the removal's `confirm` sentence, `impacts`, `verification` and `next_action`.
+
+Walk the merchant through email like this; the [Set up email walkthrough](https://developers.tringify.com/apps/connectors/set-up-email) has a full example.
+
+1. **Read.** Call `get_email_overview` and show its badge, steps and `next_action.message`. Then call `next_action.tool` with `next_action.arguments` once the merchant agrees.
+2. **Sending domain.** `list_email_domain_candidates`, then `create_email_domain`. When `setup.path` is `tringify_dns`, Tringify writes all six records itself (3 DKIM CNAME, MX and TXT on `bounce.<domain>`, DMARC TXT): there is nothing for the merchant to add. Otherwise show each record's `label`, `type`, `host`, `value` and `status_text`.
+3. **Don't loop.** Call `verify_email_domain` once when the merchant says they added the records; it runs the next step at once, returns the domain and never fails while DNS is still updating. Tringify keeps checking in the background, so otherwise look again with `get_email_domain` after `next_action.after` (or `setup.poll_after_ms` while verifying). Never call `verify_email_domain` repeatedly.
+4. **Sender, default, reply-to.** Follow `next_action`: `create_email_sender` once the domain is ready, `set_default_email_sender`, then `update_email_reply_to` (the merchant confirms it from that inbox).
+5. **Health.** Relay `health.issues[]` and each domain's `issue` (`title`, `message`, `fix`). Missing DMARC or bounce records never stop sending; they are shown as something to fix.
+6. **Remove.** Call `check_email_domain_removal` or `check_email_sender_removal`, show `confirm` and every `impacts[].message` (senders removed, the Tringify address taking over as default sender, marketing paused, DNS records Tringify deletes). After the merchant approves, call its `next_action` (`request_verification_code`), ask for the emailed code and call `delete_email_domain` or `delete_email_sender` with `otp_code`. Removing the default sender is allowed.
+
+Adding or removing a sending domain, restarting verification, changing MAIL FROM, adding or removing a sender, choosing the default sender and changing reply-to need `otp_code` (see Verification codes); a missing or wrong code is refused with `details.next_action`, the `request_verification_code` call to make.
+
 ## Verification codes
 
 Removing a domain, setting up hosted DNS, DNS record changes, unassigning a domain, setting or clearing the primary domain, and sending-domain, sender, reply-to and MAIL FROM changes need the same verification code Store Admin asks for. Each of those tools names the exact `action`, `target_type` and `target_id` in its description.
