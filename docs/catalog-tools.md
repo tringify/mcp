@@ -461,6 +461,19 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_email_reply_to` | `GET /api/2025-01/email/reply-to` | store:settings.email:read |
 | `update_email_reply_to` | `PUT /api/2025-01/email/reply-to` | store:settings.email:write |
 | `get_email_suppression` | `GET /api/2025-01/email/suppressions` | store:settings.email:read |
+| `create_email_sender` | `POST /api/2025-01/email/senders` | store:settings.email:write |
+| `delete_email_sender` | `DELETE /api/2025-01/email/senders/{addressId}` | store:settings.email:write |
+| `set_default_email_sender` | `PUT /api/2025-01/email/senders/{addressId}/default` | store:settings.email:write |
+| `create_email_domain` | `POST /api/2025-01/email/domains` | store:settings.email:write |
+| `get_email_domain_records` | `GET /api/2025-01/email/domains/{domainId}/records` | store:settings.email:read |
+| `verify_email_domain` | `POST /api/2025-01/email/domains/{domainId}/verify` | store:settings.email:write |
+| `restart_email_domain` | `POST /api/2025-01/email/domains/{domainId}/restart` | store:settings.email:write |
+| `delete_email_domain` | `DELETE /api/2025-01/email/domains/{domainId}` | store:settings.email:write |
+| `set_email_mail_from` | `PUT /api/2025-01/email/domains/{domainId}/mail-from` | store:settings.email:write |
+| `list_email_history` | `GET /api/2025-01/email/history` | store:settings.email:read |
+| `get_email_statistics` | `GET /api/2025-01/email/statistics` | store:settings.email:read |
+| `list_email_suppressions` | `GET /api/2025-01/email/suppression-history` | store:settings.email:read |
+| `lift_email_suppression` | `POST /api/2025-01/email/suppressions/lift` | store:settings.email:write |
 | `request_verification_code` | `POST /api/2025-01/verification-codes` | store:settings.domains:write or store:settings.email:write (the one of the requested action) |
 | `list_store_api_scopes` | `GET /api/2025-01/scopes` | Valid Store connection; no resource scope |
 | `list_countries` | `GET /api/2025-01/reference/countries` | Valid Store connection; no resource scope |
@@ -632,12 +645,25 @@ Email subscriber lifecycle webhooks are `subscribers/create`, `subscribers/updat
 
 The domain tools do everything Store Admin › Settings › Domains does, for the merchant's own connection only; installed apps can never hold domain access. Reads need `store:settings.domains:read`, every change `store:settings.domains:write`, and each change runs as the connected member with that member's permissions.
 
-- `create_domain` adds a domain as `pending` and returns the DNS records to publish in `dns_instructions`. Every domain carries `setup`, its step-by-step setup state (nameservers to set or records to add, what public DNS shows now, the next automatic check); Tringify advances it in the background. `verify_domain` runs the next step at once and never fails a domain while DNS is still updating. A subdomain uses `dns_management: external`; a root domain uses `managed` (Tringify hosts its DNS) unless its provider can route a root domain.
-- `connect_domain` finds the DNS provider (`action: discover`) and, when automatic setup is available, returns `apply_url` (`action: apply`). Give that link to the merchant to open in their browser; never open or fetch it yourself.
-- Call `check_domain_removal` before `delete_domain` and show the merchant what goes with the domain (sending domains, sender addresses, the new default sender).
-- `create_dns_zone` lets Tringify host a root domain's DNS. `refresh_dns_zone`, `scan_dns_zone`, `cancel_scan_dns_zone` and `retry_dns_zone` change no records.
-- Removing a domain, setting up hosted DNS, and creating, updating, deleting, bulk deleting or importing records need `otp_code`: a verification code bound to the action and target the tool names. Get it with `request_verification_code` (see Verification codes). Other domain tools need no code.
-- Queued DNS work answers HTTP 202: poll `get_dns_operation` with the returned operation id, or follow import and export jobs with `list_dns_jobs`. Preview an import with `preview_dns_import`, get an export file with `get_dns_export_download` (the link works for 5 minutes).
+Every domain returned by `get_domain`, `list_domains`, `create_domain` and `verify_domain` carries what to show and do at any stage of its life, the same values Store Admin and the mobile app render, in the request language:
+
+- `badge` (`label`, `tone`) and `role_label`: how the domain reads in a list.
+- `setup`: the step-by-step setup state (nameservers to set or records to add, what public DNS shows now, the last and next automatic check).
+- `next_action`: the single next step, with `label`, `message`, `after` (when looking again makes sense) and the `tool` and `arguments` to call. Absent when nothing is left to do.
+- `issue`: what is wrong after setup (HTTPS blocked by a CAA record or another Cloudflare account, certificate timed out, DNS records changed, disconnected, primary address handed to another domain), with `title`, `message`, `fix`, `since` and, for a DNS warning, the `deadline`.
+- `actions`: what the domain allows now (check, assign_storefront, unassign, set_primary, clear_primary, set_country, clear_country, manage_dns, remove).
+
+Walk the merchant through a domain like this; the [Connect a domain walkthrough](https://developers.tringify.com/apps/connectors/connect-a-domain) has a full example.
+
+1. **Add.** Call `connect_domain` with `action: discover`. Show each of its `options` (`label`, `description`, and `unavailable_reason` when it doesn't suit the address) and let the merchant choose; `chosen` is the recommendation. Call `create_domain` with the chosen `dns_management`. `DOMAIN_LIMIT_REACHED`, `DOMAIN_INVALID_FORMAT` and `DOMAIN_CLAIM_REQUIRED` (another store's unfinished claim: publish the TXT record its message names, then add again) are refusals to relay as given.
+2. **Set up.** Show `next_action.message` (and `setup.nameservers` or `setup.records`). When the merchant says they made the change, call `verify_domain`; it never fails a domain while DNS is still updating. Tringify keeps checking in the background, so don't loop: look again with `get_domain` after `next_action.after`. If `connect_domain` (`action: apply`) returns `apply_url`, give it to the merchant to open in their browser; never open or fetch it yourself.
+3. **HTTPS.** After ownership is verified the certificate is issued, usually within minutes. If `issue` appears (for example `certificate_caa`), relay its `message` and `fix`.
+4. **Assign.** When `next_action.key` is `assign_storefront`, call `list_storefronts`, let the merchant choose and call `assign_storefront_domain`. `set_primary_domain` (confirm first, then a verification code), `set_country_domain` and `clear_country_domain` follow.
+5. **Health.** Connected domains are re-checked every 6 hours. A DNS warning (`issue.key` `dns_warning`) says what public DNS shows, the fix and the deadline; after the fix, `verify_domain` re-checks at once. A primary domain that stopped working hands the primary address over (`issue.key` `primary_fallback`); once it reconnects, `next_action` offers `set_primary_domain` again.
+6. **Hosted DNS.** `create_dns_zone` lets Tringify host a root domain's DNS. A zone's `view` has `state_label`, `tone`, `working` (read again after `poll_after_ms`) and `operation` (the one change to show: queued, applied, failed or cancelled). Queued DNS work answers HTTP 202: poll `get_dns_operation` with the returned `operation_id`, or follow import and export jobs with `list_dns_jobs`. `refresh_dns_zone`, `scan_dns_zone`, `cancel_scan_dns_zone` and `retry_dns_zone` change no records. Preview an import with `preview_dns_import`; get an export file with `get_dns_export_download` (the link works for 5 minutes).
+7. **Remove.** Call `check_domain_removal` and show its `confirm` sentence and every `impacts[].message` (hosted DNS and its records, sending domains, sender addresses, the new default sender, that the domain is free for any store afterwards). After the merchant approves, call its `next_action` (`request_verification_code` with the given arguments), ask the merchant for the emailed code and call `delete_domain` with `otp_code`. A domain that can't be removed yet is refused with `details.next_action`: `DOMAIN_ASSIGNED_TO_STOREFRONT` (unassign first, which needs its own `unassign_domain` code) or `DOMAIN_DNS_NAMESERVERS_IN_USE` (the message lists the Tringify nameservers to change at the registrar; check again once public DNS shows the change).
+
+Removing a domain, setting up hosted DNS, creating, updating, deleting, bulk deleting or importing records, unassigning a domain, and setting or clearing the primary domain need `otp_code`: a verification code bound to the action and target the tool names (see Verification codes). Adding, checking, assigning, country domains, refreshing, scanning, retrying, exporting and reading need no code.
 
 ## Verification codes
 
@@ -648,7 +674,7 @@ Removing a domain, setting up hosted DNS, DNS record changes, unassigning a doma
 3. Tell the merchant where the code went and ask them for it. Never guess, reuse or invent a code.
 4. Call the tool with `otp_code` before `expires_at`.
 
-A code works once, only for the action and target it was requested for. A wrong, expired or mismatched code is refused (`DANGEROUS_CODE_INVALID`, or `DOMAIN_REMOVAL_OTP_INVALID` for `delete_domain`); request a new one, after `resend_available_at` for the same action and target. Requests are limited per merchant and per store. The tool is listed while the connection holds `store:settings.domains:write` or `store:settings.email:write`; each call needs the one of its action. Connected tools get the code by email only; passkey confirmation is for Store Admin. Every request is recorded in the store's activity log.
+A code works once, only for the action and target it was requested for. A missing code is refused with `DANGEROUS_CODE_REQUIRED` (`DOMAIN_REMOVAL_OTP_REQUIRED` for `delete_domain`) and a wrong, expired or mismatched one with `DANGEROUS_CODE_INVALID` (`DOMAIN_REMOVAL_OTP_INVALID`); both carry `details.next_action`, the exact `request_verification_code` call to make. Request a new one, after `resend_available_at` for the same action and target. Requests are limited per merchant and per store. The tool is listed while the connection holds `store:settings.domains:write` or `store:settings.email:write`; each call needs the one of its action. Connected tools get the code by email only; passkey confirmation is for Store Admin. Every request is recorded in the store's activity log.
 
 ## Online Store: storefronts
 

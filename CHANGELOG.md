@@ -1,5 +1,15 @@
 # Changelog
 
+## Domain lifecycle — 27 October 2026
+
+- Every domain now carries `badge`, `role_label`, `actions`, `next_action` (the single next step with the `tool` and `arguments` to call) and `issue` (HTTPS blocked by a CAA record or another Cloudflare account, certificate timed out, DNS warning with its deadline, disconnected, primary address handed over), the same values Store Admin and the mobile app show.
+- `connect_domain` (`action: discover`) explains each way to connect the address (`options`, `chosen`) and returns `domain` (ASCII) and `domain_display` (Unicode); a failed provider lookup is `DOMAIN_DISCOVERY_FAILED`.
+- `check_domain_removal` returns `confirm`, `impacts`, `verification` and `next_action` (the `request_verification_code` call); its refusals carry `details.next_action`. Every missing or rejected verification code returns `details.next_action` with the exact `request_verification_code` arguments.
+- `verify_domain` on a domain in a DNS warning runs the health re-check at once.
+- DNS zones carry `view.state_label`, `tone`, `in_setup`, `working` and `operation`.
+- `get_dns_operation` takes `operation_id`, `delete_email_sender` and `set_default_email_sender` take `address_id`, and `get_review_bulk_operation` / `acknowledge_review_bulk_operation` take `operation_id` (were camelCase).
+- Catalog table lists the 13 email settings tools it was missing; fixed the note that only some domain tools need a code.
+
 ## Domain setup steps — 27 October 2026
 
 - `get_domain`, `list_domains` and `create_domain` return `setup` on each domain: the same step list Store Admin shows (`path`, `state`, `summary`, `current_step`, `steps`, the `nameservers` to set or the `records` to add with what public DNS shows, `last_checked`, `next_check`, `expires`, `actions`). Labels and messages are in the request language.
