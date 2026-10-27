@@ -8,6 +8,11 @@
 - A translation CSV import or export started while another one runs is refused with `TRANSLATION_CSV_JOB_IN_PROGRESS`, which now says the limit is one job per store and names the running job ("One translation CSV job runs per store at a time; a Brands export is running.").
 - `get_import` of an attributes import counts attributes in `total_rows`/`processed_rows` and the file's option rows in `job.option_rows` (`total`, `processed`).
 
+## Product filter webhooks — 28 October 2026
+
+- `list_webhook_topics` and `get_webhook_topic_schema` include the Product filters topics: `product_filters/create`, `product_filters/update`, `product_filters/delete`, `product_filters/reorder` (scope `read_products`), and `product_filters/translations/update` and `product_filters/translations/delete` (`read_products` and `read_translations`).
+- `create_product_filter`, `update_product_filter`, `reorder_product_filters`, `delete_product_filter` and the filter translation tools name the event each write publishes. Saving unchanged values or the current order publishes nothing.
+
 ## Metafield definition names, the Metafield block, definition management — 28 October 2026
 
 - Added `get_metafield_definition_translation`, `get_metafield_definition_translations` (up to 100 definitions in one language) and `set_metafield_definition_translations` (up to 100 rows `{id, locale, fields: {name}}` for any enabled non-default languages, per-row results, `totals` and the `TRANSLATIONS_SAVED` / `TRANSLATIONS_PARTIALLY_SAVED` / `TRANSLATIONS_NOT_SAVED` outcome). A definition's name is the label shoppers see next to its value. Names of app-owned definitions the merchant cannot edit return `TRANSLATION_FIELD_NOT_TRANSLATABLE`. Name translations send no webhooks, like choice labels.
@@ -23,7 +28,7 @@
 
 ## Timestamps in store time, metafield write rules, variant order — 27 October 2026
 
-- Every tool now returns timestamps as RFC 3339 in the store's timezone with its offset (for example `2026-10-28T01:16:00+05:30`), never display text. This covers orders (and their items, payments, refunds, fulfillments), discounts, shipping, COD, checkout and duty settings, campaigns and templates, email history, statistics, suppressions, reply-to and domains, inventory low stock, movements and restock requests, DNS jobs, domains, webhook endpoints, deliveries and attempts, and sales channels. `request_verification_code` returns `expires_at` and `resend_available_at` in that form and no longer returns `*_iso` copies.
+- Tools that returned display-text times now return them as RFC 3339 in the store's timezone with its offset (for example `2026-10-28T01:16:00+05:30`). This covers orders (and their items, payments, refunds, fulfillments), discounts, shipping, COD, checkout and duty settings, campaigns and templates, email history, statistics, suppressions, reply-to and domains, inventory low stock, movements and restock requests, DNS jobs, domains, webhook endpoints, deliveries and attempts, and sales channels. `request_verification_code` returns `expires_at` and `resend_available_at` in that form and no longer returns `*_iso` copies.
 - The `set_*_metafield` tools state who may write which definitions: an app connection writes its own app's definitions; a merchant connection (connected AI tools, store admin tokens) writes merchant-owned definitions, and app-owned ones whose `merchant_access` is `read_write`. Behaviour is unchanged.
 - `create_product` returns each variant's attribute values with `attribute_name`, `attribute_slug` and option label/value, as `list_product_variants` does, and its stored `sort_order`. A variant sent without `sort_order` is stored at its position in `variants` (`update_product`: after the variants the product keeps).
 
