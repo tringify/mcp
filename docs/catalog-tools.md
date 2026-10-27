@@ -315,6 +315,12 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `set_currency_rounding` | `PUT /api/2025-01/currencies/{id}/rounding` | store:settings.currencies:write |
 | `set_multi_currency` | `PUT /api/2025-01/currencies/multi-currency` | store:settings.currencies:write |
 | `set_auto_exchange_rates` | `PUT /api/2025-01/currencies/auto-rates` | store:settings.currencies:write |
+| `set_automatic_currency_enabled` | `POST /api/2025-01/currencies/enable` | store:settings.currencies:write |
+| `bulk_set_automatic_currencies_enabled` | `POST /api/2025-01/currencies/bulk-enable` | store:settings.currencies:write |
+| `bulk_create_currencies` | `POST /api/2025-01/currencies/bulk-create` | store:settings.currencies:write |
+| `bulk_delete_currencies` | `POST /api/2025-01/currencies/bulk-delete` | store:settings.currencies:write |
+| `bulk_update_currency_rates` | `POST /api/2025-01/currencies/bulk-update-rate` | store:settings.currencies:write |
+| `bulk_update_currencies` | `POST /api/2025-01/currencies/bulk-update` | store:settings.currencies:write |
 | `get_market_limits` | `GET /api/2025-01/markets/limits` | store:markets:read |
 | `get_assigned_market_countries` | `GET /api/2025-01/markets/assigned-countries` | store:markets:read |
 | `list_markets` | `GET /api/2025-01/markets` | store:markets:read |
@@ -811,6 +817,30 @@ Pixel tools manage a storefront's custom pixels and the merchant's switch for ea
 | `list_storefront_messages` | `GET /api/2025-01/storefront-messages` | store:online_store.storefront_messages:read |
 | `save_storefront_message` | `PUT /api/2025-01/storefront-messages/overrides` | store:online_store.storefront_messages:write |
 | `reset_storefront_message` | `DELETE /api/2025-01/storefront-messages/overrides/{code}` | store:online_store.storefront_messages:write |
+
+## CSV imports and exports
+
+Each tool needs the access of the import or export `type` it works on: read for the listing, status and export tools, write for uploading, starting, confirming, discarding, cancelling and undoing an import. `list_import_types` and `list_export_types` list every type with the scopes it needs; a translation type also needs its resource's owner scope. `finalize_import_upload` and `get_import_upload_status` take `type` and `intent_ids` only; the upload keeps the `resource` given to `create_import_upload`.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_import_types` | `GET /api/2025-01/imports/types` | The import or export type's read access |
+| `create_import_upload` | `POST /api/2025-01/imports/upload-intents` | The import or export type's write access |
+| `finalize_import_upload` | `POST /api/2025-01/imports/upload-intents/finalize` | The import or export type's write access |
+| `get_import_upload_status` | `POST /api/2025-01/imports/upload-intents/status` | The import or export type's write access |
+| `create_import` | `POST /api/2025-01/imports` | The import or export type's write access |
+| `list_imports` | `GET /api/2025-01/imports` | The import or export type's read access |
+| `get_import` | `GET /api/2025-01/imports/{importId}` | The import or export type's read access |
+| `list_import_errors` | `GET /api/2025-01/imports/{importId}/errors` | The import or export type's read access |
+| `confirm_import` | `POST /api/2025-01/imports/{importId}/confirm` | The import or export type's write access |
+| `discard_import` | `POST /api/2025-01/imports/{importId}/discard` | The import or export type's write access |
+| `cancel_import` | `POST /api/2025-01/imports/{importId}/cancel` | The import or export type's write access |
+| `undo_import` | `POST /api/2025-01/imports/{importId}/undo` | The import or export type's write access |
+| `list_export_types` | `GET /api/2025-01/exports/types` | The import or export type's read access |
+| `create_export` | `POST /api/2025-01/exports` | The import or export type's read access |
+| `list_exports` | `GET /api/2025-01/exports` | The import or export type's read access |
+| `get_export` | `GET /api/2025-01/exports/{exportId}` | The import or export type's read access |
+| `cancel_export` | `POST /api/2025-01/exports/{exportId}/cancel` | The import or export type's read access |
 
 ## Other catalog, file and market tools
 
