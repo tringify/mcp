@@ -1,5 +1,11 @@
 # Changelog
 
+## Inventory list limits: commitments, inventory group lists, locations — 28 October 2026
+
+- `get_inventory_limits` returns a `commitments` section with the same seven paging and sorting keys, used by `list_inventory_commitments` and `list_inventory_commitment_activitys` (store-wide, per item and per inventory group). A `limit` above `commitments.list_max_limit` is refused with `VALIDATION_LIST_INVALID_LIMIT`. Commitments page by cursor, newest first, so `sort_columns` is `created_at` only.
+- `get_inventory_group_limits` returns the group list's `default_sort` and `default_sort_direction`, and `stock`, `movements`, `products` and `variants` sections with the seven keys for each group's own lists.
+- `get_location_limits` returns `request_caps.default_sort` and `request_caps.default_sort_direction` for the location list.
+
 ## Translation outcomes, argument errors, CSV import tools — 28 October 2026
 
 - Every `set_<resource>_translations` tool and `set_theme_text_translations` return a top-level `code` and `message` with the unchanged per-row `results`: `TRANSLATIONS_SAVED` (every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (`success: true`; the message counts saved and failed rows and names the failure reasons, e.g. "2 saved, 1 failed. No source text found for the requested fields (description).") or `TRANSLATIONS_NOT_SAVED` (`success: false`, HTTP 422; `error.details` carries `totals` and `results`).
