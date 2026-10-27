@@ -21537,7 +21537,7 @@
     "api_key": "dns_records.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/dns-zones/{zoneId}/records",
-    "description": "Add a record to a hosted DNS zone. Supported types are A, AAAA, CNAME, MX, TXT, CAA, SRV and NS. NS records may delegate a child name inside the zone; protected root and storefront delegation cannot be changed. Names are within the zone (`@` is the root). A zone holds at most 200 records. Records Tringify manages for the storefront and email cannot be changed, and a record that conflicts with another at the same name is refused. HTTP 202 means queued. The response includes operation and requested_operation with a durable id. Poll GET /dns-zones/{zoneId}/operations/{operationId} for terminal done/failed/cancelled and sanitized code/message; dns_operations/update reports completion. A pending=false zone does not prove success. Only merchant credentials can hold either domains scope. Apps read storefront addresses with List country URLs under read_storefront. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/dns-zones/{zoneId}/records. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a record to a hosted DNS zone. Supported types are A, AAAA, CNAME, MX, TXT, CAA, SRV and NS. NS records may delegate a child name inside the zone; protected root and storefront delegation cannot be changed. Names are within the zone (`@` is the root). A zone holds at most 200 records. Records Tringify manages for the storefront and email cannot be changed, and a record that conflicts with another at the same name is refused. HTTP 202 means queued. The response includes operation and requested_operation with a durable id. Poll GET /dns-zones/{zoneId}/operations/{operationId} for terminal done/failed/cancelled and sanitized code/message; dns_operations/update reports completion. A pending=false zone does not prove success. Only merchant credentials can hold either domains scope. Apps read storefront addresses with List country URLs under read_storefront. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `dns_save`, target_type `dns_zone` and target_id the zoneId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/dns-zones/{zoneId}/records. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -21550,7 +21550,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh dangerous-action verification code from the merchant, bound to this action and target. Tokens and connected tools have no exemption. Use action dns_save, target_type=dns_zone, target_id=zoneId.",
+          "description": "Verification code for action `dns_save`, target_type `dns_zone` and target_id the zoneId. Request it with request_verification_code.",
           "type": "string"
         },
         "priority": {
@@ -21595,7 +21595,7 @@
     "api_key": "dns_records.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/dns-zones/{zoneId}/records/{recordId}",
-    "description": "Change a record in a hosted DNS zone. Supported types are A, AAAA, CNAME, MX, TXT, CAA, SRV and NS. NS records may delegate a child name inside the zone; protected root and storefront delegation cannot be changed. Names are within the zone (`@` is the root). A zone holds at most 200 records. Records Tringify manages for the storefront and email cannot be changed, and a record that conflicts with another at the same name is refused. HTTP 202 means queued. The response includes operation and requested_operation with a durable id. Poll GET /dns-zones/{zoneId}/operations/{operationId} for terminal done/failed/cancelled and sanitized code/message; dns_operations/update reports completion. A pending=false zone does not prove success. Only merchant credentials can hold either domains scope. Apps read storefront addresses with List country URLs under read_storefront. Send `modified_on` from the record you read to refuse the change if someone edited it since. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/dns-zones/{zoneId}/records/{recordId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change a record in a hosted DNS zone. Supported types are A, AAAA, CNAME, MX, TXT, CAA, SRV and NS. NS records may delegate a child name inside the zone; protected root and storefront delegation cannot be changed. Names are within the zone (`@` is the root). A zone holds at most 200 records. Records Tringify manages for the storefront and email cannot be changed, and a record that conflicts with another at the same name is refused. HTTP 202 means queued. The response includes operation and requested_operation with a durable id. Poll GET /dns-zones/{zoneId}/operations/{operationId} for terminal done/failed/cancelled and sanitized code/message; dns_operations/update reports completion. A pending=false zone does not prove success. Only merchant credentials can hold either domains scope. Apps read storefront addresses with List country URLs under read_storefront. Send `modified_on` from the record you read to refuse the change if someone edited it since. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `dns_save`, target_type `dns_zone` and target_id the zoneId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/dns-zones/{zoneId}/records/{recordId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -21615,7 +21615,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh dangerous-action verification code from the merchant, bound to this action and target. Tokens and connected tools have no exemption. Use action dns_save, target_type=dns_zone, target_id=zoneId.",
+          "description": "Verification code for action `dns_save`, target_type `dns_zone` and target_id the zoneId. Request it with request_verification_code.",
           "type": "string"
         },
         "priority": {
@@ -21666,12 +21666,12 @@
     "api_key": "dns_records.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/dns-zones/{zoneId}/records/{recordId}",
-    "description": "Remove a record from a hosted DNS zone. Records Tringify manages cannot be removed. HTTP 202 means queued. Poll the returned `operation.id` for done, failed or cancelled; `pending=false` alone does not establish success. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/dns-zones/{zoneId}/records/{recordId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Remove a record from a hosted DNS zone. Records Tringify manages cannot be removed. HTTP 202 means queued. Poll the returned `operation.id` for done, failed or cancelled; `pending=false` alone does not establish success. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `dns_delete`, target_type `dns_zone` and target_id the zoneId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/dns-zones/{zoneId}/records/{recordId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "otp_code": {
-          "description": "Fresh dangerous-action verification code from the merchant, bound to this action and target. Tokens and connected tools have no exemption. Use action dns_delete, target_type=dns_zone, target_id=zoneId.",
+          "description": "Verification code for action `dns_delete`, target_type `dns_zone` and target_id the zoneId. Request it with request_verification_code.",
           "type": "string"
         },
         "record_id": {
@@ -21786,7 +21786,7 @@
     "api_key": "domains.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/domains/{domainId}",
-    "description": "Remove a custom domain from the store. Removes the domain, the email setup that rests on it (see Check a domain removal) and, for a root domain whose DNS Tringify hosts, its DNS zone. A domain assigned to a storefront must be unassigned first (DOMAIN_ASSIGNED_TO_STOREFRONT). The store's mytringify address cannot be removed. Cannot be undone; the merchant gets an email. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/domains/{domainId}. Only the connected store is accessible. Call check_domain_removal first, show the merchant everything removed with the domain and get approval. Cannot be undone; do not retry an uncertain removal automatically.",
+    "description": "Remove a custom domain from the store. Removes the domain, the email setup that rests on it (see Check a domain removal) and, for a root domain whose DNS Tringify hosts, its DNS zone. A domain assigned to a storefront must be unassigned first (DOMAIN_ASSIGNED_TO_STOREFRONT). The store's mytringify address cannot be removed. Cannot be undone; the merchant gets an email. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `remove_domain`, target_type `domain` and target_id the domainId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/domains/{domainId}. Only the connected store is accessible. Call check_domain_removal first, show the merchant everything removed with the domain and get approval. Cannot be undone; do not retry an uncertain removal automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -21796,7 +21796,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh dangerous-action verification code from the merchant, bound to this action and target. Tokens and connected tools have no exemption. Use action remove_domain, target_type=domain, target_id=domainId.",
+          "description": "Verification code for action `remove_domain`, target_type `domain` and target_id the domainId. Request it with request_verification_code.",
           "type": "string"
         }
       },
@@ -21852,7 +21852,7 @@
     "api_key": "dns_zones.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/dns-zones",
-    "description": "Start hosting a root domain's DNS with Tringify. Creates a hosted DNS zone for a root domain the store has added (example.com, not shop.example.com) and returns it. Tringify assigns nameservers; the zone's records become editable once they are ready, and the merchant then changes the domain's nameservers at their registrar to the returned `nameservers`. To stop hosting the DNS, remove the domain. HTTP 202 means queued. Poll GET /dns-zones/{zoneId}/operations/{operationId} with the returned `operation.id` until done, failed or cancelled; `pending=false` alone does not establish success. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/dns-zones. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Start hosting a root domain's DNS with Tringify. Creates a hosted DNS zone for a root domain the store has added (example.com, not shop.example.com) and returns it. Tringify assigns nameservers; the zone's records become editable once they are ready, and the merchant then changes the domain's nameservers at their registrar to the returned `nameservers`. To stop hosting the DNS, remove the domain. HTTP 202 means queued. Poll GET /dns-zones/{zoneId}/operations/{operationId} with the returned `operation.id` until done, failed or cancelled; `pending=false` alone does not establish success. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `dns_manage`, target_type `domain` and target_id the domain_id. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/dns-zones. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -21861,7 +21861,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh dangerous-action verification code from the merchant, bound to this action and target. Tokens and connected tools have no exemption. Use action dns_manage, target_type=domain, target_id=domain_id.",
+          "description": "Verification code for action `dns_manage`, target_type `domain` and target_id the domain_id. Request it with request_verification_code.",
           "type": "string"
         }
       },
@@ -21976,12 +21976,12 @@
     "api_key": "dns_records.bulk-delete",
     "api_method": "POST",
     "api_path": "/api/2025-01/dns-zones/{zoneId}/records/bulk-delete",
-    "description": "Remove several records from a hosted zone at once. Send each record's `id`, with the `modified_on` you read; if any record changed since (DOMAIN_DNS_RECORD_CHANGED) or Tringify manages it, nothing is removed. HTTP 202 means queued. Poll GET /dns-zones/{zoneId}/operations/{operationId} with the returned `operation.id` until done, failed or cancelled; `pending=false` alone does not establish success. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/dns-zones/{zoneId}/records/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Remove several records from a hosted zone at once. Send each record's `id`, with the `modified_on` you read; if any record changed since (DOMAIN_DNS_RECORD_CHANGED) or Tringify manages it, nothing is removed. HTTP 202 means queued. Poll GET /dns-zones/{zoneId}/operations/{operationId} with the returned `operation.id` until done, failed or cancelled; `pending=false` alone does not establish success. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `dns_bulk_delete`, target_type `dns_zone` and target_id the zoneId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/dns-zones/{zoneId}/records/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "otp_code": {
-          "description": "Fresh dangerous-action verification code from the merchant, bound to this action and target. Tokens and connected tools have no exemption. Use action dns_bulk_delete, target_type=dns_zone, target_id=zoneId.",
+          "description": "Verification code for action `dns_bulk_delete`, target_type `dns_zone` and target_id the zoneId. Request it with request_verification_code.",
           "type": "string"
         },
         "records": {
@@ -22056,7 +22056,7 @@
     "api_key": "dns_zones.import",
     "api_method": "POST",
     "api_path": "/api/2025-01/dns-zones/{zoneId}/import",
-    "description": "Add the records from a zone file or CSV. Runs as a bulk job that adds the file's new records to the zone; records already there are left as they are. Preview first. HTTP 202 returns the job; follow it with List DNS jobs and read line errors with List DNS job errors. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/dns-zones/{zoneId}/import. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add the records from a zone file or CSV. Runs as a bulk job that adds the file's new records to the zone; records already there are left as they are. Preview first. HTTP 202 returns the job; follow it with List DNS jobs and read line errors with List DNS job errors. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `dns_import`, target_type `dns_zone` and target_id the zoneId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/dns-zones/{zoneId}/import. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22065,7 +22065,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh dangerous-action verification code from the merchant, bound to this action and target. Tokens and connected tools have no exemption. Use action dns_import, target_type=dns_zone, target_id=zoneId.",
+          "description": "Verification code for action `dns_import`, target_type `dns_zone` and target_id the zoneId. Request it with request_verification_code.",
           "type": "string"
         },
         "zone_id": {
@@ -22282,7 +22282,7 @@
     "api_key": "domains.assignment.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/domains/{domainId}/storefront",
-    "description": "Assign an unassigned connected domain to a storefront, or unassign a custom domain. storefront_id is the destination storefront; an empty string unassigns. A domain must be unassigned before it moves to another storefront. Unassigning requires a fresh verification code (action unassign_domain, target_type domain, target_id domainId). Unassigning the primary domain makes another domain primary. Unassigning a country domain, or a previous country domain that still forwards old links, ends that forwarding and returns it to assignable domains; the response then carries address_impact. The response's address_impact lists backend sentences naming the exact hosts and country the change affected; show them to the merchant, then read List country URLs for the resulting addresses. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/domains/{domainId}/storefront. Only the connected store is accessible. Tell the merchant which country and domains change and get approval first; show the returned address_impact. Do not retry an uncertain write automatically; read list_country_urls first.",
+    "description": "Assign an unassigned connected domain to a storefront, or unassign a custom domain. storefront_id is the destination storefront; an empty string unassigns. A domain must be unassigned before it moves to another storefront. Unassigning the primary domain makes another domain primary. Unassigning a country domain, or a previous country domain that still forwards old links, ends that forwarding and returns it to assignable domains; the response then carries address_impact. The response's address_impact lists backend sentences naming the exact hosts and country the change affected; show them to the merchant, then read List country URLs for the resulting addresses. Needs a verification code when unassigning (empty storefront_id): request it with request_verification_code (POST /api/2025-01/verification-codes) using action `unassign_domain`, target_type `domain` and target_id the domainId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/domains/{domainId}/storefront. Only the connected store is accessible. Tell the merchant which country and domains change and get approval first; show the returned address_impact. Do not retry an uncertain write automatically; read list_country_urls first.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22292,7 +22292,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Verification code, required when unassigning.",
+          "description": "Verification code for action `unassign_domain`, target_type `domain` and target_id the domainId. Required when unassigning (empty storefront_id). Request it with request_verification_code.",
           "type": [
             "string",
             "null"
@@ -22378,7 +22378,7 @@
     "api_key": "domains.primary.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/domains/{domainId}/primary",
-    "description": "Make a domain the storefront's primary domain. First send confirmed=false and show the returned warnings to the merchant; after approval repeat with confirmed=true, the confirmation_token and a fresh verification code (action set_primary_domain, target_type domain, target_id domainId). Never confirm automatically. A country domain, or a previous country domain that still forwards old links, cannot become primary. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/domains/{domainId}/primary. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Make a domain the storefront's primary domain. First send confirmed=false and show the returned warnings to the merchant; after approval repeat with confirmed=true and the confirmation_token. Never confirm automatically. A country domain, or a previous country domain that still forwards old links, cannot become primary. Needs a verification code with confirmed=true: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `set_primary_domain`, target_type `domain` and target_id the domainId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/domains/{domainId}/primary. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22402,7 +22402,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Verification code for set_primary_domain on this domain.",
+          "description": "Verification code for action `set_primary_domain`, target_type `domain` and target_id the domainId. Required with confirmed=true. Request it with request_verification_code.",
           "type": [
             "string",
             "null"
@@ -22423,7 +22423,7 @@
     "api_key": "domains.primary.clear",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/primary-domain",
-    "description": "Make the store's mytringify address primary again. Only for the store's primary storefront. First send confirmed=false and show the returned warnings; after approval repeat with confirmed=true, the confirmation_token and a fresh verification code (action clear_primary_domain, target_type storefront, target_id storefrontId). Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/storefronts/{storefrontId}/primary-domain. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Make the store's mytringify address primary again. Only for the store's primary storefront. First send confirmed=false and show the returned warnings; after approval repeat with confirmed=true and the confirmation_token. Needs a verification code with confirmed=true: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `clear_primary_domain`, target_type `storefront` and target_id the storefrontId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/storefronts/{storefrontId}/primary-domain. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22442,7 +22442,7 @@
           ]
         },
         "otp_code": {
-          "description": "Verification code for clear_primary_domain on this storefront.",
+          "description": "Verification code for action `clear_primary_domain`, target_type `storefront` and target_id the storefrontId. Required with confirmed=true. Request it with request_verification_code.",
           "type": [
             "string",
             "null"
@@ -22513,7 +22513,7 @@
     "api_key": "email_reply_to.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/email/reply-to",
-    "description": "Set where customer replies to store emails go. An empty value removes the Reply-To override. It does not disable an externally hosted From mailbox. A new address takes effect once its inbox confirms the link Tringify emails to it; until then the response returns it as `pending_reply_to`, with pending_requested_at, pending_expires_at and pending_expired; resend_available_at is present only while a resend would still be refused (EMAIL_REPLY_TO_RESEND_TOO_SOON). Save the active value to cancel and revoke the pending link (EMAIL_REPLY_TO_PENDING_CANCELLED); save the pending value to resend the link. Times are in the store's timezone. Links expire after seven days. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/reply-to. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set where customer replies to store emails go. An empty value removes the Reply-To override. It does not disable an externally hosted From mailbox. A new address takes effect once its inbox confirms the link Tringify emails to it; until then the response returns it as `pending_reply_to`, with pending_requested_at, pending_expires_at and pending_expired; resend_available_at is present only while a resend would still be refused (EMAIL_REPLY_TO_RESEND_TOO_SOON). Save the active value to cancel and revoke the pending link (EMAIL_REPLY_TO_PENDING_CANCELLED); save the pending value to resend the link. Times are in the store's timezone. Links expire after seven days. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `email_reply_to`, target_type `email_identity` and target_id storeId|value: the store id, a | and the trimmed reply-to address (empty when removing it). Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/reply-to. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22522,7 +22522,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh action/target-bound dangerous-action verification code, using the same verification flow as domain deletion. Tokens and connected tools have no exemption. Use action email_reply_to, target_type=email_identity, target_id=storeId + | + the trimmed reply-to value (empty value clears replies).",
+          "description": "Verification code for action `email_reply_to`, target_type `email_identity` and target_id storeId|value: the store id, a | and the trimmed reply-to address (empty when removing it). Request it with request_verification_code.",
           "type": "string"
         }
       },
@@ -22564,7 +22564,7 @@
     "api_key": "email_senders.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/email/senders",
-    "description": "Create a sender address on a verified sending domain. Creating a sender does not make it the default. Transactional and marketing limits are returned with the sender list. Request fresh dangerous-action verification using action add_email_address; target_type=email_identity; target_id=storeId|local_part@domain, with local_part and domain trimmed and lowercased. Send the returned code as otp_code; connected tools have no exemption.  Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/senders. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a sender address on a verified sending domain. Creating a sender does not make it the default. Transactional and marketing limits are returned with the sender list. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `add_email_address`, target_type `email_identity` and target_id storeId|local_part@domain: the store id, a | and the sender address, with local_part and domain trimmed and lowercased. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/senders. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22581,7 +22581,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh action/target-bound verification code.",
+          "description": "Verification code for action `add_email_address`, target_type `email_identity` and target_id storeId|local_part@domain: the store id, a | and the sender address, with local_part and domain trimmed and lowercased. Request it with request_verification_code.",
           "type": "string"
         }
       },
@@ -22602,7 +22602,7 @@
     "api_key": "email_senders.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/email/senders/{addressId}",
-    "description": "Delete a custom sender address. The provided Tringify noreply sender is permanent and the current default cannot be deleted; can_delete on each sender reports this. Request fresh dangerous-action verification using action delete_email_address; target_type=email_address; target_id=addressId. Send the returned code as otp_code; connected tools have no exemption.  Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email/senders/{addressId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete a custom sender address. The provided Tringify noreply sender is permanent and the current default cannot be deleted; can_delete on each sender reports this. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `delete_email_address`, target_type `email_address` and target_id the addressId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email/senders/{addressId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22612,7 +22612,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh action/target-bound verification code.",
+          "description": "Verification code for action `delete_email_address`, target_type `email_address` and target_id the addressId. Request it with request_verification_code.",
           "type": "string"
         }
       },
@@ -22631,7 +22631,7 @@
     "api_key": "email_senders.set_default",
     "api_method": "PUT",
     "api_path": "/api/2025-01/email/senders/{addressId}/default",
-    "description": "Make a sender the default for its email type. Request fresh dangerous-action verification using action set_default_email_address; target_type=email_address; target_id=addressId. Send the returned code as otp_code; connected tools have no exemption.  Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/senders/{addressId}/default. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Make a sender the default for its email type.  Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `set_default_email_address`, target_type `email_address` and target_id the addressId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/senders/{addressId}/default. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22641,7 +22641,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh action/target-bound verification code.",
+          "description": "Verification code for action `set_default_email_address`, target_type `email_address` and target_id the addressId. Request it with request_verification_code.",
           "type": "string"
         }
       },
@@ -22660,7 +22660,7 @@
     "api_key": "email_domains.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/email/domains",
-    "description": "Register a sending domain under a verified store domain. Request fresh dangerous-action verification using action add_email_domain; target_type=email_identity; target_id=storeId|domain, with domain trimmed and lowercased. Send the returned code as otp_code; connected tools have no exemption.  Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Register a sending domain under a verified store domain.  Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `add_email_domain`, target_type `email_identity` and target_id storeId|domain: the store id, a | and the domain, trimmed and lowercased. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22669,7 +22669,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh action/target-bound verification code.",
+          "description": "Verification code for action `add_email_domain`, target_type `email_identity` and target_id storeId|domain: the store id, a | and the domain, trimmed and lowercased. Request it with request_verification_code.",
           "type": "string"
         }
       },
@@ -22751,7 +22751,7 @@
     "api_key": "email_domains.restart",
     "api_method": "POST",
     "api_path": "/api/2025-01/email/domains/{domainId}/restart",
-    "description": "Recreate a failed sending identity with new DKIM records. Request fresh dangerous-action verification using action restart_email_domain; target_type=email_domain; target_id=domainId. Send the returned code as otp_code; connected tools have no exemption.  Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains/{domainId}/restart. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Recreate a failed sending identity with new DKIM records.  Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `restart_email_domain`, target_type `email_domain` and target_id the domainId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains/{domainId}/restart. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22761,7 +22761,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh action/target-bound verification code.",
+          "description": "Verification code for action `restart_email_domain`, target_type `email_domain` and target_id the domainId. Request it with request_verification_code.",
           "type": "string"
         }
       },
@@ -22780,7 +22780,7 @@
     "api_key": "email_domains.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/email/domains/{domainId}",
-    "description": "Remove a sending domain and its sender addresses. A domain holding a default sender cannot be removed. Request fresh dangerous-action verification using action delete_email_domain; target_type=email_domain; target_id=domainId. Send the returned code as otp_code; connected tools have no exemption.  Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email/domains/{domainId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Remove a sending domain and its sender addresses. A domain holding a default sender cannot be removed. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `delete_email_domain`, target_type `email_domain` and target_id the domainId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email/domains/{domainId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22790,7 +22790,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh action/target-bound verification code.",
+          "description": "Verification code for action `delete_email_domain`, target_type `email_domain` and target_id the domainId. Request it with request_verification_code.",
           "type": "string"
         }
       },
@@ -22928,7 +22928,7 @@
     "api_key": "email_domains.mail_from",
     "api_method": "PUT",
     "api_path": "/api/2025-01/email/domains/{domainId}/mail-from",
-    "description": "Configure a dedicated envelope subdomain. Use an unused subdomain of the sending identity. Publish its returned MX and SPF records; never replace the root MX/SPF. Failed MX verification rejects sends: there is no automatic envelope fallback. Empty mail_from_domain explicitly removes this setting. Request action email_mail_from, target_type=email_identity, target_id=storeId|domainId|mail_from_domain, with mail_from_domain trimmed, lowercased and without a trailing dot (empty when removing). Uses fresh step-up; app credentials are excluded. Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/domains/{domainId}/mail-from. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Configure a dedicated envelope subdomain. Use an unused subdomain of the sending identity. Publish its returned MX and SPF records; never replace the root MX/SPF. Failed MX verification rejects sends: there is no automatic envelope fallback. Empty mail_from_domain explicitly removes this setting. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `email_mail_from`, target_type `email_identity` and target_id storeId|domainId|mail_from_domain: the store id, the sending domain id and the MAIL FROM subdomain trimmed, lowercased and without a trailing dot (empty when removing it), joined with |. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/domains/{domainId}/mail-from. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22942,7 +22942,7 @@
           "type": "string"
         },
         "otp_code": {
-          "description": "Fresh action/target-bound verification code.",
+          "description": "Verification code for action `email_mail_from`, target_type `email_identity` and target_id storeId|domainId|mail_from_domain: the store id, the sending domain id and the MAIL FROM subdomain trimmed, lowercased and without a trailing dot (empty when removing it), joined with |. Request it with request_verification_code.",
           "type": "string"
         }
       },
@@ -22957,6 +22957,41 @@
     "scopes": [
       "store:settings.email:write"
     ]
+  },
+  {
+    "api_key": "verification_codes.request",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/verification-codes",
+    "description": "Email the merchant a verification code for one dangerous action on one target. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/verification-codes. Only the connected store is accessible. Tringify emails a verification code to the token's member: the person who created the admin token, or the merchant who approved the MCP connection. It is the same code Store Admin sends before a dangerous change, with the same expiry, attempts and binding: it works once, only for the action and target it was requested for. Ask the merchant for the code and send it as otp_code to the endpoint that names this action. Each endpoint that takes otp_code names the exact action, target_type and target_id to request. The response says where the code went (`sent_to`, masked), when it expires (`expires_at`, in the store's timezone, with `expires_at_iso`) and when another code can be requested for the same action and target (`resend_available_at`, with `resend_available_at_iso`). It never contains the code. Requesting again replaces the earlier code for that action and target. The checks the change itself makes before anything else (for example DOMAIN_ASSIGNED_TO_STOREFRONT for remove_domain) run here too, so no code is sent for a change that would be refused. The request needs the scope of the endpoint the code is for, and the member needs the Store Admin permission for that change. Requests are limited per member and per store; a limited request returns the wait. Tokens and connected tools get the code by email only: passkey confirmation is for Store Admin. Every request is recorded in the store's activity log. Actions: `add_email_address` (target_type `email_identity`, needs write_email_settings); `add_email_domain` (target_type `email_identity`, needs write_email_settings); `clear_primary_domain` (target_type `storefront`, needs write_domains); `delete_email_address` (target_type `email_address`, needs write_email_settings); `delete_email_domain` (target_type `email_domain`, needs write_email_settings); `dns_bulk_delete` (target_type `dns_zone`, needs write_domains); `dns_delete` (target_type `dns_zone`, needs write_domains); `dns_import` (target_type `dns_zone`, needs write_domains); `dns_manage` (target_type `domain`, needs write_domains); `dns_save` (target_type `dns_zone`, needs write_domains); `email_mail_from` (target_type `email_identity`, needs write_email_settings); `email_reply_to` (target_type `email_identity`, needs write_email_settings); `remove_domain` (target_type `domain`, needs write_domains); `restart_email_domain` (target_type `email_domain`, needs write_email_settings); `set_default_email_address` (target_type `email_address`, needs write_email_settings); `set_primary_domain` (target_type `domain`, needs write_domains); `unassign_domain` (target_type `domain`, needs write_domains). Call it only when the merchant has approved the change, right before the tool that takes otp_code. Then tell the merchant a code was emailed to sent_to and ask them to give it to you; never guess, reuse or invent a code. Do not request again before resend_available_at.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "The dangerous action the code is for, exactly as the endpoint that consumes it names it.",
+          "type": "string"
+        },
+        "target_id": {
+          "description": "The target id, built exactly as the endpoint describes (for most actions the id in its path).",
+          "type": "string"
+        },
+        "target_type": {
+          "description": "The target type the endpoint names for this action.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action",
+        "target_type",
+        "target_id"
+      ],
+      "type": "object"
+    },
+    "name": "request_verification_code",
+    "scopes": [
+      "store:settings.email:write",
+      "store:settings.domains:write"
+    ],
+    "scopes_any_of": true
   },
   {
     "api_key": "preferences.limits",

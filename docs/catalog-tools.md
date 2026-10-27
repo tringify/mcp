@@ -461,6 +461,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_email_reply_to` | `GET /api/2025-01/email/reply-to` | store:settings.email:read |
 | `update_email_reply_to` | `PUT /api/2025-01/email/reply-to` | store:settings.email:write |
 | `get_email_suppression` | `GET /api/2025-01/email/suppressions` | store:settings.email:read |
+| `request_verification_code` | `POST /api/2025-01/verification-codes` | store:settings.domains:write or store:settings.email:write (the one of the requested action) |
 | `list_store_api_scopes` | `GET /api/2025-01/scopes` | Valid Store connection; no resource scope |
 | `list_countries` | `GET /api/2025-01/reference/countries` | Valid Store connection; no resource scope |
 | `list_subdivisions` | `GET /api/2025-01/reference/subdivisions/{countryCode}` | Valid Store connection; no resource scope |
@@ -635,8 +636,19 @@ The domain tools do everything Store Admin › Settings › Domains does, for th
 - `connect_domain` finds the DNS provider (`action: discover`) and, when automatic setup is available, returns `apply_url` (`action: apply`). Give that link to the merchant to open in their browser; never open or fetch it yourself.
 - Call `check_domain_removal` before `delete_domain` and show the merchant what goes with the domain (sending domains, sender addresses, the new default sender).
 - `create_dns_zone` lets Tringify host a root domain's DNS. `refresh_dns_zone`, `scan_dns_zone`, `cancel_scan_dns_zone` and `retry_dns_zone` change no records.
-- Removing a domain, setting up hosted DNS, and creating, updating, deleting, bulk deleting or importing records need `otp_code`: a fresh verification code from the merchant bound to the action and target the tool names. Other domain tools need no code.
+- Removing a domain, setting up hosted DNS, and creating, updating, deleting, bulk deleting or importing records need `otp_code`: a verification code bound to the action and target the tool names. Get it with `request_verification_code` (see Verification codes). Other domain tools need no code.
 - Queued DNS work answers HTTP 202: poll `get_dns_operation` with the returned operation id, or follow import and export jobs with `list_dns_jobs`. Preview an import with `preview_dns_import`, get an export file with `get_dns_export_download` (the link works for 5 minutes).
+
+## Verification codes
+
+Removing a domain, setting up hosted DNS, DNS record changes, unassigning a domain, setting or clearing the primary domain, and sending-domain, sender, reply-to and MAIL FROM changes need the same verification code Store Admin asks for. Each of those tools names the exact `action`, `target_type` and `target_id` in its description.
+
+1. Get the merchant's approval for the change.
+2. Call `request_verification_code` with that `action`, `target_type` and `target_id`. Tringify emails the code to the connected merchant. The result has `sent_to` (masked), `expires_at` and `resend_available_at`; it never contains the code.
+3. Tell the merchant where the code went and ask them for it. Never guess, reuse or invent a code.
+4. Call the tool with `otp_code` before `expires_at`.
+
+A code works once, only for the action and target it was requested for. A wrong, expired or mismatched code is refused (`DANGEROUS_CODE_INVALID`, or `DOMAIN_REMOVAL_OTP_INVALID` for `delete_domain`); request a new one, after `resend_available_at` for the same action and target. Requests are limited per merchant and per store. The tool is listed while the connection holds `store:settings.domains:write` or `store:settings.email:write`; each call needs the one of its action. Connected tools get the code by email only; passkey confirmation is for Store Admin. Every request is recorded in the store's activity log.
 
 ## Online Store: storefronts
 

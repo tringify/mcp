@@ -2,7 +2,7 @@
   "source": "api-gateway-store-api resource contracts, executed through the hosted connector",
   "credentials": "Merchant admin tokens and the merchant’s own MCP connection only; apps may not hold domain/email-settings scopes.",
   "step_up": {
-    "flow": "Request a fresh dangerous-action verification code in the merchant account for the exact action, target_type and target_id documented by the selected tool; pass otp_code. The connected tool cannot invent or bypass this code.",
+    "flow": "Call request_verification_code with the exact action, target_type and target_id documented by the selected tool; Tringify emails the code to the connected merchant. Ask the merchant for it and pass it as otp_code. The connected tool cannot invent or bypass this code.",
     "reply_to": "email_reply_to; email_identity; storeId|trimmed customer_reply_to",
     "mail_from": "email_mail_from; email_identity; storeId|domainId|normalized mail_from_domain"
   },
