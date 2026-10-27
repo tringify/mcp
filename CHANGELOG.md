@@ -1,5 +1,11 @@
 # Changelog
 
+## Translations in one call, compact bulk results — 27 October 2026
+
+- Every `set_<resource>_translations` batch tool (products, collections, categories, attributes, attribute options, tags, brands, vendors, pages, policies, blog posts, categories, tags and authors, menu items, locations, product filters, list-page and storefront page SEO) takes rows `{id, locale, fields}` (`page_type` instead of `id` for page SEO) for any enabled non-default languages in one call, up to 100 rows (one row = one item in one language). The `locale` argument is gone. Each row is saved on its own; the result has `totals` (`rows`, `saved`, `failed`) and one `{id, locale, status}` per row, with the full `error` on failed rows (new code `TRANSLATION_ROW_DUPLICATE` for a second row for the same item and language).
+- `finalize_file_uploads` and `get_file_upload_status` return `totals` (`ready`, `in_progress`, `failed`) and per intent only `intent_id`, `status`, `file.id` when ready, `reused` and `error`. Get the file for its URLs.
+- Bulk creates (`bulk_create_brands`, `bulk_create_categories`, `bulk_create_tags`, `bulk_create_vendors`, `bulk_create_customer_tags`) return `totals` and `created` as `{id, name}`; `skipped` and `row_errors` are unchanged. Gift Card and transfer bulk status, manual currency bulk create, market currency bulk add, currency data bulk removal, inventory adjustments and fulfillment event batches return `totals` plus id/status rows.
+
 ## Email setup steps — 27 October 2026
 
 - Added `get_email_overview`: the store's email setup in order (sending domain, sender address, default sender, reply-to), the single `next_action` with the `tool` and `arguments` to call, and sending health (bounce rate, spam complaint rate, addresses Tringify no longer emails, each problem with its cause and fix).

@@ -379,8 +379,8 @@
   {
     "api_key": "product_filters.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/product-filters/translations/{locale}",
-    "description": "Update several filter labels atomically. Each row contains a filter UUID and fields with label. The entire request succeeds or fails together. Empty label strings remove existing translations. Omitted filters keep their translations. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/product-filters/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/product-filters/translations",
+    "description": "Set filter translations for any languages in one call. Each row is one filter in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one filter in one locale) and at most one row per filter and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/product-filters/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -388,21 +388,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows containing id (UUID) and fields. Only label is translatable.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Only `label` is translatable.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Only `label` is translatable.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Filter definition UUID.",
+                "type": "string"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -2795,8 +2809,8 @@
   {
     "api_key": "products.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/products/translations/{locale}",
-    "description": "Set product translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/products/translations",
+    "description": "Set product translations for any languages in one call. Each row is one product in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one product in one locale) and at most one row per product and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -2804,21 +2818,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Product id.",
+                "type": "integer"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -3886,8 +3914,8 @@
   {
     "api_key": "collections.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/collections/translations/{locale}",
-    "description": "Set collection translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/collections/translations",
+    "description": "Set collection translations for any languages in one call. Each row is one collection in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one collection in one locale) and at most one row per collection and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -3895,21 +3923,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Collection id.",
+                "type": "string"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -4613,8 +4655,8 @@
   {
     "api_key": "categories.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/categories/translations/{locale}",
-    "description": "Set category translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/categories/translations",
+    "description": "Set category translations for any languages in one call. Each row is one category in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one category in one locale) and at most one row per category and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4622,21 +4664,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Category id.",
+                "type": "integer"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -5143,8 +5199,8 @@
   {
     "api_key": "attributes.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/attributes/translations/{locale}",
-    "description": "Set attribute translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attributes/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/attributes/translations",
+    "description": "Set attribute translations for any languages in one call. Each row is one attribute in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one attribute in one locale) and at most one row per attribute and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attributes/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5152,21 +5208,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed fields: name, description.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields: name, description.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed fields: name, description.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Attribute id.",
+                "type": "integer"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -5281,8 +5351,8 @@
   {
     "api_key": "attribute_options.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/attribute-options/translations/{locale}",
-    "description": "Set attribute option translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attribute-options/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/attribute-options/translations",
+    "description": "Set attribute option translations for any languages in one call. Each row is one attribute option in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one attribute option in one locale) and at most one row per attribute option and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attribute-options/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5290,21 +5360,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field: label.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field: label.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed field: label.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Attribute option id.",
+                "type": "integer"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -5938,8 +6022,8 @@
   {
     "api_key": "pages.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/pages/translations/{locale}",
-    "description": "Set page translations in batch. Writes translated Page fields for multiple page ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/pages/translations",
+    "description": "Set page translations for any languages in one call. Each row is one page in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one page in one locale) and at most one row per page and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5947,21 +6031,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Page id.",
+                "type": "string"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -6244,8 +6342,8 @@
   {
     "api_key": "policies.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/policies/translations/{locale}",
-    "description": "Set policy translations in batch. Writes translated Policy fields for multiple policy ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/policies/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/policies/translations",
+    "description": "Set policy translations for any languages in one call. Each row is one policy in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one policy in one locale) and at most one row per policy and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/policies/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6253,21 +6351,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Policy id.",
+                "type": "string"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -7170,8 +7282,8 @@
   {
     "api_key": "blog_posts.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/blog/posts/translations/{locale}",
-    "description": "Set blog post translations in batch. Writes translated Blog Post fields for multiple post ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/blog/posts/translations",
+    "description": "Set blog post translations for any languages in one call. Each row is one blog post in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog post in one locale) and at most one row per blog post and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -7179,21 +7291,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Post id.",
+                "type": "string"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -7791,8 +7917,8 @@
   {
     "api_key": "blog_categories.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/blog/categories/translations/{locale}",
-    "description": "Set blog category translations in batch. Writes translated Blog Category fields for multiple category ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/blog/categories/translations",
+    "description": "Set blog category translations for any languages in one call. Each row is one blog category in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog category in one locale) and at most one row per blog category and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -7800,21 +7926,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Category id.",
+                "type": "string"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -8190,8 +8330,8 @@
   {
     "api_key": "blog_tags.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/blog/tags/translations/{locale}",
-    "description": "Set blog tag translations in batch. Writes translated Blog Tag fields for multiple tag ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/tags/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/blog/tags/translations",
+    "description": "Set blog tag translations for any languages in one call. Each row is one blog tag in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog tag in one locale) and at most one row per blog tag and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/tags/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8199,21 +8339,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Tag id.",
+                "type": "string"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -8581,8 +8735,8 @@
   {
     "api_key": "blog_authors.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/blog/authors/translations/{locale}",
-    "description": "Set blog author translations in batch. Writes translated Blog Author fields for multiple author ids in one locale. Either every row is written or, if any row is invalid, none are. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/authors/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/blog/authors/translations",
+    "description": "Set blog author translations for any languages in one call. Each row is one blog author in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog author in one locale) and at most one row per blog author and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/authors/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8590,21 +8744,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Author id.",
+                "type": "string"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -9410,8 +9578,8 @@
   {
     "api_key": "menus.items.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/menus/items/translations/{locale}",
-    "description": "Write translated menu item titles in one batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/menus/items/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/menus/items/translations",
+    "description": "Set menu item translations for any languages in one call. Each row is one menu item in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one menu item in one locale) and at most one row per menu item and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/menus/items/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -9419,21 +9587,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with an item id and title in fields.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Only `title` is supported.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Only `title` is supported.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Menu item ID returned in a menu tree or item list.",
+                "type": "string"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -9581,7 +9763,7 @@
     "api_key": "tags.bulk-create",
     "api_method": "POST",
     "api_path": "/api/2025-01/tags/bulk-create",
-    "description": "Create multiple tags by name. Creates multiple product tags from names. Slugs are generated automatically. Existing names are returned in `skipped`; invalid rows and store-limit failures are returned in `row_errors`, while other valid rows are still created. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/tags/bulk-create. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create multiple tags by name. Creates multiple product tags from names. Slugs are generated automatically. Existing names are returned in `skipped`; invalid rows and store-limit failures are returned in `row_errors`, while other valid rows are still created. The response is compact: `totals` counts `created`, `skipped` and `failed` names; `created` lists each new item's `id` and the `name` you sent; `skipped` and `row_errors` are unchanged. Get an item for its other fields. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/tags/bulk-create. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -9823,8 +10005,8 @@
   {
     "api_key": "tags.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/tags/translations/{locale}",
-    "description": "Set tag translations in batch. Writes translations for multiple tags in one locale. The whole request succeeds or fails together; if any row is invalid, none are saved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/tags/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/tags/translations",
+    "description": "Set tag translations for any languages in one call. Each row is one tag in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one tag in one locale) and at most one row per tag and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/tags/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -9832,21 +10014,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. The only allowed field key is `name`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. The only allowed field key is `name`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. The only allowed field key is `name`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Tag id.",
+                "type": "integer"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -10190,7 +10386,7 @@
     "api_key": "brands.bulk-create",
     "api_method": "POST",
     "api_path": "/api/2025-01/brands/bulk-create",
-    "description": "Create multiple brands by name. Creates brands from names and generates their slugs. Existing names appear in `skipped`; invalid rows are reported without blocking valid ones. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/brands/bulk-create. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create multiple brands by name. Creates brands from names and generates their slugs. Existing names appear in `skipped`; invalid rows are reported without blocking valid ones. The response is compact: `totals` counts `created`, `skipped` and `failed` names; `created` lists each new item's `id` and the `name` you sent; `skipped` and `row_errors` are unchanged. Get an item for its other fields. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/brands/bulk-create. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10480,8 +10676,8 @@
   {
     "api_key": "brands.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/brands/translations/{locale}",
-    "description": "Set brand translations in batch. Sets translations for multiple brands in one locale. The whole request succeeds or fails together; if any row is invalid, none are saved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/brands/translations",
+    "description": "Set brand translations for any languages in one call. Each row is one brand in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one brand in one locale) and at most one row per brand and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10489,21 +10685,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`; allowed fields are `name`, `slug`, `description`, `seo_title`, and `seo_description`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields are `name`, `slug`, `description`, `seo_title` and `seo_description`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed fields are `name`, `slug`, `description`, `seo_title` and `seo_description`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Brand id.",
+                "type": "integer"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -10883,7 +11093,7 @@
     "api_key": "vendors.bulk-create",
     "api_method": "POST",
     "api_path": "/api/2025-01/vendors/bulk-create",
-    "description": "Create multiple vendors by name. Creates vendors from names and generates their slugs. Existing names appear in `skipped`; invalid rows appear in `row_errors` without blocking valid ones. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/vendors/bulk-create. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create multiple vendors by name. Creates vendors from names and generates their slugs. Existing names appear in `skipped`; invalid rows appear in `row_errors` without blocking valid ones. The response is compact: `totals` counts `created`, `skipped` and `failed` names; `created` lists each new item's `id` and the `name` you sent; `skipped` and `row_errors` are unchanged. Get an item for its other fields. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/vendors/bulk-create. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11173,8 +11383,8 @@
   {
     "api_key": "vendors.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/vendors/translations/{locale}",
-    "description": "Set vendor translations in batch. Sets translations for multiple vendors in one locale. The whole request succeeds or fails together; if any row is invalid, none are saved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/vendors/translations",
+    "description": "Set vendor translations for any languages in one call. Each row is one vendor in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one vendor in one locale) and at most one row per vendor and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11182,21 +11392,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`; allowed fields are `name`, `slug`, `description`, `seo_title`, and `seo_description`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields are `name`, `slug`, `description`, `seo_title` and `seo_description`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed fields are `name`, `slug`, `description`, `seo_title` and `seo_description`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Vendor id.",
+                "type": "integer"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -11403,7 +11627,7 @@
     "api_key": "files.upload-intents.finalize",
     "api_method": "POST",
     "api_path": "/api/2025-01/files/upload-intents/finalize",
-    "description": "Check uploaded files and begin validation. Call after each signed PUT attempt has finished, including an attempt whose response was lost. Send at most `max_files_per_upload` intent IDs. The library and creating identity must match: app uploads belong to the app installation, and other uploads to their creating user. Finalize returns per-intent results; `processing` means validation is still running and only `ready` makes the file available. A missing uploaded body can be rejected. HTTP 200 does not mean every file was accepted: inspect each intent's `status` and optional `error`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/upload-intents/finalize. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Check uploaded files and begin validation. Call after each signed PUT attempt has finished, including an attempt whose response was lost. Send at most `max_files_per_upload` intent IDs. The library and creating identity must match: app uploads belong to the app installation, and other uploads to their creating user. Finalize returns per-intent results; `processing` means validation is still running and only `ready` makes the file available. A missing uploaded body can be rejected. HTTP 200 does not mean every file was accepted: inspect each intent's `status` and optional `error`. Attach a file only after its upload is `ready`, using `file.id` from the ready result rather than the intent ID; attaching while it is still `pending` or `processing` returns `FILE_REF_UPLOAD_PROCESSING` (HTTP 409), so poll the upload status until it is ready. The response is compact: `totals` counts `ready`, `in_progress` (`pending` or `processing`) and `failed` (`rejected`, `expired` or `deleted`) intents, and each intent row carries only `intent_id`, `status`, `file.id` when ready, `reused` when an identical existing file was used, and `error` when it failed. Get the file for its URLs and other fields. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/upload-intents/finalize. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11439,7 +11663,7 @@
     "api_key": "files.upload-intents.status",
     "api_method": "POST",
     "api_path": "/api/2025-01/files/upload-intents/status",
-    "description": "Read the result of each upload intent. Send at most `max_files_per_upload` intent IDs with the same library and creating identity. Each result is `pending`, `processing`, `ready`, `rejected`, `expired` or `deleted`. A `ready` result contains `file`. `deleted` means the upload completed but its file has since been deleted; its `error` is `STORAGE_FILE_NOT_FOUND`. A rejected, expired or deleted result contains `error` with `code`, `message`, `status_code` and optional `params`, within the successful response envelope. Rejection codes can include `STORAGE_CONTENT_TYPE_MISMATCH`, `STORAGE_IMAGE_MEGAPIXELS_TOO_BIG`, `STORAGE_MALWARE_REJECTED`, `STORAGE_UPLOAD_SIZE_MISMATCH`, `STORAGE_UPLOAD_VALIDATION_TIMEOUT`, `STORAGE_UPLOAD_NOT_RECEIVED` (the signed upload never arrived; upload the file again with a new intent) and `STORAGE_UPLOAD_FAILED`; an expired intent has `STORAGE_UPLOAD_EXPIRED`. Inspect every result and stop polling terminal intents. Retain IDs while recovering an interrupted upload. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/upload-intents/status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Read the result of each upload intent. Send at most `max_files_per_upload` intent IDs with the same library and creating identity. Each result is `pending`, `processing`, `ready`, `rejected`, `expired` or `deleted`. A `ready` result contains `file`; its `id` is the file ID that products, collections, metafields and every other resource take, and it can differ from `intent_id`. A resource given an intent ID returns `FILE_REF_UPLOAD_PROCESSING` (HTTP 409) while the upload is `pending` or `processing`, `FILE_REF_UPLOAD_ID` naming the file ID once it is `ready`, and `FILE_REF_UPLOAD_FAILED` once it is `rejected` or `expired`. `deleted` means the upload completed but its file has since been deleted; its `error` is `STORAGE_FILE_NOT_FOUND`. A rejected, expired or deleted result contains `error` with `code`, `message` and optional `params`, within the successful response envelope. Rejection codes can include `STORAGE_CONTENT_TYPE_MISMATCH`, `STORAGE_IMAGE_MEGAPIXELS_TOO_BIG`, `STORAGE_MALWARE_REJECTED`, `STORAGE_UPLOAD_SIZE_MISMATCH`, `STORAGE_UPLOAD_VALIDATION_TIMEOUT`, `STORAGE_UPLOAD_NOT_RECEIVED` (the signed upload never arrived; upload the file again with a new intent) and `STORAGE_UPLOAD_FAILED`; an expired intent has `STORAGE_UPLOAD_EXPIRED`. Inspect every result and stop polling terminal intents. Retain IDs while recovering an interrupted upload. The response is compact: `totals` counts `ready`, `in_progress` (`pending` or `processing`) and `failed` (`rejected`, `expired` or `deleted`) intents, and each intent row carries only `intent_id`, `status`, `file.id` when ready, `reused` when an identical existing file was used, and `error` when it failed. Get the file for its URLs and other fields. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/upload-intents/status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -15133,8 +15357,8 @@
   {
     "api_key": "list-page-seo.translations.set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/list-page-seo/translations/{locale}",
-    "description": "Set translations for several catalog list pages atomically. The request accepts at most one row for each supported page type. If any row is invalid, none are written. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/list-page-seo/translations",
+    "description": "Set list page translations for any languages in one call. Each row is one list page in one language: `page_type`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one list page in one locale) and at most one row per list page and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{page_type, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -15142,21 +15366,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows shaped as {page_type, fields}; page_type is `brand_list`, `vendor_list`, `category_list` or `collection_list`.",
+          "description": "Up to 100 rows shaped as {page_type, locale, fields}. Allowed fields are `seo_title` and `seo_description`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed fields are `seo_title` and `seo_description`.",
+                "type": "object"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              },
+              "page_type": {
+                "description": "`brand_list`, `vendor_list`, `category_list` or `collection_list`.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "page_type",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -15813,7 +16051,7 @@
     "api_key": "currencies.data.bulk-remove",
     "api_method": "POST",
     "api_path": "/api/2025-01/currencies/bulk-remove-data",
-    "description": "Preview and atomically clear live data for selected non-base currencies. Send a non-empty list of unique currency UUIDs in `ids`, capped by `bulk_max` from List currencies. Every ID must belong to this store. The base currency and automatic exchange-rate mode are rejected. The entire selection is checked together: a market must retain at least one currency after removal. First call without confirmation. `CONFIRMATION_REQUIRED` returns `details.preview` with total and per-currency `removed`/`counts`, warnings, and a five-minute single-use confirmation token. Repeat the same IDs with `confirmed: true` and `confirmation_token`. The token is bound to the store, actor, sorted selection and all previewed counts. Changed counts, selection, expiry or replay require a fresh preview. All 17 reference types are cleared for the whole batch at once: either every currency in the batch is cleaned up or nothing changes. No currency configuration records or historical carts, orders, payments or financial records are deleted. An all-empty unconfirmed batch returns zero counts without mutation events. Successful cleanup records per-currency and batch audit entries, queues one `currencies/update` with changed currency IDs/codes and one `currencies/data_removed` per currency whose data changed. Storefront product filters are refreshed once for the whole batch. Any failure rolls back the entire batch. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-remove-data. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Preview and atomically clear live data for selected non-base currencies. Send a non-empty list of unique currency UUIDs in `ids`, capped by `bulk_max` from List currencies. Every ID must belong to this store. The base currency and automatic exchange-rate mode are rejected. The entire selection is checked together: a market must retain at least one currency after removal. First call without confirmation. `CONFIRMATION_REQUIRED` returns `details.preview` with total and per-currency `removed`/`counts`, warnings, and a five-minute single-use confirmation token. Repeat the same IDs with `confirmed: true` and `confirmation_token`. The token is bound to the store, actor, sorted selection and all previewed counts. Changed counts, selection, expiry or replay require a fresh preview. All 17 reference types are cleared for the whole batch at once: either every currency in the batch is cleaned up or nothing changes. No currency configuration records or historical carts, orders, payments or financial records are deleted. An all-empty unconfirmed batch returns zero counts without mutation events. Successful cleanup records per-currency and batch audit entries, queues one `currencies/update` with changed currency IDs/codes and one `currencies/data_removed` per currency whose data changed. Storefront product filters are refreshed once for the whole batch. Any failure rolls back the entire batch. The confirmed response is compact: `totals` (`currencies`, `removed`), only the non-zero per-table `counts`, and each currency's `currency_id`, `currency_code` and `removed`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-remove-data. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -16025,7 +16263,7 @@
     "api_key": "currencies.bulk-create",
     "api_method": "POST",
     "api_path": "/api/2025-01/currencies/bulk-create",
-    "description": "Add several currencies with explicit manual rates atomically. Manual mode only. Each currencies entry contains exactly code and conversion_rate, a positive decimal string obeying max_conversion_rate and max_conversion_decimals from List currencies. Duplicate or existing codes and invalid rates reject the entire batch. At most bulk_max entries; max_per_store includes the base currency. New currencies are enabled with rounding_mode none. Returns created and the currencies with their effective rates and localized display fields. Enabling currencies never assigns them to countries. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-create. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add several currencies with explicit manual rates atomically. Manual mode only. Each currencies entry contains exactly code and conversion_rate, a positive decimal string obeying max_conversion_rate and max_conversion_decimals from List currencies. Duplicate or existing codes and invalid rates reject the entire batch. At most bulk_max entries; max_per_store includes the base currency. New currencies are enabled with rounding_mode none. Returns `totals.created` and each new currency's `id` and `code`; List currencies has their effective rates and display fields. Enabling currencies never assigns them to countries. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-create. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -16574,7 +16812,7 @@
     "api_key": "markets.currencies.bulk-add",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/currencies/bulk",
-    "description": "Add several enabled currencies to a market atomically. The request is all-or-nothing. Codes already on the market and repeated codes are skipped, not refused; the response lists only the currencies this request added, so it is empty (and nothing is published) when every code was already there. Every new code must be enabled for the store, the store must have multi-currency available and enabled, and `currency_codes` may hold at most `currency_bulk_max_count` entries, repeats included. Successful changes publish one `markets/update` event containing the resulting currency set. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/currencies/bulk. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add several enabled currencies to a market atomically. The request is all-or-nothing. Codes already on the market and repeated codes are skipped, not refused; the response lists only the currencies this request added, so it is empty (and nothing is published) when every code was already there. Every new code must be enabled for the store, the store must have multi-currency available and enabled, and `currency_codes` may hold at most `currency_bulk_max_count` entries, repeats included. Successful changes publish one `markets/update` event containing the resulting currency set. The response is compact: `totals.added`, then each added market currency's `id` and `currency_code`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/currencies/bulk. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -24481,18 +24719,13 @@
   {
     "api_key": "storefronts.page-seo.translations.set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/translations/{locale}",
-    "description": "Set translations for several of a storefront's system pages atomically. The request accepts at most one row for each page type. If any row is invalid, none are written. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/page-seo/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/translations",
+    "description": "Set system page translations for any languages in one call. Each row is one system page in one language: `page_type`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one system page in one locale) and at most one row per system page and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{page_type, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/page-seo/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "idempotency_key": {
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
-          "type": "string"
-        },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
           "type": "string"
         },
         "storefront_id": {
@@ -24501,8 +24734,28 @@
           "type": "string"
         },
         "translations": {
-          "description": "Rows shaped as {page_type, fields}; page_type is `home`, `shop` or `search`.",
+          "description": "Up to 100 rows shaped as {page_type, locale, fields}. Allowed fields are `seo_title` and `seo_description`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed fields are `seo_title` and `seo_description`.",
+                "type": "object"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              },
+              "page_type": {
+                "description": "`home`, `shop` or `search`.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "page_type",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -24510,7 +24763,6 @@
       },
       "required": [
         "storefront_id",
-        "locale",
         "translations"
       ],
       "type": "object"
@@ -28048,8 +28300,8 @@
   {
     "api_key": "locations.translation.batch-set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/locations/translations/{locale}",
-    "description": "Set location translations in batch. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/locations/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/locations/translations",
+    "description": "Set location translations for any languages in one call. Each row is one location in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one location in one locale) and at most one row per location and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/locations/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -28057,21 +28309,35 @@
           "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
           "type": "string"
         },
-        "locale": {
-          "description": "Enabled non-default store locale.",
-          "minLength": 1,
-          "type": "string"
-        },
         "translations": {
-          "description": "Rows with `id` and `fields`. Allowed field keys are `name`, `pickup_instructions` and `pickup_hours`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys are `name`, `pickup_instructions` and `pickup_hours`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. Allowed field keys are `name`, `pickup_instructions` and `pickup_hours`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Location id.",
+                "type": "string"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
             "type": "object"
           },
           "type": "array"
         }
       },
       "required": [
-        "locale",
         "translations"
       ],
       "type": "object"
