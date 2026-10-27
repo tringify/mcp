@@ -465,11 +465,14 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `delete_email_sender` | `DELETE /api/2025-01/email/senders/{addressId}` | store:settings.email:write |
 | `set_default_email_sender` | `PUT /api/2025-01/email/senders/{addressId}/default` | store:settings.email:write |
 | `create_email_domain` | `POST /api/2025-01/email/domains` | store:settings.email:write |
-| `get_email_domain_records` | `GET /api/2025-01/email/domains/{domainId}/records` | store:settings.email:read |
 | `verify_email_domain` | `POST /api/2025-01/email/domains/{domainId}/verify` | store:settings.email:write |
 | `restart_email_domain` | `POST /api/2025-01/email/domains/{domainId}/restart` | store:settings.email:write |
 | `delete_email_domain` | `DELETE /api/2025-01/email/domains/{domainId}` | store:settings.email:write |
 | `set_email_mail_from` | `PUT /api/2025-01/email/domains/{domainId}/mail-from` | store:settings.email:write |
+| `get_email_overview` | `GET /api/2025-01/email/overview` | store:settings.email:read |
+| `get_email_domain` | `GET /api/2025-01/email/domains/{domainId}` | store:settings.email:read |
+| `check_email_domain_removal` | `GET /api/2025-01/email/domains/{domainId}/removal-check` | store:settings.email:read |
+| `check_email_sender_removal` | `GET /api/2025-01/email/senders/{addressId}/removal-check` | store:settings.email:read |
 | `list_email_history` | `GET /api/2025-01/email/history` | store:settings.email:read |
 | `get_email_statistics` | `GET /api/2025-01/email/statistics` | store:settings.email:read |
 | `list_email_suppressions` | `GET /api/2025-01/email/suppression-history` | store:settings.email:read |

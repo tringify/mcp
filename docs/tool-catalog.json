@@ -1908,7 +1908,7 @@
           "type": "integer"
         },
         "title": {
-          "description": "Optional title for the copy. Defaults to `Copy of \u003csource title\u003e`.",
+          "description": "Optional title for the copy. Defaults to `Copy of <source title>`.",
           "type": [
             "string",
             "null"
@@ -3185,7 +3185,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "minLength": 1,
           "type": "string"
         }
@@ -3232,7 +3232,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "minLength": 1,
           "type": "string"
         },
@@ -22468,7 +22468,7 @@
     "api_key": "email_senders.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/email/senders",
-    "description": "List the addresses the store sends email from. `is_verified` reports whether an address can send right now, with the same rule sending enforces. When the default transactional sender cannot send, order and account email goes out from the store's Tringify address. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/senders. Only the connected store is accessible.",
+    "description": "List the addresses the store sends email from. `is_verified` reports whether an address can send right now, with the same rule sending enforces; `badge` is its sending domain's status while it can't. `actions` (set_default, remove) are what the merchant may do now; the store's Tringify address has no remove. When the default transactional sender cannot send, order and account email goes out from the store's Tringify address. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/senders. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -22483,7 +22483,7 @@
     "api_key": "email_domains.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/email/domains",
-    "description": "List the store's custom sending domains. Each domain shows its verification status and whether it can send. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/domains. Only the connected store is accessible.",
+    "description": "List the store's custom sending domains. Each domain is the same object as Get a sending domain: its setup steps and DNS records, badge, actions, next_action and issue. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/domains. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -22602,7 +22602,7 @@
     "api_key": "email_senders.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/email/senders/{addressId}",
-    "description": "Delete a custom sender address. The provided Tringify noreply sender is permanent and the current default cannot be deleted; can_delete on each sender reports this. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `delete_email_address`, target_type `email_address` and target_id the addressId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email/senders/{addressId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete a custom sender address. Call Check sender removal first and show its confirm sentence and impacts. The store's Tringify address is permanent (its actions never include remove). Removing the default order and account sender makes the Tringify address the default; removing the default marketing sender pauses marketing email until another is chosen. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `delete_email_address`, target_type `email_address` and target_id the addressId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email/senders/{addressId}. Only the connected store is accessible. Call check_email_sender_removal first, show the merchant its confirm sentence and every impacts message and get approval; then call its next_action (request_verification_code with the given arguments), ask the merchant for the emailed code and call this with otp_code. Cannot be undone; do not retry an uncertain removal automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22660,7 +22660,7 @@
     "api_key": "email_domains.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/email/domains",
-    "description": "Register a sending domain under a verified store domain.  Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `add_email_domain`, target_type `email_identity` and target_id storeId|domain: the store id, a | and the domain, trimmed and lowercased. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Register a sending domain under a verified store domain.  Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `add_email_domain`, target_type `email_identity` and target_id storeId|domain: the store id, a | and the domain, trimmed and lowercased. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains. Only the connected store is accessible. Show the returned message and the sending domain's setup steps, records (host and value to copy, and what public DNS shows), next_action and issue text as given, then follow next_action (its tool and arguments). Do not call verify_email_domain in a loop: Tringify keeps checking in the background and notifies the merchant; look again with get_email_domain after next_action.after. Never name the sending provider to the merchant.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22700,34 +22700,10 @@
     ]
   },
   {
-    "api_key": "email_domains.records",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/email/domains/{domainId}/records",
-    "description": "Get the DNS records a sending domain needs. Each record has its full name, the name relative to the detected DNS zone (relative_name) and the zone; relative_name is absent when the zone could not be determined. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/domains/{domainId}/records. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "domain_id": {
-          "description": "Store-scoped resource UUID.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "domain_id"
-      ],
-      "type": "object"
-    },
-    "name": "get_email_domain_records",
-    "scopes": [
-      "store:settings.email:read"
-    ]
-  },
-  {
     "api_key": "email_domains.verify",
     "api_method": "POST",
     "api_path": "/api/2025-01/email/domains/{domainId}/verify",
-    "description": "Check a sending domain with the email provider now. Success means the check ran, not that the domain is verified: read verified, sending_ready and next_check_at. next_check_at is RFC 3339 in the store's timezone with its offset; next_check is the same time as display text in the store's timezone. Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains/{domainId}/verify. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Run the next step of a sending domain's setup now. Success means the check ran, not that the domain can send: the response is the sending domain (see Get a sending domain) as it is after the check, and the message says what the check found. Tringify keeps checking by itself (setup.next_check); call this when the merchant changed DNS, not in a loop. A pending or transient DNS state is never an error. Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains/{domainId}/verify. Only the connected store is accessible. Show the returned message and the sending domain's setup steps, records (host and value to copy, and what public DNS shows), next_action and issue text as given, then follow next_action (its tool and arguments). Do not call verify_email_domain in a loop: Tringify keeps checking in the background and notifies the merchant; look again with get_email_domain after next_action.after. Never name the sending provider to the merchant.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22751,7 +22727,7 @@
     "api_key": "email_domains.restart",
     "api_method": "POST",
     "api_path": "/api/2025-01/email/domains/{domainId}/restart",
-    "description": "Recreate a failed sending identity with new DKIM records.  Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `restart_email_domain`, target_type `email_domain` and target_id the domainId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains/{domainId}/restart. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Restart a sending domain's verification after it stopped, with new signing (DKIM) records.  Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `restart_email_domain`, target_type `email_domain` and target_id the domainId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email/domains/{domainId}/restart. Only the connected store is accessible. Show the returned message and the sending domain's setup steps, records (host and value to copy, and what public DNS shows), next_action and issue text as given, then follow next_action (its tool and arguments). Do not call verify_email_domain in a loop: Tringify keeps checking in the background and notifies the merchant; look again with get_email_domain after next_action.after. Never name the sending provider to the merchant.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22780,7 +22756,7 @@
     "api_key": "email_domains.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/email/domains/{domainId}",
-    "description": "Remove a sending domain and its sender addresses. A domain holding a default sender cannot be removed. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `delete_email_domain`, target_type `email_domain` and target_id the domainId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email/domains/{domainId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Remove a sending domain and its sender addresses. Call Check sending domain removal first and show its confirm sentence and impacts. Its senders are removed; a default order and account sender falls back to the store's Tringify address and a default marketing sender pauses marketing email. Records Tringify wrote in DNS it hosts are deleted. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `delete_email_domain`, target_type `email_domain` and target_id the domainId. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email/domains/{domainId}. Only the connected store is accessible. Call check_email_domain_removal first, show the merchant its confirm sentence and every impacts message and get approval; then call its next_action (request_verification_code with the given arguments), ask the merchant for the emailed code and call this with otp_code. Cannot be undone; do not retry an uncertain removal automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22928,7 +22904,7 @@
     "api_key": "email_domains.mail_from",
     "api_method": "PUT",
     "api_path": "/api/2025-01/email/domains/{domainId}/mail-from",
-    "description": "Configure a dedicated envelope subdomain. Use an unused subdomain of the sending identity. Publish its returned MX and SPF records; never replace the root MX/SPF. Failed MX verification rejects sends: there is no automatic envelope fallback. Empty mail_from_domain explicitly removes this setting. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `email_mail_from`, target_type `email_identity` and target_id storeId|domainId|mail_from_domain: the store id, the sending domain id and the MAIL FROM subdomain trimmed, lowercased and without a trailing dot (empty when removing it), joined with |. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/domains/{domainId}/mail-from. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Choose the subdomain bounces return to (MAIL FROM). Every sending domain has one, bounce.<domain> by default. Use an unused subdomain of the sending domain; its MX and SPF records then appear in setup.records (Tringify writes them in DNS it hosts). Never replace the root MX/SPF. Missing bounce records never stop sending. An empty mail_from_domain restores bounce.<domain>. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `email_mail_from`, target_type `email_identity` and target_id storeId|domainId|mail_from_domain: the store id, the sending domain id and the MAIL FROM subdomain trimmed, lowercased and without a trailing dot (empty when restoring the default), joined with |. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/domains/{domainId}/mail-from. Only the connected store is accessible. Show the returned message and the sending domain's setup steps, records (host and value to copy, and what public DNS shows), next_action and issue text as given, then follow next_action (its tool and arguments). Do not call verify_email_domain in a loop: Tringify keeps checking in the background and notifies the merchant; look again with get_email_domain after next_action.after. Never name the sending provider to the merchant.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22938,11 +22914,11 @@
           "type": "string"
         },
         "mail_from_domain": {
-          "description": "Dedicated unused subdomain, or empty to remove.",
+          "description": "Dedicated unused subdomain, or empty for bounce.<domain>.",
           "type": "string"
         },
         "otp_code": {
-          "description": "Verification code for action `email_mail_from`, target_type `email_identity` and target_id storeId|domainId|mail_from_domain: the store id, the sending domain id and the MAIL FROM subdomain trimmed, lowercased and without a trailing dot (empty when removing it), joined with |. Request it with request_verification_code.",
+          "description": "Verification code for action `email_mail_from`, target_type `email_identity` and target_id storeId|domainId|mail_from_domain: the store id, the sending domain id and the MAIL FROM subdomain trimmed, lowercased and without a trailing dot (empty when restoring the default), joined with |. Request it with request_verification_code.",
           "type": "string"
         }
       },
@@ -22956,6 +22932,93 @@
     "name": "set_email_mail_from",
     "scopes": [
       "store:settings.email:write"
+    ]
+  },
+  {
+    "api_key": "email_overview.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/overview",
+    "description": "See the store's email setup in order and its sending health. `steps` are always sending_domain, sender_address, default_sender and reply_to, each with a backend `status` (done, current, action_required, upcoming or optional) and `message`. `next_action` is the single next thing to do, with the hosted MCP `tool` and `arguments` that perform or check it; it is absent when everything is done and healthy. `health` has `state` (good, warning or critical), a `badge`, a `summary`, `metrics` (bounce rate, spam complaint rate over the last 30 days, suppressed addresses) and `issues`, each with its cause (`message`) and `fix` in plain words. Rates count from 100 sends in 30 days. All text is backend-written in the request language; show it as given. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/overview. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_email_overview",
+    "scopes": [
+      "store:settings.email:read"
+    ]
+  },
+  {
+    "api_key": "email_domains.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/domains/{domainId}",
+    "description": "Get one sending domain with its setup steps and DNS records. `setup` is the one step tracker: `path` (tringify_dns when Tringify hosts the DNS and writes the records itself, your_dns when the merchant adds them), `state` (action_required, verifying, ready or attention), `summary`, `current_step`, `steps` (add_domain, add_records, verifying, verified, ready — each with `status` and `message`), `records` (3 DKIM, 2 MAIL FROM and 1 DMARC record, each with `host` relative to `zone`, full `name`, `value`, `status` found, missing, mismatch, unchecked or lookup_failed, and `status_text` with what public DNS shows instead), `last_checked`, `next_check`, `next_check_at` (RFC 3339 in the store's timezone) and `poll_after_ms`. `badge`, `actions` (check, restart, change_mail_from, add_sender, remove), `next_action` (MCP tool + arguments) and `issue` (title, message, fix) are backend-decided. Missing bounce or DMARC records never stop sending. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/domains/{domainId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_id": {
+          "description": "Store-scoped resource UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_email_domain",
+    "scopes": [
+      "store:settings.email:read"
+    ]
+  },
+  {
+    "api_key": "email_domains.removal_check",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/domains/{domainId}/removal-check",
+    "description": "See what removing a sending domain takes with it. Show `confirm` and every `impacts[].message` (senders removed, the default sender falling back to the store's Tringify address, marketing pausing, DNS records) and get approval; then call `next_action` (request_verification_code with the given arguments) and remove the domain with the emailed code. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/domains/{domainId}/removal-check. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_id": {
+          "description": "Store-scoped resource UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_id"
+      ],
+      "type": "object"
+    },
+    "name": "check_email_domain_removal",
+    "scopes": [
+      "store:settings.email:read"
+    ]
+  },
+  {
+    "api_key": "email_senders.removal_check",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email/senders/{addressId}/removal-check",
+    "description": "See what removing a sender address changes. Show `confirm` and every `impacts[].message`; then call `next_action` (request_verification_code with the given arguments) and delete the sender with the emailed code. The store's Tringify address can't be removed (EMAIL_ADDRESS_DELETE_MANAGED). Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email/senders/{addressId}/removal-check. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "address_id": {
+          "description": "Store-scoped resource UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "address_id"
+      ],
+      "type": "object"
+    },
+    "name": "check_email_sender_removal",
+    "scopes": [
+      "store:settings.email:read"
     ]
   },
   {
@@ -23818,12 +23881,12 @@
     "api_key": "custom_pixels.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels",
-    "description": "Add a custom pixel to a storefront. Every field is required. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `\u003cscript\u003e` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. A storefront has at most `custom_pixels.max_per_storefront` custom pixels (Storefront limits), disabled ones included; one more is refused with `CUSTOM_PIXEL_LIMIT_REACHED`. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/custom-pixels. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
+    "description": "Add a custom pixel to a storefront. Every field is required. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `<script>` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. A storefront has at most `custom_pixels.max_per_storefront` custom pixels (Storefront limits), disabled ones included; one more is refused with `CUSTOM_PIXEL_LIMIT_REACHED`. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/custom-pixels. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "code": {
-          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `\u003cscript\u003e` tags and no HTML snippets.",
+          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `<script>` tags and no HTML snippets.",
           "type": "string"
         },
         "consent_category": {
@@ -23835,7 +23898,7 @@
           "type": "boolean"
         },
         "name": {
-          "description": "Name shown in Online Store \u003e Pixels, 1 to `name_max_length` characters (100).",
+          "description": "Name shown in Online Store > Pixels, 1 to `name_max_length` characters (100).",
           "type": "string"
         },
         "storefront_id": {
@@ -23862,12 +23925,12 @@
     "api_key": "custom_pixels.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}",
-    "description": "Replace a custom pixel's name, code, consent category and enabled state. Send every field: the pixel is replaced as sent. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `\u003cscript\u003e` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. Disabling keeps the code; pages already open in a browser keep running the pixel until they are reloaded. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
+    "description": "Replace a custom pixel's name, code, consent category and enabled state. Send every field: the pixel is replaced as sent. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `<script>` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. Disabling keeps the code; pages already open in a browser keep running the pixel until they are reloaded. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "code": {
-          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `\u003cscript\u003e` tags and no HTML snippets.",
+          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `<script>` tags and no HTML snippets.",
           "type": "string"
         },
         "consent_category": {
@@ -23879,7 +23942,7 @@
           "type": "boolean"
         },
         "name": {
-          "description": "Name shown in Online Store \u003e Pixels, 1 to `name_max_length` characters (100).",
+          "description": "Name shown in Online Store > Pixels, 1 to `name_max_length` characters (100).",
           "type": "string"
         },
         "pixel_id": {
@@ -27864,7 +27927,7 @@
           "type": "string"
         },
         "stock_action": {
-          "description": "What to do with stock still on hand: `{\"mode\": \"move\", \"target_location_id\": \"\u003cid\u003e\"}` moves every unit to another active merchant location; `{\"mode\": \"clear\"}` sets it to zero. Send the same value on the confirmation retry.",
+          "description": "What to do with stock still on hand: `{\"mode\": \"move\", \"target_location_id\": \"<id>\"}` moves every unit to another active merchant location; `{\"mode\": \"clear\"}` sets it to zero. Send the same value on the confirmation retry.",
           "type": [
             "object",
             "null"
@@ -28222,7 +28285,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:\u003cslug\u003e`.",
+          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:<slug>`.",
           "minLength": 1,
           "type": "string"
         }
@@ -28263,7 +28326,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:\u003cslug\u003e`.",
+          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:<slug>`.",
           "minLength": 1,
           "type": "string"
         },
