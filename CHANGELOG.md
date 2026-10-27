@@ -1,5 +1,9 @@
 # Changelog
 
+## Translation writes during a translation import — 27 October 2026
+
+- Translation tools no longer wait for a running translation CSV import. Writes of other items, types and languages never wait; a write of an item or a name or slug the import's current batch is writing waits at most 2 seconds and then fails with `TRANSLATION_WRITE_BUSY` (HTTP 503, nothing saved) with `error.details.retry_after_seconds`; send it again after that. Every row or call either saved or reports an error; none times out with an unknown outcome.
+
 ## One uniqueness rule for translations; retryable busy rows — 27 October 2026
 
 - Every `set_<resource>_translation` and `set_<resource>_translations` tool states its type's uniqueness rule, the same rule translation CSV preview and import use: per language, a translated category name must be unique among categories with the same parent (like source names; the same name under different parents is fine); slugs, and vendor, brand, blog category and blog tag names, must be unique among the values shown in that language; tag and attribute names among translated names. Of two rows of one call sharing a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`.
