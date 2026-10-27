@@ -1,5 +1,11 @@
 # Changelog
 
+## Timestamps in store time, metafield write rules, variant order — 27 October 2026
+
+- Every tool now returns timestamps as RFC 3339 in the store's timezone with its offset (for example `2026-10-28T01:16:00+05:30`), never display text. This covers orders (and their items, payments, refunds, fulfillments), discounts, shipping, COD, checkout and duty settings, campaigns and templates, email history, statistics, suppressions, reply-to and domains, inventory low stock, movements and restock requests, DNS jobs, domains, webhook endpoints, deliveries and attempts, and sales channels. `request_verification_code` returns `expires_at` and `resend_available_at` in that form and no longer returns `*_iso` copies.
+- The `set_*_metafield` tools state who may write which definitions: an app connection writes its own app's definitions; a merchant connection (connected AI tools, store admin tokens) writes merchant-owned definitions, and app-owned ones whose `merchant_access` is `read_write`. Behaviour is unchanged.
+- `create_product` returns each variant's attribute values with `attribute_name`, `attribute_slug` and option label/value, as `list_product_variants` does, and its stored `sort_order`. A variant sent without `sort_order` is stored at its position in `variants` (`update_product`: after the variants the product keeps).
+
 ## Translation writes during a translation import — 27 October 2026
 
 - Translation tools no longer wait for a running translation CSV import. Writes of other items, types and languages never wait; a write of an item or a name or slug the import's current batch is writing waits at most 2 seconds and then fails with `TRANSLATION_WRITE_BUSY` (HTTP 503, nothing saved) with `error.details.retry_after_seconds`; send it again after that. Every row or call either saved or reports an error; none times out with an unknown outcome.
