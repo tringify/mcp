@@ -15373,10 +15373,11 @@
             "additionalProperties": false,
             "properties": {
               "code": {
+                "description": "Supported ISO currency code; normalized to uppercase.",
                 "type": "string"
               },
               "conversion_rate": {
-                "description": "Positive decimal string, within the limits returned by list_currencies.",
+                "description": "Positive decimal string within max_conversion_rate and max_conversion_decimals from List currencies.",
                 "type": "string"
               }
             },
