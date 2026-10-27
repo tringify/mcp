@@ -1,5 +1,11 @@
 # Changelog
 
+## Domain and DNS management — 27 October 2026
+
+- Added 19 domain and DNS tools: `create_domain`, `verify_domain`, `check_domain_removal`, `delete_domain`, `connect_domain`, `create_dns_zone`, `refresh_dns_zone`, `scan_dns_zone`, `cancel_scan_dns_zone`, `retry_dns_zone`, `bulk_delete_dns_records`, `preview_dns_import`, `import_dns_records`, `export_dns_records`, `list_dns_jobs`, `get_dns_job_limits`, `list_dns_job_errors`, `get_dns_export_download` and `cancel_dns_job`, plus `list_email_domain_candidates`. A connection can now do everything Store Admin › Settings › Domains does.
+- Removing a domain, setting up hosted DNS and record changes need the merchant's `otp_code`, exactly as in Store Admin. Installed apps still cannot hold domain access.
+- Synced the machine-readable catalog (714 tools).
+
 ## Metafield value clear tools
 
 - Documented the 13 `delete_<owner>_metafield` tools in the catalog table and README. The variant tool is `delete_product_variant_metafield`, matching `set_product_variant_metafield` (it was briefly listed as `delete_variant_metafield`).

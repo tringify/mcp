@@ -436,8 +436,28 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `clear_country_domain` | `DELETE /api/2025-01/domains/{domainId}/country` | store:settings.domains:write |
 | `set_primary_domain` | `PUT /api/2025-01/domains/{domainId}/primary` | store:settings.domains:write |
 | `clear_primary_domain` | `DELETE /api/2025-01/storefronts/{storefrontId}/primary-domain` | store:settings.domains:write |
+| `create_domain` | `POST /api/2025-01/domains` | store:settings.domains:write |
+| `verify_domain` | `POST /api/2025-01/domains/{domainId}/verify` | store:settings.domains:write |
+| `check_domain_removal` | `GET /api/2025-01/domains/{domainId}/removal-check` | store:settings.domains:write |
+| `delete_domain` | `DELETE /api/2025-01/domains/{domainId}` | store:settings.domains:write |
+| `connect_domain` | `POST /api/2025-01/domains/connection` | store:settings.domains:write |
+| `create_dns_zone` | `POST /api/2025-01/dns-zones` | store:settings.domains:write |
+| `refresh_dns_zone` | `POST /api/2025-01/dns-zones/{zoneId}/refresh` | store:settings.domains:write |
+| `scan_dns_zone` | `POST /api/2025-01/dns-zones/{zoneId}/scan` | store:settings.domains:write |
+| `cancel_scan_dns_zone` | `POST /api/2025-01/dns-zones/{zoneId}/cancel-scan` | store:settings.domains:write |
+| `retry_dns_zone` | `POST /api/2025-01/dns-zones/{zoneId}/retry` | store:settings.domains:write |
+| `bulk_delete_dns_records` | `POST /api/2025-01/dns-zones/{zoneId}/records/bulk-delete` | store:settings.domains:write |
+| `preview_dns_import` | `POST /api/2025-01/dns-zones/{zoneId}/import/preview` | store:settings.domains:write |
+| `import_dns_records` | `POST /api/2025-01/dns-zones/{zoneId}/import` | store:settings.domains:write |
+| `export_dns_records` | `POST /api/2025-01/dns-zones/{zoneId}/export` | store:settings.domains:write |
+| `list_dns_jobs` | `GET /api/2025-01/dns/jobs` | store:settings.domains:read |
+| `get_dns_job_limits` | `GET /api/2025-01/dns/jobs/limits` | store:settings.domains:read |
+| `list_dns_job_errors` | `GET /api/2025-01/dns/jobs/{jobId}/errors` | store:settings.domains:read |
+| `get_dns_export_download` | `GET /api/2025-01/dns/jobs/{jobId}/download` | store:settings.domains:read |
+| `cancel_dns_job` | `POST /api/2025-01/dns/jobs/{jobId}/cancel` | store:settings.domains:write |
 | `list_email_senders` | `GET /api/2025-01/email/senders` | store:settings.email:read |
 | `list_email_domains` | `GET /api/2025-01/email/domains` | store:settings.email:read |
+| `list_email_domain_candidates` | `GET /api/2025-01/email/domains/candidates` | store:settings.email:read |
 | `get_email_reply_to` | `GET /api/2025-01/email/reply-to` | store:settings.email:read |
 | `update_email_reply_to` | `PUT /api/2025-01/email/reply-to` | store:settings.email:write |
 | `get_email_suppression` | `GET /api/2025-01/email/suppressions` | store:settings.email:read |
@@ -606,6 +626,17 @@ Email subscriber lifecycle webhooks are `subscribers/create`, `subscribers/updat
 | `get_location_translations` | `GET /api/2025-01/locations/translations/{locale}` | store:locations:read, store:settings.languages:read |
 | `set_location_translations` | `PUT /api/2025-01/locations/translations/{locale}` | store:locations:write, store:settings.languages:write |
 | `reorder_locations` | `POST /api/2025-01/locations/reorder` | store:locations:write |
+
+## Domains and DNS
+
+The domain tools do everything Store Admin › Settings › Domains does, for the merchant's own connection only; installed apps can never hold domain access. Reads need `store:settings.domains:read`, every change `store:settings.domains:write`, and each change runs as the connected member with that member's permissions.
+
+- `create_domain` adds a domain as `pending` and returns the DNS records to publish in `dns_instructions`; then call `verify_domain`. A subdomain uses `dns_management: external`; a root domain uses `managed` (Tringify hosts its DNS) unless its provider can route a root domain.
+- `connect_domain` finds the DNS provider (`action: discover`) and, when automatic setup is available, returns `apply_url` (`action: apply`). Give that link to the merchant to open in their browser; never open or fetch it yourself.
+- Call `check_domain_removal` before `delete_domain` and show the merchant what goes with the domain (sending domains, sender addresses, the new default sender).
+- `create_dns_zone` lets Tringify host a root domain's DNS. `refresh_dns_zone`, `scan_dns_zone`, `cancel_scan_dns_zone` and `retry_dns_zone` change no records.
+- Removing a domain, setting up hosted DNS, and creating, updating, deleting, bulk deleting or importing records need `otp_code`: a fresh verification code from the merchant bound to the action and target the tool names. Other domain tools need no code.
+- Queued DNS work answers HTTP 202: poll `get_dns_operation` with the returned operation id, or follow import and export jobs with `list_dns_jobs`. Preview an import with `preview_dns_import`, get an export file with `get_dns_export_download` (the link works for 5 minutes).
 
 ## Online Store: storefronts
 
