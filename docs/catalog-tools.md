@@ -499,7 +499,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 
 ## Product filters
 
-Filter definitions are capped at 50 per store, including built-in and disabled filters. Source discovery pages accept at most 100 rows. Update requires the definition revision; reorder requires the complete list revision and every definition ID. Only labels are translatable; source values retain their filter tokens. Translation tools require both Products and Languages access.
+Filter definitions are capped at 50 per store, including built-in and disabled filters. Source discovery pages accept at most 100 rows. Update requires the definition revision; reorder requires the complete list revision and every definition ID. Only labels are translatable; source values retain their filter tokens. Built-in filters keep a platform label, provided in every storefront language, until the merchant renames them; translation reads return `label.origin` (`merchant` or `platform`), and clearing a translation restores the platform label. Translation tools require both Products and Languages access.
 
 | Tool | Store API operation | OAuth scopes |
 | --- | --- | --- |
