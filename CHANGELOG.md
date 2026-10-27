@@ -1,5 +1,10 @@
 # Changelog
 
+## Email times and send history — 27 October 2026
+
+- `verify_email_domain` returns `next_check_at` as RFC 3339 in the store's timezone with its offset, and `next_check`, the same time as text to show. Sending domains no longer return the raw UTC `ses.last_check_at` and `ses.verified_at`; read the domain's `last_check_at` and `verified_at`.
+- Each send in `list_email_history` carries `submission_label`, the text to show for its `submission_state`. Emails sent before submission states were recorded now carry a derived state; `no_provider_record` means no record of the email provider's answer remains.
+
 ## Domain lifecycle — 27 October 2026
 
 - Every domain now carries `badge`, `role_label`, `actions`, `next_action` (the single next step with the `tool` and `arguments` to call) and `issue` (HTTPS blocked by a CAA record or another Cloudflare account, certificate timed out, DNS warning with its deadline, disconnected, primary address handed over), the same values Store Admin and the mobile app show.
