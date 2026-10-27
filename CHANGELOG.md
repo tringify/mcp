@@ -1,5 +1,9 @@
 # Changelog
 
+## Translation writes that only met busy rows — 28 October 2026
+
+- `set_<resource>_translations` and `set_metafield_definition_translations` return `TRANSLATIONS_NOT_SAVED_RETRY` when no row saved and every row failed only with `TRANSLATION_WRITE_BUSY` (other translation changes were saving the same items): call again with the same arguments after `error.details.retry_after_seconds`. `TRANSLATIONS_NOT_SAVED` is returned when at least one row failed for a reason that calling again will not fix. Both carry `totals` and `results` in `error.details`.
+
 ## Inventory list limits: commitments, inventory group lists, locations — 28 October 2026
 
 - `get_inventory_limits` returns a `commitments` section with the same seven paging and sorting keys, used by `list_inventory_commitments` and `list_inventory_commitment_activitys` (store-wide, per item and per inventory group). A `limit` above `commitments.list_max_limit` is refused with `VALIDATION_LIST_INVALID_LIMIT`. Commitments page by cursor, newest first, so `sort_columns` is `created_at` only.
