@@ -1,5 +1,13 @@
 # Changelog
 
+## Translation outcomes, argument errors, CSV import tools — 28 October 2026
+
+- Every `set_<resource>_translations` tool and `set_theme_text_translations` return a top-level `code` and `message` with the unchanged per-row `results`: `TRANSLATIONS_SAVED` (every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (`success: true`; the message counts saved and failed rows and names the failure reasons, e.g. "2 saved, 1 failed. No source text found for the requested fields (description).") or `TRANSLATIONS_NOT_SAVED` (`success: false`, HTTP 422; `error.details` carries `totals` and `results`).
+- A call with an unexpected property, a missing required one or a wrongly typed value returns `CONNECTOR_TOOL_ARGUMENTS_INVALID`; its message and `error.details.properties` list the tool's allowed and required properties, and those of each object or list of objects (`translations[]`).
+- The CSV import and export tools are listed in the catalog (`list_import_types` … `cancel_export`). `finalize_import_upload` and `get_import_upload_status` take `type` and `intent_ids` only: the upload keeps the `resource` given to `create_import_upload`.
+- A translation CSV import or export started while another one runs is refused with `TRANSLATION_CSV_JOB_IN_PROGRESS`, which now says the limit is one job per store and names the running job ("One translation CSV job runs per store at a time; a Brands export is running.").
+- `get_import` of an attributes import counts attributes in `total_rows`/`processed_rows` and the file's option rows in `job.option_rows` (`total`, `processed`).
+
 ## Metafield definition names, the Metafield block, definition management — 28 October 2026
 
 - Added `get_metafield_definition_translation`, `get_metafield_definition_translations` (up to 100 definitions in one language) and `set_metafield_definition_translations` (up to 100 rows `{id, locale, fields: {name}}` for any enabled non-default languages, per-row results, `totals` and the `TRANSLATIONS_SAVED` / `TRANSLATIONS_PARTIALLY_SAVED` / `TRANSLATIONS_NOT_SAVED` outcome). A definition's name is the label shoppers see next to its value. Names of app-owned definitions the merchant cannot edit return `TRANSLATION_FIELD_NOT_TRANSLATABLE`. Name translations send no webhooks, like choice labels.

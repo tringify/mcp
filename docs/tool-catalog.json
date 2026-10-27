@@ -380,7 +380,7 @@
     "api_key": "product_filters.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/product-filters/translations",
-    "description": "Set filter translations for any languages in one call. Each row is one filter in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one filter in one locale) and at most one row per filter and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/product-filters/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set filter translations for any languages in one call. Each row is one filter in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one filter in one locale) and at most one row per filter and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/product-filters/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -1922,7 +1922,7 @@
           "type": "integer"
         },
         "title": {
-          "description": "Optional title for the copy. Defaults to `Copy of <source title>`.",
+          "description": "Optional title for the copy. Defaults to `Copy of \u003csource title\u003e`.",
           "type": [
             "string",
             "null"
@@ -2810,7 +2810,7 @@
     "api_key": "products.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/products/translations",
-    "description": "Set product translations for any languages in one call. Each row is one product in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one product in one locale) and at most one row per product and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated slug must be unique among the URLs of this type in that language (a translated slug, or the source slug where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set product translations for any languages in one call. Each row is one product in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one product in one locale) and at most one row per product and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated slug must be unique among the URLs of this type in that language (a translated slug, or the source slug where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/products/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -3213,7 +3213,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
           "minLength": 1,
           "type": "string"
         }
@@ -3260,7 +3260,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
           "minLength": 1,
           "type": "string"
         },
@@ -3325,7 +3325,7 @@
           "type": "string"
         },
         "rules": {
-          "description": "Automatic collection rules. Each rule has field, operator, optional value, and include_subcategories.",
+          "description": "Automatic collection rules. Each rule has field, operator, optional value, and include_subcategories (see the Add rule endpoint for the value of each field). A tag rule value may be the tag's ID or its slug; the slug is resolved to the ID when the rule is saved.",
           "items": {
             "type": "object"
           },
@@ -3429,7 +3429,7 @@
           ]
         },
         "rules": {
-          "description": "Automatic collection rules. Each rule has field, operator, optional value, and include_subcategories.",
+          "description": "Automatic collection rules. Each rule has field, operator, optional value, and include_subcategories (see the Add rule endpoint for the value of each field). A tag rule value may be the tag's ID or its slug; the slug is resolved to the ID when the rule is saved.",
           "items": {
             "type": "object"
           },
@@ -3707,7 +3707,7 @@
           "type": "string"
         },
         "value": {
-          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag, category, vendor and brand rules take the entity's numeric id as a string (for example `\"7\"`), not its slug or name; title rules take the text to match, case-insensitively.",
+          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag rules take the tag's ID as a string (for example `\"7\"`) or its slug (for example `\"summer-sale\"`): a slug is resolved to the tag ID when the rule is saved, and the rule stores and returns the ID with the tag's name in `value_label`. A value that is the ID of a tag in this store is read as that ID, even when another tag has it as its slug. An ID or slug that matches no tag in this store is rejected with `COLLECTION_RULE_TAG_NOT_FOUND`. Category, vendor and brand rules take the entity's numeric ID as a string, not its slug or name. Title rules take the text to match, case-insensitively.",
           "type": [
             "string",
             "null"
@@ -3760,7 +3760,7 @@
           "type": "string"
         },
         "value": {
-          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag, category, vendor and brand rules take the entity's numeric id as a string (for example `\"7\"`), not its slug or name; title rules take the text to match, case-insensitively.",
+          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag rules take the tag's ID as a string (for example `\"7\"`) or its slug (for example `\"summer-sale\"`): a slug is resolved to the tag ID when the rule is saved, and the rule stores and returns the ID with the tag's name in `value_label`. A value that is the ID of a tag in this store is read as that ID, even when another tag has it as its slug. An ID or slug that matches no tag in this store is rejected with `COLLECTION_RULE_TAG_NOT_FOUND`. Category, vendor and brand rules take the entity's numeric ID as a string, not its slug or name. Title rules take the text to match, case-insensitively.",
           "type": [
             "string",
             "null"
@@ -3915,7 +3915,7 @@
     "api_key": "collections.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/collections/translations",
-    "description": "Set collection translations for any languages in one call. Each row is one collection in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one collection in one locale) and at most one row per collection and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated slug must be unique among the URLs of this type in that language (a translated slug, or the source slug where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set collection translations for any languages in one call. Each row is one collection in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one collection in one locale) and at most one row per collection and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated slug must be unique among the URLs of this type in that language (a translated slug, or the source slug where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/collections/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4656,7 +4656,7 @@
     "api_key": "categories.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/categories/translations",
-    "description": "Set category translations for any languages in one call. Each row is one category in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one category in one locale) and at most one row per category and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated category name must be unique among categories with the same parent in that language, like source names: the same translated name under two different parents is allowed. A translated slug must be unique among all category URLs in that language (a translated slug, or the source slug of a category without one). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set category translations for any languages in one call. Each row is one category in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one category in one locale) and at most one row per category and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated category name must be unique among categories with the same parent in that language, like source names: the same translated name under two different parents is allowed. A translated slug must be unique among all category URLs in that language (a translated slug, or the source slug of a category without one). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/categories/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5200,7 +5200,7 @@
     "api_key": "attributes.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/attributes/translations",
-    "description": "Set attribute translations for any languages in one call. Each row is one attribute in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one attribute in one locale) and at most one row per attribute and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated attribute name must be unique among attribute names translated into that language. Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attributes/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set attribute translations for any languages in one call. Each row is one attribute in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one attribute in one locale) and at most one row per attribute and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated attribute name must be unique among attribute names translated into that language. Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attributes/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -5352,7 +5352,7 @@
     "api_key": "attribute_options.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/attribute-options/translations",
-    "description": "Set attribute option translations for any languages in one call. Each row is one attribute option in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one attribute option in one locale) and at most one row per attribute option and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attribute-options/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set attribute option translations for any languages in one call. Each row is one attribute option in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one attribute option in one locale) and at most one row per attribute option and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/attribute-options/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6023,7 +6023,7 @@
     "api_key": "pages.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/pages/translations",
-    "description": "Set page translations for any languages in one call. Each row is one page in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one page in one locale) and at most one row per page and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated slug must be unique among the URLs of this type in that language (a translated slug, or the source slug where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set page translations for any languages in one call. Each row is one page in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one page in one locale) and at most one row per page and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated slug must be unique among the URLs of this type in that language (a translated slug, or the source slug where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/pages/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -6343,7 +6343,7 @@
     "api_key": "policies.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/policies/translations",
-    "description": "Set policy translations for any languages in one call. Each row is one policy in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one policy in one locale) and at most one row per policy and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated slug must be unique among the URLs of this type in that language (a translated slug, or the source slug where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/policies/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set policy translations for any languages in one call. Each row is one policy in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one policy in one locale) and at most one row per policy and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated slug must be unique among the URLs of this type in that language (a translated slug, or the source slug where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/policies/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -7283,7 +7283,7 @@
     "api_key": "blog_posts.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/posts/translations",
-    "description": "Set blog post translations for any languages in one call. Each row is one blog post in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog post in one locale) and at most one row per blog post and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated slug must be unique among the URLs of this type in that language (a translated slug, or the source slug where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set blog post translations for any languages in one call. Each row is one blog post in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog post in one locale) and at most one row per blog post and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated slug must be unique among the URLs of this type in that language (a translated slug, or the source slug where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/posts/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -7918,7 +7918,7 @@
     "api_key": "blog_categories.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/categories/translations",
-    "description": "Set blog category translations for any languages in one call. Each row is one blog category in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog category in one locale) and at most one row per blog category and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated name and a translated slug must each be unique among the names and slugs of this type shown in that language (a translation, or the source value where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set blog category translations for any languages in one call. Each row is one blog category in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog category in one locale) and at most one row per blog category and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated name and a translated slug must each be unique among the names and slugs of this type shown in that language (a translation, or the source value where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/categories/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8331,7 +8331,7 @@
     "api_key": "blog_tags.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/tags/translations",
-    "description": "Set blog tag translations for any languages in one call. Each row is one blog tag in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog tag in one locale) and at most one row per blog tag and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated name and a translated slug must each be unique among the names and slugs of this type shown in that language (a translation, or the source value where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/tags/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set blog tag translations for any languages in one call. Each row is one blog tag in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog tag in one locale) and at most one row per blog tag and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated name and a translated slug must each be unique among the names and slugs of this type shown in that language (a translation, or the source value where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/tags/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8736,7 +8736,7 @@
     "api_key": "blog_authors.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/blog/authors/translations",
-    "description": "Set blog author translations for any languages in one call. Each row is one blog author in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog author in one locale) and at most one row per blog author and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/authors/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set blog author translations for any languages in one call. Each row is one blog author in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one blog author in one locale) and at most one row per blog author and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/blog/authors/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -9579,7 +9579,7 @@
     "api_key": "menus.items.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/menus/items/translations",
-    "description": "Set menu item translations for any languages in one call. Each row is one menu item in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one menu item in one locale) and at most one row per menu item and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/menus/items/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set menu item translations for any languages in one call. Each row is one menu item in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one menu item in one locale) and at most one row per menu item and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/menus/items/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10006,7 +10006,7 @@
     "api_key": "tags.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/tags/translations",
-    "description": "Set tag translations for any languages in one call. Each row is one tag in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one tag in one locale) and at most one row per tag and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated tag name must be unique among tag names translated into that language. Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/tags/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set tag translations for any languages in one call. Each row is one tag in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one tag in one locale) and at most one row per tag and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated tag name must be unique among tag names translated into that language. Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/tags/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10677,7 +10677,7 @@
     "api_key": "brands.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/brands/translations",
-    "description": "Set brand translations for any languages in one call. Each row is one brand in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one brand in one locale) and at most one row per brand and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated name and a translated slug must each be unique among the names and slugs of this type shown in that language (a translation, or the source value where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set brand translations for any languages in one call. Each row is one brand in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one brand in one locale) and at most one row per brand and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated name and a translated slug must each be unique among the names and slugs of this type shown in that language (a translation, or the source value where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/brands/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11384,7 +11384,7 @@
     "api_key": "vendors.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/vendors/translations",
-    "description": "Set vendor translations for any languages in one call. Each row is one vendor in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one vendor in one locale) and at most one row per vendor and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated name and a translated slug must each be unique among the names and slugs of this type shown in that language (a translation, or the source value where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set vendor translations for any languages in one call. Each row is one vendor in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one vendor in one locale) and at most one row per vendor and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A translated name and a translated slug must each be unique among the names and slugs of this type shown in that language (a translation, or the source value where there is none). Of two rows of one call that would share a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/vendors/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11591,7 +11591,7 @@
     "api_key": "files.upload-intents.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/files/upload-intents",
-    "description": "Reserve storage and obtain signed upload requests. Creates one intent for each item, in request order. Upload each original file body with HTTPS PUT to its returned `url` within `expires_in` seconds, including every returned signed header unchanged. The headers are part of the signature; the example values are illustrative. Do not send the Store API bearer token to that URL. The declared byte size must match the uploaded body. A new create request creates new intents; keep their IDs to recover interrupted uploads. After validation, video and 3D preview work starts automatically for Store API uploads. Preview completion is separate from the original becoming ready. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/upload-intents. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Reserve storage and obtain signed upload requests. Creates one intent for each item, in request order. Upload each original file body with HTTPS PUT to its returned `url` within `expires_in` seconds, including every returned signed header unchanged. The headers are part of the signature; the example values are illustrative. Do not send the Store API bearer token to that URL. The declared byte size must match the uploaded body. A new create request creates new intents; keep their IDs to recover interrupted uploads. After validation, video and 3D preview work starts automatically for Store API uploads. Preview completion is separate from the original becoming ready. An `intent_id` is an upload ID, not a file ID: products, collections, metafields and every other resource take the file ID, which is `file.id` in the upload's `ready` result and can differ from `intent_id`. Giving a resource an upload ID returns `FILE_REF_UPLOAD_PROCESSING` (HTTP 409) while the upload is still processing, `FILE_REF_UPLOAD_ID` naming the file ID once it is ready, or `FILE_REF_UPLOAD_FAILED` if it was rejected or expired. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/upload-intents. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -12043,7 +12043,7 @@
       "additionalProperties": false,
       "properties": {
         "aspect_ratio": {
-          "description": "Defaults to `1:1`. Transparent images accept only 1:1, 3:2, 2:3.",
+          "description": "Defaults to `3:2`. Transparent images accept only 1:1, 3:2, 2:3.",
           "type": [
             "string",
             "null"
@@ -12098,7 +12098,7 @@
       "additionalProperties": false,
       "properties": {
         "aspect_ratio": {
-          "description": "Defaults to `1:1`. Transparent images accept only 1:1, 3:2, 2:3.",
+          "description": "Defaults to `3:2`. Transparent images accept only 1:1, 3:2, 2:3.",
           "type": [
             "string",
             "null"
@@ -15358,7 +15358,7 @@
     "api_key": "list-page-seo.translations.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/list-page-seo/translations",
-    "description": "Set list page translations for any languages in one call. Each row is one list page in one language: `page_type`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one list page in one locale) and at most one row per list page and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{page_type, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set list page translations for any languages in one call. Each row is one list page in one language: `page_type`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one list page in one locale) and at most one row per list page and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{page_type, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/list-page-seo/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -15846,7 +15846,7 @@
     "api_key": "currencies.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/currencies",
-    "description": "List the store's currencies with their settings. Returns the store's complete currency set, including the base currency and any added currencies. Each currency includes its conversion rate, `rate_source`, rounding mode, the rounding modes it can use, enabled state, and timestamps. The base currency keeps its original prices and cannot be rounded, so its `rounding_modes` is always empty. `conversion_rate` converts base to currency: `amount_in_currency = amount_in_base * conversion_rate`. This is the direction of exchange-rate `rate_inverse`, the opposite of exchange-rate `rate`. It is the rate prices use right now: in manual mode it is the merchant's stored rate (`rate_source: \"manual\"`); in automatic-rate mode it is the live market cross-rate from the current exchange-rate snapshot (`rate_source: \"automatic\"`), and when no current snapshot exists it is empty with `rate_source: \"automatic_unavailable\"`—prices in that currency cannot be charged until rates refresh. Exchange rates always use `.` as the decimal separator. Use conversion_rate from currency reads for the effective rate, never the rounded reference table. Names and rate_message are backend-localized; show rate_message verbatim. Use All exchange rates only for reference. Live rate refreshes do not fire `currencies/update`; re-read currencies when you need the current automatic rate. The response also shows whether multi-currency is enabled and available on the store's plan, whether rates are automatic, every rounding mode the platform supports, and the store's currency limits. The top-level `rounding_modes` includes `nearest_99`, `nearest_95` and `nearest_50`, which zero-decimal currencies such as JPY reject; offer each currency its own `rounding_modes` instead. `max_conversion_decimals` is the service constant (10); `max_conversion_rate`, `max_per_store` (including the base currency), and `bulk_max` come from the service configuration keys `CURRENCY_MAX_CONVERSION_RATE`, `CURRENCY_MAX_PER_STORE`, and `CURRENCY_BULK_MAX`. Example values are illustrative; read the response to validate manual rates and limits. `bulk_max` caps currency batches, including the bulk data-removal endpoint. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies. Only the connected store is accessible.",
+    "description": "List the store's currencies with their settings. Returns the store's complete currency set, including the base currency and any added currencies. Each currency includes its conversion rate, `rate_source`, rounding mode, the rounding modes it can use, enabled state, and timestamps. The base currency keeps its original prices and cannot be rounded, so its `rounding_modes` is always empty. `conversion_rate` converts base to currency: `amount_in_currency = amount_in_base * conversion_rate`. This is the direction of exchange-rate `rate_inverse`, the opposite of exchange-rate `rate`. It is the rate prices use right now: in manual mode it is the merchant's stored rate (`rate_source: \"manual\"`); in automatic-rate mode it is the live market cross-rate from the current exchange-rate snapshot (`rate_source: \"automatic\"`), and when no current snapshot exists it is empty with `rate_source: \"automatic_unavailable\"`—prices in that currency cannot be charged until rates refresh. `conversion_rate_display` is the same rate for showing to people: rounded to six significant digits (all integer digits kept), trailing zeros removed, plain digits with no grouping and never scientific notation, for example `\"0.468115\"` or `\"16063.4\"`; it is empty when `conversion_rate` is. Never calculate with it. Exchange rates always use `.` as the decimal separator. Use conversion_rate from currency reads for the effective rate, never the rounded reference table. Names and rate_message are backend-localized; show rate_message verbatim. Use All exchange rates only for reference. Live rate refreshes do not fire `currencies/update`; re-read currencies when you need the current automatic rate. The response also shows whether multi-currency is enabled and available on the store's plan, whether rates are automatic, every rounding mode the platform supports, and the store's currency limits. The top-level `rounding_modes` includes `nearest_99`, `nearest_95` and `nearest_50`, which zero-decimal currencies such as JPY reject; offer each currency its own `rounding_modes` instead. `max_conversion_decimals` is the service constant (10); `max_conversion_rate`, `max_per_store` (including the base currency), and `bulk_max` come from the service configuration keys `CURRENCY_MAX_CONVERSION_RATE`, `CURRENCY_MAX_PER_STORE`, and `CURRENCY_BULK_MAX`. Example values are illustrative; read the response to validate manual rates and limits. `bulk_max` caps currency batches, including the bulk data-removal endpoint. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -15861,7 +15861,7 @@
     "api_key": "currencies.enabled",
     "api_method": "GET",
     "api_path": "/api/2025-01/currencies/enabled",
-    "description": "Currencies enabled at the store level for pricing and market assignment. Returns only the enabled currencies with their ids, display fields, conversion rate and `rate_source`, rounding configuration, timestamps, and the store's multi-currency enabled state. `conversion_rate` converts base to currency: `amount_in_currency = amount_in_base * conversion_rate`. This is the direction of exchange-rate `rate_inverse`, the opposite of exchange-rate `rate`. It is the rate prices use right now: in manual mode it is the merchant's stored rate (`rate_source: \"manual\"`); in automatic-rate mode it is the live market cross-rate from the current exchange-rate snapshot (`rate_source: \"automatic\"`), and when no current snapshot exists it is empty with `rate_source: \"automatic_unavailable\"`—prices in that currency cannot be charged until rates refresh. Exchange rates always use `.` as the decimal separator. Use conversion_rate from currency reads for the effective rate, never the rounded reference table. Names and rate_message are backend-localized; show rate_message verbatim. Use All exchange rates only for reference. Live rate refreshes do not fire `currencies/update`; re-read currencies when you need the current automatic rate. Market assignment still determines which currencies a shopper may use. Use the resolved active market—not this store-wide list alone—to build a shopper-facing currency selector. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/enabled. Only the connected store is accessible.",
+    "description": "Currencies enabled at the store level for pricing and market assignment. Returns only the enabled currencies with their ids, display fields, conversion rate and `rate_source`, rounding configuration, timestamps, and the store's multi-currency enabled state. `conversion_rate` converts base to currency: `amount_in_currency = amount_in_base * conversion_rate`. This is the direction of exchange-rate `rate_inverse`, the opposite of exchange-rate `rate`. It is the rate prices use right now: in manual mode it is the merchant's stored rate (`rate_source: \"manual\"`); in automatic-rate mode it is the live market cross-rate from the current exchange-rate snapshot (`rate_source: \"automatic\"`), and when no current snapshot exists it is empty with `rate_source: \"automatic_unavailable\"`—prices in that currency cannot be charged until rates refresh. `conversion_rate_display` is the same rate for showing to people: rounded to six significant digits (all integer digits kept), trailing zeros removed, plain digits with no grouping and never scientific notation, for example `\"0.468115\"` or `\"16063.4\"`; it is empty when `conversion_rate` is. Never calculate with it. Exchange rates always use `.` as the decimal separator. Use conversion_rate from currency reads for the effective rate, never the rounded reference table. Names and rate_message are backend-localized; show rate_message verbatim. Use All exchange rates only for reference. Live rate refreshes do not fire `currencies/update`; re-read currencies when you need the current automatic rate. Market assignment still determines which currencies a shopper may use. Use the resolved active market—not this store-wide list alone—to build a shopper-facing currency selector. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/enabled. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -21097,7 +21097,7 @@
     "api_key": "cod.rules.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/cod-rules",
-    "description": "Add an allow or block condition for cash on delivery. Send the complete rule definition using a field and operator from the list response. Title conditions use contains or not_contains. For tag, category, vendor and brand comparisons, value is the resource ID as a string and must belong to this store. Presence checks do not require a value. include_subcategories applies to category conditions. The response returns the saved rule, including its ID and timestamps. Store and market ownership come from the token and URL. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/cod-rules. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add an allow or block condition for cash on delivery. Send the complete rule definition using a field and operator from the list response. Title conditions use contains or not_contains. For category, vendor and brand comparisons, value is the resource ID as a string and must belong to this store. For tag comparisons, value is the tag ID or its slug; a slug is resolved to the tag ID when the rule is saved, a value that is the ID of a tag in this store is read as that ID, and an ID or slug that matches no tag in this store is rejected with COLLECTION_RULE_TAG_NOT_FOUND. Presence checks do not require a value. include_subcategories applies to category conditions. The response returns the saved rule, including its ID and timestamps. Store and market ownership come from the token and URL. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/cod-rules. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -21155,7 +21155,7 @@
     "api_key": "cod.rules.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/cod-rules/{ruleId}",
-    "description": "Replace a saved product condition and its priority. Send the complete rule definition using a field and operator from the list response. Title conditions use contains or not_contains. For tag, category, vendor and brand comparisons, value is the resource ID as a string and must belong to this store. Presence checks do not require a value. include_subcategories applies to category conditions. The response returns the saved rule, including its ID and timestamps. Store and market ownership come from the token and URL. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/cod-rules/{ruleId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace a saved product condition and its priority. Send the complete rule definition using a field and operator from the list response. Title conditions use contains or not_contains. For category, vendor and brand comparisons, value is the resource ID as a string and must belong to this store. For tag comparisons, value is the tag ID or its slug; a slug is resolved to the tag ID when the rule is saved, a value that is the ID of a tag in this store is read as that ID, and an ID or slug that matches no tag in this store is rejected with COLLECTION_RULE_TAG_NOT_FOUND. Presence checks do not require a value. include_subcategories applies to category conditions. The response returns the saved rule, including its ID and timestamps. Store and market ownership come from the token and URL. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/cod-rules/{ruleId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -23142,7 +23142,7 @@
     "api_key": "email_domains.mail_from",
     "api_method": "PUT",
     "api_path": "/api/2025-01/email/domains/{domainId}/mail-from",
-    "description": "Choose the subdomain bounces return to (MAIL FROM). Every sending domain has one, bounce.<domain> by default. Use an unused subdomain of the sending domain; its MX and SPF records then appear in setup.records (Tringify writes them in DNS it hosts). Never replace the root MX/SPF. Missing bounce records never stop sending. An empty mail_from_domain restores bounce.<domain>. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `email_mail_from`, target_type `email_identity` and target_id storeId|domainId|mail_from_domain: the store id, the sending domain id and the MAIL FROM subdomain trimmed, lowercased and without a trailing dot (empty when restoring the default), joined with |. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/domains/{domainId}/mail-from. Only the connected store is accessible. Show the returned message and the sending domain's setup steps, records (host and value to copy, and what public DNS shows), next_action and issue text as given, then follow next_action (its tool and arguments). Do not call verify_email_domain in a loop: Tringify keeps checking in the background and notifies the merchant; look again with get_email_domain after next_action.after. Never name the sending provider to the merchant.",
+    "description": "Choose the subdomain bounces return to (MAIL FROM). Every sending domain has one, bounce.\u003cdomain\u003e by default. Use an unused subdomain of the sending domain; its MX and SPF records then appear in setup.records (Tringify writes them in DNS it hosts). Never replace the root MX/SPF. Missing bounce records never stop sending. An empty mail_from_domain restores bounce.\u003cdomain\u003e. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `email_mail_from`, target_type `email_identity` and target_id storeId|domainId|mail_from_domain: the store id, the sending domain id and the MAIL FROM subdomain trimmed, lowercased and without a trailing dot (empty when restoring the default), joined with |. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/domains/{domainId}/mail-from. Only the connected store is accessible. Show the returned message and the sending domain's setup steps, records (host and value to copy, and what public DNS shows), next_action and issue text as given, then follow next_action (its tool and arguments). Do not call verify_email_domain in a loop: Tringify keeps checking in the background and notifies the merchant; look again with get_email_domain after next_action.after. Never name the sending provider to the merchant.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -23152,7 +23152,7 @@
           "type": "string"
         },
         "mail_from_domain": {
-          "description": "Dedicated unused subdomain, or empty for bounce.<domain>.",
+          "description": "Dedicated unused subdomain, or empty for bounce.\u003cdomain\u003e.",
           "type": "string"
         },
         "otp_code": {
@@ -24119,12 +24119,12 @@
     "api_key": "custom_pixels.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels",
-    "description": "Add a custom pixel to a storefront. Every field is required. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `<script>` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. A storefront has at most `custom_pixels.max_per_storefront` custom pixels (Storefront limits), disabled ones included; one more is refused with `CUSTOM_PIXEL_LIMIT_REACHED`. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/custom-pixels. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
+    "description": "Add a custom pixel to a storefront. Every field is required. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `\u003cscript\u003e` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. A storefront has at most `custom_pixels.max_per_storefront` custom pixels (Storefront limits), disabled ones included; one more is refused with `CUSTOM_PIXEL_LIMIT_REACHED`. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/custom-pixels. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "code": {
-          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `<script>` tags and no HTML snippets.",
+          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `\u003cscript\u003e` tags and no HTML snippets.",
           "type": "string"
         },
         "consent_category": {
@@ -24136,7 +24136,7 @@
           "type": "boolean"
         },
         "name": {
-          "description": "Name shown in Online Store > Pixels, 1 to `name_max_length` characters (100).",
+          "description": "Name shown in Online Store \u003e Pixels, 1 to `name_max_length` characters (100).",
           "type": "string"
         },
         "storefront_id": {
@@ -24163,12 +24163,12 @@
     "api_key": "custom_pixels.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}",
-    "description": "Replace a custom pixel's name, code, consent category and enabled state. Send every field: the pixel is replaced as sent. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `<script>` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. Disabling keeps the code; pages already open in a browser keep running the pixel until they are reloaded. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
+    "description": "Replace a custom pixel's name, code, consent category and enabled state. Send every field: the pixel is replaced as sent. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `\u003cscript\u003e` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. Disabling keeps the code; pages already open in a browser keep running the pixel until they are reloaded. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "code": {
-          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `<script>` tags and no HTML snippets.",
+          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `\u003cscript\u003e` tags and no HTML snippets.",
           "type": "string"
         },
         "consent_category": {
@@ -24180,7 +24180,7 @@
           "type": "boolean"
         },
         "name": {
-          "description": "Name shown in Online Store > Pixels, 1 to `name_max_length` characters (100).",
+          "description": "Name shown in Online Store \u003e Pixels, 1 to `name_max_length` characters (100).",
           "type": "string"
         },
         "pixel_id": {
@@ -24720,7 +24720,7 @@
     "api_key": "storefronts.page-seo.translations.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/page-seo/translations",
-    "description": "Set system page translations for any languages in one call. Each row is one system page in one language: `page_type`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one system page in one locale) and at most one row per system page and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{page_type, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/page-seo/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set system page translations for any languages in one call. Each row is one system page in one language: `page_type`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one system page in one locale) and at most one row per system page and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{page_type, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/page-seo/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -28263,7 +28263,7 @@
           "type": "string"
         },
         "stock_action": {
-          "description": "What to do with stock still on hand: `{\"mode\": \"move\", \"target_location_id\": \"<id>\"}` moves every unit to another active merchant location; `{\"mode\": \"clear\"}` sets it to zero. Send the same value on the confirmation retry.",
+          "description": "What to do with stock still on hand: `{\"mode\": \"move\", \"target_location_id\": \"\u003cid\u003e\"}` moves every unit to another active merchant location; `{\"mode\": \"clear\"}` sets it to zero. Send the same value on the confirmation retry.",
           "type": [
             "object",
             "null"
@@ -28385,7 +28385,7 @@
     "api_key": "locations.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/locations/translations",
-    "description": "Set location translations for any languages in one call. Each row is one location in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one location in one locale) and at most one row per location and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response is 200 with `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/locations/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set location translations for any languages in one call. Each row is one location in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one location in one locale) and at most one row per location and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved, and `error.details` carries the same `totals` and `results`). With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/locations/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -28457,6 +28457,728 @@
     "scopes": [
       "store:locations:write"
     ]
+  },
+  {
+    "api_key": "imports.types.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/imports/types",
+    "description": "List the CSV imports this store offers, with their modes and options. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/imports/types. Only the connected store is accessible. Every import Store Admin offers, with its `modes` (the first is the default), `options`, the scopes it needs to run (`write_scopes`) and read (`read_scopes`), and whether it can be cancelled or undone. `partial` imports apply the valid rows and skip rows with errors; the others need an error-free file. A translation import also needs its resource's owner scope (for example write_products for `product`).",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_import_types",
+    "scopes": [
+      "store:blog:read",
+      "store:customers:read",
+      "store:files:read",
+      "store:inventory:read",
+      "store:locations:read",
+      "store:markets:read",
+      "store:menus:read",
+      "store:orders:read",
+      "store:pages:read",
+      "store:products:read",
+      "store:online_store.redirects:read",
+      "store:reviews:read",
+      "store:online_store.storefronts:read",
+      "store:settings.languages:read"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "imports.upload_intents.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/imports/upload-intents",
+    "description": "Get an upload URL for an import CSV. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/imports/upload-intents. Only the connected store is accessible. Step 1 of an import. Send the import `type` and one item describing the file; the response carries an intent with an upload URL. PUT the file there, then finalize the intent. The file's size, row and column limits are the type's Store Admin limits, checked at upload. The token needs the scopes of the request's `type` (see `GET /imports/types` and `GET /exports/types`); a missing one returns 403 `CSV_JOB_SCOPE_REQUIRED` naming it. Workflow: list_import_types → create_import_upload → PUT the file's bytes to upload_url with your own HTTP client (never put file contents in tool arguments) → finalize_import_upload, then get_import_upload_status until ready → create_import with the ready file_id → show the merchant the preview counts, warnings and list_import_errors → confirm_import only after the merchant approves → get_import until completed, failed or cancelled. To translate: create_export type translations (resource + locale) → download → translate the file → upload it → create_import type translations with the same resource and locale.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "description": "Exactly one file: `original_filename` ending in `.csv`, `mime_type` `text/csv` and `size_bytes`.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "resource": {
+          "description": "Translations only: the translated resource, as in the import's `resource` option.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "description": "Import type: one of `GET /imports/types`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "items"
+      ],
+      "type": "object"
+    },
+    "name": "create_import_upload",
+    "scopes": [
+      "store:blog:write",
+      "store:customers:write",
+      "store:files:write",
+      "store:inventory:write",
+      "store:locations:write",
+      "store:markets:write",
+      "store:menus:write",
+      "store:orders:write",
+      "store:pages:write",
+      "store:products:write",
+      "store:online_store.redirects:write",
+      "store:reviews:write",
+      "store:online_store.storefronts:write",
+      "store:settings.languages:write"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "imports.upload_intents.finalize",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/imports/upload-intents/finalize",
+    "description": "Finalize an uploaded import CSV. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/imports/upload-intents/finalize. Only the connected store is accessible. Step 2: after the PUT, finalize the intent with the same `type`. The intent keeps the `resource` given at the create step, so a translation upload is not told it again. The file is checked (CSV, size, row and column counts); poll the status endpoint until the intent is `ready`, then pass its `file_id` to `POST /imports`. Workflow: list_import_types → create_import_upload → PUT the file's bytes to upload_url with your own HTTP client (never put file contents in tool arguments) → finalize_import_upload, then get_import_upload_status until ready → create_import with the ready file_id → show the merchant the preview counts, warnings and list_import_errors → confirm_import only after the merchant approves → get_import until completed, failed or cancelled. To translate: create_export type translations (resource + locale) → download → translate the file → upload it → create_import type translations with the same resource and locale.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "intent_ids": {
+          "description": "The intent from the create step.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "type": {
+          "description": "Import type: one of `GET /imports/types`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "intent_ids"
+      ],
+      "type": "object"
+    },
+    "name": "finalize_import_upload",
+    "scopes": [
+      "store:blog:write",
+      "store:customers:write",
+      "store:files:write",
+      "store:inventory:write",
+      "store:locations:write",
+      "store:markets:write",
+      "store:menus:write",
+      "store:orders:write",
+      "store:pages:write",
+      "store:products:write",
+      "store:online_store.redirects:write",
+      "store:reviews:write",
+      "store:online_store.storefronts:write",
+      "store:settings.languages:write"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "imports.upload_intents.status",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/imports/upload-intents/status",
+    "description": "Check whether an uploaded import CSV is ready. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/imports/upload-intents/status. Only the connected store is accessible. Returns the intent's state; once it is `ready`, its `file_id` creates the import. Workflow: list_import_types → create_import_upload → PUT the file's bytes to upload_url with your own HTTP client (never put file contents in tool arguments) → finalize_import_upload, then get_import_upload_status until ready → create_import with the ready file_id → show the merchant the preview counts, warnings and list_import_errors → confirm_import only after the merchant approves → get_import until completed, failed or cancelled. To translate: create_export type translations (resource + locale) → download → translate the file → upload it → create_import type translations with the same resource and locale.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "intent_ids": {
+          "description": "The intent from the create step.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "type": {
+          "description": "Import type: one of `GET /imports/types`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "intent_ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_import_upload_status",
+    "scopes": [
+      "store:blog:write",
+      "store:customers:write",
+      "store:files:write",
+      "store:inventory:write",
+      "store:locations:write",
+      "store:markets:write",
+      "store:menus:write",
+      "store:orders:write",
+      "store:pages:write",
+      "store:products:write",
+      "store:online_store.redirects:write",
+      "store:reviews:write",
+      "store:online_store.storefronts:write",
+      "store:settings.languages:write"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "imports.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/imports",
+    "description": "Analyze an uploaded CSV and return what the import would change, without changing anything. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/imports. Only the connected store is accessible. Step 3. Runs the same analysis as the Store Admin import wizard and returns the import in preview: row counts (`creates`, `updates`, `unchanged`, `skips`, `errors`), file warnings such as ignored columns, and `can_confirm`. Nothing is written until `POST /imports/{importId}/confirm`. Read row errors with `GET /imports/{importId}/errors`. The preview expires after 24 hours (`expires_at`). `status` is `ready` when the import can be confirmed and `blocked` when the file's errors stop it (fix the rows, upload the file again and create a new import). A large file can take up to 25 seconds to analyze; a busy service returns 503 and the request can be repeated with the same `Idempotency-Key`. The token needs the scopes of the request's `type` (see `GET /imports/types` and `GET /exports/types`); a missing one returns 403 `CSV_JOB_SCOPE_REQUIRED` naming it. Workflow: list_import_types → create_import_upload → PUT the file's bytes to upload_url with your own HTTP client (never put file contents in tool arguments) → finalize_import_upload, then get_import_upload_status until ready → create_import with the ready file_id → show the merchant the preview counts, warnings and list_import_errors → confirm_import only after the merchant approves → get_import until completed, failed or cancelled. To translate: create_export type translations (resource + locale) → download → translate the file → upload it → create_import type translations with the same resource and locale. Nothing changes until confirm_import. If the error is IMPORT_EXPORT_PREVIEW_ALREADY_ACTIVE, ask the merchant before calling discard_import on the waiting import (list_imports).",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "file_id": {
+          "description": "The `file_id` of the ready upload intent.",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional key, up to 255 characters, that makes this create safe to retry. Repeating the request with the same key and body within 24 hours returns the original import or export instead of starting another; the same key with a different body returns `CSV_JOB_REQUEST_KEY_CONFLICT`.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "mode": {
+          "description": "One of the type's `modes`; defaults to the first. `create_only` adds new records, `update_only` changes existing ones matched by id or handle.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "options": {
+          "description": "The type's options, e.g. `{\"market_id\": \"…\"}` for tax rates or `{\"resource\": \"product\", \"locale\": \"fr\"}` for translations.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "type": {
+          "description": "Import type: one of `GET /imports/types`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "file_id"
+      ],
+      "type": "object"
+    },
+    "name": "create_import",
+    "scopes": [
+      "store:blog:write",
+      "store:customers:write",
+      "store:files:write",
+      "store:inventory:write",
+      "store:locations:write",
+      "store:markets:write",
+      "store:menus:write",
+      "store:orders:write",
+      "store:pages:write",
+      "store:products:write",
+      "store:online_store.redirects:write",
+      "store:reviews:write",
+      "store:online_store.storefronts:write",
+      "store:settings.languages:write"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "imports.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/imports",
+    "description": "List recent imports created through the API, newest first. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/imports. Only the connected store is accessible. Imports created through the Store API or a connected tool whose type this token can read, newest first. Paged by cursor.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "`next_cursor` of the previous page.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size, 1-50.",
+          "type": "integer"
+        },
+        "type": {
+          "description": "Only this type.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_imports",
+    "scopes": [
+      "store:blog:read",
+      "store:customers:read",
+      "store:files:read",
+      "store:inventory:read",
+      "store:locations:read",
+      "store:markets:read",
+      "store:menus:read",
+      "store:orders:read",
+      "store:pages:read",
+      "store:products:read",
+      "store:online_store.redirects:read",
+      "store:reviews:read",
+      "store:online_store.storefronts:read",
+      "store:settings.languages:read"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "imports.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/imports/{importId}",
+    "description": "Read an import's preview counts, status and result. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/imports/{importId}. Only the connected store is accessible. Before confirmation `status` is `ready`, `blocked` or `expired`. After it, `status` is the job's: `validating`, `processing`, `completed`, `failed` or `cancelled`, and `job` carries progress and result counts (`processed_rows`, `succeeded`, `failed`, `skipped`). An attributes import counts attributes in `total_rows` and `processed_rows` (a file row is one option of an attribute) and reports the file's option rows in `job.option_rows` (`total`, `processed`). Poll until `completed`, `failed` or `cancelled`.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "import_id": {
+          "description": "Import id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "import_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_import",
+    "scopes": [
+      "store:blog:read",
+      "store:customers:read",
+      "store:files:read",
+      "store:inventory:read",
+      "store:locations:read",
+      "store:markets:read",
+      "store:menus:read",
+      "store:orders:read",
+      "store:pages:read",
+      "store:products:read",
+      "store:online_store.redirects:read",
+      "store:reviews:read",
+      "store:online_store.storefronts:read",
+      "store:settings.languages:read"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "imports.errors.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/imports/{importId}/errors",
+    "description": "Read an import's row errors, one page at a time. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/imports/{importId}/errors. Only the connected store is accessible. Before confirmation these are the preview's row errors; after it, the rows the job could not apply. Each error names the CSV `row`, the `field` when known, a `code` and a `message`. A job keeps its first `row_error_limit` row errors; `total` counts them all.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "import_id": {
+          "description": "Import id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size, 1-100.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page, from 1.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "import_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_import_errors",
+    "scopes": [
+      "store:blog:read",
+      "store:customers:read",
+      "store:files:read",
+      "store:inventory:read",
+      "store:locations:read",
+      "store:markets:read",
+      "store:menus:read",
+      "store:orders:read",
+      "store:pages:read",
+      "store:products:read",
+      "store:online_store.redirects:read",
+      "store:reviews:read",
+      "store:online_store.storefronts:read",
+      "store:settings.languages:read"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "imports.confirm",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/imports/{importId}/confirm",
+    "description": "Run a previewed import. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/imports/{importId}/confirm. Only the connected store is accessible. Starts the job for the previewed file, exactly as Start import in Store Admin, and returns the import with `status` `validating` or `processing`. Confirm only after reviewing the preview counts and errors with the merchant. Repeating it returns `CSV_IMPORT_ALREADY_CONFIRMED`. The token needs the scopes of the request's `type` (see `GET /imports/types` and `GET /exports/types`); a missing one returns 403 `CSV_JOB_SCOPE_REQUIRED` naming it. Changes the store's data. Before calling it, show the merchant what the import will change (creates, updates, skips, errors, warnings, ignored columns) and get their approval; never confirm automatically. Do not retry an uncertain confirm: read get_import.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "import_id": {
+          "description": "Import id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "import_id"
+      ],
+      "type": "object"
+    },
+    "name": "confirm_import",
+    "scopes": [
+      "store:blog:write",
+      "store:customers:write",
+      "store:files:write",
+      "store:inventory:write",
+      "store:locations:write",
+      "store:markets:write",
+      "store:menus:write",
+      "store:orders:write",
+      "store:pages:write",
+      "store:products:write",
+      "store:online_store.redirects:write",
+      "store:reviews:write",
+      "store:online_store.storefronts:write",
+      "store:settings.languages:write"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "imports.discard",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/imports/{importId}/discard",
+    "description": "Drop an import that was not confirmed. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/imports/{importId}/discard. Only the connected store is accessible. Deletes the preview without changing anything, like Discard in the Store Admin wizard. A store keeps one active preview per type for reviews, tags, historical orders, sales baselines and tax rates, so discard an unwanted one before creating another. The token needs the scopes of the request's `type` (see `GET /imports/types` and `GET /exports/types`); a missing one returns 403 `CSV_JOB_SCOPE_REQUIRED` naming it. Tell the merchant which file's preview is dropped and get approval first.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "import_id": {
+          "description": "Import id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "import_id"
+      ],
+      "type": "object"
+    },
+    "name": "discard_import",
+    "scopes": [
+      "store:blog:write",
+      "store:customers:write",
+      "store:files:write",
+      "store:inventory:write",
+      "store:locations:write",
+      "store:markets:write",
+      "store:menus:write",
+      "store:orders:write",
+      "store:pages:write",
+      "store:products:write",
+      "store:online_store.redirects:write",
+      "store:reviews:write",
+      "store:online_store.storefronts:write",
+      "store:settings.languages:write"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "imports.cancel",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/imports/{importId}/cancel",
+    "description": "Stop a running import. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/imports/{importId}/cancel. Only the connected store is accessible. Cancels a confirmed import that hasn't finished, like Cancel in Store Admin's bulk jobs. Rows already applied stay applied. Translation imports can't be cancelled. The token needs the scopes of the request's `type` (see `GET /imports/types` and `GET /exports/types`); a missing one returns 403 `CSV_JOB_SCOPE_REQUIRED` naming it. Tell the merchant what stops (rows already applied stay) and get approval first. Do not retry an uncertain cancel: read the job first.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "import_id": {
+          "description": "Import id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "import_id"
+      ],
+      "type": "object"
+    },
+    "name": "cancel_import",
+    "scopes": [
+      "store:blog:write",
+      "store:customers:write",
+      "store:files:write",
+      "store:inventory:write",
+      "store:locations:write",
+      "store:markets:write",
+      "store:menus:write",
+      "store:orders:write",
+      "store:pages:write",
+      "store:products:write",
+      "store:online_store.redirects:write",
+      "store:reviews:write",
+      "store:online_store.storefronts:write",
+      "store:settings.languages:write"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "imports.undo",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/imports/{importId}/undo",
+    "description": "Delete the orders a finished historical order import created. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/imports/{importId}/undo. Only the connected store is accessible. Historical order imports only, with the same rules as Undo import in Store Admin: orders that have since changed (paid, fulfilled, refunded, edited) are kept and counted in `blocked`. The first call returns 409 `CONFIRMATION_REQUIRED` with the impact (`orders_in_batch`, `deletable`, `blocked`) and a single-use `confirmation_token`; show it to the merchant and repeat the call with `confirmed: true` and the token. One call deletes a bounded batch; while `remaining` is above 0, repeat the confirmation round. The token needs the scopes of the request's `type` (see `GET /imports/types` and `GET /exports/types`); a missing one returns 403 `CSV_JOB_SCOPE_REQUIRED` naming it. Every call without a confirmation returns CONFIRMATION_REQUIRED: show error.details.warnings and impact (orders that will be deleted and those kept) and repeat with confirmed: true and confirmation_token only after the merchant approves. While remaining is above 0, repeat that round. Deleted orders cannot be restored.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Single-use token returned by `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true only when repeating after `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "import_id": {
+          "description": "Import id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "import_id"
+      ],
+      "type": "object"
+    },
+    "name": "undo_import",
+    "scopes": [
+      "store:blog:write",
+      "store:customers:write",
+      "store:files:write",
+      "store:inventory:write",
+      "store:locations:write",
+      "store:markets:write",
+      "store:menus:write",
+      "store:orders:write",
+      "store:pages:write",
+      "store:products:write",
+      "store:online_store.redirects:write",
+      "store:reviews:write",
+      "store:online_store.storefronts:write",
+      "store:settings.languages:write"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "exports.types.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/exports/types",
+    "description": "List the CSV exports this store offers, with their options. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/exports/types. Only the connected store is accessible. Every export Store Admin offers, with its `options` (filters) and the scopes it needs. A translation export also needs its resource's owner read scope.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_export_types",
+    "scopes": [
+      "store:blog:read",
+      "store:customers:read",
+      "store:files:read",
+      "store:inventory:read",
+      "store:locations:read",
+      "store:markets:read",
+      "store:menus:read",
+      "store:orders:read",
+      "store:pages:read",
+      "store:products:read",
+      "store:online_store.redirects:read",
+      "store:reviews:read",
+      "store:online_store.storefronts:read",
+      "store:settings.languages:read"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "exports.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/exports",
+    "description": "Export records to a CSV file in the background. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/exports. Only the connected store is accessible. Starts the same export as Store Admin's Export button and returns it with `status` `processing`. Poll `GET /exports/{exportId}`; when `status` is `completed` it carries a short-lived `download_url`. The file uses the import columns, so an edited export can be imported again (for translations: export, translate the file, then import it with the same `resource` and `locale`). The token needs the scopes of the request's `type` (see `GET /imports/types` and `GET /exports/types`); a missing one returns 403 `CSV_JOB_SCOPE_REQUIRED` naming it. Poll get_export until completed, then give the merchant download_url or download the file with your own HTTP client; never paste file contents into a reply. The link lasts 5 minutes: call get_export again for a fresh one.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional key, up to 255 characters, that makes this create safe to retry. Repeating the request with the same key and body within 24 hours returns the original import or export instead of starting another; the same key with a different body returns `CSV_JOB_REQUEST_KEY_CONFLICT`.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "options": {
+          "description": "The type's options (filters), e.g. `{\"status\": \"active\"}` for products or `{\"resource\": \"product\", \"locale\": \"fr\"}` for translations.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "type": {
+          "description": "Export type: one of `GET /exports/types`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "name": "create_export",
+    "scopes": [
+      "store:blog:read",
+      "store:customers:read",
+      "store:files:read",
+      "store:inventory:read",
+      "store:locations:read",
+      "store:markets:read",
+      "store:menus:read",
+      "store:orders:read",
+      "store:pages:read",
+      "store:products:read",
+      "store:online_store.redirects:read",
+      "store:reviews:read",
+      "store:online_store.storefronts:read",
+      "store:settings.languages:read"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "exports.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/exports",
+    "description": "List recent exports created through the API, newest first. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/exports. Only the connected store is accessible. Exports created through the Store API or a connected tool whose type this token can read, newest first. Paged by cursor. A `download_url` is only on `GET /exports/{exportId}`.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "`next_cursor` of the previous page.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size, 1-50.",
+          "type": "integer"
+        },
+        "type": {
+          "description": "Only this type.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_exports",
+    "scopes": [
+      "store:blog:read",
+      "store:customers:read",
+      "store:files:read",
+      "store:inventory:read",
+      "store:locations:read",
+      "store:markets:read",
+      "store:menus:read",
+      "store:orders:read",
+      "store:pages:read",
+      "store:products:read",
+      "store:online_store.redirects:read",
+      "store:reviews:read",
+      "store:online_store.storefronts:read",
+      "store:settings.languages:read"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "exports.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/exports/{exportId}",
+    "description": "Read an export's status and, once it is done, its download link. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/exports/{exportId}. Only the connected store is accessible. `status` is `processing`, `completed`, `failed` or `cancelled`. A completed export has `download_url`, a signed link valid for 5 minutes (`download_expires_at`); read the export again for a fresh link.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "export_id": {
+          "description": "Export id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "export_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_export",
+    "scopes": [
+      "store:blog:read",
+      "store:customers:read",
+      "store:files:read",
+      "store:inventory:read",
+      "store:locations:read",
+      "store:markets:read",
+      "store:menus:read",
+      "store:orders:read",
+      "store:pages:read",
+      "store:products:read",
+      "store:online_store.redirects:read",
+      "store:reviews:read",
+      "store:online_store.storefronts:read",
+      "store:settings.languages:read"
+    ],
+    "scopes_any_of": true
+  },
+  {
+    "api_key": "exports.cancel",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/exports/{exportId}/cancel",
+    "description": "Stop a running export. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/exports/{exportId}/cancel. Only the connected store is accessible. Cancels an export that hasn't finished. Newsletter subscriber and translation exports can't be cancelled. Tell the merchant what stops (rows already applied stay) and get approval first. Do not retry an uncertain cancel: read the job first.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "export_id": {
+          "description": "Export id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "export_id"
+      ],
+      "type": "object"
+    },
+    "name": "cancel_export",
+    "scopes": [
+      "store:blog:read",
+      "store:customers:read",
+      "store:files:read",
+      "store:inventory:read",
+      "store:locations:read",
+      "store:markets:read",
+      "store:menus:read",
+      "store:orders:read",
+      "store:pages:read",
+      "store:products:read",
+      "store:online_store.redirects:read",
+      "store:reviews:read",
+      "store:online_store.storefronts:read",
+      "store:settings.languages:read"
+    ],
+    "scopes_any_of": true
   },
   {
     "api_key": "catalog.metafield-definitions.list",
@@ -28635,7 +29357,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:<slug>`.",
+          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:\u003cslug\u003e`.",
           "minLength": 1,
           "type": "string"
         }
@@ -28676,7 +29398,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:<slug>`.",
+          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:\u003cslug\u003e`.",
           "minLength": 1,
           "type": "string"
         },
