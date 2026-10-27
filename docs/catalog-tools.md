@@ -426,6 +426,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_domain` | `GET /api/2025-01/domains/{domainId}` | store:settings.domains:read |
 | `list_dns_zones` | `GET /api/2025-01/dns-zones` | store:settings.domains:read |
 | `get_dns_zone` | `GET /api/2025-01/dns-zones/{zoneId}` | store:settings.domains:read |
+| `get_dns_operation` | `GET /api/2025-01/dns-zones/{zoneId}/operations/{operationId}` | store:settings.domains:read |
 | `create_dns_record` | `POST /api/2025-01/dns-zones/{zoneId}/records` | store:settings.domains:write |
 | `update_dns_record` | `PUT /api/2025-01/dns-zones/{zoneId}/records/{recordId}` | store:settings.domains:write |
 | `delete_dns_record` | `DELETE /api/2025-01/dns-zones/{zoneId}/records/{recordId}` | store:settings.domains:write |
