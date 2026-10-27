@@ -1,5 +1,11 @@
 # Changelog
 
+## Store time everywhere, datetime metafield values, global examples — 28 October 2026
+
+- These times are now RFC 3339 in the store's timezone with its offset (for example `2026-10-28T09:15:00-04:00`) instead of UTC: `get_storefront` `cache.last_cleared_at`/`next_available_at` and `clear_storefront_cache` (also `error.details` of `STOREFRONT_CACHE_CLEAR_TOO_SOON`); packing-slip `expires_at`; customer group `membership.evaluated_at`/`valid_until`, `get_customer_group_membership_snapshot` `last_evaluated_at` and `list_customer_group_membership_changes` `revisions[].recorded_at`; campaign audience preview `evaluated_at`/`previewed_at` and a campaign's `audience_definition` times; `get_text_marketing_consent` and `set_text_marketing_consent` `consented_at`/`updated_at`.
+- A `datetime` metafield value is returned in the same form by every metafield tool, for every owner (products, variants, customers, orders, order items, brands, vendors, categories, collections, pages, blog posts, blog categories and the store), instead of UTC. A `date` value stays `YYYY-MM-DD`. Writes accept the same values as before.
+- Tool examples use a US store (`-04:00`, USD, New York addresses, `+1` phone numbers; Canada/CAD and EUR where a second country or currency is needed).
+
 ## Translation writes that only met busy rows — 28 October 2026
 
 - `set_<resource>_translations` and `set_metafield_definition_translations` return `TRANSLATIONS_NOT_SAVED_RETRY` when no row saved and every row failed only with `TRANSLATION_WRITE_BUSY` (other translation changes were saving the same items): call again with the same arguments after `error.details.retry_after_seconds`. `TRANSLATIONS_NOT_SAVED` is returned when at least one row failed for a reason that calling again will not fix. Both carry `totals` and `results` in `error.details`.
