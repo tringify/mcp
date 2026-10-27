@@ -25,6 +25,7 @@
 - `update_product` states that each `variants` entry takes `overall_low_stock_threshold` (number sets, null disables, omitted keeps; tracked variants only); `create_product` says it can be changed later.
 - `list_inventory_low_stocks` says which staff members get low-stock notifications is each staff member's own preference in Store Admin or the Tringify app and is not available to tools; apps use the `inventory/low_stock` webhook.
 - `get_inventory_limits` returns the same paging and sorting keys in every section (`list_page_size`, `list_max_limit`, `page_size_options`, `search_max_length`, `sort_columns`, `default_sort`, `default_sort_direction`); `transfers.status_actions` gives each action's label and confirmation text in the request language.
+- `get_inventory_limits` returns `low_stock.alert_cooldown_hours`: while an item stays at or below its threshold, the `inventory/low_stock` webhook alerts again only after that many hours; once available stock rises above the threshold, the next drop alerts at once.
 
 ## Timestamps in store time, metafield write rules, variant order — 27 October 2026
 
