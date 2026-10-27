@@ -1,5 +1,10 @@
 # Changelog
 
+## One uniqueness rule for translations; retryable busy rows — 27 October 2026
+
+- Every `set_<resource>_translation` and `set_<resource>_translations` tool states its type's uniqueness rule, the same rule translation CSV preview and import use: per language, a translated category name must be unique among categories with the same parent (like source names; the same name under different parents is fine); slugs, and vendor, brand, blog category and blog tag names, must be unique among the values shown in that language; tag and attribute names among translated names. Of two rows of one call sharing a value, the earlier row keeps it and the later row fails with the duplicate code and `details.existing_id`.
+- A row (or a single save) that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing because another change to the same item was saving at the same time; send it again. Several languages of one item in one call no longer collide.
+
 ## Translations in one call, compact bulk results — 27 October 2026
 
 - Every `set_<resource>_translations` batch tool (products, collections, categories, attributes, attribute options, tags, brands, vendors, pages, policies, blog posts, categories, tags and authors, menu items, locations, product filters, list-page and storefront page SEO) takes rows `{id, locale, fields}` (`page_type` instead of `id` for page SEO) for any enabled non-default languages in one call, up to 100 rows (one row = one item in one language). The `locale` argument is gone. Each row is saved on its own; the result has `totals` (`rows`, `saved`, `failed`) and one `{id, locale, status}` per row, with the full `error` on failed rows (new code `TRANSLATION_ROW_DUPLICATE` for a second row for the same item and language).
