@@ -1368,7 +1368,7 @@
           ]
         },
         "overall_low_stock_threshold": {
-          "description": "Overall low-stock threshold for directly tracked simple products. Uses total available stock across locations. Zero is valid. On update, null disables the alert and omission keeps it. Not available for untracked or group-backed stock. Simple products only.",
+          "description": "Overall low-stock threshold for directly tracked simple products. Uses total available stock across locations. Zero is valid. On update, null disables the alert and omission keeps it. Not available for untracked or group-backed stock. To change only a threshold, use `POST /products/{id}/set-threshold`, which needs no `expected_revision`. Simple products only.",
           "type": [
             "integer",
             "null"
@@ -1475,7 +1475,7 @@
           "type": "string"
         },
         "variants": {
-          "description": "Variable products only; required (at least one variant). The initial variant set, validated together: combination uniqueness against the declared attributes, attribute coverage, at least one variant, and store-wide SKU uniqueness. Each entry:\n\n- `sku` (string, required) — unique across the entire store.\n- `attribute_values` (array, required) — One entry per declared attribute: `{attribute_id, option_id, sort_order?}`, choosing one of that attribute's options. Without `sort_order`, an entry is stored at its position in this array. Attribute and option ids come from `GET /attributes` (the product's `attribute_ids` must cover every `attribute_id` used). Two variants can never share the same combination.\n- `prices` (array, required) — per-currency rows `{currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}`; the base currency row is required. Amounts are decimal strings.\n- `title` (string, optional) — auto-composed from option labels (\"Red / M\") unless supplied.\n- `barcode` is variant-specific. `condition`, `mpn`, and `no_manufacturer_identifiers` can override the parent’s values. `identifier_status` describes whether identifiers are provided, unknown, or not applicable; use the identifier fields and declaration consistently.\n- `weight`, `weight_unit`, `length`, `width`, `height`, `dimension_unit`, `hs_code`, `country_of_origin` — physical overrides.\n- `requires_shipping` (boolean or null, optional) — this variant's own shipping setting, for example a hardcover that ships beside a PDF that does not. Omit it or send null to follow the product. A variant that does not ship cannot have weight, dimensions, customs fields, or `shipping_prices`.\n- `inventory_source` (`track` | `none` | `group`), `inventory` (per-location rows `{location_id, quantity, low_stock_threshold?, expected_quantity?}` when tracking), `inventory_group_id` (when `group`).\n- `image_file_id` (string, optional) — Media-library upload UUID; non-empty values require `read_files` in addition to `write_products`. `image_id` selects an existing product gallery row and does not require `read_files`.\n- `max_order_quantity` is an optional per-order cap; `overall_low_stock_threshold` applies only to directly tracked stock.\n- `sort_order` (integer, optional) — the variant's place in variant lists. Without it, the variant is stored at its position in this array (0 for the first).\n\nCreate supplies the initial set here. Later edits use the delta fields on Product update; read operations use the paginated Variant endpoints.",
+          "description": "Variable products only; required (at least one variant). The initial variant set, validated together: combination uniqueness against the declared attributes, attribute coverage, at least one variant, and store-wide SKU uniqueness. Each entry:\n\n- `sku` (string, required) — unique across the entire store.\n- `attribute_values` (array, required) — One entry per declared attribute: `{attribute_id, option_id, sort_order?}`, choosing one of that attribute's options. Without `sort_order`, an entry is stored at its position in this array. Attribute and option ids come from `GET /attributes` (the product's `attribute_ids` must cover every `attribute_id` used). Two variants can never share the same combination.\n- `prices` (array, required) — per-currency rows `{currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}`; the base currency row is required. Amounts are decimal strings.\n- `title` (string, optional) — auto-composed from option labels (\"Red / M\") unless supplied.\n- `barcode` is variant-specific. `condition`, `mpn`, and `no_manufacturer_identifiers` can override the parent’s values. `identifier_status` describes whether identifiers are provided, unknown, or not applicable; use the identifier fields and declaration consistently.\n- `weight`, `weight_unit`, `length`, `width`, `height`, `dimension_unit`, `hs_code`, `country_of_origin` — physical overrides.\n- `requires_shipping` (boolean or null, optional) — this variant's own shipping setting, for example a hardcover that ships beside a PDF that does not. Omit it or send null to follow the product. A variant that does not ship cannot have weight, dimensions, customs fields, or `shipping_prices`.\n- `inventory_source` (`track` | `none` | `group`), `inventory` (per-location rows `{location_id, quantity, low_stock_threshold?, expected_quantity?}` when tracking), `inventory_group_id` (when `group`).\n- `image_file_id` (string, optional) — Media-library upload UUID; non-empty values require `read_files` in addition to `write_products`. `image_id` selects an existing product gallery row and does not require `read_files`.\n- `max_order_quantity` is an optional per-order cap; `overall_low_stock_threshold` (total available stock across all locations) applies only to directly tracked stock. Change it later with `variants` on Product update or the variant set-threshold endpoint.\n- `sort_order` (integer, optional) — the variant's place in variant lists. Without it, the variant is stored at its position in this array (0 for the first).\n\nCreate supplies the initial set here. Later edits use the delta fields on Product update; read operations use the paginated Variant endpoints.",
           "items": {},
           "type": [
             "array",
@@ -1736,7 +1736,7 @@
           ]
         },
         "overall_low_stock_threshold": {
-          "description": "Overall low-stock threshold for directly tracked simple products. Uses total available stock across locations. Zero is valid. On update, null disables the alert and omission keeps it. Not available for untracked or group-backed stock. Simple products only.",
+          "description": "Overall low-stock threshold for directly tracked simple products. Uses total available stock across locations. Zero is valid. On update, null disables the alert and omission keeps it. Not available for untracked or group-backed stock. To change only a threshold, use `POST /products/{id}/set-threshold`, which needs no `expected_revision`. Simple products only.",
           "type": [
             "integer",
             "null"
@@ -1861,7 +1861,7 @@
           ]
         },
         "variants": {
-          "description": "Variable products only: entries address existing variants by `variant_id` and change only the supplied fields. Variants not mentioned are untouched. Supplying `attribute_values` replaces that Variant's complete combination; it must cover the Product's declared attributes and remain unique across all surviving and concurrently updated Variants. Supplying `prices` replaces the complete currency set and cannot be empty. Supplying `shipping_prices` replaces the complete set and an empty array clears it. `requires_shipping` takes `true` or `false` to set the variant's own value, or null to return it to the product's setting; omit it to leave it unchanged. When a variant stops shipping, its stored weight, dimensions, customs fields, and shipping prices are cleared, and supplying non-empty values for them is rejected. Supplying `inventory` sets only the named locations. Include `expected_quantity` in each edited location row to reject a stale stock snapshot with PRODUCT_VERSION_STALE (409). Omit unchanged locations when editing other fields. Example — reprice one variant: `{\"variants\": [{\"variant_id\": 1007, \"prices\": [{\"currency_code\": \"USD\", \"regular_price\": \"31.00\"}]}]}`.",
+          "description": "Variable products only: entries address existing variants by `variant_id` and change only the supplied fields. Variants not mentioned are untouched. Supplying `attribute_values` replaces that Variant's complete combination; it must cover the Product's declared attributes and remain unique across all surviving and concurrently updated Variants. Supplying `prices` replaces the complete currency set and cannot be empty. Supplying `shipping_prices` replaces the complete set and an empty array clears it. `requires_shipping` takes `true` or `false` to set the variant's own value, or null to return it to the product's setting; omit it to leave it unchanged. When a variant stops shipping, its stored weight, dimensions, customs fields, and shipping prices are cleared, and supplying non-empty values for them is rejected. Supplying `inventory` sets only the named locations. Include `expected_quantity` in each edited location row to reject a stale stock snapshot with PRODUCT_VERSION_STALE (409). Omit unchanged locations when editing other fields. `overall_low_stock_threshold` (integer or null) is the variant's overall low-stock threshold, compared with its total available stock across all locations: a number sets it (0 is valid), null disables it, omission keeps it; it is accepted only while the variant's `inventory_source` is `track`. To change only a threshold, `POST /products/{id}/variants/{variantId}/set-threshold` needs no `expected_revision`. Example — reprice one variant: `{\"variants\": [{\"variant_id\": 1007, \"prices\": [{\"currency_code\": \"USD\", \"regular_price\": \"31.00\"}]}]}`.",
           "items": {},
           "type": [
             "array",
@@ -26197,7 +26197,7 @@
     "api_key": "inventory.low-stock.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/inventory/low-stock",
-    "description": "List items at or below their low-stock threshold. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/low-stock. Only the connected store is accessible.",
+    "description": "List items at or below their low-stock threshold. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inventory/low-stock. Only the connected store is accessible. Which staff members are notified about low stock is each staff member's own notification preference in Store Admin or the Tringify app; tools can't read or change it. Apps are told through the inventory/low_stock webhook.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -26497,6 +26497,90 @@
       "type": "object"
     },
     "name": "create_inventory_adjustments",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "products.threshold.set",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products/{id}/set-threshold",
+    "description": "Set or clear a simple product's low-stock threshold at one location, or overall when location_id is omitted, without a product update. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products/{id}/set-threshold. Only the connected store is accessible. Needs no expected_revision and changes nothing else on the product. Send low_stock_threshold null to clear it; 0 is a valid threshold. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Location whose threshold to set. Omit it for the overall threshold.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "low_stock_threshold": {
+          "description": "Required: a whole number sets the threshold (0 is valid), null clears it.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "low_stock_threshold"
+      ],
+      "type": "object"
+    },
+    "name": "set_product_threshold",
+    "scopes": [
+      "store:inventory:write"
+    ]
+  },
+  {
+    "api_key": "products.variants.threshold.set",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/products/{id}/variants/{variantId}/set-threshold",
+    "description": "Set or clear a variant's low-stock threshold at one location, or overall when location_id is omitted, without a product update. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/products/{id}/variants/{variantId}/set-threshold. Only the connected store is accessible. Needs no expected_revision and changes nothing else on the product. Send low_stock_threshold null to clear it; 0 is a valid threshold. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Product ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Location whose threshold to set. Omit it for the overall threshold.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "low_stock_threshold": {
+          "description": "Required: a whole number sets the threshold (0 is valid), null clears it.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "variant_id": {
+          "description": "Variant ID; it must belong to the product.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "variant_id",
+        "low_stock_threshold"
+      ],
+      "type": "object"
+    },
+    "name": "set_product_variant_threshold",
     "scopes": [
       "store:inventory:write"
     ]

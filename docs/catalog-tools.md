@@ -598,6 +598,8 @@ Email subscriber lifecycle webhooks are `subscribers/create`, `subscribers/updat
 | `create_inventory_sync_jobs` | `POST /api/2025-01/inventory/sync-jobs` | store:inventory:write |
 | `get_inventory_sync_jobs` | `GET /api/2025-01/inventory/sync-jobs/{jobId}` | store:inventory:read |
 | `create_inventory_adjustments` | `POST /api/2025-01/inventory/adjustments` | store:inventory:write |
+| `set_product_threshold` | `POST /api/2025-01/products/{id}/set-threshold` | store:inventory:write |
+| `set_product_variant_threshold` | `POST /api/2025-01/products/{id}/variants/{variantId}/set-threshold` | store:inventory:write |
 | `list_inventory_transfers` | `GET /api/2025-01/transfers` | store:inventory:read |
 | `get_inventory_transfer` | `GET /api/2025-01/transfers/{transferId}` | store:inventory:read |
 | `create_inventory_transfer` | `POST /api/2025-01/transfers` | store:inventory:write |

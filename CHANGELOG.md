@@ -1,5 +1,12 @@
 # Changelog
 
+## Low-stock thresholds without a product update — 28 October 2026
+
+- New `set_product_threshold` and `set_product_variant_threshold` set or clear one low-stock threshold of a simple product or a variant: at a location (`location_id`) or overall across all locations (omit `location_id`). `low_stock_threshold` is required; null clears it and 0 is valid. They need no `expected_revision` and change nothing else on the product. A changed location threshold sends `inventory_levels/update` (reason `threshold_updated`); a changed overall threshold sends `products/update` or `variants/update` with `changed_fields` `["overall_low_stock_threshold"]`. Inventory groups keep `set_inventory_group_threshold`.
+- `update_product` states that each `variants` entry takes `overall_low_stock_threshold` (number sets, null disables, omitted keeps; tracked variants only); `create_product` says it can be changed later.
+- `list_inventory_low_stocks` says which staff members get low-stock notifications is each staff member's own preference in Store Admin or the Tringify app and is not available to tools; apps use the `inventory/low_stock` webhook.
+- `get_inventory_limits` returns the same paging and sorting keys in every section (`list_page_size`, `list_max_limit`, `page_size_options`, `search_max_length`, `sort_columns`, `default_sort`, `default_sort_direction`); `transfers.status_actions` gives each action's label and confirmation text in the request language.
+
 ## Timestamps in store time, metafield write rules, variant order — 27 October 2026
 
 - Every tool now returns timestamps as RFC 3339 in the store's timezone with its offset (for example `2026-10-28T01:16:00+05:30`), never display text. This covers orders (and their items, payments, refunds, fulfillments), discounts, shipping, COD, checkout and duty settings, campaigns and templates, email history, statistics, suppressions, reply-to and domains, inventory low stock, movements and restock requests, DNS jobs, domains, webhook endpoints, deliveries and attempts, and sales channels. `request_verification_code` returns `expires_at` and `resend_available_at` in that form and no longer returns `*_iso` copies.
