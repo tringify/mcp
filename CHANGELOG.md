@@ -1,5 +1,11 @@
 # Changelog
 
+## Metafield definition names, the Metafield block, definition management — 28 October 2026
+
+- Added `get_metafield_definition_translation`, `get_metafield_definition_translations` (up to 100 definitions in one language) and `set_metafield_definition_translations` (up to 100 rows `{id, locale, fields: {name}}` for any enabled non-default languages, per-row results, `totals` and the `TRANSLATIONS_SAVED` / `TRANSLATIONS_PARTIALLY_SAVED` / `TRANSLATIONS_NOT_SAVED` outcome). A definition's name is the label shoppers see next to its value. Names of app-owned definitions the merchant cannot edit return `TRANSLATION_FIELD_NOT_TRANSLATABLE`. Name translations send no webhooks, like choice labels.
+- `add_block` places the platform Metafield block (`theme:metafield`) in any slot that accepts app blocks or theme blocks: settings `owner` (`product`, `collection`, `category`, `vendor`, `brand`, `page`, `blog_post` or `store`), `field_<owner>` (`namespace.key` of a storefront-visible definition), `label` (empty shows the definition name in the shopper's language) and `show_label`. `list_section_types` lists it under `theme_blocks` with `platform: true`.
+- A store connection creates, updates and deletes the merchant's own metafield definitions with `create_metafield_definition`, `update_metafield_definition` and `delete_metafield_definition` (never an app's definitions or an `app:` namespace). The Store API itself has no definition create, update or delete endpoints; the docs now say so for every token. Behaviour is unchanged.
+
 ## Low-stock thresholds without a product update — 28 October 2026
 
 - New `set_product_threshold` and `set_product_variant_threshold` set or clear one low-stock threshold of a simple product or a variant: at a location (`location_id`) or overall across all locations (omit `location_id`). `low_stock_threshold` is required; null clears it and 0 is valid. They need no `expected_revision` and change nothing else on the product. A changed location threshold sends `inventory_levels/update` (reason `threshold_updated`); a changed overall threshold sends `products/update` or `variants/update` with `changed_fields` `["overall_low_stock_threshold"]`. Inventory groups keep `set_inventory_group_threshold`.
