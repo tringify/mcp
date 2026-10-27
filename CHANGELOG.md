@@ -1,5 +1,10 @@
 # Changelog
 
+## Domain setup steps — 27 October 2026
+
+- `get_domain`, `list_domains` and `create_domain` return `setup` on each domain: the same step list Store Admin shows (`path`, `state`, `summary`, `current_step`, `steps`, the `nameservers` to set or the `records` to add with what public DNS shows, `last_checked`, `next_check`, `expires`, `actions`). Labels and messages are in the request language.
+- `verify_domain` now runs the domain's next setup step at once (code `DOMAIN_SETUP_CHECKED`, or `DOMAIN_VERIFIED` when it connects) and never marks a domain failed while DNS is still updating; `DOMAIN_DNS_TXT_LOOKUP_FAILED` and `DOMAIN_DNS_TXT_MISMATCH` are gone. Tringify keeps checking in the background, so there is no need to call it in a loop.
+
 ## Verification codes — 27 October 2026
 
 - Added `request_verification_code`: it emails the merchant the verification code a tool with `otp_code` needs, for the exact `action`, `target_type` and `target_id` that tool names. Until now the code could only be requested in Store Admin.
