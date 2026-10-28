@@ -1,5 +1,9 @@
 # Changelog
 
+## Go-live blockers name the missing address fields — 28 October 2026
+
+- `get_storefront` `go_live.blockers[].missing_fields` (and the same `blockers` in `error.details` of `STOREFRONT_NOT_READY_TO_GO_LIVE` from `update_storefront_mode`) is a list of objects instead of field keys: each blank field's `field` (`line1`, `city`, `postal_code` or `country`) and its `label` in the request language, for example `{"field":"postal_code","label":"Postal code"}`. A primary location in India names its postal code "PIN code"; the location's country decides it. Show `label` as is.
+
 ## Import, export and DNS job status names — 28 October 2026
 
 - `create_import`, `get_import`, `list_imports`, `confirm_import` and `cancel_import` return `status_display` (for example "Ready", "Processing", "Completed") and `type_display` (the type's `label` from `list_import_types`) beside `status` and `type`, in English; an import's `job` carries `status_display` too. `create_export`, `get_export`, `list_exports` and `cancel_export` return the same two fields.
