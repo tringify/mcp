@@ -192,7 +192,7 @@ Codex needs a way to read the local file and make the upload request from the co
 
 Do not put binary data or base64 into MCP arguments. Starting an upload does not mean it has passed validation. Do not restart an upload just because validation is still processing.
 
-`list_files` filters by `media_type` and `search` and orders by `sort`. Files can be renamed or have their alt text changed with `update_file`. AI alt text suggestions, AI image generation and AI credit balances are not exposed through MCP. Clearing a catalog image reference does not delete its library file. `delete_file` checks use and may require impact confirmation; a file required by another record can block deletion.
+`list_files` filters by `media_type` and `search` and orders by `sort`. Files can be renamed or have their alt text changed with `update_file`. AI credit balances are not exposed through MCP; AI image generation and alt text jobs are described above. Clearing a catalog image reference does not delete its library file. `delete_file` checks use and may require impact confirmation; a file required by another record can block deletion.
 
 ## Update permissions
 
