@@ -1,5 +1,10 @@
 # Changelog
 
+## Import, export and DNS job status names — 28 October 2026
+
+- `create_import`, `get_import`, `list_imports`, `confirm_import` and `cancel_import` return `status_display` (for example "Ready", "Processing", "Completed") and `type_display` (the type's `label` from `list_import_types`) beside `status` and `type`, in English; an import's `job` carries `status_display` too. `create_export`, `get_export`, `list_exports` and `cancel_export` return the same two fields.
+- `list_dns_jobs` and `cancel_dns_job` return `status_display` and `type_display` (Import or Export) on each job, in the request language. `get_dns_job_limits` returns `status_options` (each status `value` with its `label`) in place of `statuses`, and each `job_kinds` entry carries its `label`.
+
 ## Store time everywhere, datetime metafield values, global examples — 28 October 2026
 
 - These times are now RFC 3339 in the store's timezone with its offset (for example `2026-10-28T09:15:00-04:00`) instead of UTC: `get_storefront` `cache.last_cleared_at`/`next_available_at` and `clear_storefront_cache` (also `error.details` of `STOREFRONT_CACHE_CLEAR_TOO_SOON`); packing-slip `expires_at`; customer group `membership.evaluated_at`/`valid_until`, `get_customer_group_membership_snapshot` `last_evaluated_at` and `list_customer_group_membership_changes` `revisions[].recorded_at`; campaign audience preview `evaluated_at`/`previewed_at` and a campaign's `audience_definition` times; `get_text_marketing_consent` and `set_text_marketing_consent` `consented_at`/`updated_at`.
