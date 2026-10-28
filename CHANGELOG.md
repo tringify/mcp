@@ -1,5 +1,10 @@
 # Changelog
 
+## SEO overrides name their language and country — 28 October 2026
+
+- `list_storefront_seo_overrides` and `set_storefront_seo_override` return `locale_label` and `country_name` on each override: the language's and country's display names in the request language, for example `"locale_label":"German"`, `"country_name":"Switzerland"` (`country_name` is empty for the every-country override). They are set also for an override whose language the storefront no longer publishes. The title preview in `update_storefront_seo` carries `locale_label` for its language.
+- The tool catalog is re-exported from the hosted server.
+
 ## Go-live blockers name the missing address fields — 28 October 2026
 
 - `get_storefront` `go_live.blockers[].missing_fields` (and the same `blockers` in `error.details` of `STOREFRONT_NOT_READY_TO_GO_LIVE` from `update_storefront_mode`) is a list of objects instead of field keys: each blank field's `field` (`line1`, `city`, `postal_code` or `country`) and its `label` in the request language, for example `{"field":"postal_code","label":"Postal code"}`. A primary location in India names its postal code "PIN code"; the location's country decides it. Show `label` as is.
