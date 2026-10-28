@@ -1,5 +1,12 @@
 # Changelog
 
+## Message templates and their translations — 28 October 2026
+
+- New tools for SMS and WhatsApp templates: `list_message_templates`, `get_message_template`, `update_message_template` and `reset_message_template` (`store:marketing:read` / `store:marketing:write`), and their translations `get_message_template_translation`, `set_message_template_translation`, `get_message_template_translations` and `set_message_template_translations` (also `store:settings.languages:read` / `write`). A template row carries `id` (what the translation tools take), `default_locale`, `default_label`, `translations` (each other store language with `status` `translated`, `outdated` or `not_translated`) and `translations_updated_at`.
+- A translation keeps the original's values and tags exactly; otherwise `MARKETING_TRANSLATION_VARIABLES_MISMATCH` with `details.variables`. Blank text is `MESSAGE_TEMPLATE_CONTENT_REQUIRED`, too long `MESSAGE_TEMPLATE_CONTENT_TOO_LONG` with `details.max`; an empty string clears the translation.
+- Existing connections approve the new Marketing access (`store:marketing:read`, `store:marketing:write`) before these tools appear.
+- The tool catalog is re-exported from the hosted server.
+
 ## SEO overrides name their language and country — 28 October 2026
 
 - `list_storefront_seo_overrides` and `set_storefront_seo_override` return `locale_label` and `country_name` on each override: the language's and country's display names in the request language, for example `"locale_label":"German"`, `"country_name":"Switzerland"` (`country_name` is empty for the every-country override). They are set also for an override whose language the storefront no longer publishes. The title preview in `update_storefront_seo` carries `locale_label` for its language.

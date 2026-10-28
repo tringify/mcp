@@ -858,6 +858,21 @@ Each tool needs the access of the import or export `type` it works on: read for 
 | `bulk_delete_files` | `POST /api/2025-01/files/bulk-delete` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `health_market_duty_country_rule` | `GET /api/2025-01/markets/duty-health` | store:markets:read, store:products:read |
 
+## Message templates
+
+SMS and WhatsApp templates are one row per message type and channel: list them with `list_message_templates` and pass `type` and `channel` (`sms` or `whatsapp`) to the others. Each row carries its `id`, `default_locale` and `translations`, its state in every other store language (`translated`, `outdated` or `not_translated`). The translation tools take that `id`. A translation keeps the original's values and tags exactly (`{{ ... }}`, `{% ... %}`); otherwise it is refused with `MARKETING_TRANSLATION_VARIABLES_MISMATCH` and `details.variables` lists what to keep. Blank text is refused with `MESSAGE_TEMPLATE_CONTENT_REQUIRED`, text over the template limit with `MESSAGE_TEMPLATE_CONTENT_TOO_LONG`; an empty string clears a translation. Every change sends the `message_templates/update` webhook.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_message_templates` | `GET /api/2025-01/message-templates` | store:marketing:read |
+| `get_message_template` | `GET /api/2025-01/message-templates/{type}` | store:marketing:read |
+| `update_message_template` | `PUT /api/2025-01/message-templates/{type}` | store:marketing:write |
+| `reset_message_template` | `POST /api/2025-01/message-templates/{type}/reset` | store:marketing:write |
+| `get_message_template_translation` | `GET /api/2025-01/message-templates/{id}/translations/{locale}` | store:marketing:read, store:settings.languages:read |
+| `set_message_template_translation` | `PUT /api/2025-01/message-templates/{id}/translations/{locale}` | store:marketing:write, store:settings.languages:write |
+| `get_message_template_translations` | `GET /api/2025-01/message-templates/translations/{locale}` | store:marketing:read, store:settings.languages:read |
+| `set_message_template_translations` | `PUT /api/2025-01/message-templates/translations` | store:marketing:write, store:settings.languages:write |
+
 ## Order and store metafield values
 
 Value translations require both owner and Languages access: read for get, write for set or clear, including product and variant values. Store values use `store:settings.metafield_definitions:read/write`; order and order-item values use `store:orders:read/write`. Orders and order items have no value translations. These tools use the existing Store API endpoints and validation, preserve omitted values, and require no confirmation token. Sharing and merchant-access restrictions still apply.
