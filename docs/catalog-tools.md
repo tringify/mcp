@@ -818,6 +818,39 @@ Pixel tools manage a storefront's custom pixels and the merchant's switch for ea
 | `save_storefront_message` | `PUT /api/2025-01/storefront-messages/overrides` | store:online_store.storefront_messages:write |
 | `reset_storefront_message` | `DELETE /api/2025-01/storefront-messages/overrides/{code}` | store:online_store.storefront_messages:write |
 
+## Gift Cards
+
+Read tools need `store:gift_cards:read`; write tools need `store:gift_cards:write` (write access does not include read). Cards are always shown with a masked code (`code_last4`); the full code is returned only by `issue_gift_card` when it creates a card (or repeats the same issue with the same `idempotency_key` within an hour) and by `reveal_gift_card_code`. Call `reveal_gift_card_code` only when the merchant explicitly asks to see a card's code: every call is recorded in the card's history as `code_revealed` with the connected user as `actor_name`, and in the store's audit log. The code is never in webhooks, history or logs. Naming a customer (`recipient_customer_id` on `issue_gift_card`, `customer_id` on `list_gift_card_languages`) also needs `store:customers:read`.
+
+`adjust_gift_card_balance` adds (`direction: "credit"`) or removes (`direction: "debit"`) balance with a required `reason` and `idempotency_key`. Only `active` or `depleted` cards that have not expired can be adjusted (`can_adjust_balance` on every card; otherwise `GIFT_CARD_ADJUSTMENT_UNAVAILABLE`). A debit can't exceed the balance (`GIFT_CARD_ADJUSTMENT_EXCEEDS_BALANCE`), a credit can't take the balance above `balance_max` (`GIFT_CARD_BALANCE_LIMIT_EXCEEDED`), and one adjustment is at most `adjustment_max` from `get_gift_card_limits` (`GIFT_CARD_ADJUSTMENT_LIMIT_EXCEEDED`). Each adjustment is an `adjustment` movement with its `reason` in the card's balance history, a `balance_adjusted` event with `actor_name`, an audit log entry and a `gift_cards/update` webhook. Reusing the key with the same details returns the card without a second adjustment.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_gift_card_limits` | `GET /api/2025-01/gift-cards/limits` | store:gift_cards:read |
+| `list_gift_card_languages` | `GET /api/2025-01/gift-cards/languages` | store:gift_cards:read (with `customer_id` also store:customers:read) |
+| `get_gift_card_settings` | `GET /api/2025-01/gift-cards/settings` | store:gift_cards:read |
+| `update_gift_card_settings` | `PUT /api/2025-01/gift-cards/settings` | store:gift_cards:write |
+| `list_gift_cards` | `GET /api/2025-01/gift-cards` | store:gift_cards:read |
+| `get_gift_card` | `GET /api/2025-01/gift-cards/{id}` | store:gift_cards:read |
+| `list_gift_card_history` | `GET /api/2025-01/gift-cards/{id}/history` | store:gift_cards:read |
+| `issue_gift_card` | `POST /api/2025-01/gift-cards` | store:gift_cards:write (with `recipient_customer_id` also store:customers:read) |
+| `update_gift_card` | `PUT /api/2025-01/gift-cards/{id}` | store:gift_cards:write |
+| `set_gift_card_status` | `POST /api/2025-01/gift-cards/{id}/status` | store:gift_cards:write |
+| `bulk_set_gift_card_status` | `POST /api/2025-01/gift-cards/bulk-status` | store:gift_cards:write |
+| `resend_gift_card` | `POST /api/2025-01/gift-cards/{id}/resend` | store:gift_cards:write |
+| `reveal_gift_card_code` | `POST /api/2025-01/gift-cards/{id}/reveal-code` | store:gift_cards:write |
+| `adjust_gift_card_balance` | `POST /api/2025-01/gift-cards/{id}/adjustments` | store:gift_cards:write |
+| `list_gift_card_products` | `GET /api/2025-01/gift-cards/products` | store:gift_cards:read, store:products:read |
+| `create_gift_card_product` | `POST /api/2025-01/gift-cards/products` | store:gift_cards:write, store:products:write |
+| `list_order_gift_cards` | `GET /api/2025-01/orders/{id}/gift-cards` | store:orders:read |
+| `retry_order_gift_card_issuance` | `POST /api/2025-01/orders/{id}/gift-cards/{intent_id}/retry` | store:orders:write |
+
+`create_product` with `is_gift_card: true` creates a Gift Card product exactly as `create_gift_card_product` does and also needs `store:gift_cards:write`. `get_product` returns `is_gift_card` and, for a Gift Card product, `gift_card_policy`; editing or deleting a Gift Card product with `update_product` or `delete_product` also needs `store:gift_cards:write`. `list_products` with `is_gift_card: true` returns the same rows as `list_gift_card_products`.
+
+`list_order_gift_cards` lists the Gift Cards an order bought (one row per card, `intent_id`), with `state` and `state_display`, the issued card's `gift_card_id` and `code_last4`, and what refunding it would give back. A unit in `needs_attention` can be retried with `retry_order_gift_card_issuance`, optionally with a new `recipient_email` and/or `recipient_phone`; anything else returns `ORDER_GIFT_CARD_NOT_RETRYABLE`.
+
+Gift Cards are also a CSV type for the [CSV import and export tools](#csv-imports-and-exports): import type `gift_cards` issues one new card per row (codes are generated by Tringify, a preview with no errors is required, there is no undo), export type `gift_cards` lists the store's cards without their codes.
+
 ## CSV imports and exports
 
 Translation CSV uses `type: "translations"` and `options: {resource: "message_template" | "email_template" | "order_status" | "file" | "product_media", locale: "fr"}` for these resources, alongside the other types returned by the backend. List the current import/export types and use their permissions and limits. Upload-intent creation keeps `resource` at its existing top level.

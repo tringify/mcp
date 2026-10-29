@@ -5,6 +5,16 @@
 - Card responses expose server decisions for editing delivery details and resending, with display reasons. Sent, in-flight or used cards lock recipient details, message, language and schedule; expired, depleted, cancelled and disabled cards cannot be edited or resent.
 - Saving a schedule creates or moves a real waiting delivery; clearing it cancels the send. Resend uses saved recipient details and language. The catalog includes the Gift Card tools and current schemas.
 
+## Gift Cards — 29 October 2026
+
+- New Gift Card tools covering every Gift Card operation of the Store API: `get_gift_card_limits`, `list_gift_card_languages`, `get_gift_card_settings`, `list_gift_cards`, `get_gift_card`, `list_gift_card_history`, `list_gift_card_products` (`store:gift_cards:read`, new) and `update_gift_card_settings`, `issue_gift_card`, `update_gift_card`, `set_gift_card_status`, `bulk_set_gift_card_status`, `resend_gift_card`, `reveal_gift_card_code`, `create_gift_card_product` (`store:gift_cards:write`). Write access does not include read. `reveal_gift_card_code` is for an explicit request from the merchant only; every call is recorded in the card's history and the audit log with the connected user.
+- New `adjust_gift_card_balance` (`store:gift_cards:write`): add (`credit`) or remove (`debit`) balance with a reason and an `idempotency_key`. Only active or depleted cards that have not expired (`can_adjust_balance`); never below zero or above `balance_max`; at most `adjustment_max` per adjustment (`get_gift_card_limits`, which also lists `adjustment_direction_options`). Recorded as an `adjustment` movement with its `reason`, a `balance_adjusted` event, an audit entry and a `gift_cards/update` webhook.
+- New `list_order_gift_cards` (`store:orders:read`) and `retry_order_gift_card_issuance` (`store:orders:write`): an order's purchased Gift Cards and retrying one whose issuing stopped.
+- `create_product` takes `is_gift_card`; `true` creates a Gift Card product and needs `store:gift_cards:write`, like editing or deleting one.
+- The CSV tools accept import and export type `gift_cards`.
+- Existing connections approve the new Gift Cards read access before the read tools appear.
+- The tool catalog is re-exported from the hosted server.
+
 ## Order status names in every language — 29 October 2026
 
 - Translation CSV import/export now includes Message Templates (`message_template`), Emails (`email_template`, one editor text per row), custom Order statuses (`order_status`), Files (`file`) and Product media (`product_media`). Existing import/export tools keep the same preview, errors, confirmation, limits and progress contract. Template values/tags and email layout remain protected.
