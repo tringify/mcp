@@ -1,5 +1,12 @@
 # Changelog
 
+## Store fonts — 30 October 2026
+
+- New tools for the fonts a merchant uploads to their own store: `list_store_fonts` (`store:online_store.storefronts:read`) and `create_store_font_upload`, `upload_store_font`, `update_store_font`, `delete_store_font` (`store:online_store.storefronts:write`).
+- To add a font: call `create_store_font_upload` with the file's exact `size_bytes` (at most 2 MB), PUT the file to the returned `url` yourself, then call `upload_store_font` with the `upload_id`. WOFF2, WOFF, TTF and OTF files are accepted and checked with the same sanitizer browsers use; weight, style and family name are read from the file. A store has at most 20 fonts with up to 4 files each.
+- Every upload needs the merchant's own confirmation of the licence statement that `list_store_fonts` returns: show it word for word, and send `licence_accepted: true` with its `version` only after the merchant confirms. Each acceptance is recorded with the connected user.
+- A font's `handle` (`store:<id>`) is a value for a theme's `font_picker` setting and the checkout font. `delete_store_font` refuses a font still selected in a theme or the checkout with `FONT_IN_USE`, listing where.
+
 ## Gift Card code safety — 29 October 2026
 
 - `adjust_gift_card_balance` now sends the `gift_cards/adjust` webhook (an `adjustment` movement with a signed amount, `balance_after` and the reason) instead of `gift_cards/update`. Gift Card webhook payloads carry `recipient_name`, `recipient_phone`, `recipient_message` and `delivery_scheduled_at`, and `gift_cards/update` names what changed in `changed_fields`.

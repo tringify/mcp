@@ -768,6 +768,11 @@ Pixel tools manage a storefront's custom pixels and the merchant's switch for ea
 | `delete_custom_pixel` | `DELETE /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}` | store:online_store.storefronts:write |
 | `list_app_pixels` | `GET /api/2025-01/storefronts/{storefrontId}/app-pixels` | store:online_store.storefronts:read |
 | `set_app_pixel` | `PUT /api/2025-01/storefronts/{storefrontId}/app-pixels/{appId}/{embedKey}` | store:online_store.storefronts:write |
+| `list_store_fonts` | `GET /api/2025-01/fonts` | store:online_store.storefronts:read |
+| `create_store_font_upload` | `POST /api/2025-01/fonts/uploads` | store:online_store.storefronts:write |
+| `upload_store_font` | `POST /api/2025-01/fonts` | store:online_store.storefronts:write |
+| `update_store_font` | `PATCH /api/2025-01/fonts/{fontId}` | store:online_store.storefronts:write |
+| `delete_store_font` | `DELETE /api/2025-01/fonts/{fontId}` | store:online_store.storefronts:write |
 
 ## Online Store: preferences, redirects, search, recommendations and messages
 

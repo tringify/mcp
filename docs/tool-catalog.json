@@ -25646,6 +25646,144 @@
     ]
   },
   {
+    "api_key": "fonts.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/fonts",
+    "description": "List the store's own fonts, the limits and the licence statement. Returns every font family the store uploaded, oldest first, each with its faces (weight, style and stored size in bytes). `handle` is the value a theme's `font_picker` setting and the checkout font take (`store:\u003cid\u003e`); the library fonts keep their own handles. `limits` are store-wide: at most `max_families` families, `max_faces` faces per family and `max_file_bytes` per uploaded file. `licence` is the statement the merchant confirms on every upload, in the request language (English by default), with its `version`. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/fonts. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_store_fonts",
+    "scopes": [
+      "store:online_store.storefronts:read"
+    ]
+  },
+  {
+    "api_key": "fonts.uploads.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/fonts/uploads",
+    "description": "Get a signed URL to upload one font file to. Upload the file's bytes with HTTPS PUT to the returned `url` within `expires_in` seconds, sending every returned header unchanged (the headers are signed; do not send the Store API bearer token there). `size_bytes` must be the file's exact size, at most 2 MB. Then call Upload a font with the returned `upload_id`. An upload that is never turned into a font is discarded. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/fonts/uploads. Only the connected store is accessible. Never send binary bytes or base64 in tool arguments: PUT the file to the returned url yourself, then call upload_store_font with upload_id after the merchant confirmed the licence statement.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "size_bytes": {
+          "description": "The font file's exact size in bytes.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "size_bytes"
+      ],
+      "type": "object"
+    },
+    "name": "create_store_font_upload",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "fonts.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/fonts",
+    "description": "Turn an uploaded file into a store font, or add a face to one. Accepts WOFF2, WOFF, TTF and OTF files; the file's own bytes decide the format, not its name. The file is checked with OTS, the sanitizer Chrome and Firefox use, and refused with `FONT_FILE_INVALID` when it fails; a font whose licence bits forbid embedding is refused with `FONT_LICENCE_RESTRICTED`. Weight, style and the family name are read from the font itself (a variable font's weight axis gives a range such as `100 900`). It is stored and served as WOFF2, only from the store's own domains. Without `font_id` a new family is created (`FONT_LIMIT_REACHED` past `max_families`); with it the face joins that family (`FONT_LIMIT_REACHED` past `max_faces`, `FONT_FACE_EXISTS` when the family already has that weight and style). The merchant must have read and confirmed the licence statement from List fonts: send `licence_accepted: true` and its `version` as `terms_version`, else `FONT_LICENCE_NOT_ACCEPTED`. Ask the merchant first; never accept it on their behalf. Every upload records the acceptance with the token, the statement and the file's checksum. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/fonts. Only the connected store is accessible. Before calling, show the merchant the licence statement from list_store_fonts word for word and ask whether they confirm it; send licence_accepted true with its version only after they explicitly confirm, for every file. Never confirm it for them or assume an earlier confirmation covers a new file. Upload the bytes first with create_store_font_upload (a signed PUT); never send binary bytes or base64 in tool arguments. Do not retry an uncertain upload automatically; read list_store_fonts first.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "description": "Name shown in pickers, up to 80 characters. Default: the font's own family name. Ignored with `font_id`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "font_id": {
+          "description": "Add the file as another face of this font instead of creating a new font.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "licence_accepted": {
+          "description": "`true` once the merchant confirmed the licence statement from List fonts.",
+          "type": "boolean"
+        },
+        "terms_version": {
+          "description": "The licence statement's `version` the merchant confirmed.",
+          "type": "string"
+        },
+        "upload_id": {
+          "description": "`upload_id` from Create a font upload, after the file was uploaded to its URL.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "upload_id",
+        "licence_accepted",
+        "terms_version"
+      ],
+      "type": "object"
+    },
+    "name": "upload_store_font",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "fonts.update",
+    "api_method": "PATCH",
+    "api_path": "/api/2025-01/fonts/{fontId}",
+    "description": "Change the name a font shows in pickers. Only `display_name` changes; the family name in the CSS stays the font's own. Pages pick up the new name in theme and checkout pickers right away. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. Uses the documented Store API fields, validation and permissions for PATCH /api/2025-01/fonts/{fontId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "description": "Name shown in pickers, 1 to 80 characters.",
+          "type": "string"
+        },
+        "fontId": {
+          "description": "Font id from List fonts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "fontId",
+        "display_name"
+      ],
+      "type": "object"
+    },
+    "name": "update_store_font",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
+    "api_key": "fonts.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/fonts/{fontId}",
+    "description": "Delete a font and its files. A font selected in any theme's settings or in a storefront's checkout branding is refused with `FONT_IN_USE`; `error.details.used_in` lists where (`kind` `theme` with the theme's name, or `checkout`). Pick another font there first. Deleting removes the font's files; the licence acceptances recorded at upload are kept. Answers HTTP 204 with no body. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/fonts/{fontId}. Only the connected store is accessible. Tell the merchant which font will be deleted and get approval first; a font in use is refused with FONT_IN_USE listing where it is selected. Do not retry an uncertain delete automatically; read list_store_fonts first.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "fontId": {
+          "description": "Font id from List fonts.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "fontId"
+      ],
+      "type": "object"
+    },
+    "name": "delete_store_font",
+    "scopes": [
+      "store:online_store.storefronts:write"
+    ]
+  },
+  {
     "api_key": "storefronts.seo.override.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/seo/overrides",
