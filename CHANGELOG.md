@@ -1,5 +1,11 @@
 # Changelog
 
+## Gift Card code safety — 29 October 2026
+
+- `adjust_gift_card_balance` now sends the `gift_cards/adjust` webhook (an `adjustment` movement with a signed amount, `balance_after` and the reason) instead of `gift_cards/update`. Gift Card webhook payloads carry `recipient_name`, `recipient_phone`, `recipient_message` and `delivery_scheduled_at`, and `gift_cards/update` names what changed in `changed_fields`.
+
+- Clarified for `issue_gift_card`, `get_gift_card` and `list_gift_cards`: anyone with the code can redeem an eligible card. Recipient details control delivery, and checkout does not match the recipient email or customer. Keep the code and view link safe; disable or cancel a card if its code leaks.
+
 ## Gift Card delivery permissions — 29 October 2026
 
 - Card responses expose server decisions for editing delivery details and resending, with display reasons. Sent, in-flight or used cards lock recipient details, message, language and schedule; expired, depleted, cancelled and disabled cards cannot be edited or resent.
