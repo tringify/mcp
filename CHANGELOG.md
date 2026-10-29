@@ -7,6 +7,9 @@
 
 ## Order status names in every language — 29 October 2026
 
+- Translation CSV import/export now includes Message Templates (`message_template`), Emails (`email_template`, one editor text per row), custom Order statuses (`order_status`), Files (`file`) and Product media (`product_media`). Existing import/export tools keep the same preview, errors, confirmation, limits and progress contract. Template values/tags and email layout remain protected.
+
+
 - `list_order_statuses`: `name` is the status in the request language. Tringify words the four system statuses (`pending` — Pending payment, `processing`, `completed`, `cancelled`) in every language, for staff and customers alike; one of the store's own statuses shows its translation in that language, else its own name. New `source_name`: a custom status's own name in the store's default language (`null` for system statuses).
 - New tools for the names of the store's own statuses in other store languages: `get_order_status_translation`, `set_order_status_translation`, `get_order_status_translations` and `set_order_status_translations` (`store:orders:read` + `store:settings.languages:read` / `store:orders:write` + `store:settings.languages:write`). A status is addressed by the `id` (a UUID) that `list_order_statuses` returns; the only field is `name`, under the same rules as a status name; an empty string clears the translation. A translation written against an earlier name is reported outdated (`is_outdated`). System statuses refuse translations with `ORDER_STATUS_TRANSLATION_SYSTEM`.
 - The tool catalog is re-exported from the hosted server.

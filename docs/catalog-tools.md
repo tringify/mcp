@@ -820,6 +820,15 @@ Pixel tools manage a storefront's custom pixels and the merchant's switch for ea
 
 ## CSV imports and exports
 
+Translation CSV uses `type: "translations"` and `options: {resource: "message_template" | "email_template" | "order_status" | "file" | "product_media", locale: "fr"}` for these resources, alongside the other types returned by the backend. List the current import/export types and use their permissions and limits. Upload-intent creation keeps `resource` at its existing top level.
+
+- Message Templates: one SMS/WhatsApp message type and channel per row, field `content`.
+- Emails: one editor text per row, field `content`; `text_id` is `<template UUID>:<exact text_key>`. Subject, preview line, preheader, reachable visual block texts and code-mode text runs have the same granularity as the editor. Keep the exported keys, source columns and template syntax; edit translated text. Layout stays with the source template.
+- Order statuses: one custom status per row, field `name`. System statuses are supplied by Tringify and cannot be translated.
+- Files and Product media: field `alt_text`, addressed by library file UUID / product gallery item ID. File alt text also has the existing individual translation tools.
+
+Blank translated cells preserve stored values; `__CLEAR__` clears a translation. Preview counts, row errors, confirmation, job progress and downloads use the ordinary CSV workflow. The standard AI Translator estimate/review/apply flow is available in Store Admin and mobile; there is no public MCP AI job tool or dedicated per-email translation tool. Theme text uses its existing storefront/theme-scoped workflow and CSV format.
+
 Each tool needs the access of the import or export `type` it works on: read for the listing, status and export tools, write for uploading, starting, confirming, discarding, cancelling and undoing an import. `list_import_types` and `list_export_types` list every type with the scopes it needs; a translation type also needs its resource's owner scope. `finalize_import_upload` and `get_import_upload_status` take `type` and `intent_ids` only; the upload keeps the `resource` given to `create_import_upload`.
 
 | Tool | Store API operation | Required access |
@@ -860,7 +869,7 @@ Each tool needs the access of the import or export `type` it works on: read for 
 
 ## Message templates
 
-SMS and WhatsApp templates are one row per message type and channel: list them with `list_message_templates` and pass `type` and `channel` (`sms` or `whatsapp`) to the others. Each row carries its `id`, `default_locale` and `translations`, its state in every other store language (`translated`, `outdated` or `not_translated`). The translation tools take that `id`. A translation keeps the original's values and tags exactly (`{{ ... }}`, `{% ... %}`); otherwise it is refused with `MARKETING_TRANSLATION_VARIABLES_MISMATCH` and `details.variables` lists what to keep. Blank text is refused with `MESSAGE_TEMPLATE_CONTENT_REQUIRED`, text over the template limit with `MESSAGE_TEMPLATE_CONTENT_TOO_LONG`; an empty string clears a translation. Every change sends the `message_templates/update` webhook.
+SMS and WhatsApp templates are one row per message type and channel: list them with `list_message_templates` and pass `type` and `channel` (`sms` or `whatsapp`) to the others. Each row carries its `id`, `default_locale` and `translations`, its state in every other store language (`translated`, `outdated` or `not_translated`). The translation tools take that `id`. A translation keeps the original's values and tags exactly (`{{ ... }}`, `{% ... %}`); otherwise it is refused with `MARKETING_TRANSLATION_VARIABLES_MISMATCH` and `details.variables` lists what to keep. Blank text is refused with `MESSAGE_TEMPLATE_CONTENT_REQUIRED`, text over the template limit with `MESSAGE_TEMPLATE_CONTENT_TOO_LONG`; an empty string clears a translation. Translation changes send `message_templates/translations/update`, or `message_templates/translations/delete` when cleared. Source edits use `message_templates/update`.
 
 | Tool | Store API operation | Required access |
 | --- | --- | --- |
