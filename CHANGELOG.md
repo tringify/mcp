@@ -1,5 +1,11 @@
 # Changelog
 
+## Order statuses and their triggers — 29 October 2026
+
+- New tool `list_order_statuses` (`store:orders:read`): the store's order statuses in display order — the four system statuses (`pending`, named Pending payment, `processing`, `completed`, `cancelled`) and the merchant's own labels — with `slug` (what `create_order` takes as `status_slug`), `name`, `color`, `sort_order` and `is_system`.
+- Each status carries `triggers`: the events that move an order to it automatically, each with `event` (for example `fulfillment_shipped`, `fulfillment_delivered`, `order_paid`), `scope` (`first_fulfillment`, `all_fulfillments` or `order`) and `label` in the request language, for example `{"event":"fulfillment_shipped","scope":"first_fulfillment","label":"Shipment sent (first fulfillment)"}`. A trigger moves an order once, only changes its status and never notifies the customer. System statuses have none. Triggers are managed in Store Admin.
+- The tool catalog is re-exported from the hosted server.
+
 ## Message templates and their translations — 28 October 2026
 
 - New tools for SMS and WhatsApp templates: `list_message_templates`, `get_message_template`, `update_message_template` and `reset_message_template` (`store:marketing:read` / `store:marketing:write`), and their translations `get_message_template_translation`, `set_message_template_translation`, `get_message_template_translations` and `set_message_template_translations` (also `store:settings.languages:read` / `write`). A template row carries `id` (what the translation tools take), `default_locale`, `default_label`, `translations` (each other store language with `status` `translated`, `outdated` or `not_translated`) and `translations_updated_at`.
