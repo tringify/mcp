@@ -1331,6 +1331,13 @@
             "null"
           ]
         },
+        "is_gift_card": {
+          "description": "`true` creates a Gift Card product (requires `write_gift_cards`), with the same rules as Create a Gift Card product. Omit or send `false` for an ordinary product.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "length": {
           "description": "Positive package length within the store’s limit.",
           "type": [
@@ -1922,7 +1929,7 @@
           "type": "integer"
         },
         "title": {
-          "description": "Optional title for the copy. Defaults to `Copy of \u003csource title\u003e`.",
+          "description": "Optional title for the copy. Defaults to `Copy of <source title>`.",
           "type": [
             "string",
             "null"
@@ -3213,7 +3220,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "minLength": 1,
           "type": "string"
         }
@@ -3260,7 +3267,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:\u003capp-id\u003e` is sent as `app%3A\u003capp-id\u003e`.",
+          "description": "Metafield definition namespace. URL-encode reserved path characters; for example `app:<app-id>` is sent as `app%3A<app-id>`.",
           "minLength": 1,
           "type": "string"
         },
@@ -12577,7 +12584,7 @@
     "api_key": "orders.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders/{id}",
-    "description": "Fetch one order with fulfillment plans. Order numbers are assigned using the merchant’s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Tax is split across `items[].tax_lines`, `shipping_tax_lines`, `cod_fee_tax_lines`, `duty_tax_lines` and `checkout_fee_lines[].tax_lines`; these amounts sum to `tax_total`. `status_name` and `status_color` are the store's order status for `status_slug`. The order names its codes in the request language (English by default) beside them: `financial_status_display`, `payment_status_display` (empty while the order has no payment), `channel_type_display` (null without a channel), `tax_exemption_source_display`, and `attribution_status.status_display` with `reason_display`. Each payment carries `status_display`, and `provider_label` with the gateway name an app or import sent when it is not one of Tringify's own; each refund carries `method_display`, and where they apply `provider_status_display`, `gift_card_status_display` and `store_credit_status_display` (the Store Credit progress, with the reason when it failed). Refunds expose `goods_total`, `tax_total` and `components` (actual returned amount, goods_amount, tax_amount, original tax_lines and item or charge identity). Item refunds also expose goods_amount, tax_amount and tax_lines. Components include amount-only allocations; quantities of zero do not return stock. Tax is prorated from the saved tax lines over remaining units or charge amounts, with the final unit taking the remainder, capped at collected tax less active refund reservations. Smaller refund amounts reduce tax proportionally. Money above selected units and charges is allocated across the remaining order without returning additional units. A component key identifies its source and can repeat for selected-unit and additional monetary allocations. Surplus money that was never sale value has no tax. Only completed refunds reduce tax reports. Base refund goods and tax consume each item's or charge's saved base allocations cumulatively, including its final remainder. Fully refunded products have zero net goods revenue. The signed base_rounding_amount reconciles settled cash with base_goods_amount plus base_tax_amount without moving revenue or tax between products. Snapshot items carry an immutable allocation_key, preserved when imports replace database IDs; supplied sale allocations and original refund evidence are validated and retained. Historical order CSV exports preserve refunds (per-refund components and original tax_lines), line_id and base_refunded_total. Imports reject missing or inconsistent refund evidence with ORDER_IMPORT_REFUND_EVIDENCE_INVALID; they never estimate taxable refund history from refunded_total. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` and `customer_tax_id_type` record the normalized, offline-validated ID and never prove registration or exemption. `tax_exemption_source` is customer_flag, staff_order or none, and `tax_id_state_mismatch` flags a GSTIN whose state differs from the Indian tax address. Saved customer IDs are used only when their type and validation match the zone; invalid saved IDs are ignored without blocking pricing or payment; `tax_exempt` and `invoice_only` are server-computed outcomes. `is_tax_included` records whether the order's prices include tax, and `tax_basis_applied` which address taxed it (`shipping` or `billing`). Each item's `tax_lines` list its taxes with `name`, `rate`, `amount`, `base_amount` (the amount in the store's base currency), `jurisdiction` (the ISO 3166-2 subdivision of the matched state zone, such as `IN-UP`, otherwise the tax country, such as `IN`) and `jurisdiction_type` (`subdivision` or `country`). Inclusive checkout shows VAT on duty as a separate added amount: 120 goods + 12 duty + 2.40 duty VAT = 134.40, with only 20 goods VAT labelled included. The item's `tax_rate` is the sum of its tax lines' rates (4% state tax + 4.5% county tax is 8.5), on create and edit alike. Tax is calculated at full precision on discounted amounts across the order; `tax_total` is rounded once to currency precision (half to even), then allocated across item lines, shipping, COD, duty tax and checkout fees by largest remainder, so line amounts always add up. Cart and checkout use each line's allocated tax for display. Thus 100 separate exclusive 0.25 lines at 19% have 4.75 tax: 75 lines receive 0.05 and 25 receive 0.04, displaying 75 times 0.30 plus 25 times 0.29 = 29.75, exactly the amount charged, with zero savings. A single 100-unit line also has 4.75 tax and 29.75 payable. When a merchant-approved tax-exempt buyer orders in a tax-inclusive market, every amount is charged without its included tax: `tax_exempt` is `true`, `is_tax_included` stays `true` and `tax_total` is 0. An item's `duty_customs_value` is its value after discounts without the tax its price includes, plus its share of shipping (when the country rule includes shipping) and of checkout fees that count toward customs value. When duty is collected at checkout, the import VAT on it is part of `tax_total` and listed in `pricing_snapshot.tax.duty_tax_lines`. `duty_collection_mode` records who pays import duties on an international shipment and is empty for domestic orders. When it is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`. When it is `pay_on_delivery`, `duty_total` plus `duty_tax_estimate` is the customer's estimate, outside `grand_total`. When it is `included_in_price`, they are the merchant's estimated duty cost, outside `grand_total` and not revenue. Estimates come from the merchant's rules; carriers and customs may charge differently. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token’s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Each entry in `discounts` lists its `allocations`: the part of that discount that reduced each order item (`order_item_id`, the `quantity` of units it reduced, `amount`, and `is_free` when it made those units free). A discount's allocations sum to its amount and an item's allocations sum to its `discount_amount`; an order-level manual discount is split in proportion to what each item has left after the other discounts. Quantity edits preserve discount shares consumed or reserved by refunds and prorate only the remaining aggregate discount over the remaining units; the saved allocations and pricing totals reconcile to those shares. Orders saved without pricing evidence have none. Each refund item reports `amount`, the refunded units at the item's unit price less their share of its discounts, and `discount_allocations`, each discount's share: the remaining aggregate line discount is prorated over the remaining units and rounded once, then distributed between discounts with each share capped at its remaining allocation. Successful and pending refunds consume shares; failed provider refunds release them. The final available units receive the unconsumed discount. Item amounts always subtract the authoritative line discount, even if historical per-discount allocations are unavailable. Historical refund breakdowns are reconstructed deterministically from the saved line allocations. The refund's own amount is what was returned and can differ from its items. An item that does not require shipping has no fulfillment: its `fulfillment_status` becomes `fulfilled` and `fulfilled_quantity` equals its quantity when captured payments cover the order total plus any returned surplus and the order is not cancelled. Refund status alone never fulfills a line. The order's `fulfillment_status` counts every item, so an unpaid order of only such items is `unfulfilled`. A pickup order carries `pickup_location`: the store location the customer collects it from, as chosen at checkout (`id`, `name`, address fields, `phone`, `ready_in`, `instructions`, `hours`); it is null for a delivery order. A pickup order's fulfillments move `pending` → `ready_for_pickup` → `picked_up` (or `cancelled`), with `ready_for_pickup_at` and `picked_up_at`; `picked_up` counts as delivered. A delivery order never takes a pickup status, and a pickup order never a delivery one. `checkout_answers` lists the shopper's answers to the store's checkout question, frozen when the order was placed: `block_id`, `kind` (`text` or `checkbox`), `label` (the question in the store's default language), `value` (what the shopper entered, `yes` for a ticked checkbox) and `locale` (the shopper's checkout language); it is empty when checkout asked nothing. Nobody can change answers after the order exists. Each entry in `payments` carries `label`, the payment method's name in the request language: a payment app's payment is named by the app that collected it, the platform's own methods by their name (for example Gift card or Cash on Delivery), and any other recorded method reads Other payment method. Show `label`; `method` stays the recorded identifier. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
+    "description": "Fetch one order with fulfillment plans. `base_currency_rate` and each payment and refund `exchange_rate` are exact; `base_currency_rate_display` and `exchange_rate_display` are the same rates for showing to people, rounded to six significant digits like currency `conversion_rate_display`. Never calculate with the display values. Order numbers are assigned using the merchant’s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Tax is split across `items[].tax_lines`, `shipping_tax_lines`, `cod_fee_tax_lines`, `duty_tax_lines` and `checkout_fee_lines[].tax_lines`; these amounts sum to `tax_total`. `status_name` is the order's status for `status_slug` in the request language (a system status in Tringify's wording, one of the store's own statuses by its translation in that language, else by its own name) and `status_color` its colour from Order Settings. The order names its codes in the request language (English by default) beside them: `financial_status_display`, `payment_status_display` (empty while the order has no payment), `channel_type_display` (null without a channel), `tax_exemption_source_display`, and `attribution_status.status_display` with `reason_display`. Each payment carries `status_display`, and `provider_label` with the gateway name an app or import sent when it is not one of Tringify's own; each refund carries `method_display`, and where they apply `provider_status_display`, `gift_card_status_display` and `store_credit_status_display` (the Store Credit progress, with the reason when it failed). Refunds expose `goods_total`, `tax_total` and `components` (actual returned amount, goods_amount, tax_amount, original tax_lines and item or charge identity). Item refunds also expose goods_amount, tax_amount and tax_lines. Components include amount-only allocations; quantities of zero do not return stock. Tax is prorated from the saved tax lines over remaining units or charge amounts, with the final unit taking the remainder, capped at collected tax less active refund reservations. Smaller refund amounts reduce tax proportionally. Money above selected units and charges is allocated across the remaining order without returning additional units. A component key identifies its source and can repeat for selected-unit and additional monetary allocations. Surplus money that was never sale value has no tax. Only completed refunds reduce tax reports. Base refund goods and tax consume each item's or charge's saved base allocations cumulatively, including its final remainder. Fully refunded products have zero net goods revenue. The signed base_rounding_amount reconciles settled cash with base_goods_amount plus base_tax_amount without moving revenue or tax between products. Snapshot items carry an immutable allocation_key, preserved when imports replace database IDs; supplied sale allocations and original refund evidence are validated and retained. Historical order CSV exports preserve refunds (per-refund components and original tax_lines), line_id and base_refunded_total. Imports reject missing or inconsistent refund evidence with ORDER_IMPORT_REFUND_EVIDENCE_INVALID; they never estimate taxable refund history from refunded_total. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` and `customer_tax_id_type` record the normalized, offline-validated ID and never prove registration or exemption. `tax_exemption_source` is customer_flag, staff_order or none, and `tax_id_state_mismatch` flags a GSTIN whose state differs from the Indian tax address. Saved customer IDs are used only when their type and validation match the zone; invalid saved IDs are ignored without blocking pricing or payment; `tax_exempt` and `invoice_only` are server-computed outcomes. `is_tax_included` records whether the order's prices include tax, and `tax_basis_applied` which address taxed it (`shipping` or `billing`). Each item's `tax_lines` list its taxes with `name`, `rate`, `amount`, `base_amount` (the amount in the store's base currency), `jurisdiction` (the ISO 3166-2 subdivision of the matched state zone, such as `IN-UP`, otherwise the tax country, such as `IN`) and `jurisdiction_type` (`subdivision` or `country`). Inclusive checkout shows VAT on duty as a separate added amount: 120 goods + 12 duty + 2.40 duty VAT = 134.40, with only 20 goods VAT labelled included. The item's `tax_rate` is the sum of its tax lines' rates (4% state tax + 4.5% county tax is 8.5), on create and edit alike. Tax is calculated at full precision on discounted amounts across the order; `tax_total` is rounded once to currency precision (half to even), then allocated across item lines, shipping, COD, duty tax and checkout fees by largest remainder, so line amounts always add up. Cart and checkout use each line's allocated tax for display. Thus 100 separate exclusive 0.25 lines at 19% have 4.75 tax: 75 lines receive 0.05 and 25 receive 0.04, displaying 75 times 0.30 plus 25 times 0.29 = 29.75, exactly the amount charged, with zero savings. A single 100-unit line also has 4.75 tax and 29.75 payable. When a merchant-approved tax-exempt buyer orders in a tax-inclusive market, every amount is charged without its included tax: `tax_exempt` is `true`, `is_tax_included` stays `true` and `tax_total` is 0. An item's `duty_customs_value` is its value after discounts without the tax its price includes, plus its share of shipping (when the country rule includes shipping) and of checkout fees that count toward customs value. When duty is collected at checkout, the import VAT on it is part of `tax_total` and listed in `pricing_snapshot.tax.duty_tax_lines`. `duty_collection_mode` records who pays import duties on an international shipment and is empty for domestic orders. When it is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`. When it is `pay_on_delivery`, `duty_total` plus `duty_tax_estimate` is the customer's estimate, outside `grand_total`. When it is `included_in_price`, they are the merchant's estimated duty cost, outside `grand_total` and not revenue. Estimates come from the merchant's rules; carriers and customs may charge differently. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token’s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Each entry in `discounts` lists its `allocations`: the part of that discount that reduced each order item (`order_item_id`, the `quantity` of units it reduced, `amount`, and `is_free` when it made those units free). A discount's allocations sum to its amount and an item's allocations sum to its `discount_amount`; an order-level manual discount is split in proportion to what each item has left after the other discounts. Quantity edits preserve discount shares consumed or reserved by refunds and prorate only the remaining aggregate discount over the remaining units; the saved allocations and pricing totals reconcile to those shares. Orders saved without pricing evidence have none. Each refund item reports `amount`, the refunded units at the item's unit price less their share of its discounts, and `discount_allocations`, each discount's share: the remaining aggregate line discount is prorated over the remaining units and rounded once, then distributed between discounts with each share capped at its remaining allocation. Successful and pending refunds consume shares; failed provider refunds release them. The final available units receive the unconsumed discount. Item amounts always subtract the authoritative line discount, even if historical per-discount allocations are unavailable. Historical refund breakdowns are reconstructed deterministically from the saved line allocations. The refund's own amount is what was returned and can differ from its items. An item that does not require shipping has no fulfillment: its `fulfillment_status` becomes `fulfilled` and `fulfilled_quantity` equals its quantity when captured payments cover the order total plus any returned surplus and the order is not cancelled. Refund status alone never fulfills a line. The order's `fulfillment_status` counts every item, so an unpaid order of only such items is `unfulfilled`. A pickup order carries `pickup_location`: the store location the customer collects it from, as chosen at checkout (`id`, `name`, address fields, `phone`, `ready_in`, `instructions`, `hours`); it is null for a delivery order. A pickup order's fulfillments move `pending` → `ready_for_pickup` → `picked_up` (or `cancelled`), with `ready_for_pickup_at` and `picked_up_at`; `picked_up` counts as delivered. A delivery order never takes a pickup status, and a pickup order never a delivery one. `checkout_answers` lists the shopper's answers to the store's checkout question, frozen when the order was placed: `block_id`, `kind` (`text` or `checkbox`), `label` (the question in the store's default language), `value` (what the shopper entered, `yes` for a ticked checkbox) and `locale` (the shopper's checkout language); it is empty when checkout asked nothing. Nobody can change answers after the order exists. Each entry in `payments` carries `label`, the payment method's name in the request language: a payment app's payment is named by the app that collected it, the platform's own methods by their name (for example Gift card or Cash on Delivery), and any other recorded method reads Other payment method. Show `label`; `method` stays the recorded identifier. While `can_create_refund` is true, `refund_destinations` lists where a refund can go back to: `method` (`original_payment` when a payment app collected money, `gift_card` once per Gift Card that paid, with the tender's id as `reference_id`, `store_credit` and `manual`), `label` in the request language (a Gift Card's shows its masked code, such as Original Gift Card **** 7K9P), `available`, `available_amount` (the most that destination can take now) and, when `available` is false, `unavailable_reason` saying why (for example, a guest checkout can't take Store Credit). Destinations are listed in the order Store Admin suggests them: the original payment, then each Gift Card that paid, then Store Credit and Manual. One refund goes back to one destination. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -12643,6 +12650,74 @@
     "name": "get_order_edit_options",
     "scopes": [
       "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "orders.gift-cards.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/orders/{id}/gift-cards",
+    "description": "List the Gift Cards an order bought, with what refunding each would give back. One row per purchased card (`intent_id`), in line order. `state` is `not_issued`, `needs_attention`, `issuing`, `issued`, `in_use`, `refund_pending`, `refunded` or `cancelled`, worded in `state_display`. A unit whose issuing stopped is `needs_attention` with `attention_code` (`recipient_invalid`, `no_destination`, `destination_invalid` or `unavailable`) and `attention_display`; retry it with Retry a Gift Card issuance. An issued card carries `gift_card_id` and `code_last4` (never its code), its `balance` and what was `spent`. `refundable_default` and `refundable_max` are what a refund of the card gives back by default and at most; `selectable` says whether it can be refunded now. Same rows as Store Admin's order page. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}/gift-cards. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "list_order_gift_cards",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "orders.gift-cards.retry",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/orders/{id}/gift-cards/{intent_id}/retry",
+    "description": "Issue an order's Gift Card again after issuing stopped. Only a `needs_attention` unit of an order that is not cancelled can be retried (`ORDER_GIFT_CARD_NOT_RETRYABLE`). Send `recipient_email` and/or `recipient_phone` to replace where the card is delivered before retrying; omit both to retry with the recipient the order gave. The unit is queued and still issues exactly one card. The retry is recorded on the order timeline and in the audit log. Returns the order's Gift Cards as List an order's Gift Cards does. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{id}/gift-cards/{intent_id}/retry. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "intent_id": {
+          "description": "The purchased card's `intent_id` from List an order's Gift Cards.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "recipient_email": {
+          "description": "Deliver the card to this email address.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recipient_phone": {
+          "description": "Deliver the card to this phone number, with its country calling code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "intent_id"
+      ],
+      "type": "object"
+    },
+    "name": "retry_order_gift_card_issuance",
+    "scopes": [
+      "store:orders:write"
     ]
   },
   {
@@ -14078,6 +14153,1042 @@
     "name": "delete_customer_metafield",
     "scopes": [
       "store:customers:write"
+    ]
+  },
+  {
+    "api_key": "gift-cards.products.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/gift-cards/products",
+    "description": "Find catalog products that issue Gift Cards after payment. Uses the product cursor pagination, search and sorting contract. These are products, not issued codes or balances. Read/edit a product using `/products/{id}`. Product detail includes `is_gift_card` and `gift_card_policy` (`can_edit_value`, `can_delete`, and a localized `reason` when locked). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/gift-cards/products. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "brand_id": {
+          "description": "Filter by assigned brand ID.",
+          "type": "integer"
+        },
+        "brand_ids": {
+          "description": "Comma-separated brand IDs; matches any listed brand.",
+          "type": "string"
+        },
+        "category_id": {
+          "description": "Filter by assigned category ID.",
+          "type": "integer"
+        },
+        "category_ids": {
+          "description": "Comma-separated category IDs; matches products in any listed category.",
+          "type": "string"
+        },
+        "collection_id": {
+          "description": "Filter by collection membership. Collections are rule-based, so membership follows each collection's rules.",
+          "type": "string"
+        },
+        "collection_ids": {
+          "description": "Comma-separated collection UUIDs; matches membership in any listed collection.",
+          "type": "string"
+        },
+        "cursor": {
+          "description": "Opaque cursor from a previous `products.list` response. Omit for the first page; reset when search, filters, or sorting changes.",
+          "type": "string"
+        },
+        "ids": {
+          "description": "Comma-separated product IDs, up to `list_max_limit`; returns only those products. Use it to fetch a known set in one call instead of one call per product. IDs that do not exist are left out.",
+          "type": "string"
+        },
+        "include_total": {
+          "description": "Set to false to omit `total` from a filtered first page. Pages read with `cursor` never include a filtered `total`. Unfiltered lists always include `total`.",
+          "type": "boolean"
+        },
+        "limit": {
+          "description": "Page size from 1 to `list_max_limit`. Omit to use `list_default_limit` from Product limits. Values above the maximum are rejected.",
+          "type": "integer"
+        },
+        "location_id": {
+          "description": "Filter to products with inventory at this location.",
+          "type": "string"
+        },
+        "location_ids": {
+          "description": "Comma-separated location UUIDs; matches inventory at any listed location.",
+          "type": "string"
+        },
+        "low_stock_only": {
+          "description": "Return products at or below a configured low-stock threshold.",
+          "type": "boolean"
+        },
+        "price_max": {
+          "description": "Maximum regular price in the store currency.",
+          "type": "string"
+        },
+        "price_min": {
+          "description": "Minimum regular price in the store currency.",
+          "type": "string"
+        },
+        "search": {
+          "description": "Search text; surrounding whitespace is removed. Text exceeding `search_max_length` is rejected.",
+          "type": "string"
+        },
+        "search_field": {
+          "description": "Defaults to `all`: matches product titles, product/variant SKUs and barcodes, tags, and full-text matches in titles, descriptions, vendor names and brand names. Choose `title`, `sku`, `barcode`, `vendor`, `brand`, `tag`, or `variant_sku` to narrow the search. `sku` searches product SKUs; `variant_sku` searches variant SKUs. `barcode` searches both product and variant barcodes.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "A value from `sort_columns` in Product limits. Defaults to `created_at`. Price sorts use the store currency; variable products sort by their minimum variant price. Equal values use ascending product ID as a tie-breaker; missing values sort last.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "`asc` or `desc`; defaults to `desc`.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Filter: active, scheduled, draft, or archived.",
+          "type": "string"
+        },
+        "stock_max": {
+          "description": "Maximum displayed available stock. Untracked products do not match.",
+          "type": "integer"
+        },
+        "stock_min": {
+          "description": "Minimum displayed available stock. Untracked products do not match.",
+          "type": "integer"
+        },
+        "tag_id": {
+          "description": "Filter by assigned tag ID. A tag that does not exist or is being deleted matches no products.",
+          "type": "integer"
+        },
+        "tag_ids": {
+          "description": "Comma-separated assigned tag IDs. Use `tag_match` to choose whether any or all IDs must match. A tag that does not exist or is being deleted is rejected.",
+          "type": "string"
+        },
+        "tag_match": {
+          "description": "How `tag_ids` compose: `any` (default) or `all`.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Filter: simple or variable.",
+          "type": "string"
+        },
+        "vendor_id": {
+          "description": "Filter by assigned vendor ID.",
+          "type": "integer"
+        },
+        "vendor_ids": {
+          "description": "Comma-separated vendor IDs; matches any listed vendor.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_gift_card_products",
+    "scopes": [
+      "store:gift_cards:read",
+      "store:products:read"
+    ]
+  },
+  {
+    "api_key": "gift-cards.products.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/gift-cards/products",
+    "description": "Create a single-value Gift Card catalog product. Send `type: simple`, a positive regular price in each currency the card is sold in (one `prices` row per currency), an SKU, status and explicit `channel_ids`. Gift Card prices are never converted: shoppers paying in a currency without a price cannot see or buy the product. The title is translated per language, not per currency, so use a currency-neutral name. Draft products and products without channels are not purchasable. No physical stock, shipping, tax classes, sale prices, quantity discounts or free-gift settings. Updates and deletion use `/products/{id}` and also require `write_gift_cards`. Once an order references the product (even unpaid), financial edits and deletion fail with `GIFT_CARD_PRODUCT_LOCKED`; archive or unpublish instead. Existing issued cards are unchanged by catalog edits. Existing variable Gift Card products remain readable and purchasable. Product webhooks use the ordinary product topics and `is_gift_card`; issued-card events use the separate Gift Card topics. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/gift-cards/products. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_ids": {
+          "description": "Attribute IDs that define the variant combinations. Required for variable products. Each variant must provide one value per declared attribute. On update, replaces the declaration, subject to the surviving variants and store limits. Variable products only.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "barcode": {
+          "description": "Optional Barcode/GTIN for a simple product; variable products use variant barcodes. ASCII letters, digits, and hyphens are accepted. Must be unique across products and variants. See barcode_max_length. Simple products only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "brand_id": {
+          "description": "Brand ID in this store. On create, omit if unassigned. On update, omit or send null to keep the assignment; send 0 to clear it.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "category_ids": {
+          "description": "Category IDs in this store, up to max_categories. Duplicates are removed. On update, replaces the assignment set; [] clears it and omission keeps it.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "channel_ids": {
+          "description": "Sales-channel IDs in this store. Omission on create leaves the product unassigned. On update, replaces the assignment set; [] clears it and omission keeps it.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "condition": {
+          "description": "Merchandise condition. Defaults to new. Variants may override the parent condition. Allowed values: `new`, `used`, `refurbished`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "country_of_origin": {
+          "description": "Two-letter ISO country code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "Rich HTML description. Unsafe HTML is removed. The sanitized HTML, including markup, must fit description_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dimension_unit": {
+          "description": "Dimension unit; required when any dimension is supplied. Allowed values: `cm`, `mm`, `m`, `in`, `ft`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "gift_only": {
+          "description": "Defaults to false. When true, direct cart additions are rejected with CART_GIFT_ONLY; the product can be added only as an eligible free gift. This flag does not hide the product from listings.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "height": {
+          "description": "Positive package height within the store’s limit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "hide_from_listings": {
+          "description": "Defaults to false. Excludes the product from storefront search and browse listings while keeping its assigned-channel product page accessible by direct link. Does not change gift_only or channel assignments.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "hs_code": {
+          "description": "Customs HS code. See hs_code_max_length and the field constraints in GET /products/limits.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "images": {
+          "description": "Gallery entries: {file_id, alt_text?, sort_order?}. Files may be images, videos, or 3D models. Non-empty file_id values require read_files. On update, the array replaces the gallery; [] clears it. The store’s max_images limit applies.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "inventory": {
+          "description": "Simple products with inventory_source=track. Rows are {location_id, quantity, low_stock_threshold?, expected_quantity?}. Quantities are non-negative integers within the store’s limits. On update, only named locations change. expected_quantity is the on-hand value previously read (0 for a missing row); a mismatch returns 409 PRODUCT_VERSION_STALE. You may use merchant-managed locations or locations owned by your app’s active installation.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "inventory_group_id": {
+          "description": "Inventory-group UUID. Required with inventory_source=group. The group must belong to this store. Simple products only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inventory_source": {
+          "description": "Simple-product inventory mode: track for per-location stock, none for untracked stock, or group for an inventory-group link. Defaults to track. Changing modes on update may require confirmation. Allowed values: `track`, `none`, `group`. Simple products only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "length": {
+          "description": "Positive package length within the store’s limit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_order_quantity": {
+          "description": "Optional per-order quantity cap, independent of inventory mode. On update, 0 clears the explicit cap; omission or null leaves it unchanged. Without an explicit cap, the store’s default order cap may still apply.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "metafields": {
+          "description": "Values as {definition_id, value}. Definitions must target products and permit your app to write them. On update, this array replaces the set your app can write; [] clears that set. Use the dedicated metafield endpoint for writes addressed by namespace and key.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "mpn": {
+          "description": "Optional manufacturer part number. Not required to be unique. See mpn_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "no_manufacturer_identifiers": {
+          "description": "Set true only if the product has no manufacturer identifiers. Cannot be true with a barcode or MPN. The response’s identifier_status is provided when identifiers exist, not_applicable when this flag is true, and unknown otherwise.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "overall_low_stock_threshold": {
+          "description": "Overall low-stock threshold for directly tracked simple products. Uses total available stock across locations. Zero is valid. On update, null disables the alert and omission keeps it. Not available for untracked or group-backed stock. To change only a threshold, use `POST /products/{id}/set-threshold`, which needs no `expected_revision`. Simple products only.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "prices": {
+          "description": "Simple products only. Rows are {currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}. Amounts are JSON decimal strings with the currency’s permitted precision. Include the base currency. On update, supplying this array replaces the complete price set. A sale price may be zero but must be below the regular price. The base-currency sale schedule applies to all currency sale prices; a non-base sale requires a base sale. Omit sale prices from the replacement set to remove them.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "publish_at": {
+          "description": "Publication time, required when the resulting status is scheduled. Accepts an ISO 8601 timestamp; include an offset for an explicit instant, or use the store timezone for a local timestamp. Stay within publish_max_days_ahead from GET /products/limits. Invalid local times during a daylight-saving change are rejected; a repeated local time uses its first occurrence. Changing to another status clears the schedule.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "requires_shipping": {
+          "description": "Defaults to true and can be changed on update. Variants follow this value unless they set their own requires_shipping. While it is false, the product and every variant that follows it reject weight, dimensions, customs fields, and per-item shipping prices; values stored earlier are kept but not used.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "Search-engine description. Whitespace is trimmed and control characters are rejected. See seo_description_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "Search-engine title. Whitespace is trimmed and control characters are rejected. See seo_title_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shipping_prices": {
+          "description": "Simple products only. Per-currency flat shipping overrides: {currency_code, price}. Send price as an exact decimal string using that currency's precision.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "short_description": {
+          "description": "Plain-text summary. Surrounding whitespace is removed and control characters are rejected. See short_description_max_length.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sku": {
+          "description": "Required product SKU, including for a variable parent. ASCII letters, digits, hyphens, underscores, periods, and slashes are accepted. Trimmed and kept as entered, and unique across products, variants, and inventory groups in the store regardless of letter casing: ABC-1 and abc-1 are the same SKU. See sku_max_length.",
+          "type": "string"
+        },
+        "slug": {
+          "description": "URL slug. Omit on create to generate it from the title. A source slug must use lowercase, hyphen-separated words and stay within slug_max_length. A duplicate source slug receives a suffix. On update, omit to keep it; changing it creates a redirect unless create_redirect is false.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "Product status: draft, active, scheduled, or archived. Defaults to draft. Scheduled products require publish_at. Active products are available only through their assigned sales channels. Allowed values: `active`, `scheduled`, `draft`, `archived`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tag_ids": {
+          "description": "Tag IDs in this store, up to max_tags. Duplicates are removed. On update, replaces the assignment set; [] clears it and omission keeps it.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "tax_classes": {
+          "description": "Per-market tax assignment: {market_id, tax_class_id}. Supplied array replaces the full set.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "template_handle": {
+          "description": "Existing product template handle for this store. Use default_product for the default template. Omit on update to keep the assignment; an empty string is invalid.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "description": "Product title. Required on create; cannot be empty on update. Normalized to NFC. Control characters are rejected. See title_max_length in GET /products/limits.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Required on create: simple or variable. Cannot be changed after creation. Allowed values: `simple`, `variable`.",
+          "type": "string"
+        },
+        "variants": {
+          "description": "Variable products only; required (at least one variant). The initial variant set, validated together: combination uniqueness against the declared attributes, attribute coverage, at least one variant, and store-wide SKU uniqueness. Each entry:\n\n- `sku` (string, required) — unique across the entire store.\n- `attribute_values` (array, required) — One entry per declared attribute: `{attribute_id, option_id, sort_order?}`, choosing one of that attribute's options. Without `sort_order`, an entry is stored at its position in this array. Attribute and option ids come from `GET /attributes` (the product's `attribute_ids` must cover every `attribute_id` used). Two variants can never share the same combination.\n- `prices` (array, required) — per-currency rows `{currency_code, regular_price, sale_price?, cost_price?, sale_starts_at?, sale_ends_at?}`; the base currency row is required. Amounts are decimal strings.\n- `title` (string, optional) — auto-composed from option labels (\"Red / M\") unless supplied.\n- `barcode` is variant-specific. `condition`, `mpn`, and `no_manufacturer_identifiers` can override the parent’s values. `identifier_status` describes whether identifiers are provided, unknown, or not applicable; use the identifier fields and declaration consistently.\n- `weight`, `weight_unit`, `length`, `width`, `height`, `dimension_unit`, `hs_code`, `country_of_origin` — physical overrides.\n- `requires_shipping` (boolean or null, optional) — this variant's own shipping setting, for example a hardcover that ships beside a PDF that does not. Omit it or send null to follow the product. A variant that does not ship cannot have weight, dimensions, customs fields, or `shipping_prices`.\n- `inventory_source` (`track` | `none` | `group`), `inventory` (per-location rows `{location_id, quantity, low_stock_threshold?, expected_quantity?}` when tracking), `inventory_group_id` (when `group`).\n- `image_file_id` (string, optional) — Media-library upload UUID; non-empty values require `read_files` in addition to `write_products`. `image_id` selects an existing product gallery row and does not require `read_files`.\n- `max_order_quantity` is an optional per-order cap; `overall_low_stock_threshold` (total available stock across all locations) applies only to directly tracked stock. Change it later with `variants` on Product update or the variant set-threshold endpoint.\n- `sort_order` (integer, optional) — the variant's place in variant lists. Without it, the variant is stored at its position in this array (0 for the first).\n\nCreate supplies the initial set here. Later edits use the delta fields on Product update; read operations use the paginated Variant endpoints.",
+          "items": {},
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "vendor_id": {
+          "description": "Vendor ID in this store. On create, omit if unassigned. On update, omit or send null to keep the assignment; send 0 to clear it.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "weight": {
+          "description": "Positive weight within the store’s limit. Requires weight_unit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "weight_unit": {
+          "description": "Weight unit; required with weight. Allowed values: `kg`, `g`, `lb`, `oz`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "width": {
+          "description": "Positive package width within the store’s limit.",
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "type",
+        "sku"
+      ],
+      "type": "object"
+    },
+    "name": "create_gift_card_product",
+    "scopes": [
+      "store:gift_cards:write",
+      "store:products:write"
+    ]
+  },
+  {
+    "api_key": "gift-cards.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/gift-cards/limits",
+    "description": "Read Gift Card limits. Returns issuance, balance adjustment (`adjustment_max`, `formatted_adjustment_max`), recipient-field, search, pagination, per-order and resend (`resend_max_per_hour`) limits. Use these values for client-side validation. `status_options` and `source_options` list the list filters' values, and `adjustment_direction_options` the directions of a balance adjustment (`credit`, `debit`), each with a `label` worded by the API. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/gift-cards/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_gift_card_limits",
+    "scopes": [
+      "store:gift_cards:read"
+    ]
+  },
+  {
+    "api_key": "gift-cards.languages",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/gift-cards/languages",
+    "description": "Read the languages a Gift Card can be delivered in. Returns `options`, the store's languages (the default language first) with the store's `label` for each, and `default_locale`, the language a new card gets when `locale` is omitted on issue: with `customer_id`, the language of that customer's latest order when the store offers it, else the store's default language; without it, the store's default language. Sending `customer_id` also requires `read_customers`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/gift-cards/languages. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_id": {
+          "description": "A customer of this store: `default_locale` becomes their language. Requires `read_customers`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_gift_card_languages",
+    "scopes": [
+      "store:gift_cards:read"
+    ]
+  },
+  {
+    "api_key": "gift-cards.settings.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/gift-cards/settings",
+    "description": "Read Gift Card checkout, expiry and balance check settings. Returns checkout acceptance, paid-order expiry defaults, `balance_check_enabled` (whether the storefront Gift Card page is available), `balance_check_path` (that page's storefront path, read-only) and `delivery_options` (`manual`, plus `email`, `phone` and `both` when they can be sent). Availability can change; issuance validates the selected method again. Phone availability does not attest provider-specific template approval. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/gift-cards/settings. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_gift_card_settings",
+    "scopes": [
+      "store:gift_cards:read"
+    ]
+  },
+  {
+    "api_key": "gift-cards.settings.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/gift-cards/settings",
+    "description": "Change Gift Card checkout, expiry and balance check settings. Updates the store's Gift Card settings. Omitted defaults are not inferred: send the complete settings object returned by the read endpoint. `balance_check_path` and `delivery_options` are read-only and ignored. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/gift-cards/settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "balance_check_enabled": {
+          "description": "Let customers check Gift Card balances on your store. When true, the storefront Gift Card page at `balance_check_path` lets shoppers check a code's balance and opens the view link sent with each card. When false, that page and the view links are not available. Every store starts with true.",
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Accept Gift Cards at checkout.",
+          "type": "boolean"
+        },
+        "expires_after_days": {
+          "description": "Days until cards from paid orders expire.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "expires_enabled": {
+          "description": "Apply automatic expiry to cards from paid orders.",
+          "type": "boolean"
+        },
+        "max_cards_per_order": {
+          "description": "Maximum Gift Cards accepted on one order.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enabled",
+        "expires_enabled",
+        "max_cards_per_order",
+        "balance_check_enabled"
+      ],
+      "type": "object"
+    },
+    "name": "update_gift_card_settings",
+    "scopes": [
+      "store:gift_cards:write"
+    ]
+  },
+  {
+    "api_key": "gift-cards.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/gift-cards",
+    "description": "List Gift Cards issued by the store. Returns masked codes only. Filter by lifecycle status, issuance source, or currency, and search by the last four code characters or recipient. Each card carries `status_display` and `source_display`, its status and source worded by the API. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/gift-cards. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "currency_code": {
+          "description": "ISO 4217 currency code.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Last four code characters, recipient name, or recipient email.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "Sort field from `list_sort_columns` in the limits response: `code_last4`, `status`, `balance`, `initial_amount`, `currency_code`, `recipient_name`, `source`, `issued_at` or `expires_at`. Defaults to `issued_at`. Without a `currency_code` filter, amount sorts group cards by currency first.",
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "`asc` or `desc`. Defaults to `desc`.",
+          "type": "string"
+        },
+        "source": {
+          "description": "Issuance source, a value from `source_options` in the limits response: `manual` or `order`.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Lifecycle status, a value from `status_options` in the limits response: `active`, `scheduled`, `disabled`, `depleted`, `expired`, `cancelled` or `refund_pending`.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_gift_cards",
+    "scopes": [
+      "store:gift_cards:read"
+    ]
+  },
+  {
+    "api_key": "gift-cards.issue",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/gift-cards",
+    "description": "Issue a Gift Card manually. The complete bearer code is returned when this request creates the card. Send `Idempotency-Key`: repeating the same request with the same details within an hour returns the card and its code again, so a lost response doesn't lose the code; after that, a repeat returns the card without its code. Reusing the key with different details returns `GIFT_CARD_IDEMPOTENCY_CONFLICT`. Webhook payloads never contain the code. `locale` sets the language the card is delivered in; omitted, it is the `default_locale` of List Gift Card languages for the card's `recipient_customer_id` (the store's default language without one). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/gift-cards. Only the connected store is accessible. The response holds the new card's full code: give it only to the merchant and don't repeat it later in the conversation. Reuse the same idempotency_key only to repeat the same issue after an uncertain response; never retry with a new key automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "description": "Initial value in the selected currency.",
+          "type": "string"
+        },
+        "currency_code": {
+          "description": "ISO 4217 currency code: the store's base currency or another currency enabled in Settings > Currencies.",
+          "type": "string"
+        },
+        "delivery_method": {
+          "description": "Choose manual, email, phone or both from delivery_options in the settings. Manual does not send and cannot be scheduled. Email, phone and both require the corresponding recipient email, phone, or both.",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "Future expiry time, later than scheduled_at when both are present.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "idempotency_key": {
+          "description": "Stable key for this exact request, up to 200 characters. Reuse it only to repeat the same request after an uncertain response.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language the card is delivered in, a `value` from List Gift Card languages. Omit for the `default_locale` of that endpoint for `recipient_customer_id`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason": {
+          "description": "Merchant-visible issuance reason.",
+          "type": "string"
+        },
+        "recipient_customer_id": {
+          "description": "Links the card to an existing customer of this store. Requires the `read_customers` scope in addition to `write_gift_cards`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recipient_email": {
+          "description": "Recipient email.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recipient_message": {
+          "description": "Message sent with the card.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recipient_name": {
+          "description": "Recipient name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recipient_phone": {
+          "description": "Validated international phone number including its calling code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scheduled_at": {
+          "description": "Future delivery and activation time.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "currency_code",
+        "amount",
+        "reason",
+        "delivery_method",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "issue_gift_card",
+    "scopes": [
+      "store:gift_cards:write"
+    ]
+  },
+  {
+    "api_key": "gift-cards.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/gift-cards/{id}",
+    "description": "Read one Gift Card. Returns the store-scoped card with a masked code, current balance, recipient, delivery schedule and lifecycle dates. `status_display` and `source_display` word the card's status and source. `locale` is the language the card is delivered in (one of the store's languages when it was set: the buying order's for a purchased card, the one chosen when it was issued) and `locale_display` the store's label for it (the language's name once the store no longer offers it); every delivery and resend uses it. Times are RFC 3339 in the store's timezone, with its offset; `expires_at_iso` and `delivery_scheduled_at_iso` repeat the expiry and delivery schedule when set. Detail responses include the first page of `events`, `deliveries` and `movements`, newest first, with `events_next_cursor`, `deliveries_next_cursor` and `movements_next_cursor` present only while that section has older entries. Read further pages from `/gift-cards/{id}/history`. An event has `id`, `kind`, `kind_display`, `actor_name` and `created_at`; `actor_name` is the staff member or app that resent the card, showed its code or adjusted its balance (`resent`, `code_revealed`, `balance_adjusted`), and null for automatic events. A delivery has `id`, `channel` (`email` or `sms`), `destination`, `status`, `status_display`, `attempts`, `created_at` and `updated_at`. A delivery's `status` is `pending` (waiting to send), `sent` (handed off: the email was submitted to the email provider, or the text was handed to the messaging app), `not_sent` (the platform could not hand it off) or `cancelled` (stopped before it was sent). Tringify records only the hand-off, never what a provider or carrier does afterwards, so `sent` is not a receipt. A `not_sent` delivery, or a `cancelled` delivery stopped for a delivery failure, also has `last_error_code` (`template_unavailable`, `sender_unavailable`, `recipient_invalid`, `card_inactive`, `card_cancelled`, `card_expired`, `delivery_expired` or `send_failed`) and `last_error_message`, localized by the API: display it directly. To send a card again, use Resend a Gift Card. Movement fields are `id`, `kind`, `kind_display`, `amount`, `formatted_amount` and `created_at`; `kind` is `grant` (issued), `redeem`, `redemption_reversal`, `refund_credit`, `revoke` (cancelled balance) or `adjustment`, and `amount` is signed (negative when balance left the card). An `adjustment` movement also has `reason`, the merchant's reason. `can_edit_delivery` controls recipient name/email/phone, message, language and Schedule delivery. `edit_delivery_reason` is empty when editable, otherwise `sent`, `already_used`, `expired`, `depleted`, `cancelled`, `disabled` or `refund_pending`; display `edit_delivery_reason_display` directly. `can_edit_expiry` independently controls expiry editing. `can_resend` and `resend_reason`/`resend_reason_display` control Resend; additional reasons are `scheduled`, `no_recipient` and `code_unavailable`. These capabilities appear on list and write responses too. Do not infer permissions from balance or the latest history page. Delivery configuration and hourly resend limits are validated when sending. `can_adjust_balance` says whether Adjust a Gift Card balance accepts the card now. `kind_display` words an event or movement kind, and `status_display` a delivery status. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/gift-cards/{id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Gift Card UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_gift_card",
+    "scopes": [
+      "store:gift_cards:read"
+    ]
+  },
+  {
+    "api_key": "gift-cards.history",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/gift-cards/{id}/history",
+    "description": "Page one section of a Gift Card's history. Returns one page of `events`, `deliveries` or `movements`, newest first, in the same shape as the detail response. Pass the section's `next_cursor` from the detail response or the previous page as `cursor`; `next_cursor` is null on the last page. `limit` defaults to 20 and cannot exceed 50. A cursor is only valid for the card and section that issued it. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/gift-cards/{id}/history. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "The `next_cursor` of the previous page. Omit for the newest page.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Gift Card UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size, 1 to 50.",
+          "type": "integer"
+        },
+        "section": {
+          "description": "History section: `events`, `deliveries` or `movements`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "section"
+      ],
+      "type": "object"
+    },
+    "name": "list_gift_card_history",
+    "scopes": [
+      "store:gift_cards:read"
+    ]
+  },
+  {
+    "api_key": "gift-cards.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/gift-cards/{id}",
+    "description": "Update recipient, delivery, or expiry details. Omitted fields remain unchanged. Only an unsent, unused card with `can_edit_delivery: true` accepts changes to recipient name/email/phone, message, language or delivery schedule. A redemption or debit locks these details even if its balance is later restored; sent or in-flight deliveries also lock them (`GIFT_CARD_EDIT_LOCKED`). Expired (including an elapsed expiry), depleted, cancelled and disabled cards cannot be edited (`GIFT_CARD_EDIT_UNAVAILABLE`); refunds in progress return `GIFT_CARD_REFUND_PENDING`. Expiry follows `can_edit_expiry`. Saving `delivery_scheduled_at` creates a delivery when none is waiting, or moves the waiting delivery, using email when present, otherwise phone through the configured messaging route. The time must be in the future and strictly before expiry, and a matching recipient, enabled delivery method and stored code are required. Clearing with `clear_delivery_schedule: true` cancels waiting delivery: it never sends now. Nothing is sent until scheduled again or explicitly resent. Clear flags cannot be combined with their corresponding value. Resend always uses the saved recipient and language. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/gift-cards/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "clear_delivery_schedule": {
+          "description": "Cancel the waiting delivery and remove the schedule. Does not send now.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "clear_expiry": {
+          "description": "Remove the expiry.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "delivery_scheduled_at": {
+          "description": "Future delivery and activation time.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expires_at": {
+          "description": "Future expiry time, later than scheduled_at when both are present.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Gift Card UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language the card is delivered in, a `value` from List Gift Card languages. Only while `can_edit_delivery` is true.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recipient_email": {
+          "description": "Recipient email.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recipient_message": {
+          "description": "Message sent with the card.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recipient_name": {
+          "description": "Recipient name.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recipient_phone": {
+          "description": "Validated international phone number including its calling code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "update_gift_card",
+    "scopes": [
+      "store:gift_cards:write"
+    ]
+  },
+  {
+    "api_key": "gift-cards.resend",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/gift-cards/{id}/resend",
+    "description": "Send a Gift Card again to its saved recipient. Use `can_resend` and the server-provided `resend_reason_display`. Only active cards with positive balance that have not expired can be resent; scheduled, disabled, depleted, expired, cancelled and refund-pending cards cannot. Sent or partially used cards can be resent to their existing details. Resend cannot change recipient details or language (`GIFT_CARD_RESEND_DETAILS_LOCKED`); edit an eligible card first with Update a Gift Card. `delivery_method` must be `email`, `phone` or `both`, from the settings delivery options, with the matching saved recipient details. Each resend adds one delivery per channel and a `resent` event with its actor; it adds no value. Send `Idempotency-Key`: the same key and method does not send twice; changed details return `GIFT_CARD_IDEMPOTENCY_CONFLICT`. Cards without a stored code return `GIFT_CARD_CODE_UNAVAILABLE`. The server enforces `resend_max_per_hour` from Get Gift Card limits (`GIFT_CARD_RESEND_LIMIT_REACHED`). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/gift-cards/{id}/resend. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "delivery_method": {
+          "description": "`email`, `phone` or `both`, from `delivery_options` in settings, using saved recipient details.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Gift Card UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Stable key for this exact request, up to 200 characters. Reuse it only to repeat the same request after an uncertain response.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "delivery_method",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "resend_gift_card",
+    "scopes": [
+      "store:gift_cards:write"
+    ]
+  },
+  {
+    "api_key": "gift-cards.reveal-code",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/gift-cards/{id}/reveal-code",
+    "description": "Read a Gift Card's full code. Returns the card's complete bearer code. Every call is recorded as a `code_revealed` event with `actor_name` in the card's history and in the store's audit log; the code itself is never written to the history, the audit log or webhooks. Cancelled cards and cards whose full code is not stored (cards issued before codes were kept) return `GIFT_CARD_CODE_UNAVAILABLE`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/gift-cards/{id}/reveal-code. Only the connected store is accessible. Call it only when the merchant explicitly asks to see this card's code, never on your own initiative or to complete another task. Give the code only to the merchant, never write it anywhere else, and do not repeat it later in the conversation. Every call is recorded in the card's history and the audit log with your connection's user.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Gift Card UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "reveal_gift_card_code",
+    "scopes": [
+      "store:gift_cards:write"
+    ]
+  },
+  {
+    "api_key": "gift-cards.status",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/gift-cards/{id}/status",
+    "description": "Activate, disable, or cancel a Gift Card. Send `Idempotency-Key` and a reason. Cancelling permanently revokes the remaining balance; disabling pauses redemption and can be reversed by activating the card. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/gift-cards/{id}/status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Gift Card UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Stable key for this exact request, up to 200 characters. Reuse it only to repeat the same request after an uncertain response.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "reason": {
+          "description": "Merchant-visible reason recorded in the audit log.",
+          "type": "string"
+        },
+        "status": {
+          "description": "New status: `active`, `disabled`, or `cancelled`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "reason",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "set_gift_card_status",
+    "scopes": [
+      "store:gift_cards:write"
+    ]
+  },
+  {
+    "api_key": "gift-cards.adjust",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/gift-cards/{id}/adjustments",
+    "description": "Add balance to a Gift Card or remove balance from it. Send `Idempotency-Key`, a `direction` (`credit` adds, `debit` removes; values from `adjustment_direction_options` in Get Gift Card limits), a positive `amount` in the card's currency up to `adjustment_max`, and a reason. Only `active` and `depleted` cards that have not expired can be adjusted (`can_adjust_balance`); scheduled, disabled, expired and cancelled cards cannot. A debit can't take more than the card's balance, and a credit can't take the balance above `balance_max`. Crediting a depleted card makes it active again; debiting an active card to zero makes it depleted. Each adjustment adds an `adjustment` movement with the reason and a `balance_adjusted` event with `actor_name`, is recorded in the store's audit log and sends `gift_cards/update`. Repeating the request with the same key and details returns the card without adjusting it again; the same key with other details returns `GIFT_CARD_IDEMPOTENCY_CONFLICT`. Returns the card detail. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/gift-cards/{id}/adjustments. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "description": "Positive amount in the card's currency, up to `adjustment_max`.",
+          "type": "string"
+        },
+        "direction": {
+          "description": "`credit` to add balance, `debit` to remove it.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Gift Card UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Stable key for this exact request, up to 200 characters. Reuse it only to repeat the same request after an uncertain response.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "reason": {
+          "description": "Merchant-visible reason, kept with the movement and in the audit log. Customers never see it.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "direction",
+        "amount",
+        "reason",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "adjust_gift_card_balance",
+    "scopes": [
+      "store:gift_cards:write"
+    ]
+  },
+  {
+    "api_key": "gift-cards.bulk-status",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/gift-cards/bulk-status",
+    "description": "Activate or disable many Gift Cards. Send `Idempotency-Key`, up to `bulk_max_count` distinct card ids, a status of `active` or `disabled`, and a reason. Each card changes independently: `updated` lists the cards that now have the requested status and `failed` lists each card that could not change with its error `code` and localized `message`, so one refused card never blocks the others. Repeating the request with the same key does not repeat a change that already applied. Cancelling is permanent and is only available one card at a time through the single-card status endpoint. The response is compact: `totals` first, then each item's `id` and `status` only; read an item for its other fields. Failed items keep their full error. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/gift-cards/bulk-status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Stable key for this exact request, up to 200 characters. Reuse it only to repeat the same request after an uncertain response.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "ids": {
+          "description": "Gift Card UUIDs, 1 to `bulk_max_count`, without duplicates.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "Merchant-visible reason recorded in each card's audit log.",
+          "type": "string"
+        },
+        "status": {
+          "description": "New status: `active` or `disabled`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ids",
+        "status",
+        "reason",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_set_gift_card_status",
+    "scopes": [
+      "store:gift_cards:write"
     ]
   },
   {
@@ -16745,7 +17856,7 @@
     "api_key": "markets.update",
     "api_method": "PATCH",
     "api_path": "/api/2025-01/markets/{marketId}",
-    "description": "Change a market's settings. Send only the fields you want to change. To avoid overwriting someone else's change, send the `revision` you last read as `expected_revision`: if the market changed since, the request fails with `MARKET_CHANGED` and nothing is saved. When provided, `countries` and `currency_codes` replace their complete existing lists. Always retain the store's base currency in `currency_codes`; other currencies require a store plan with multi-currency support. Every market country has a serving currency, and newly added countries initially use the store's base currency. Countries another market serves move to this one: the request asks for confirmation naming each country and the market it leaves, then moves them in the same transaction. A market left with no countries refuses with `MARKET_COUNTRY_MOVE_EMPTIES_MARKET`. A country cannot be removed while a tax, shipping, or cash-on-delivery zone still uses it, and a currency cannot be removed while a country or duty rule uses it. Removing a currency also removes its exact shipping overrides; adding it back later converts blank shipping values from the base again. A single update can add or remove at most the market-currency bulk limit. While the market has price-based tax rules, replacing its currency is refused with `TAX_PRICE_RULE_BLOCKS_CURRENCY_CHANGE`, because rule thresholds are amounts in the current currency. `tax_included` controls whether catalog prices already contain tax, while `tax_display_mode` controls how storefront prices are presented. Tax is calculated on the order total, rounded once and allocated across lines by largest remainder, so line amounts always add up. Cart and checkout display each line using its allocated tax and represent mixed-display discounts as signed differences. For 100 separate exclusive 0.25 lines at 19%, tax is 4.75 and both display and charge total 29.75, with zero savings. Inclusive 1100 discounted to 1045 across a 1000 threshold at 5%/12% displays exclusive 982.14 minus a signed discount of -13.10 = 995.24, plus 49.76 tax = 1045. A negative displayed discount is a tax adjustment, not additional savings; render it as an increase instead of hiding or clamping it. Moving countries from other markets, changing `tax_included`, and deactivating a market with unpaid checkout orders first return `CONFIRMATION_REQUIRED` with `details.warnings` and `details.confirmation_token`; repeat the request with `confirmed: true` and that `confirmation_token` to proceed. Confirmation is checked against the market's current state; a concurrent change cannot bypass it, even without expected_revision. Changing `tax_included` always asks: every price keeps its number, so the warning (`MARKET_TAX_INCLUDED_ON_WARNING` or `MARKET_TAX_INCLUDED_OFF_WARNING`) explains that a price of 100 then means 100 with tax included, or 100 before tax. Deactivating a market asks when checkout orders in it are still waiting for payment. A request that does several returns one set of warnings, and one token confirms it. Successful changes return the updated market and publish `markets/update`. Sending only values that are already saved changes nothing and publishes no event, unless a market country was missing its serving currency, in which case that country is given the base currency. Uses the documented Store API fields, validation and permissions for PATCH /api/2025-01/markets/{marketId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change a market's settings. Send only the fields you want to change. To avoid overwriting someone else's change, send the `revision` you last read as `expected_revision`: if the market changed since, the request fails with `MARKET_CHANGED` and nothing is saved. When provided, `countries` and `currency_codes` replace their complete existing lists. Always retain the store's base currency in `currency_codes`; other currencies require a store plan with multi-currency support. Every market country has a serving currency, and newly added countries initially use the store's base currency. Countries another market serves move to this one: the request asks for confirmation naming each country and the market it leaves, then moves them in the same transaction. A market left with no countries refuses with `MARKET_COUNTRY_MOVE_EMPTIES_MARKET`. A country cannot be removed while a tax, shipping, or cash-on-delivery zone still uses it, and a currency cannot be removed while a country or duty rule uses it. Removing a currency also removes its exact shipping overrides; adding it back later converts blank shipping values from the base again. A single update can add or remove at most the market-currency bulk limit. While the market has price-based tax rules, replacing its currency is refused with `TAX_PRICE_RULE_BLOCKS_CURRENCY_CHANGE`, because rule thresholds are amounts in the current currency. `tax_included` controls whether catalog prices already contain tax, while `tax_display_mode` controls how storefront prices are presented. Tax is calculated on the order total, rounded once and allocated across lines by largest remainder, so line amounts always add up. Cart and checkout display each line using its allocated tax and represent mixed-display discounts as signed differences. For 100 separate exclusive 0.25 lines at 19%, tax is 4.75 and both display and charge total 29.75, with zero savings. Inclusive 1100 discounted to 1045 across a 1000 threshold at 5%/12% displays exclusive 982.14 minus a signed discount of -13.10 = 995.24, plus 49.76 tax = 1045. A negative displayed discount is a tax adjustment, not additional savings; render it as an increase instead of hiding or clamping it. Moving countries from other markets, changing `tax_included`, and deactivating a market with unpaid checkout orders first return `CONFIRMATION_REQUIRED` with `details.warnings` and `details.confirmation_token`; repeat the request with `confirmed: true` and that `confirmation_token` to proceed. Confirmation is checked against the market as it is when the change is saved; a concurrent change cannot bypass it, even without expected_revision. Changing `tax_included` always asks: every price keeps its number, so the warning (`MARKET_TAX_INCLUDED_ON_WARNING` or `MARKET_TAX_INCLUDED_OFF_WARNING`) explains that a price of 100 then means 100 with tax included, or 100 before tax. Deactivating a market asks when checkout orders in it are still waiting for payment. A request that does several returns one set of warnings, and one token confirms it. Successful changes return the updated market and publish `markets/update`. Sending only values that are already saved changes nothing and publishes no event, unless a market country was missing its serving currency, in which case that country is given the base currency. Uses the documented Store API fields, validation and permissions for PATCH /api/2025-01/markets/{marketId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -17321,7 +18432,7 @@
     "api_key": "markets.payment-adjustments.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/payment-adjustments",
-    "description": "Read saved rules and their authoring catalog. Read the payment_adjustment_catalog to determine supported kinds, values, amount requirements and limits before authoring. The catalog includes percent_max, percent_decimal_places, and fixed_amount_max. Fixed amounts must also fit each currency’s decimal precision. A binding path filters the list to that provider; a binding with no adjustments, or one not connected to the store, returns an empty list. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-adjustments. Only the connected store is accessible.",
+    "description": "Read saved rules and their authoring catalog. Read the payment_adjustment_catalog to determine supported kinds, values, amount requirements and limits before authoring. The catalog includes percent_max, percent_decimal_places, fixed_amount_max and product_page_label_max_length. Fixed amounts must also fit each currency’s decimal precision. A binding path filters the list to that provider; a binding with no adjustments, or one not connected to the store, returns an empty list. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-adjustments. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -17345,7 +18456,7 @@
     "api_key": "markets.payment-adjustments.list-provider",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments",
-    "description": "Read saved rules and their authoring catalog. Read the payment_adjustment_catalog to determine supported kinds, values, amount requirements and limits before authoring. The catalog includes percent_max, percent_decimal_places, and fixed_amount_max. Fixed amounts must also fit each currency’s decimal precision. A binding path filters the list to that provider; a binding with no adjustments, or one not connected to the store, returns an empty list. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments. Only the connected store is accessible.",
+    "description": "Read saved rules and their authoring catalog. Read the payment_adjustment_catalog to determine supported kinds, values, amount requirements and limits before authoring. The catalog includes percent_max, percent_decimal_places, fixed_amount_max and product_page_label_max_length. Fixed amounts must also fit each currency’s decimal precision. A binding path filters the list to that provider; a binding with no adjustments, or one not connected to the store, returns an empty list. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -17411,6 +18522,20 @@
             "null"
           ]
         },
+        "product_page_label": {
+          "description": "Optional headline for the offer on product pages, up to product_page_label_max_length characters from the catalog (PRODUCT_PAGE_LABEL_TOO_LONG). Empty shows the saving, for example \"5% off\".",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show_on_product_page": {
+          "description": "List this discount among the available offers on product pages, naming the payment method as checkout does (themes read product.offers). Shown while the discount is enabled and the provider is offered in the shopper's market and currency.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "value_type": {
           "description": "Use fixed or percent according to the returned adjustment catalog.",
           "type": "string"
@@ -17470,10 +18595,24 @@
             "null"
           ]
         },
+        "product_page_label": {
+          "description": "Optional headline for the offer on product pages, up to product_page_label_max_length characters from the catalog (PRODUCT_PAGE_LABEL_TOO_LONG). Empty shows the saving, for example \"5% off\".",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "rule_id": {
           "description": "Payment adjustment id.",
           "minLength": 1,
           "type": "string"
+        },
+        "show_on_product_page": {
+          "description": "List this discount among the available offers on product pages, naming the payment method as checkout does (themes read product.offers). Shown while the discount is enabled and the provider is offered in the shopper's market and currency.",
+          "type": [
+            "boolean",
+            "null"
+          ]
         },
         "value_type": {
           "description": "Use fixed or percent according to the returned adjustment catalog.",
@@ -18968,6 +20107,13 @@
             "null"
           ]
         },
+        "product_page_label": {
+          "description": "Optional headline for the offer on product pages, up to product_page_label_max_length characters (PRODUCT_PAGE_LABEL_TOO_LONG). Empty shows the saving, for example \"15% off\". Leading and trailing spaces are removed.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "refund_restores_usage": {
           "description": "Give a use back to usage_limit and per_customer_limit when every item this discount reduced on an order is refunded, or the whole order is refunded. The use is returned shortly after the refund, following the setting the discount has at that moment. The release is final for that order and discount: payment capture or retry cannot reclaim it.",
           "type": [
@@ -18977,6 +20123,13 @@
         },
         "show_in_cart": {
           "description": "Allow the storefront to show this coupon before checkout. Coupon discounts only; sending true for an automatic discount returns DISCOUNT_TARGETS_FORBIDDEN.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show_on_product_page": {
+          "description": "List this discount among the available offers on the product pages it applies to (themes read product.offers), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_PAGE_AUDIENCE. At most product_page_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_PAGE_LIMIT.",
           "type": [
             "boolean",
             "null"
@@ -19344,6 +20497,13 @@
             "null"
           ]
         },
+        "product_page_label": {
+          "description": "Optional headline for the offer on product pages, up to product_page_label_max_length characters (PRODUCT_PAGE_LABEL_TOO_LONG). Empty shows the saving, for example \"15% off\". Leading and trailing spaces are removed.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "refund_restores_usage": {
           "description": "Give a use back to usage_limit and per_customer_limit when every item this discount reduced on an order is refunded, or the whole order is refunded. The use is returned shortly after the refund, following the setting the discount has at that moment. The release is final for that order and discount: payment capture or retry cannot reclaim it.",
           "type": [
@@ -19353,6 +20513,13 @@
         },
         "show_in_cart": {
           "description": "Allow the storefront to show this coupon before checkout. Coupon discounts only; sending true for an automatic discount returns DISCOUNT_TARGETS_FORBIDDEN.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show_on_product_page": {
+          "description": "List this discount among the available offers on the product pages it applies to (themes read product.offers), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_PAGE_AUDIENCE. At most product_page_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_PAGE_LIMIT.",
           "type": [
             "boolean",
             "null"
@@ -23309,7 +24476,7 @@
     "api_key": "email_domains.mail_from",
     "api_method": "PUT",
     "api_path": "/api/2025-01/email/domains/{domainId}/mail-from",
-    "description": "Choose the subdomain bounces return to (MAIL FROM). Every sending domain has one, bounce.\u003cdomain\u003e by default. Use an unused subdomain of the sending domain; its MX and SPF records then appear in setup.records (Tringify writes them in DNS it hosts). Never replace the root MX/SPF. Missing bounce records never stop sending. An empty mail_from_domain restores bounce.\u003cdomain\u003e. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `email_mail_from`, target_type `email_identity` and target_id storeId|domainId|mail_from_domain: the store id, the sending domain id and the MAIL FROM subdomain trimmed, lowercased and without a trailing dot (empty when restoring the default), joined with |. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/domains/{domainId}/mail-from. Only the connected store is accessible. Show the returned message and the sending domain's setup steps, records (host and value to copy, and what public DNS shows), next_action and issue text as given, then follow next_action (its tool and arguments). Do not call verify_email_domain in a loop: Tringify keeps checking in the background and notifies the merchant; look again with get_email_domain after next_action.after. Never name the sending provider to the merchant.",
+    "description": "Choose the subdomain bounces return to (MAIL FROM). Every sending domain has one, bounce.<domain> by default. Use an unused subdomain of the sending domain; its MX and SPF records then appear in setup.records (Tringify writes them in DNS it hosts). Never replace the root MX/SPF. Missing bounce records never stop sending. An empty mail_from_domain restores bounce.<domain>. Needs a verification code: request it with request_verification_code (POST /api/2025-01/verification-codes) using action `email_mail_from`, target_type `email_identity` and target_id storeId|domainId|mail_from_domain: the store id, the sending domain id and the MAIL FROM subdomain trimmed, lowercased and without a trailing dot (empty when restoring the default), joined with |. Tringify emails the code to the token's member; ask them for it and send it as otp_code. A code works once, only for this action and target, until it expires. A missing or rejected code returns an error whose `details.next_action` is this exact request_verification_code call (`details.verification` holds the binding). Mutations return a backend-localized code and message; show them verbatim. Installed and third-party app credentials cannot request or hold read_domains, write_domains, read_email_settings or write_email_settings. Merchant admin tokens and the merchant’s own MCP connection retain explicitly granted access. The mytringify subdomain is permanent and cannot be renamed. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email/domains/{domainId}/mail-from. Only the connected store is accessible. Show the returned message and the sending domain's setup steps, records (host and value to copy, and what public DNS shows), next_action and issue text as given, then follow next_action (its tool and arguments). Do not call verify_email_domain in a loop: Tringify keeps checking in the background and notifies the merchant; look again with get_email_domain after next_action.after. Never name the sending provider to the merchant.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -23319,7 +24486,7 @@
           "type": "string"
         },
         "mail_from_domain": {
-          "description": "Dedicated unused subdomain, or empty for bounce.\u003cdomain\u003e.",
+          "description": "Dedicated unused subdomain, or empty for bounce.<domain>.",
           "type": "string"
         },
         "otp_code": {
@@ -24286,12 +25453,12 @@
     "api_key": "custom_pixels.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels",
-    "description": "Add a custom pixel to a storefront. Every field is required. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `\u003cscript\u003e` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. A storefront has at most `custom_pixels.max_per_storefront` custom pixels (Storefront limits), disabled ones included; one more is refused with `CUSTOM_PIXEL_LIMIT_REACHED`. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/custom-pixels. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
+    "description": "Add a custom pixel to a storefront. Every field is required. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `<script>` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. A storefront has at most `custom_pixels.max_per_storefront` custom pixels (Storefront limits), disabled ones included; one more is refused with `CUSTOM_PIXEL_LIMIT_REACHED`. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/custom-pixels. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "code": {
-          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `\u003cscript\u003e` tags and no HTML snippets.",
+          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `<script>` tags and no HTML snippets.",
           "type": "string"
         },
         "consent_category": {
@@ -24303,7 +25470,7 @@
           "type": "boolean"
         },
         "name": {
-          "description": "Name shown in Online Store \u003e Pixels, 1 to `name_max_length` characters (100).",
+          "description": "Name shown in Online Store > Pixels, 1 to `name_max_length` characters (100).",
           "type": "string"
         },
         "storefront_id": {
@@ -24330,12 +25497,12 @@
     "api_key": "custom_pixels.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}",
-    "description": "Replace a custom pixel's name, code, consent category and enabled state. Send every field: the pixel is replaced as sent. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `\u003cscript\u003e` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. Disabling keeps the code; pages already open in a browser keep running the pixel until they are reloaded. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
+    "description": "Replace a custom pixel's name, code, consent category and enabled state. Send every field: the pixel is replaced as sent. `name` is 1 to `name_max_length` characters (100) and `code` at most `code_max_length` characters (65536), both counted in Unicode code points after leading and trailing spaces are removed. The code is JavaScript only: it runs in a hidden sandboxed frame without access to the store page, its cookies or storage, where `tringify.pixel.subscribe(callback)` delivers the events the visitor's consent allows and `tringify.pixel.context()` returns the page context. Code containing a `<script>` tag (an HTML install snippet) is refused with `CUSTOM_PIXEL_CODE_INVALID`; paste the JavaScript inside it instead. Vendor scripts that need the store's cookies or page do not work there. `consent_category` decides which visitors run the pixel. Disabling keeps the code; pages already open in a browser keep running the pixel until they are reloaded. The change is recorded in the store's activity log. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_PIXELS_ADMIN_TOKEN_REQUIRED` (an app turns its own pixel on or off with Set storefront embed activation). Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/custom-pixels/{pixelId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Use only code the merchant supplied or approved; never write tracking code on your own. Show the merchant the code and the consent category before saving.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "code": {
-          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `\u003cscript\u003e` tags and no HTML snippets.",
+          "description": "The pixel's JavaScript, at most `code_max_length` characters (65536). JavaScript only: no `<script>` tags and no HTML snippets.",
           "type": "string"
         },
         "consent_category": {
@@ -24347,7 +25514,7 @@
           "type": "boolean"
         },
         "name": {
-          "description": "Name shown in Online Store \u003e Pixels, 1 to `name_max_length` characters (100).",
+          "description": "Name shown in Online Store > Pixels, 1 to `name_max_length` characters (100).",
           "type": "string"
         },
         "pixel_id": {
@@ -28430,7 +29597,7 @@
           "type": "string"
         },
         "stock_action": {
-          "description": "What to do with stock still on hand: `{\"mode\": \"move\", \"target_location_id\": \"\u003cid\u003e\"}` moves every unit to another active merchant location; `{\"mode\": \"clear\"}` sets it to zero. Send the same value on the confirmation retry.",
+          "description": "What to do with stock still on hand: `{\"mode\": \"move\", \"target_location_id\": \"<id>\"}` moves every unit to another active merchant location; `{\"mode\": \"clear\"}` sets it to zero. Send the same value on the confirmation retry.",
           "type": [
             "object",
             "null"
@@ -28640,6 +29807,7 @@
       "store:blog:read",
       "store:customers:read",
       "store:files:read",
+      "store:gift_cards:read",
       "store:inventory:read",
       "store:locations:read",
       "store:markets:read",
@@ -28692,6 +29860,7 @@
       "store:blog:write",
       "store:customers:write",
       "store:files:write",
+      "store:gift_cards:write",
       "store:inventory:write",
       "store:locations:write",
       "store:markets:write",
@@ -28737,6 +29906,7 @@
       "store:blog:write",
       "store:customers:write",
       "store:files:write",
+      "store:gift_cards:write",
       "store:inventory:write",
       "store:locations:write",
       "store:markets:write",
@@ -28782,6 +29952,7 @@
       "store:blog:write",
       "store:customers:write",
       "store:files:write",
+      "store:gift_cards:write",
       "store:inventory:write",
       "store:locations:write",
       "store:markets:write",
@@ -28844,6 +30015,7 @@
       "store:blog:write",
       "store:customers:write",
       "store:files:write",
+      "store:gift_cards:write",
       "store:inventory:write",
       "store:locations:write",
       "store:markets:write",
@@ -28886,6 +30058,7 @@
       "store:blog:read",
       "store:customers:read",
       "store:files:read",
+      "store:gift_cards:read",
       "store:inventory:read",
       "store:locations:read",
       "store:markets:read",
@@ -28924,6 +30097,7 @@
       "store:blog:read",
       "store:customers:read",
       "store:files:read",
+      "store:gift_cards:read",
       "store:inventory:read",
       "store:locations:read",
       "store:markets:read",
@@ -28970,6 +30144,7 @@
       "store:blog:read",
       "store:customers:read",
       "store:files:read",
+      "store:gift_cards:read",
       "store:inventory:read",
       "store:locations:read",
       "store:markets:read",
@@ -29008,6 +30183,7 @@
       "store:blog:write",
       "store:customers:write",
       "store:files:write",
+      "store:gift_cards:write",
       "store:inventory:write",
       "store:locations:write",
       "store:markets:write",
@@ -29046,6 +30222,7 @@
       "store:blog:write",
       "store:customers:write",
       "store:files:write",
+      "store:gift_cards:write",
       "store:inventory:write",
       "store:locations:write",
       "store:markets:write",
@@ -29084,6 +30261,7 @@
       "store:blog:write",
       "store:customers:write",
       "store:files:write",
+      "store:gift_cards:write",
       "store:inventory:write",
       "store:locations:write",
       "store:markets:write",
@@ -29136,6 +30314,7 @@
       "store:blog:write",
       "store:customers:write",
       "store:files:write",
+      "store:gift_cards:write",
       "store:inventory:write",
       "store:locations:write",
       "store:markets:write",
@@ -29165,6 +30344,7 @@
       "store:blog:read",
       "store:customers:read",
       "store:files:read",
+      "store:gift_cards:read",
       "store:inventory:read",
       "store:locations:read",
       "store:markets:read",
@@ -29215,6 +30395,7 @@
       "store:blog:read",
       "store:customers:read",
       "store:files:read",
+      "store:gift_cards:read",
       "store:inventory:read",
       "store:locations:read",
       "store:markets:read",
@@ -29257,6 +30438,7 @@
       "store:blog:read",
       "store:customers:read",
       "store:files:read",
+      "store:gift_cards:read",
       "store:inventory:read",
       "store:locations:read",
       "store:markets:read",
@@ -29295,6 +30477,7 @@
       "store:blog:read",
       "store:customers:read",
       "store:files:read",
+      "store:gift_cards:read",
       "store:inventory:read",
       "store:locations:read",
       "store:markets:read",
@@ -29333,6 +30516,7 @@
       "store:blog:read",
       "store:customers:read",
       "store:files:read",
+      "store:gift_cards:read",
       "store:inventory:read",
       "store:locations:read",
       "store:markets:read",
@@ -29524,7 +30708,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:\u003cslug\u003e`.",
+          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:<slug>`.",
           "minLength": 1,
           "type": "string"
         }
@@ -29565,7 +30749,7 @@
           "type": "string"
         },
         "namespace": {
-          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:\u003cslug\u003e`.",
+          "description": "Metafield definition namespace. URL-encode `:` in app namespaces such as `app:<slug>`.",
           "minLength": 1,
           "type": "string"
         },
@@ -29759,7 +30943,7 @@
     "api_key": "message-templates.translation.batch-set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/message-templates/translations",
-    "description": "Set template translations for any languages in one call. A message template is one SMS or WhatsApp text: one message type and channel, addressed here by the `id` that List message templates and Get a message template return. Its `content` translates per store language; a customer whose language has a translation receives it, every other customer the template's own text. A translation keeps the original's values and tags exactly (`{{ ... }}` and `{% ... %}`, in any order within the same block): only the text around them changes, and one that does not is refused with MARKETING_TRANSLATION_VARIABLES_MISMATCH and `details.variables` listing what to keep. It must not be blank (MESSAGE_TEMPLATE_CONTENT_REQUIRED) and holds at most the template's `max_content_length` characters (MESSAGE_TEMPLATE_CONTENT_TOO_LONG). A translation written against an earlier original is reported outdated. Store Admin, the Tringify mobile app, translation CSV (resource `message_template`), AI translation and MCP translate the same texts, and every change sends `message_templates/update`. Each row is one template in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one template in one locale) and at most one row per template and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") `TRANSLATIONS_NOT_SAVED_RETRY` (503 with a `Retry-After` header, `success: false`; no row saved because every row failed only with `TRANSLATION_WRITE_BUSY`, so the same call can be sent again after `error.details.retry_after_seconds`) or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved and at least one row failed for another reason). Both carry the same `totals` and `results` in `error.details`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/message-templates/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set template translations for any languages in one call. A message template is one SMS or WhatsApp text: one message type and channel, addressed here by the `id` that List message templates and Get a message template return. Its `content` translates per store language; a customer whose language has a translation receives it, every other customer the template's own text. A translation keeps the original's values and tags exactly (`{{ ... }}` and `{% ... %}`, in any order within the same block): only the text around them changes, and one that does not is refused with MARKETING_TRANSLATION_VARIABLES_MISMATCH and `details.variables` listing what to keep. It must not be blank (MESSAGE_TEMPLATE_CONTENT_REQUIRED) and holds at most the template's `max_content_length` characters (MESSAGE_TEMPLATE_CONTENT_TOO_LONG). A translation written against an earlier original is reported outdated. Store Admin, the Tringify mobile app, translation CSV (resource `message_template`), AI translation and MCP translate the same texts. Each change sends `message_templates/translations/update`, or `message_templates/translations/delete` when a translation is cleared. Each row is one template in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one template in one locale) and at most one row per template and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") `TRANSLATIONS_NOT_SAVED_RETRY` (503 with a `Retry-After` header, `success: false`; no row saved because every row failed only with `TRANSLATION_WRITE_BUSY`, so the same call can be sent again after `error.details.retry_after_seconds`) or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved and at least one row failed for another reason). Both carry the same `totals` and `results` in `error.details`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/message-templates/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {

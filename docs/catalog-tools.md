@@ -890,3 +890,30 @@ Value translations require both owner and Languages access: read for get, write 
 | `delete_store_metafield` | `DELETE /api/2025-01/store/metafields/{namespace}/{key}` | store:settings.metafield_definitions:write |
 | `get_store_metafield_translation` | `GET /api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}` | store:settings.metafield_definitions:read, store:settings.languages:read |
 | `set_store_metafield_translation` | `PUT /api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}` | store:settings.metafield_definitions:write, store:settings.languages:write |
+
+## Gift Card operations
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_gift_card_products` | `GET /api/2025-01/gift-cards/products` | store:gift_cards:read, store:products:read |
+| `create_gift_card_product` | `POST /api/2025-01/gift-cards/products` | store:gift_cards:write, store:products:write |
+| `get_gift_card_limits` | `GET /api/2025-01/gift-cards/limits` | store:gift_cards:read |
+| `list_gift_card_languages` | `GET /api/2025-01/gift-cards/languages` | store:gift_cards:read |
+| `get_gift_card_settings` | `GET /api/2025-01/gift-cards/settings` | store:gift_cards:read |
+| `update_gift_card_settings` | `PUT /api/2025-01/gift-cards/settings` | store:gift_cards:write |
+| `list_gift_cards` | `GET /api/2025-01/gift-cards` | store:gift_cards:read |
+| `issue_gift_card` | `POST /api/2025-01/gift-cards` | store:gift_cards:write |
+| `get_gift_card` | `GET /api/2025-01/gift-cards/{id}` | store:gift_cards:read |
+| `list_gift_card_history` | `GET /api/2025-01/gift-cards/{id}/history` | store:gift_cards:read |
+| `update_gift_card` | `PUT /api/2025-01/gift-cards/{id}` | store:gift_cards:write |
+| `resend_gift_card` | `POST /api/2025-01/gift-cards/{id}/resend` | store:gift_cards:write |
+| `reveal_gift_card_code` | `POST /api/2025-01/gift-cards/{id}/reveal-code` | store:gift_cards:write |
+| `set_gift_card_status` | `POST /api/2025-01/gift-cards/{id}/status` | store:gift_cards:write |
+| `adjust_gift_card_balance` | `POST /api/2025-01/gift-cards/{id}/adjustments` | store:gift_cards:write |
+| `bulk_set_gift_card_status` | `POST /api/2025-01/gift-cards/bulk-status` | store:gift_cards:write |
+
+## Gift Card delivery edits
+
+Read `get_gift_card` before editing or resending. Use `can_edit_delivery` and `edit_delivery_reason_display` for recipient details, message, language and delivery schedule; use `can_edit_expiry` for expiry. Sent, in-flight or used cards lock delivery details. Expired, depleted, cancelled and disabled cards cannot be edited or resent. Use `can_resend` and `resend_reason_display` for Resend, which always uses the saved recipient and language.
+
+`update_gift_card` with a future `delivery_scheduled_at` before expiry creates or moves the waiting send, preferring recipient email, otherwise phone through the store’s configured route. `clear_delivery_schedule` cancels the waiting send and never sends now. `resend_gift_card` takes `id`, `delivery_method` and `idempotency_key`; recipient and language overrides are not accepted. See the [Gift Cards Store API contract](https://dev-docs.tringify.com/store-api/orders/gift-cards) for response flags and refusal codes.

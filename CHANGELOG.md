@@ -1,5 +1,10 @@
 # Changelog
 
+## Gift Card delivery permissions — 29 October 2026
+
+- Card responses expose server decisions for editing delivery details and resending, with display reasons. Sent, in-flight or used cards lock recipient details, message, language and schedule; expired, depleted, cancelled and disabled cards cannot be edited or resent.
+- Saving a schedule creates or moves a real waiting delivery; clearing it cancels the send. Resend uses saved recipient details and language. The catalog includes the Gift Card tools and current schemas.
+
 ## Order status names in every language — 29 October 2026
 
 - `list_order_statuses`: `name` is the status in the request language. Tringify words the four system statuses (`pending` — Pending payment, `processing`, `completed`, `cancelled`) in every language, for staff and customers alike; one of the store's own statuses shows its translation in that language, else its own name. New `source_name`: a custom status's own name in the store's default language (`null` for system statuses).
