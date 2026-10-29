@@ -12310,7 +12310,7 @@
     "api_key": "orders.statuses.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders/statuses",
-    "description": "List the store's order statuses. Returns the store's order statuses in their display order. Statuses are labels: the four system statuses (is_system true) are pending (named Pending payment), processing, completed and cancelled; every other status is a custom label the merchant created. Tringify sets only three of them: pending when an online-payment order is created unpaid, processing once when its payment completes (or at creation for cash on delivery, pay later, staff-created and fully covered orders) while the status is still pending, and cancelled when the order is cancelled. Everything else is set by staff, apps, this API or the merchant's status triggers. No status change notifies the customer. Merchants can add triggers to their own statuses: `triggers` lists them (always empty for system statuses). A trigger moves an order to that status the first time its `event` happens to the order, once per order, and only changes the status (the order's timeline, audit log and the orders/update webhook with changed_fields status); it never applies to test, imported or cancelled orders. `event` is one of fulfillment_shipped (a delivery fulfillment gets its tracking number, or is first reported in transit, out for delivery or as a failed delivery attempt), fulfillment_out_for_delivery, fulfillment_delivered, fulfillment_delivery_failed, fulfillment_ready_for_pickup, fulfillment_picked_up, order_paid (payment status becomes paid), order_partially_refunded, order_refunded and order_fulfilled (fulfillment status becomes fulfilled). `scope` is first_fulfillment (the order's first fulfillment reaches the event) or all_fulfillments (every shipping item is in a fulfillment and every fulfillment that isn't cancelled has reached it; a delivered fulfillment counts as sent, a picked-up one as ready for pickup) for fulfillment events — all_fulfillments is not available for fulfillment_out_for_delivery and fulfillment_delivery_failed — and order for order events. Each event and scope belongs to at most one status. `label` is the trigger in the request language. Triggers are managed in Store Admin. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/statuses. Only the connected store is accessible.",
+    "description": "List the store's order statuses. Returns the store's order statuses in their display order. Statuses are labels: the four system statuses (is_system true) are pending (Pending payment), processing, completed and cancelled; every other status is a custom label the merchant created. `name` is the status in the request language: Tringify words the system statuses in every language, for staff and customers alike; one of the store's own statuses shows its translation in that language, else its own name. `source_name` is a custom status's own name in the store's default language (null for system statuses); translate it with the order status translation endpoints. Tringify sets only three of them: pending when an online-payment order is created unpaid, processing once when its payment completes (or at creation for cash on delivery, pay later, staff-created and fully covered orders) while the status is still pending, and cancelled when the order is cancelled. Everything else is set by staff, apps, this API or the merchant's status triggers. No status change notifies the customer. Merchants can add triggers to their own statuses: `triggers` lists them (always empty for system statuses). A trigger moves an order to that status the first time its `event` happens to the order, once per order, and only changes the status (the order's timeline, audit log and the orders/update webhook with changed_fields status); it never applies to test, imported or cancelled orders. `event` is one of fulfillment_shipped (a delivery fulfillment gets its tracking number, or is first reported in transit, out for delivery or as a failed delivery attempt), fulfillment_out_for_delivery, fulfillment_delivered, fulfillment_delivery_failed, fulfillment_ready_for_pickup, fulfillment_picked_up, order_paid (payment status becomes paid), order_partially_refunded, order_refunded and order_fulfilled (fulfillment status becomes fulfilled). `scope` is first_fulfillment (the order's first fulfillment reaches the event) or all_fulfillments (every shipping item is in a fulfillment and every fulfillment that isn't cancelled has reached it; a delivered fulfillment counts as sent, a picked-up one as ready for pickup) for fulfillment events — all_fulfillments is not available for fulfillment_out_for_delivery and fulfillment_delivery_failed — and order for order events. Each event and scope belongs to at most one status. `label` is the trigger in the request language. Triggers are managed in Store Admin. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/statuses. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -13062,6 +13062,158 @@
     "name": "list_order_item_metafields",
     "scopes": [
       "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "orders.statuses.translation.batch-get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/orders/statuses/translations/{locale}",
+    "description": "Fetch order status translations in batch. An order status translation is the name of one of the store's own (custom) statuses in another store language, addressed by the `id` that List order statuses returns. Customers see it on the order confirmation, order status and account pages in that language, and staff who use Tringify in that language see it in the order list and order details; without one, everyone sees the status's own name. System statuses (Pending payment, Processing, Completed, Cancelled) are worded by Tringify in every language and refuse translations with ORDER_STATUS_TRANSLATION_SYSTEM. Only `name` is translatable; it follows the rules of a status name (not blank, at most the order statuses limit's `name_max_length` characters, no control characters). A translation written against an earlier name is reported outdated. Store Admin, the Tringify mobile app, AI translation and MCP translate the same names. Each change sends `order_statuses/translations/update`, or `order_statuses/translations/delete` when a translation is cleared. Returns a `resources` entry keyed by `order_status:{id}` for each requested status (at most 100 per call); a status without a translation has an empty object. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/statuses/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "ids": {
+          "description": "Comma-separated order status IDs.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "locale",
+        "ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_order_status_translations",
+    "scopes": [
+      "store:orders:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "orders.statuses.translation.batch-set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/orders/statuses/translations",
+    "description": "Set order status translations for any languages in one call. An order status translation is the name of one of the store's own (custom) statuses in another store language, addressed by the `id` that List order statuses returns. Customers see it on the order confirmation, order status and account pages in that language, and staff who use Tringify in that language see it in the order list and order details; without one, everyone sees the status's own name. System statuses (Pending payment, Processing, Completed, Cancelled) are worded by Tringify in every language and refuse translations with ORDER_STATUS_TRANSLATION_SYSTEM. Only `name` is translatable; it follows the rules of a status name (not blank, at most the order statuses limit's `name_max_length` characters, no control characters). A translation written against an earlier name is reported outdated. Store Admin, the Tringify mobile app, AI translation and MCP translate the same names. Each change sends `order_statuses/translations/update`, or `order_statuses/translations/delete` when a translation is cleared. Each row is one order status in one language: `id`, `locale` (any enabled non-default store locale) and `fields`. Rows for several languages can be mixed in one call; send at most 100 rows (one row = one order status in one locale) and at most one row per order status and locale. Each row is saved on its own: a failing row never stops the others. Empty values clear the matching field translation; omitted fields keep their translation. Every row is validated exactly like the single translation endpoint. The response has `totals` (`rows`, `saved`, `failed`) and one `results` entry per row in request order: `{id, locale, status}` with status `saved` or `failed`. A failed row carries the full `error` (code, message, details); its codes are the single endpoint's codes plus `TRANSLATION_ROW_DUPLICATE`. A saved rich-text row whose unsafe markup was removed lists `warnings`. A top-level `code` and `message` give the outcome: `TRANSLATIONS_SAVED` (200, every row saved), `TRANSLATIONS_PARTIALLY_SAVED` (200, `success: true`; the message counts saved and failed rows and names the failure reasons, e.g. \"2 saved, 1 failed. No source text found for the requested fields (description).\") `TRANSLATIONS_NOT_SAVED_RETRY` (503 with a `Retry-After` header, `success: false`; no row saved because every row failed only with `TRANSLATION_WRITE_BUSY`, so the same call can be sent again after `error.details.retry_after_seconds`) or `TRANSLATIONS_NOT_SAVED` (422, `success: false`; no row saved and at least one row failed for another reason). Both carry the same `totals` and `results` in `error.details`. With an `Idempotency-Key`, repeating the same request re-applies nothing that already saved and retries the failed rows. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/orders/statuses/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "translations": {
+          "description": "Up to 100 rows shaped as {id, locale, fields}. The only allowed field key is `name`.",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field-keyed translated strings. The only allowed field key is `name`.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Order status ID.",
+                "type": "string"
+              },
+              "locale": {
+                "description": "Enabled non-default store locale.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "locale",
+              "fields"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_order_status_translations",
+    "scopes": [
+      "store:orders:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "orders.statuses.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/orders/statuses/{id}/translations/{locale}",
+    "description": "Fetch one order status name in another store language. An order status translation is the name of one of the store's own (custom) statuses in another store language, addressed by the `id` that List order statuses returns. Customers see it on the order confirmation, order status and account pages in that language, and staff who use Tringify in that language see it in the order list and order details; without one, everyone sees the status's own name. System statuses (Pending payment, Processing, Completed, Cancelled) are worded by Tringify in every language and refuse translations with ORDER_STATUS_TRANSLATION_SYSTEM. Only `name` is translatable; it follows the rules of a status name (not blank, at most the order statuses limit's `name_max_length` characters, no control characters). A translation written against an earlier name is reported outdated. Store Admin, the Tringify mobile app, AI translation and MCP translate the same names. Each change sends `order_statuses/translations/update`, or `order_statuses/translations/delete` when a translation is cleared. Returns the stored `name` translation in the selected locale with `is_outdated`; a status without a translation in this locale returns an empty `fields` object. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/statuses/{id}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Order status ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_order_status_translation",
+    "scopes": [
+      "store:orders:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "orders.statuses.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/orders/statuses/{id}/translations/{locale}",
+    "description": "Set or clear one order status name in another store language. An order status translation is the name of one of the store's own (custom) statuses in another store language, addressed by the `id` that List order statuses returns. Customers see it on the order confirmation, order status and account pages in that language, and staff who use Tringify in that language see it in the order list and order details; without one, everyone sees the status's own name. System statuses (Pending payment, Processing, Completed, Cancelled) are worded by Tringify in every language and refuse translations with ORDER_STATUS_TRANSLATION_SYSTEM. Only `name` is translatable; it follows the rules of a status name (not blank, at most the order statuses limit's `name_max_length` characters, no control characters). A translation written against an earlier name is reported outdated. Store Admin, the Tringify mobile app, AI translation and MCP translate the same names. Each change sends `order_statuses/translations/update`, or `order_statuses/translations/delete` when a translation is cleared. Send an empty string to clear the translation; readers in that language then see the status's own name. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/orders/statuses/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Order status ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values. The only allowed field is `name`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_order_status_translation",
+    "scopes": [
+      "store:orders:write",
+      "store:settings.languages:write"
     ]
   },
   {
