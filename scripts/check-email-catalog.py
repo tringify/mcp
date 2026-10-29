@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare email schemas with an export from the executable admin gateway."""
+"""Compare email schemas with an export of the hosted connector's tool catalog."""
 import argparse
 import json
 from pathlib import Path

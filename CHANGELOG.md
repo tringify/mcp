@@ -1,5 +1,9 @@
 # Changelog
 
+## Plainer tool descriptions — 29 October 2026
+
+- `list_currencies`, `update_market`, `assign_all_market_country_currencies` and `verify_domain` describe what happens without describing how the platform is built. Inputs, outputs and behaviour are unchanged.
+
 ## Order statuses and their triggers — 29 October 2026
 
 - New tool `list_order_statuses` (`store:orders:read`): the store's order statuses in display order — the four system statuses (`pending`, named Pending payment, `processing`, `completed`, `cancelled`) and the merchant's own labels — with `slug` (what `create_order` takes as `status_slug`), `name`, `color`, `sort_order` and `is_system`.

@@ -1,5 +1,5 @@
 {
-  "source": "api-gateway-store-api resource contracts, executed through the hosted connector",
+  "source": "Store API resource contracts, executed through the hosted connector",
   "credentials": "Merchant admin tokens and the merchant’s own MCP connection only; apps may not hold domain/email-settings scopes.",
   "workflow": [
     "Read get_email_overview first: badge, the four steps in order (sending domain, sender address, default sender, reply-to), next_action and health.",
@@ -25,5 +25,5 @@
     "Installed and third-party apps cannot hold domain or email-settings scopes. Public contact email is a separate storefront field; it is not the owner login, a sender or the Reply-To address."
   ],
   "catalog": "tool-catalog.json",
-  "schema_parity": "Run scripts/check-email-catalog.py with an export from api-gateway-admin/cmd/export-mcp-catalog and --docs-catalog pointing to docsservice/cmd/genconnectordocs/catalog-tools.json."
+  "schema_parity": "Run scripts/check-email-catalog.py with an export of the hosted connector's tool catalog and --docs-catalog pointing to the connector docs catalog."
 }
