@@ -55,6 +55,8 @@ Markets manage already-connected payment-provider availability and provider-spec
 
 Discount types have different required fields and targeting rules. Read discount limits and complete definitions, including related products/variants, gift products, bundle components and tiers. Whole-product and exact-variant targets are distinct. Tiered discounts use only the highest reached base-currency tier. Buy X Get Y/bundles reserve their claimed units; stacked savings use remaining values and cannot make merchandise negative.
 
+To list a discount or an online-payment discount under Available offers on product pages, set `show_on_product_page` (discounts for everyone only; a code then becomes public) and optionally `product_page_label`. Read `product_page_max_per_market`, `product_page_max_shown` and `product_page_label_max_length` from the discount limits (the payment adjustment catalog carries the label limit). Tringify words the offer in each shopper's language and currency; themes show it from `product.offers`.
+
 Checkout limits compare merchandise after product/order discounts and exclude shipping, tax, duties and fees. Checkout percentage fees use that same merchandise basis; fixed per-item fees multiply merchandise quantity. Required and optional fees differ. Reordering fees requires every current fee ID exactly once.
 
 ## Confirmation and bulk results
