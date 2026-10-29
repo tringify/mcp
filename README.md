@@ -110,6 +110,8 @@ Existing Products permissions cover the catalog tools. Translation operations al
 
 Order editing uses `get_order`, `get_order_edit_options`, `list_order_edit_shipping_options`, `preview_order_edit`, `apply_order_edit`, and `list_order_edits`. Reads need `store:orders:read`; previews, delivery quotes and applying need `store:orders:write`. Read current field permissions before editing. Preview item, price, manual discount, contact, address and shipping changes, review the resulting totals and settlement, then apply with the returned `preview_token`, current `order_version` and a stable `idempotency_key`. The server revalidates every write. Existing connections must approve the added Orders access. See the [Orders API reference](https://dev-docs.tringify.com/store-api/orders/orders).
 
+`list_order_statuses` (`store:orders:read`) lists the store's order statuses — the four system statuses and the merchant's own — with the `slug` that `create_order` takes as `status_slug`. Each status lists its `triggers`: events such as a shipment sent or delivered, or the order paid, that move an order to it once, changing only the status. Triggers are managed in Store Admin.
+
 The [complete tool inventory](docs/catalog-tools.md) lists the supported operations and their API counterparts. The [reference](https://dev-docs.tringify.com/apps/connectors/oauth) describes accepted fields, pagination, errors, limits, and confirmation. Products, Collections, Categories, Attributes, Tags, Languages, and Currencies cover their documented merchant-authorized API endpoints. App-only purchase requirements remain outside user connections. Brands, Vendors, and Files support the tools shown above; their remaining API endpoints are not implied.
 
 ## Pages, policies, and blogs
