@@ -25,6 +25,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `delete_product_variant_metafield` | `DELETE /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}` | store:products:write |
 | `get_product_variant_metafield_translation` | `GET /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_product_variant_metafield_translation` | `PUT /api/2025-01/products/{id}/variants/{variantId}/metafields/{namespace}/{key}/translations/{locale}` | store:products:write, store:settings.languages:write |
+| `bulk_upsert_product` | `POST /api/2025-01/products/bulk` | store:products:write |
 | `bulk_update_product_status` | `POST /api/2025-01/products/bulk-status` | store:products:write |
 | `bulk_update_product_tags` | `POST /api/2025-01/products/bulk-tags` | store:products:write |
 | `bulk_update_product_categories` | `POST /api/2025-01/products/bulk-categories` | store:products:write |
@@ -260,6 +261,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `create_file_uploads` | `POST /api/2025-01/files/upload-intents` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `finalize_file_uploads` | `POST /api/2025-01/files/upload-intents/finalize` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `get_file_upload_status` | `POST /api/2025-01/files/upload-intents/status` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `create_file_remote_uploads` | `POST /api/2025-01/files/remote-uploads` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `get_file` | `GET /api/2025-01/files/{id}` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
 | `request_file_preview` | `POST /api/2025-01/files/{id}/preview` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `update_file` | `PUT /api/2025-01/files/{id}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
@@ -270,6 +272,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `create_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `get_alt_text_job` | `GET /api/2025-01/files/alt-text-jobs/{id}` | store:ai.image_generation:write, and store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
 | `cancel_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs/{id}/cancel` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `list_order_statuses` | `GET /api/2025-01/orders/statuses` | store:orders:read |
 | `get_order` | `GET /api/2025-01/orders/{id}` | store:orders:read |
 | `list_order_edits` | `GET /api/2025-01/orders/{id}/edits` | store:orders:read |
 | `get_order_edit_options` | `GET /api/2025-01/orders/{id}/edit-options` | store:orders:read |
@@ -345,6 +348,8 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `create_market_payment_adjustment` | `POST /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments` | store:markets:write |
 | `update_market_payment_adjustment` | `PUT /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}` | store:markets:write |
 | `delete_market_payment_adjustment` | `DELETE /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}` | store:markets:write |
+| `get_market_customer_notes` | `GET /api/2025-01/markets/{marketId}/customer-notes` | store:markets:read |
+| `update_market_customer_notes` | `PUT /api/2025-01/markets/{marketId}/customer-notes` | store:markets:write |
 | `get_market_tax_class_limits` | `GET /api/2025-01/markets/tax-classes/limits` | store:markets:read |
 | `list_market_tax_classes` | `GET /api/2025-01/markets/{marketId}/tax-classes` | store:markets:read |
 | `create_market_tax_class` | `POST /api/2025-01/markets/{marketId}/tax-classes` | store:markets:write |
@@ -936,6 +941,10 @@ Value translations require both owner and Languages access: read for get, write 
 | `set_order_item_metafield` | `PUT /api/2025-01/orders/{orderId}/items/{itemId}/metafields` | store:orders:write |
 | `delete_order_item_metafield` | `DELETE /api/2025-01/orders/{orderId}/items/{itemId}/metafields/{namespace}/{key}` | store:orders:write |
 | `list_order_item_metafields` | `GET /api/2025-01/orders/{orderId}/items/{itemId}/metafields` | store:orders:read |
+| `get_order_status_translations` | `GET /api/2025-01/orders/statuses/translations/{locale}` | store:orders:read, store:settings.languages:read |
+| `set_order_status_translations` | `PUT /api/2025-01/orders/statuses/translations` | store:orders:write, store:settings.languages:write |
+| `get_order_status_translation` | `GET /api/2025-01/orders/statuses/{id}/translations/{locale}` | store:orders:read, store:settings.languages:read |
+| `set_order_status_translation` | `PUT /api/2025-01/orders/statuses/{id}/translations/{locale}` | store:orders:write, store:settings.languages:write |
 | `list_store_metafields` | `GET /api/2025-01/store/metafields` | store:settings.metafield_definitions:read |
 | `set_store_metafield` | `PUT /api/2025-01/store/metafields` | store:settings.metafield_definitions:write |
 | `delete_store_metafield` | `DELETE /api/2025-01/store/metafields/{namespace}/{key}` | store:settings.metafield_definitions:write |

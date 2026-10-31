@@ -1,5 +1,17 @@
 # Changelog
 
+## Catalog re-export — 1 November 2026
+
+The tool catalog is re-exported from the hosted server and now includes every shipped tool:
+
+- New `bulk_upsert_product` (`store:products:write`): create or update up to `bulk_upsert_max` products in one call, matched by SKU.
+- New `create_file_remote_uploads` (`store:files:write` for Media, `store:online_store.site_assets:write` for Site Assets): Tringify fetches images from URLs into the library; poll the returned intents for the file ID.
+- New `get_market_customer_notes` (`store:markets:read`) and `update_market_customer_notes` (`store:markets:write`): a market's tax, shipping and duty notes to shoppers, per storefront language.
+- `create_location` and `update_location` take `ships_to_countries`, the countries a location ships online orders to.
+- `create_market_tax_zone` says zones match states by their subdivision code, whatever spelling an address was sent with; `preview_order_edit` and `apply_order_edit` say the same state sent under another name or as its code keeps tax pins.
+- Updated descriptions: Gift Cards are bearer cards (recipient fields describe delivery, not who can redeem), `get_order` lists `original_payment_methods`, `list_order_gift_cards` for orders of only Gift Cards, `create_export` for Gift Cards, `rebuild_search_index` (one rebuild per hour), payment provider limits, the `gift_card` menu link type, `show_in_cart` (Show in cart and checkout), `duty_collection_mode` and Gift Card expiry settings.
+- The [tool inventory](docs/catalog-tools.md) lists the new tools and the order status tools.
+
 ## States and provinces are ISO codes — 1 November 2026
 
 - Every state or province is now its ISO 3166-2 code, such as `US-CA`, `IN-UP`, `JP-13` or `AE-DU` (`CC-KEY` where ISO 3166-2 has none). Location `state_province`, order address `state`, customer address `province` and tax, shipping and cash-on-delivery zone `subdivisions` store and return the code; reads add the name in the request language in `state_province_display`, `state_display`, `province_display` and `subdivisions_display`.

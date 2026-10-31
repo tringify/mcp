@@ -43,6 +43,8 @@ Duties use destination, origin and HS-code rules. Read a complete rule before ed
 
 Each market answers who pays import duties on international shipments with `duty_collection_mode`: `pay_on_delivery` (the customer; any estimate shows below the total), `collect_at_checkout` (the customer at checkout; duty and its import tax are added to the total; needs `duties_enabled`, otherwise `MARKET_DUTY_COLLECT_NEEDS_ESTIMATES`) or `included_in_price` (the merchant; nothing is added and orders record the estimate as `duty_total` plus `duty_tax_estimate`, the merchant's estimated cost). `duties_enabled` only turns estimates from country rules on or off; the answer applies either way. Confirm the answer with the merchant before changing it: estimates come from their own rules, carriers and customs may charge differently (including handling fees), and the merchant is responsible for the choice.
 
+`get_market_customer_notes` and `update_market_customer_notes` read and change the tax, shipping and duty notes a market shows shoppers, per storefront language and variant. Send only the texts to change; `text: null` resets a variant to the platform default and an empty string shows nothing. Only `on_delivery_estimate` may use `{{.amount}}`.
+
 ## Shipping and payments
 
 Save Advanced shipping mode before managing zones or methods. Fetch the complete method and preserve its weight unit and tier meaning when replacing it. `item` selects an item-count tier; `per_item` multiplies one charge by shippable quantity. Weight boundaries use the saved g/kg/lb/oz unit. Checkout offers methods only from the matched shipping zone. If its active methods cannot supply a rate, a broader zone is not tried.
