@@ -1,5 +1,12 @@
 # Changelog
 
+## States and provinces are ISO codes — 1 November 2026
+
+- Every state or province is now its ISO 3166-2 code, such as `US-CA`, `IN-UP`, `JP-13` or `AE-DU` (`CC-KEY` where ISO 3166-2 has none). Location `state_province`, order address `state`, customer address `province` and tax, shipping and cash-on-delivery zone `subdivisions` store and return the code; reads add the name in the request language in `state_province_display`, `state_display`, `province_display` and `subdivisions_display`.
+- `list_subdivisions` returns `{code, name, local_name}` for each state or province, and `get_address_format` embeds the same list. Send a code from it, or any name of it (English, German, Spanish, French, Italian or the local language), its suffix or a short form such as `NSW`: it is stored as the code. A value that matches nothing is refused with `SUBDIVISION_INVALID`, which replaces `LOCATION_SUBDIVISION_INVALID` and `ZONE_SUBDIVISION_INVALID`. For a country without subdivisions, leave the state empty.
+- Customer addresses no longer have `province_code`; `province` holds the code.
+- The catalog's descriptions for `list_subdivisions`, `get_address_format`, `create_location`, `update_location`, `create_order` and the tax, shipping and cash-on-delivery zone tools are updated to match.
+
 ## Store fonts — 30 October 2026
 
 - New tools for the fonts a merchant uploads to their own store: `list_store_fonts` (`store:online_store.storefronts:read`) and `create_store_font_upload`, `upload_store_font`, `update_store_font`, `delete_store_font` (`store:online_store.storefronts:write`).

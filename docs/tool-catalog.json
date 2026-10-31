@@ -12337,7 +12337,7 @@
       "additionalProperties": false,
       "properties": {
         "billing_address": {
-          "description": "Billing address snapshot. Its country selects the market when no shipping country is present.",
+          "description": "Billing address snapshot. Its country selects the market when no shipping country is present. `state` follows the same rule as the shipping address.",
           "type": [
             "object",
             "null"
@@ -12516,7 +12516,7 @@
           ]
         },
         "shipping_address": {
-          "description": "Shipping address snapshot. Its country selects the market when present.",
+          "description": "Shipping address snapshot. Its country selects the market when present. `state` is a code from `GET /reference/subdivisions/{country}` (e.g. `US-NY`) or any name of it, stored as the code (refused with `SUBDIVISION_INVALID` when unknown, and must be empty for a country without subdivisions); reads add `state_display`, its name in the request language.",
           "type": [
             "object",
             "null"
@@ -19066,7 +19066,7 @@
           "type": "string"
         },
         "subdivisions": {
-          "description": "ISO subdivision codes (e.g. US-CA). Each must belong to a selected country and not be claimed by another zone. Listing a subdivision limits the zone to the listed subdivisions of that country only; other listed countries are still covered whole.",
+          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each must belong to a selected country and not be claimed by another zone. Listing a subdivision limits the zone to the listed subdivisions of that country only; other listed countries are still covered whole.",
           "items": {},
           "type": [
             "array",
@@ -19162,7 +19162,7 @@
           "type": "string"
         },
         "subdivisions": {
-          "description": "ISO subdivision codes (e.g. US-CA). Each must belong to a selected country and not be claimed by another zone. Listing a subdivision limits the zone to the listed subdivisions of that country only; other listed countries are still covered whole.",
+          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each must belong to a selected country and not be claimed by another zone. Listing a subdivision limits the zone to the listed subdivisions of that country only; other listed countries are still covered whole.",
           "items": {},
           "type": [
             "array",
@@ -21036,7 +21036,7 @@
           "type": "string"
         },
         "subdivisions": {
-          "description": "Subdivision codes belonging to the selected countries. Explicit subdivision zones take precedence over country fallbacks. Duplicate subdivision claims are rejected."
+          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each belongs to a selected country. Explicit subdivision zones take precedence over country fallbacks. Duplicate subdivision claims are rejected."
         }
       },
       "required": [
@@ -21115,7 +21115,7 @@
           "type": "string"
         },
         "subdivisions": {
-          "description": "Subdivision codes belonging to the selected countries. Explicit subdivision zones take precedence over country fallbacks. Duplicate subdivision claims are rejected."
+          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each belongs to a selected country. Explicit subdivision zones take precedence over country fallbacks. Duplicate subdivision claims are rejected."
         },
         "zone_id": {
           "description": "Shipping zone ID.",
@@ -22157,7 +22157,7 @@
           ]
         },
         "subdivisions": {
-          "description": "Canonical subdivision codes covered by the zone. Each subdivision must belong to a selected country.",
+          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each subdivision must belong to a selected country.",
           "items": {
             "type": "string"
           },
@@ -22322,7 +22322,7 @@
           ]
         },
         "subdivisions": {
-          "description": "Canonical subdivision codes covered by the zone. Each subdivision must belong to a selected country.",
+          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each subdivision must belong to a selected country.",
           "items": {
             "type": "string"
           },
@@ -27428,7 +27428,7 @@
     "api_key": "reference.subdivisions.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/reference/subdivisions/{countryCode}",
-    "description": "List a country's states and provinces. Invalid country codes fail; a valid country with no subdivisions returns an empty list. For address inputs, use exact codes from get_address_format. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/subdivisions/{countryCode}. Only the connected store is accessible.",
+    "description": "List a country's states and provinces. Returns [{code, name, local_name}]: code is the ISO 3166-2 code (e.g. AE-DU, US-CA) that every address, location and zone stores; name is in the request language; local_name is in the country's own script. For address inputs, send a code from this list or any name of the subdivision; it is stored as the code. Invalid country codes fail; a valid country with no subdivisions returns an empty list, and its addresses must leave the state empty. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/subdivisions/{countryCode}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -27524,7 +27524,7 @@
     "api_key": "reference.address_formats.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/reference/address-format/{countryCode}",
-    "description": "Get a country's address and postal rules. Use returned subdivision codes, field labels, postal format, required fields and metadata. Resource-specific requirements still apply; validation does not prove deliverability. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/address-format/{countryCode}. Only the connected store is accessible.",
+    "description": "Get a country's address and postal rules. Use returned field labels, postal format, required fields and metadata; subdivisions is the same list as list_subdivisions (send a code from it or any name; stored as the ISO code). Resource-specific requirements still apply; validation does not prove deliverability. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/address-format/{countryCode}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -29554,7 +29554,7 @@
           ]
         },
         "state_province": {
-          "description": "State, province, or region.",
+          "description": "State, province or region: a code from `GET /reference/subdivisions/{country_code}` (e.g. `US-CA`), or any name of it (in English, German, Spanish, French, Italian or the local language), its ISO suffix or a short form; stored and returned as the code, with its name in the request language in `state_province_display`. Required for an online-fulfillment or pickup location in a country whose addresses name a subdivision; must be empty for a country without subdivisions. An unknown value is refused with `SUBDIVISION_INVALID`.",
           "type": [
             "string",
             "null"
@@ -29690,7 +29690,7 @@
           ]
         },
         "state_province": {
-          "description": "State, province, or region.",
+          "description": "State, province or region: a code from `GET /reference/subdivisions/{country_code}` (e.g. `US-CA`), or any name of it (in English, German, Spanish, French, Italian or the local language), its ISO suffix or a short form; stored and returned as the code, with its name in the request language in `state_province_display`. Required for an online-fulfillment or pickup location in a country whose addresses name a subdivision; must be empty for a country without subdivisions. An unknown value is refused with `SUBDIVISION_INVALID`.",
           "type": [
             "string",
             "null"
