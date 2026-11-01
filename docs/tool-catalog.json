@@ -89,12 +89,12 @@
     "api_key": "product_filters.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/product-filters",
-    "description": "Create a storefront filter from an attribute or metafield definition. Choose a filter type and display type supported by the source. The service derives filter_key: for example, the Material attribute yields `attribute:material`, while a product metafield with namespace specs and key material yields `metafield:product:specs.material`. enabled defaults to true. allow_multiple defaults to true for multi_enum and color, and false for other filter types; range filters cannot allow multiple values. A successful create publishes `product_filters/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/product-filters. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a storefront filter from an attribute or metafield definition. Choose a filter type and display type supported by the source. The service derives filter_key: for example, the Material attribute yields `attribute:material`, while a product metafield with namespace specs and key material yields `metafield:product:specs.material`. enabled defaults to true. allow_multiple defaults to true for multi_enum and color, and false for other filter types; boolean and range filters cannot allow multiple values. A successful create publishes `product_filters/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/product-filters. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "allow_multiple": {
-          "description": "Whether shoppers may select more than one choice. Use the source recommendation; ranges require false.",
+          "description": "Whether shoppers may select more than one choice. Use the source recommendation; boolean and range filters require false.",
           "type": [
             "boolean",
             "null"
