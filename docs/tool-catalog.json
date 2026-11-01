@@ -6107,7 +6107,7 @@
     "api_key": "pages.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/pages/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/pages/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. The deletion is recorded in the store's activity log and sends the same metafield webhooks as a delete in Store Admin. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/pages/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -7367,7 +7367,7 @@
     "api_key": "blog_posts.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. The deletion is recorded in the store's activity log and sends the same metafield webhooks as a delete in Store Admin. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8002,7 +8002,7 @@
     "api_key": "blog_categories.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. The deletion is recorded in the store's activity log and sends the same metafield webhooks as a delete in Store Admin. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/categories/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10761,7 +10761,7 @@
     "api_key": "brands.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/brands/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/brands/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. The deletion is recorded in the store's activity log and sends the same metafield webhooks as a delete in Store Admin. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/brands/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10829,11 +10829,11 @@
           "type": "string"
         },
         "sort_by": {
-          "description": "Sort field from the Vendor list contract.",
+          "description": "Sort field. Supported values are listed below.",
           "type": "string"
         },
         "sort_direction": {
-          "description": "Sort direction from the Vendor list contract.",
+          "description": "Sort direction: `asc` or `desc`.",
           "type": "string"
         }
       },
@@ -11105,7 +11105,7 @@
           ]
         },
         "template_handle": {
-          "description": "Vendor template assignment. Omit this field, send an empty string, or send `default_vendor` to use the default Vendor template. Otherwise, send a Vendor template handle available in the store's active theme.",
+          "description": "Vendor template. Omit this field, send an empty string, or send `default_vendor` to use the default vendor template. Otherwise, send a vendor template handle available in the store's active theme.",
           "type": [
             "string",
             "null"
@@ -11217,7 +11217,7 @@
           ]
         },
         "template_handle": {
-          "description": "New Vendor template assignment. Omit to leave it unchanged, send `default_vendor` to use the default Vendor template, or send another Vendor template handle available in the store's active theme. An empty string is invalid.",
+          "description": "New vendor template. Omit to leave it unchanged, send `default_vendor` to use the default vendor template, or send another vendor template handle available in the store's active theme. An empty string is invalid.",
           "type": [
             "string",
             "null"
@@ -11276,7 +11276,7 @@
     "api_key": "vendors.bulk-delete",
     "api_method": "POST",
     "api_path": "/api/2025-01/vendors/bulk-delete",
-    "description": "Delete multiple vendors. Send vendor IDs in `vendor_ids`. The response lists removed IDs in `deleted` and missing or changed IDs in `failed`; IDs listed in `deleted` are removed atomically. Each deleted vendor's translations and metafield values are deleted too, the vendors are taken off their products, and the collection rules, cash on delivery product rules and menu links that use them are removed. Each collection that loses a rule sends `collections/update` with `changed_fields` `rules` and its remaining rules, shortly after the delete. When anything uses the selected vendors, the first request returns `CONFIRMATION_REQUIRED` with `error.details.warnings` (a summary to show) and `error.details.impact`: `products.count` (each changed product once), the first 50 changed collections with `collections_total`, the first 50 discounts aimed at those collections with `discounts_total`, and the first 50 cash on delivery rules removed with `cod_rules_total`. Confirmation covers the full impact, including entries past the first 50. Repeat the same `vendor_ids` with `confirmed: true` and the returned `confirmation_token`; if the impact changed in between, a new confirmation is returned. A delete that changes 250 products or fewer completes in the request. A larger one hides the vendors at once (they can no longer be assigned or used in rules, and their names and slugs return `VENDOR_DELETE_IN_PROGRESS` until it finishes), removes their rules at once, and takes them off their products in background batches, each sending `products/update`; the vendors are deleted after the last batch. Menu links may update shortly after the response. The confirmation also lists the storefront places that use it in a theme, since they go empty. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/vendors/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete multiple vendors. Send vendor IDs in `vendor_ids`. The response lists removed IDs in `deleted` and missing or changed IDs in `failed`; IDs listed in `deleted` are removed atomically. Each deleted vendor's translations and metafield values are deleted too, the vendors are taken off their products, and the collection rules, cash on delivery product rules and menu links that use them are removed. Each collection that loses a rule sends `collections/update` with `changed_fields` `rules` and its remaining rules, shortly after the delete. When anything uses the selected vendors, the first request returns `CONFIRMATION_REQUIRED` with `error.details.warnings` (a summary to show) and `error.details.impact`: `products.count` (each changed product once), the first 50 changed collections with `collections_total`, the first 50 discounts aimed at those collections with `discounts_total`, and the first 50 cash on delivery rules removed with `cod_rules_total`. Confirmation covers the full impact, including entries past the first 50. Repeat the same `vendor_ids` with `confirmed: true` and the returned `confirmation_token`; if the impact changed in between, a new confirmation is returned. A delete that changes 250 products or fewer completes in the request. A larger one hides the vendors at once (they can no longer be assigned or used in rules, and their names and slugs return `VENDOR_DELETE_IN_PROGRESS` until it finishes), removes their rules at once, and takes them off their products in background batches, each sending `products/update`; the vendors are deleted after the last batch. Menu links may update shortly after the response. The confirmation also lists the storefront places that use them in a theme, since they go empty. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/vendors/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -11295,7 +11295,7 @@
           ]
         },
         "vendor_ids": {
-          "description": "Store-scoped integer vendor ids to delete.",
+          "description": "Vendor ids to delete.",
           "items": {
             "type": "integer"
           },
@@ -11321,7 +11321,7 @@
       "additionalProperties": false,
       "properties": {
         "id": {
-          "description": "Vendor ID.",
+          "description": "Vendor id.",
           "minimum": 1,
           "type": "integer"
         },
@@ -11352,7 +11352,7 @@
       "additionalProperties": false,
       "properties": {
         "id": {
-          "description": "Vendor ID.",
+          "description": "Vendor id.",
           "minimum": 1,
           "type": "integer"
         },
@@ -11468,7 +11468,7 @@
     "api_key": "vendors.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/vendors/{id}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/vendors/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. The deletion is recorded in the store's activity log and sends the same metafield webhooks as a delete in Store Admin. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/vendors/{id}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13357,7 +13357,7 @@
     "api_key": "orders.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/orders/{orderId}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/orders/{orderId}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. The deletion is recorded in the store's activity log and sends the same metafield webhooks as a delete in Store Admin. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/orders/{orderId}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13393,7 +13393,7 @@
     "api_key": "orders.items.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/orders/{orderId}/items/{itemId}/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/orders/{orderId}/items/{itemId}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. The deletion is recorded in the store's activity log and sends the same metafield webhooks as a delete in Store Admin. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/orders/{orderId}/items/{itemId}/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31239,7 +31239,7 @@
     "api_key": "store.metafields.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/store/metafields/{namespace}/{key}",
-    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. Uses Store Admin's mutation, audit and value-change webhooks. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Staff-created merchant API tokens also require the creator's current settings.metafield_definitions:write permission. Store owners are permitted; installed apps keep their scope and ownership checks. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/store/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
+    "description": "Clear one metafield value and its translations, preserving its definition. Address the existing definition by namespace and key. Requires the same write scope and ownership as setting the value. Apps can clear only their own values; merchant callers need write access to the definition's values. The value row is removed, not set to null. The deletion is recorded in the store's activity log and sends the same metafield webhooks as a delete in Store Admin. Repeating the request for an absent value succeeds with the same success envelope (no data or deleted-count field). An unknown or unreadable definition fails. No request body or confirmation token is required. Staff-created merchant API tokens also require the creator's current settings.metafield_definitions:write permission. Store owners are permitted; installed apps keep their scope and ownership checks. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/store/metafields/{namespace}/{key}. Only the connected store is accessible. The value is cleared immediately; repeating the call for an already-cleared value is safe.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
