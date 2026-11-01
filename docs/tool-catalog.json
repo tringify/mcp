@@ -10090,7 +10090,7 @@
     "api_key": "brands.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/brands/limits",
-    "description": "Fetch Brand limits and per-field constraints. Returns the per-field maximum lengths and request caps that apply to Brand endpoints. Useful for clients to validate inputs before sending them and to size UIs. `max_per_store` is the store's brand cap: its plan's product allowance, never above 100,000; `count` is the current number of brands. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/limits. Only the connected store is accessible.",
+    "description": "Fetch brand limits and per-field constraints. Returns the per-field maximum lengths and request caps that apply to brand endpoints. Useful for clients to validate inputs before sending them and to size UIs. `max_per_store` is the store's brand cap: its plan's product allowance, never above 100,000; `count` is the current number of brands. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -10105,7 +10105,7 @@
     "api_key": "brands.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/brands",
-    "description": "List brands for the store. Returns brands and their product counts. Each page holds at most 100 brands, and every row carries the full Brand fields, description included. Search matches names and slugs; matches are ordered by relevance (exact name, name prefix, exact slug, slug prefix, then other matches), then by the sort field. Use the returned cursors unchanged, and start without a cursor when search or sorting changes. Fetch `/brands/limits` for page-size and search limits; supported sort fields are listed below. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands. Only the connected store is accessible.",
+    "description": "List brands for the store. Returns brands and their product counts. Each page holds at most 100 brands, and every row carries the full brand fields, description included. Search matches names and slugs; matches are ordered by relevance (exact name, name prefix, exact slug, slug prefix, then other matches), then by the sort field. Use the returned cursors unchanged, and start without a cursor when search or sorting changes. Fetch `/brands/limits` for page-size and search limits; supported sort fields are listed below. `storefront_url` uses the store's primary domain; `storefront_path` is the base path without a domain. Shopper-facing URLs may use translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/brands. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -10122,11 +10122,11 @@
           "type": "string"
         },
         "sort_by": {
-          "description": "Sort field from the Brand list contract.",
+          "description": "Sort field. Supported values are listed below.",
           "type": "string"
         },
         "sort_direction": {
-          "description": "Sort direction from the Brand list contract.",
+          "description": "Sort direction: `asc` or `desc`.",
           "type": "string"
         }
       },
@@ -10377,14 +10377,14 @@
           "type": "string"
         },
         "seo_description": {
-          "description": "Optional SEO description. Omit or send an empty string to let the storefront fall back to the Brand description.",
+          "description": "Optional SEO description. Omit or send an empty string to let the storefront fall back to the brand description.",
           "type": [
             "string",
             "null"
           ]
         },
         "seo_title": {
-          "description": "Optional SEO title. Omit or send an empty string to let the storefront fall back to the Brand name.",
+          "description": "Optional SEO title. Omit or send an empty string to let the storefront fall back to the brand name.",
           "type": [
             "string",
             "null"
@@ -10398,7 +10398,7 @@
           ]
         },
         "template_handle": {
-          "description": "Brand template assignment. Omit this field, send an empty string, or send `default_brand` to use the default Brand template. Otherwise, send a Brand template handle available in the store's active theme.",
+          "description": "Brand template. Omit this field, send an empty string, or send `default_brand` to use the default brand template. Otherwise, send a brand template handle available in the store's active theme.",
           "type": [
             "string",
             "null"
@@ -10482,21 +10482,21 @@
           ]
         },
         "name": {
-          "description": "New Brand name. Omit to leave it unchanged; an empty value is invalid.",
+          "description": "New brand name. Omit to leave it unchanged; an empty value is invalid.",
           "type": [
             "string",
             "null"
           ]
         },
         "seo_description": {
-          "description": "New SEO description. Omit to leave it unchanged; send an empty string to clear it and restore the storefront Brand-description fallback.",
+          "description": "New SEO description. Omit to leave it unchanged; send an empty string to clear it and restore the storefront brand-description fallback.",
           "type": [
             "string",
             "null"
           ]
         },
         "seo_title": {
-          "description": "New SEO title. Omit to leave it unchanged; send an empty string to clear it and restore the storefront Brand-name fallback.",
+          "description": "New SEO title. Omit to leave it unchanged; send an empty string to clear it and restore the storefront brand-name fallback.",
           "type": [
             "string",
             "null"
@@ -10510,7 +10510,7 @@
           ]
         },
         "template_handle": {
-          "description": "New Brand template assignment. Omit to leave it unchanged, send `default_brand` to use the default Brand template, or send another Brand template handle available in the store's active theme. An empty string is invalid.",
+          "description": "New brand template. Omit to leave it unchanged, send `default_brand` to use the default brand template, or send another brand template handle available in the store's active theme. An empty string is invalid.",
           "type": [
             "string",
             "null"
@@ -10569,12 +10569,12 @@
     "api_key": "brands.bulk-delete",
     "api_method": "POST",
     "api_path": "/api/2025-01/brands/bulk-delete",
-    "description": "Delete multiple brands. Send brand IDs in `brand_ids`. The response lists removed IDs in `deleted` and missing or changed IDs in `failed`; IDs listed in `deleted` are removed atomically. Each deleted brand's translations and metafield values are deleted too, the brands are taken off their products, and the collection rules, cash on delivery product rules and menu links that use them are removed. Each collection that loses a rule sends `collections/update` with `changed_fields` `rules` and its remaining rules, shortly after the delete. When anything uses the selected brands, the first request returns `CONFIRMATION_REQUIRED` with `error.details.warnings` (a summary to show) and `error.details.impact`: `products.count` (each changed product once), the first 50 changed collections with `collections_total`, the first 50 discounts aimed at those collections with `discounts_total`, and the first 50 cash on delivery rules removed with `cod_rules_total`. Confirmation covers the full impact, including entries past the first 50. Repeat the same `brand_ids` with `confirmed: true` and the returned `confirmation_token`; if the impact changed in between, a new confirmation is returned. A delete that changes 250 products or fewer completes in the request. A larger one hides the brands at once (they can no longer be assigned or used in rules, and their names and slugs return `BRAND_DELETE_IN_PROGRESS` until it finishes), removes their rules at once, and takes them off their products in background batches, each sending `products/update`; the brands are deleted after the last batch. Menu links may update shortly after the response. The confirmation also lists the storefront places that use it in a theme, since they go empty. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/brands/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete multiple brands. Send brand IDs in `brand_ids`. The response lists removed IDs in `deleted` and missing or changed IDs in `failed`; IDs listed in `deleted` are removed atomically. Each deleted brand's translations and metafield values are deleted too, the brands are taken off their products, and the collection rules, cash on delivery product rules and menu links that use them are removed. Each collection that loses a rule sends `collections/update` with `changed_fields` `rules` and its remaining rules, shortly after the delete. When anything uses the selected brands, the first request returns `CONFIRMATION_REQUIRED` with `error.details.warnings` (a summary to show) and `error.details.impact`: `products.count` (each changed product once), the first 50 changed collections with `collections_total`, the first 50 discounts aimed at those collections with `discounts_total`, and the first 50 cash on delivery rules removed with `cod_rules_total`. Confirmation covers the full impact, including entries past the first 50. Repeat the same `brand_ids` with `confirmed: true` and the returned `confirmation_token`; if the impact changed in between, a new confirmation is returned. A delete that changes 250 products or fewer completes in the request. A larger one hides the brands at once (they can no longer be assigned or used in rules, and their names and slugs return `BRAND_DELETE_IN_PROGRESS` until it finishes), removes their rules at once, and takes them off their products in background batches, each sending `products/update`; the brands are deleted after the last batch. Menu links may update shortly after the response. The confirmation also lists the storefront places that use them in a theme, since they go empty. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/brands/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "brand_ids": {
-          "description": "Store-scoped integer brand ids to delete.",
+          "description": "Brand ids to delete.",
           "items": {
             "type": "integer"
           },
@@ -10645,7 +10645,7 @@
       "additionalProperties": false,
       "properties": {
         "id": {
-          "description": "Brand ID.",
+          "description": "Brand id.",
           "minimum": 1,
           "type": "integer"
         },
