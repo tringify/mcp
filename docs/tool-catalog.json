@@ -3715,7 +3715,7 @@
           "type": "string"
         },
         "include_subcategories": {
-          "description": "Only valid for category rules.",
+          "description": "Only valid on a category rule with `equals` or `not_equals`: the rule also matches products in the category's subcategories.",
           "type": [
             "boolean",
             "null"
@@ -3763,7 +3763,7 @@
           "type": "string"
         },
         "include_subcategories": {
-          "description": "Only valid for category rules.",
+          "description": "Only valid on a category rule with `equals` or `not_equals`: the rule also matches products in the category's subcategories.",
           "type": [
             "boolean",
             "null"
