@@ -1,5 +1,10 @@
 # Changelog
 
+## COD per-zone unavailable reason and fee waiver message — 1 November 2026
+
+- `create_market_cod_zone`, `update_market_cod_zone`, `get_market_cod_zone` and `list_market_cod_zones` carry `unavailable_display`, `unavailable_message` and `unavailable_message_translations`, with the same rules as the market's. In Advanced mode, a zone that matched the shipping address (the default zone and a zone with COD turned off included) decides for every reason COD is unavailable; the market's setting applies in Simple mode and in Advanced mode when no zone matched. A zone created without `unavailable_display` uses `hide`; existing zones start with their market's current values.
+- COD settings and COD zones carry `waiver_notice_enabled` (default `true`), `waiver_notice_waived` and `waiver_notice_remaining`: checkout shows "Cash on delivery fee waived." or "Add {{.amount}} more to have the cash on delivery fee waived." on the COD option when Waive Fee Over applies, in every storefront language, with optional overrides per store language (the default language included). Only the remaining text may use `{{.amount}}`; anything else is refused with `COD_WAIVER_NOTICE_PLACEHOLDER_INVALID`. Reads add the read-only `waiver_notice_defaults`. Simple mode uses the market's settings, Advanced mode the matched zone's.
+
 ## COD unavailable reason per language — 1 November 2026
 
 - `get_market_cod_settings` and `update_market_cod_settings` carry `unavailable_message_translations`: the reason checkout shows under disabled cash on delivery, per store language other than the default. Checkout now shows the merchant's reason (it showed the standard one); an empty reason shows the standard reason in the shopper's language.
