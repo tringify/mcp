@@ -4154,7 +4154,7 @@
     "api_key": "categories.metafields.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/categories/{id}/metafields",
-    "description": "List a category's custom-data values visible to the calling app. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories/{id}/metafields. Only the connected store is accessible.",
+    "description": "List a category's custom-data values visible to the token. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/categories/{id}/metafields. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -4349,14 +4349,14 @@
           ]
         },
         "seo_description": {
-          "description": "Optional SEO description. Omit or send an empty string to let the storefront fall back to the Category description.",
+          "description": "Optional SEO description. Omit or send an empty string to let the storefront fall back to the category description.",
           "type": [
             "string",
             "null"
           ]
         },
         "seo_title": {
-          "description": "Optional SEO title. Omit or send an empty string to let the storefront fall back to the Category name.",
+          "description": "Optional SEO title. Omit or send an empty string to let the storefront fall back to the category name.",
           "type": [
             "string",
             "null"
@@ -4370,7 +4370,7 @@
           ]
         },
         "template_handle": {
-          "description": "Category template assignment. Omit this field, send an empty string, or send `default_category` to use the default Category template. Otherwise, send a Category template handle available in the store's active theme. The handles are each template's `handle` in list_theme_templates (`resource_type` `category`).",
+          "description": "Category template. Omit this field, send an empty string, or send `default_category` to use the default category template. Otherwise, send a category template handle available in the store's active theme. The handles are each template's `handle` in list_theme_templates (`resource_type` `category`).",
           "type": [
             "string",
             "null"
@@ -4454,42 +4454,42 @@
           ]
         },
         "name": {
-          "description": "New Category name. Omit to leave it unchanged; an empty value is invalid.",
+          "description": "New category name. Omit to leave it unchanged; an empty value is invalid.",
           "type": [
             "string",
             "null"
           ]
         },
         "parent_id": {
-          "description": "New parent category id. Omit to leave it unchanged; send 0 to move the Category to the root.",
+          "description": "New parent category id. Omit to leave it unchanged; send 0 to move the category to the top level.",
           "type": [
             "integer",
             "null"
           ]
         },
         "seo_description": {
-          "description": "New SEO description. Omit to leave it unchanged; send an empty string to clear it and restore the storefront Category-description fallback.",
+          "description": "New SEO description. Omit to leave it unchanged; send an empty string to clear it and restore the storefront category-description fallback.",
           "type": [
             "string",
             "null"
           ]
         },
         "seo_title": {
-          "description": "New SEO title. Omit to leave it unchanged; send an empty string to clear it and restore the storefront Category-name fallback.",
+          "description": "New SEO title. Omit to leave it unchanged; send an empty string to clear it and restore the storefront category-name fallback.",
           "type": [
             "string",
             "null"
           ]
         },
         "slug": {
-          "description": "New slug. Omit to leave the current slug unchanged; send an empty string to regenerate it from the current Category name.",
+          "description": "New slug. Omit to leave the current slug unchanged; send an empty string to regenerate it from the current category name.",
           "type": [
             "string",
             "null"
           ]
         },
         "template_handle": {
-          "description": "New Category template assignment. Omit to leave it unchanged, send `default_category` to use the default Category template, or send another Category template handle available in the store's active theme. An empty string is invalid. The handles are each template's `handle` in list_theme_templates (`resource_type` `category`).",
+          "description": "New category template. Omit to leave it unchanged, send `default_category` to use the default category template, or send another category template handle available in the store's active theme. An empty string is invalid. The handles are each template's `handle` in list_theme_templates (`resource_type` `category`).",
           "type": [
             "string",
             "null"
@@ -4553,7 +4553,7 @@
       "additionalProperties": false,
       "properties": {
         "category_ids": {
-          "description": "Store-scoped integer category ids to delete.",
+          "description": "Category ids to delete.",
           "items": {
             "type": "integer"
           },
@@ -4638,7 +4638,7 @@
           "type": "string"
         },
         "translations": {
-          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "description": "Translated `name`, `slug`, `description`, `seo_title`, or `seo_description` values.",
           "type": "object"
         }
       },
@@ -4698,12 +4698,12 @@
           "type": "string"
         },
         "translations": {
-          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields are `name`, `slug`, `description`, `seo_title` and `seo_description`.",
           "items": {
             "additionalProperties": false,
             "properties": {
               "fields": {
-                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "description": "Field-keyed translated strings. Allowed fields are `name`, `slug`, `description`, `seo_title` and `seo_description`.",
                 "type": "object"
               },
               "id": {
