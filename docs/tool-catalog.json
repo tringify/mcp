@@ -3614,7 +3614,7 @@
       "additionalProperties": false,
       "properties": {
         "cursor": {
-          "description": "Opaque cursor from this collection's previous response. Omit for the first page; reset when search or page size changes.",
+          "description": "Opaque cursor from this collection's previous response. Omit for the first page; reset when the page size or search changes.",
           "type": "string"
         },
         "id": {
@@ -3646,7 +3646,7 @@
       "additionalProperties": false,
       "properties": {
         "cursor": {
-          "description": "Opaque cursor from this collection's previous response. Omit for the first page; reset when search or page size changes.",
+          "description": "Opaque cursor from this collection's previous response. Omit for the first page; reset when the page size or search changes.",
           "type": "string"
         },
         "id": {
