@@ -2792,7 +2792,7 @@
           "type": "string"
         },
         "translations": {
-          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "description": "Translated values keyed by field. Allowed fields: `title`, `slug`, `description`, `short_description`, `seo_title` and `seo_description`.",
           "type": "object"
         }
       },
@@ -2852,12 +2852,12 @@
           "type": "string"
         },
         "translations": {
-          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields: `title`, `slug`, `description`, `short_description`, `seo_title` and `seo_description`.",
           "items": {
             "additionalProperties": false,
             "properties": {
               "fields": {
-                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "description": "Field-keyed translated strings. Allowed fields: `title`, `slug`, `description`, `short_description`, `seo_title` and `seo_description`.",
                 "type": "object"
               },
               "id": {
@@ -3897,7 +3897,7 @@
           "type": "string"
         },
         "translations": {
-          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "description": "Translated values keyed by field. Allowed fields: `name`, `slug`, `description`, `seo_title` and `seo_description`.",
           "type": "object"
         }
       },
@@ -3957,12 +3957,12 @@
           "type": "string"
         },
         "translations": {
-          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields: `name`, `slug`, `description`, `seo_title` and `seo_description`.",
           "items": {
             "additionalProperties": false,
             "properties": {
               "fields": {
-                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "description": "Field-keyed translated strings. Allowed fields: `name`, `slug`, `description`, `seo_title` and `seo_description`.",
                 "type": "object"
               },
               "id": {
@@ -4808,7 +4808,7 @@
           "type": "string"
         },
         "limit": {
-          "description": "Page size, 1-100 (`list_max_limit` from Attribute limits, default 50). Larger values return `ATTRIBUTE_LIST_INVALID_LIMIT`.",
+          "description": "Page size, 1-100 (`list_max_limit` from attribute limits, default 50). Larger values return `ATTRIBUTE_LIST_INVALID_LIMIT`.",
           "type": "integer"
         },
         "search": {
@@ -4816,11 +4816,11 @@
           "type": "string"
         },
         "sort_by": {
-          "description": "Sort field from the Attribute list contract.",
+          "description": "Sort field. Supported values are listed below.",
           "type": "string"
         },
         "sort_direction": {
-          "description": "Sort direction from the Attribute list contract.",
+          "description": "Sort direction: `asc` or `desc`.",
           "type": "string"
         },
         "sub_type": {
@@ -5053,7 +5053,7 @@
       "additionalProperties": false,
       "properties": {
         "attribute_ids": {
-          "description": "Store-scoped integer attribute ids to delete.",
+          "description": "Attribute ids to delete.",
           "items": {
             "type": "integer"
           },
@@ -6005,7 +6005,7 @@
           "type": "string"
         },
         "translations": {
-          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "description": "Translated values keyed by field. Allowed fields: `title`, `slug`, `content`, `seo_title` and `seo_description`.",
           "type": "object"
         }
       },
@@ -6065,12 +6065,12 @@
           "type": "string"
         },
         "translations": {
-          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields: `title`, `slug`, `content`, `seo_title` and `seo_description`.",
           "items": {
             "additionalProperties": false,
             "properties": {
               "fields": {
-                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "description": "Field-keyed translated strings. Allowed fields: `title`, `slug`, `content`, `seo_title` and `seo_description`.",
                 "type": "object"
               },
               "id": {
@@ -6325,7 +6325,7 @@
           "type": "string"
         },
         "translations": {
-          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "description": "Translated values keyed by field. Allowed fields: `title`, `slug`, `content`, `seo_title` and `seo_description`.",
           "type": "object"
         }
       },
@@ -6385,12 +6385,12 @@
           "type": "string"
         },
         "translations": {
-          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields: `title`, `slug`, `content`, `seo_title` and `seo_description`.",
           "items": {
             "additionalProperties": false,
             "properties": {
               "fields": {
-                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "description": "Field-keyed translated strings. Allowed fields: `title`, `slug`, `content`, `seo_title` and `seo_description`.",
                 "type": "object"
               },
               "id": {
@@ -7265,7 +7265,7 @@
           "type": "string"
         },
         "translations": {
-          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "description": "Translated values keyed by field. Allowed fields: `title`, `slug`, `content`, `excerpt`, `seo_title` and `seo_description`.",
           "type": "object"
         }
       },
@@ -7325,12 +7325,12 @@
           "type": "string"
         },
         "translations": {
-          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields: `title`, `slug`, `content`, `excerpt`, `seo_title` and `seo_description`.",
           "items": {
             "additionalProperties": false,
             "properties": {
               "fields": {
-                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "description": "Field-keyed translated strings. Allowed fields: `title`, `slug`, `content`, `excerpt`, `seo_title` and `seo_description`.",
                 "type": "object"
               },
               "id": {
@@ -7900,7 +7900,7 @@
           "type": "string"
         },
         "translations": {
-          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "description": "Translated values keyed by field. Allowed fields: `name`, `slug`, `description`, `seo_title` and `seo_description`.",
           "type": "object"
         }
       },
@@ -7960,12 +7960,12 @@
           "type": "string"
         },
         "translations": {
-          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields: `name`, `slug`, `description`, `seo_title` and `seo_description`.",
           "items": {
             "additionalProperties": false,
             "properties": {
               "fields": {
-                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "description": "Field-keyed translated strings. Allowed fields: `name`, `slug`, `description`, `seo_title` and `seo_description`.",
                 "type": "object"
               },
               "id": {
@@ -8313,7 +8313,7 @@
           "type": "string"
         },
         "translations": {
-          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "description": "Translated values keyed by field. Allowed fields: `name` and `slug`.",
           "type": "object"
         }
       },
@@ -8373,12 +8373,12 @@
           "type": "string"
         },
         "translations": {
-          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields: `name` and `slug`.",
           "items": {
             "additionalProperties": false,
             "properties": {
               "fields": {
-                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "description": "Field-keyed translated strings. Allowed fields: `name` and `slug`.",
                 "type": "object"
               },
               "id": {
@@ -8718,7 +8718,7 @@
           "type": "string"
         },
         "translations": {
-          "description": "Field-keyed translation values. Allowed fields come from `contract.translation.fields`.",
+          "description": "Translated values keyed by field. Allowed fields: `name` and `bio`.",
           "type": "object"
         }
       },
@@ -8778,12 +8778,12 @@
           "type": "string"
         },
         "translations": {
-          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed field keys come from `contract.translation.fields`.",
+          "description": "Up to 100 rows shaped as {id, locale, fields}. Allowed fields: `name` and `bio`.",
           "items": {
             "additionalProperties": false,
             "properties": {
               "fields": {
-                "description": "Field-keyed translated strings. Allowed field keys come from `contract.translation.fields`.",
+                "description": "Field-keyed translated strings. Allowed fields: `name` and `bio`.",
                 "type": "object"
               },
               "id": {
