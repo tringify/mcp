@@ -27746,28 +27746,6 @@
     "scopes": []
   },
   {
-    "api_key": "reference.subdivisions.list",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/reference/subdivisions/{countryCode}",
-    "description": "List a country's states and provinces. Returns [{code, name, local_name}]: code is the ISO 3166-2 code (e.g. AE-DU, US-CA) that every address, location and zone stores; name is in the request language; local_name is in the country's own script. For address inputs, send a code from this list or any name of the subdivision; it is stored as the code. Invalid country codes fail; a valid country with no subdivisions returns an empty list, and its addresses must leave the state empty. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/subdivisions/{countryCode}. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "country_code": {
-          "description": "Two-letter country/region code returned by the reference catalog, such as IN, US, or GB.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "country_code"
-      ],
-      "type": "object"
-    },
-    "name": "list_subdivisions",
-    "scopes": []
-  },
-  {
     "api_key": "reference.timezones.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/reference/timezones",
@@ -27845,7 +27823,7 @@
     "api_key": "reference.address_formats.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/reference/address-format/{countryCode}",
-    "description": "Get a country's address and postal rules. Use returned field labels, postal format, required fields and metadata; subdivisions is the same list as list_subdivisions (send a code from it or any name; stored as the ISO code). Resource-specific requirements still apply; validation does not prove deliverability. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/address-format/{countryCode}. Only the connected store is accessible.",
+    "description": "Get a country's address and postal rules. Returns country_name, layout (field rows in the country order; ask for the country first), required fields, labels, province (kind and options: [{code, name}]; send the code, e.g. IN-MH) and postal (kind, placeholder, pattern, max_length, input_mode, required). Postal codes are stored in the standard written form. Validation does not prove deliverability. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/reference/address-format/{countryCode}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {

@@ -1,5 +1,11 @@
 # Changelog
 
+## Address formats from one address library — 2 November 2026
+
+- `get_address_format` and `list_address_formats` return each country's address form in a new shape: `country_code`, `country_name`, `layout` (the field rows in the country's writing order; ask for the country first, then these rows), `required` (the fields an address there must have), `labels` (each field's label in the request language, such as PIN code or Prefecture), `province` (`kind` and `options`, each a `code` and `name`, or null when the country's addresses name no province) and `postal` (`kind`, `placeholder`, `pattern`, `max_length`, `input_mode`, `required`, or null when the country has no postal codes). The old fields (`format`, the `required` letter string, `zip_regex`, `zip_example`, `state_label`, `subdivisions`, `updated_at` and the rest) are gone.
+- `list_subdivisions` is removed. A country's provinces are the `province.options` of `get_address_format`.
+- Addresses store the province `code` (ISO 3166-2, such as `IN-MH`, or `CC-NAME` where ISO assigns none); names are not accepted, and a retired code is saved as its current code. Postal codes are saved in the country's standard written form, so `sw1a1aa` becomes `SW1A 1AA`.
+
 ## List a theme's templates — 1 November 2026
 
 - New `list_theme_templates` (`store:online_store.storefronts:read`): a theme's resource templates, the default template and the alternates of each resource that has templates (`product`, `collection`, `category`, `brand`, `vendor`, `page`, `blog` for blog posts, `blog_category`), or of `resource_type` only. Each template has `page_type` (what `get_template` and the section and block tools take, such as `product__summer`), `handle` (what `template_handle` takes: `default_<resource_type>` for the default template, such as `default_vendor`, otherwise the alternate's handle), `name`, `resource_type` and `is_default`. Required `storefront_id` and `theme_id`.

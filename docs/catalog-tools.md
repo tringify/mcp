@@ -491,7 +491,6 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `request_verification_code` | `POST /api/2025-01/verification-codes` | store:settings.domains:write or store:settings.email:write (the one of the requested action) |
 | `list_store_api_scopes` | `GET /api/2025-01/scopes` | Valid Store connection; no resource scope |
 | `list_countries` | `GET /api/2025-01/reference/countries` | Valid Store connection; no resource scope |
-| `list_subdivisions` | `GET /api/2025-01/reference/subdivisions/{countryCode}` | Valid Store connection; no resource scope |
 | `list_timezones` | `GET /api/2025-01/reference/timezones` | Valid Store connection; no resource scope |
 | `list_available_currencies` | `GET /api/2025-01/reference/currencies` | Valid Store connection; no resource scope |
 | `list_phone_country_codes` | `GET /api/2025-01/reference/phone-codes` | Valid Store connection; no resource scope |
