@@ -1,5 +1,11 @@
 # Changelog
 
+## Checkout fees explain how they were calculated — 1 November 2026
+
+- `create_market_checkout_fee` and `update_market_checkout_fee` take `show_calculation` (default `true`) and `calculation_texts`. A fixed fee charged per item or a percentage fee shows its calculation under the fee name at checkout, for example `₹100.00 per item × 3` or `5% of ₹1,000.00`; a fixed fee charged once per order has none. `calculation_texts` words the line per storefront language (an enabled store language); a language left out uses the platform default. A per-item fee's text may use `{{amount}}` and `{{quantity}}`, a percentage fee's `{{rate}}` (without the % sign) and `{{base}}`. New errors: `CHECKOUT_FEE_CALCULATION_NOT_AVAILABLE`, `CHECKOUT_FEE_CALCULATION_TEXT_EMPTY`, `CHECKOUT_FEE_CALCULATION_TEXT_TOO_LONG`, `CHECKOUT_FEE_CALCULATION_PLACEHOLDER_INVALID`, and `STOREFRONT_LANGUAGE_NOT_ENABLED` for a language the store does not have.
+- `list_market_checkout_fees` returns the fees with both fields; its `checkout_fee_catalog` lists `calculation_kinds` (which fees have a line and their placeholders), `calculation_text_max_length` and `calculation_defaults` (the default wording in each storefront language, with the language's name).
+- `get_order` returns `checkout_fee_lines[].calculation` (`kind`, `unit_amount` and `quantity` or `rate` and `base`, and `text`, the line the customer read) for each fee that showed one. Orders keep it, even when the fee changes later.
+
 ## COD per-zone unavailable reason and fee waiver message — 1 November 2026
 
 - `create_market_cod_zone`, `update_market_cod_zone`, `get_market_cod_zone` and `list_market_cod_zones` carry `unavailable_display`, `unavailable_message` and `unavailable_message_translations`, with the same rules as the market's. In Advanced mode, a zone that matched the shipping address (the default zone and a zone with COD turned off included) decides for every reason COD is unavailable; the market's setting applies in Simple mode and in Advanced mode when no zone matched. A zone created without `unavailable_display` uses `hide`; existing zones start with their market's current values.
