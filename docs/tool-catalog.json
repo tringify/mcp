@@ -594,6 +594,36 @@
     ]
   },
   {
+    "api_key": "reviews.photo.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/reviews/{id}/images/{imageId}",
+    "description": "Remove one photo while keeping its review. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/reviews/{id}/images/{imageId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Review id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "imageId": {
+          "description": "Photo id from review.images, not the media id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "imageId"
+      ],
+      "type": "object"
+    },
+    "name": "delete_review_photo",
+    "scopes": [
+      "store:reviews:write"
+    ]
+  },
+  {
     "api_key": "reviews.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/reviews/{id}",
@@ -626,7 +656,7 @@
       "additionalProperties": false,
       "properties": {
         "filter": {
-          "description": "Select every matching review instead of review_ids. Fields, all optional and combined with AND: status (pending, approved, rejected, hidden), ratings (array of 1-5), product_id (integer), search (text in title or content), has_store_response (boolean). An empty object selects every review.",
+          "description": "Select every matching review instead of review_ids. Fields, all optional and combined with AND: status (pending, approved, rejected, hidden), ratings (array of 1-5), product_id (integer), search (text in title or content), has_store_response (boolean). An empty object selects every review. For example, {\"status\":\"pending\",\"ratings\":[1,2]} selects pending one- and two-star reviews.",
           "type": [
             "object",
             "null"
@@ -678,7 +708,7 @@
       "additionalProperties": false,
       "properties": {
         "filter": {
-          "description": "Select every matching review instead of review_ids. Fields, all optional and combined with AND: status (pending, approved, rejected, hidden), ratings (array of 1-5), product_id (integer), search (text in title or content), has_store_response (boolean). An empty object selects every review.",
+          "description": "Select every matching review instead of review_ids. Fields, all optional and combined with AND: status (pending, approved, rejected, hidden), ratings (array of 1-5), product_id (integer), search (text in title or content), has_store_response (boolean). An empty object selects every review. For example, {\"status\":\"pending\",\"ratings\":[1,2]} selects pending one- and two-star reviews.",
           "type": [
             "object",
             "null"
@@ -781,21 +811,21 @@
       "additionalProperties": false,
       "properties": {
         "allow_anonymous": {
-          "description": "Accept reviews from guests who are not signed in. Guests must enter a name. Invited customers can always review what they bought. Default false.",
+          "description": "Accept reviews from guests who are not signed in. Guests must enter a name. A valid order invitation allows a guest to review that purchase even when ordinary guest reviews are disabled; eligibility, submission limits, content filters and moderation still apply. Default false.",
           "type": [
             "boolean",
             "null"
           ]
         },
         "allow_images": {
-          "description": "Allow review photos. Default true.",
+          "description": "Saved preference for shopper review photos. Enabling a disabled preference requires available review-photo storage; otherwise REVIEW_PHOTO_STORAGE_LIMIT_REACHED (409). Read photos_available for current availability. Default true.",
           "type": [
             "boolean",
             "null"
           ]
         },
         "auto_approve_guest_reviews": {
-          "description": "Let guest reviews follow moderation_mode like customers' reviews. While false, every guest review is pending until approved. Default false.",
+          "description": "Let guest reviews follow moderation_mode like customers' reviews. While false, guest reviews without a valid order invitation are pending until approved. Reviews through a valid order invitation follow moderation_mode and flag_low_ratings regardless of this setting. Default false.",
           "type": [
             "boolean",
             "null"
