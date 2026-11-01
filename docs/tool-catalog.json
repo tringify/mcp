@@ -1010,7 +1010,7 @@
           "type": "string"
         },
         "sort_by": {
-          "description": "A value from `sort_columns` in Product limits. Defaults to `created_at`. Price sorts use the store currency; variable products sort by their minimum variant price. Equal values use ascending product ID as a tie-breaker; missing values sort last.",
+          "description": "A value from `sort_columns` in Product limits. Defaults to `created_at`. Price sorts use the store currency; variable products sort by their minimum variant price. `total_stock` sorts by available stock (quantity minus reserved) summed across all of the store's locations: a variable product sums its tracked variants, and an inventory group shared by several variants counts once. For an app, the response's `total_stock` leaves out locations owned by other apps; the order still uses the store-wide total. Equal values are ordered by product ID in the same direction; products without a value (no price in the currency, untracked stock) sort last in both directions.",
           "type": "string"
         },
         "sort_direction": {
@@ -14294,7 +14294,7 @@
           "type": "string"
         },
         "sort_by": {
-          "description": "A value from `sort_columns` in Product limits. Defaults to `created_at`. Price sorts use the store currency; variable products sort by their minimum variant price. Equal values use ascending product ID as a tie-breaker; missing values sort last.",
+          "description": "A value from `sort_columns` in Product limits. Defaults to `created_at`. Price sorts use the store currency; variable products sort by their minimum variant price. `total_stock` sorts by available stock (quantity minus reserved) summed across all of the store's locations: a variable product sums its tracked variants, and an inventory group shared by several variants counts once. For an app, the response's `total_stock` leaves out locations owned by other apps; the order still uses the store-wide total. Equal values are ordered by product ID in the same direction; products without a value (no price in the currency, untracked stock) sort last in both directions.",
           "type": "string"
         },
         "sort_direction": {

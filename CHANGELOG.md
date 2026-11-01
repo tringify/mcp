@@ -1,5 +1,10 @@
 # Changelog
 
+## Sort products by stock — 1 November 2026
+
+- `list_products` and `list_gift_card_products` take `sort_by: total_stock`: products in order of available stock (quantity minus reserved) summed across all of the store's locations. A variable product sums its tracked variants, and an inventory group shared by several variants counts once. Untracked products sort last in both directions. `get_product_limits` lists `total_stock` in `sort_columns`.
+- The `sort_by` description now says equal values are ordered by product ID in the sort's direction.
+
 ## Catalog re-export — 1 November 2026
 
 The tool catalog is re-exported from the hosted server and now includes every shipped tool:
