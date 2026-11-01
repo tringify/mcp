@@ -1,5 +1,10 @@
 # Changelog
 
+## COD unavailable reason per language — 1 November 2026
+
+- `get_market_cod_settings` and `update_market_cod_settings` carry `unavailable_message_translations`: the reason checkout shows under disabled cash on delivery, per store language other than the default. Checkout now shows the merchant's reason (it showed the standard one); an empty reason shows the standard reason in the shopper's language.
+- `unavailable_message` and its translations can print the minimum or maximum order value for COD with `{{.amount}}`; any other placeholder is refused with `COD_UNAVAILABLE_MESSAGE_PLACEHOLDER_INVALID`.
+
 ## Sort products by stock — 1 November 2026
 
 - `list_products` and `list_gift_card_products` take `sort_by: total_stock`: products in order of available stock (quantity minus reserved) summed across all of the store's locations. A variable product sums its tracked variants, and an inventory group shared by several variants counts once. Untracked products sort last in both directions. `get_product_limits` lists `total_stock` in `sort_columns`.

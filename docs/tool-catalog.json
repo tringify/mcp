@@ -22033,7 +22033,7 @@
     "api_key": "cod.settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/cod-settings",
-    "description": "Read the cash-on-delivery configuration for a market. The response includes `unavailable_display` and `unavailable_message`; keep both when editing other settings. It also tells you whether cash on delivery is enabled, whether the market uses one simple rule or destination-based zones, and how its fee and order-value conditions are configured. Amount maps are keyed by the market's currency codes. Threshold fields remain present when their corresponding toggle is off, but they do not affect checkout. Supplied inactive amounts still need valid currency codes, nonnegative values, supported precision and valid ranges. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-settings. Only the connected store is accessible.",
+    "description": "Read the cash-on-delivery configuration for a market. The response includes `unavailable_display`, `unavailable_message` and `unavailable_message_translations`; keep all three when editing other settings. It also tells you whether cash on delivery is enabled, whether the market uses one simple rule or destination-based zones, and how its fee and order-value conditions are configured. Amount maps are keyed by the market's currency codes. Threshold fields remain present when their corresponding toggle is off, but they do not affect checkout. Supplied inactive amounts still need valid currency codes, nonnegative values, supported precision and valid ranges. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22143,16 +22143,23 @@
           ]
         },
         "unavailable_display": {
-          "description": "Use hide or show_reason when COD is unavailable.",
+          "description": "What checkout does with cash on delivery when an order can't use it: `hide` leaves it out of the payment methods; `show_reason` lists it disabled with a reason. Omission is `hide`.",
           "type": [
             "string",
             "null"
           ]
         },
         "unavailable_message": {
-          "description": "Shopper-facing explanation when COD is unavailable. Leading and trailing whitespace is trimmed; at most 200 characters are accepted. Omission clears the saved message.",
+          "description": "The reason checkout shows under disabled cash on delivery when `unavailable_display` is `show_reason`, in the store's default language. Empty shows Tringify's standard reason in the shopper's language. `{{.amount}}` prints the minimum or maximum order amount for COD in the shopper's currency; when COD is unavailable for another reason (a product rule or a destination), a reason using `{{.amount}}` is not shown and the standard reason is shown instead. No other placeholder is accepted. Leading and trailing whitespace is trimmed; at most 200 characters are accepted. Omission clears the saved message.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "unavailable_message_translations": {
+          "description": "The reason in the store's other languages, keyed by store language code. Checkout uses the shopper's language when it has a text, otherwise `unavailable_message`. Each text follows the `unavailable_message` rules; empty texts are dropped. Keys must be languages enabled for the store other than its default language. Omission clears every translation.",
+          "type": [
+            "object",
             "null"
           ]
         },
