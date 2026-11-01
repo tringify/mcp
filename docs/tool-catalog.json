@@ -28827,7 +28827,7 @@
           "type": "integer"
         },
         "location_id": {
-          "description": "Filter to groups with stock at this location.",
+          "description": "Filter to groups with stored stock at this location; the stock numbers are then that location's.",
           "type": "string"
         },
         "low_stock_only": {
@@ -28909,6 +28909,12 @@
         },
         "sort_by": {
           "description": "Sort by `title`, `status`, `sku`, or `created_at`.",
+          "enum": [
+            "title",
+            "status",
+            "sku",
+            "created_at"
+          ],
           "type": "string"
         },
         "sort_direction": {
@@ -28954,6 +28960,12 @@
         },
         "sort_by": {
           "description": "Sort by `product_title`, `variant_title`, `sku`, or `created_at`.",
+          "enum": [
+            "product_title",
+            "variant_title",
+            "sku",
+            "created_at"
+          ],
           "type": "string"
         },
         "sort_direction": {
@@ -29308,7 +29320,22 @@
           "type": "integer"
         },
         "reason": {
-          "description": "Filter by movement reason.",
+          "description": "Filter by movement reason: one of `reason_options` in the response.",
+          "enum": [
+            "received",
+            "returned",
+            "damaged",
+            "shrinkage",
+            "recount",
+            "correction",
+            "sold",
+            "transfer_out",
+            "transfer_in",
+            "transfer_damaged",
+            "initial",
+            "set_quantity",
+            "source_changed"
+          ],
           "type": "string"
         },
         "search": {
@@ -29317,6 +29344,11 @@
         },
         "sort_by": {
           "description": "Sort by `created_at`, `quantity_change`, or `location_name`.",
+          "enum": [
+            "created_at",
+            "quantity_change",
+            "location_name"
+          ],
           "type": "string"
         },
         "sort_direction": {
@@ -29449,6 +29481,11 @@
         },
         "sort_by": {
           "description": "Sort by `location_name`, `quantity`, or `available`.",
+          "enum": [
+            "location_name",
+            "quantity",
+            "available"
+          ],
           "type": "string"
         },
         "sort_direction": {
@@ -29486,7 +29523,7 @@
           "type": "string"
         },
         "stock": {
-          "description": "Stock rows to create. Each row needs location_id and quantity; low_stock_threshold is optional.",
+          "description": "Stock rows to create. Each row needs `location_id`; `quantity` is 0 when omitted and `low_stock_threshold` is optional.",
           "items": {
             "type": "object"
           },
