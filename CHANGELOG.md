@@ -1,5 +1,11 @@
 # Changelog
 
+## List a theme's templates — 1 November 2026
+
+- New `list_theme_templates` (`store:online_store.storefronts:read`): a theme's resource templates, the default template and the alternates of each resource that has templates (`product`, `collection`, `category`, `brand`, `vendor`, `page`, `blog` for blog posts, `blog_category`), or of `resource_type` only. Each template has `page_type` (what `get_template` and the section and block tools take, such as `product__summer`), `handle` (what `template_handle` takes: `default_<resource_type>` for the default template, such as `default_vendor`, otherwise the alternate's handle), `name`, `resource_type` and `is_default`. Required `storefront_id` and `theme_id`.
+- `get_template` says `list_theme_templates` lists each resource template's `page_type`.
+- The `template_handle` field of the create and update tools for products, Gift Card products, collections, categories, brands, vendors, pages, blog posts and blog categories says its values are the `handle` of the resource's templates in `list_theme_templates`. Which permissions a template assignment needs is unchanged.
+
 ## Checkout fees explain how they were calculated — 1 November 2026
 
 - `create_market_checkout_fee` and `update_market_checkout_fee` take `show_calculation` (default `true`) and `calculation_texts`. A fixed fee charged per item or a percentage fee shows its calculation under the fee name at checkout, for example `₹100.00 per item × 3` or `5% of ₹1,000.00`; a fixed fee charged once per order has none. `calculation_texts` words the line per storefront language (an enabled store language); a language left out uses the platform default. A per-item fee's text may use `{{amount}}` and `{{quantity}}`, a percentage fee's `{{rate}}` (without the % sign) and `{{base}}`. New errors: `CHECKOUT_FEE_CALCULATION_NOT_AVAILABLE`, `CHECKOUT_FEE_CALCULATION_TEXT_EMPTY`, `CHECKOUT_FEE_CALCULATION_TEXT_TOO_LONG`, `CHECKOUT_FEE_CALCULATION_PLACEHOLDER_INVALID`, and `STOREFRONT_LANGUAGE_NOT_ENABLED` for a language the store does not have.

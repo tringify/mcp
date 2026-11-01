@@ -1467,7 +1467,7 @@
           ]
         },
         "template_handle": {
-          "description": "Existing product template handle for this store. Use default_product for the default template. Omit on update to keep the assignment; an empty string is invalid.",
+          "description": "Existing product template handle for this store. Use default_product for the default template. Omit on update to keep the assignment; an empty string is invalid. The handles are each template's `handle` in list_theme_templates (`resource_type` `product`).",
           "type": [
             "string",
             "null"
@@ -1854,7 +1854,7 @@
           ]
         },
         "template_handle": {
-          "description": "Existing product template handle for this store. Use default_product for the default template. Omit on update to keep the assignment; an empty string is invalid.",
+          "description": "Existing product template handle for this store. Use default_product for the default template. Omit on update to keep the assignment; an empty string is invalid. The handles are each template's `handle` in list_theme_templates (`resource_type` `product`).",
           "type": [
             "string",
             "null"
@@ -3389,7 +3389,7 @@
           ]
         },
         "template_handle": {
-          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_collection`. Use `default_collection` for the default Collection template, or pass an alternate Collection template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_collection` to reset it to default, and do not send an empty string.",
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_collection`. Use `default_collection` for the default Collection template, or pass an alternate Collection template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_collection` to reset it to default, and do not send an empty string. The handles are each template's `handle` in list_theme_templates (`resource_type` `collection`).",
           "type": [
             "string",
             "null"
@@ -3493,7 +3493,7 @@
           ]
         },
         "template_handle": {
-          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_collection`. Use `default_collection` for the default Collection template, or pass an alternate Collection template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_collection` to reset it to default, and do not send an empty string.",
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_collection`. Use `default_collection` for the default Collection template, or pass an alternate Collection template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_collection` to reset it to default, and do not send an empty string. The handles are each template's `handle` in list_theme_templates (`resource_type` `collection`).",
           "type": [
             "string",
             "null"
@@ -4370,7 +4370,7 @@
           ]
         },
         "template_handle": {
-          "description": "Category template assignment. Omit this field, send an empty string, or send `default_category` to use the default Category template. Otherwise, send a Category template handle available in the store's active theme.",
+          "description": "Category template assignment. Omit this field, send an empty string, or send `default_category` to use the default Category template. Otherwise, send a Category template handle available in the store's active theme. The handles are each template's `handle` in list_theme_templates (`resource_type` `category`).",
           "type": [
             "string",
             "null"
@@ -4489,7 +4489,7 @@
           ]
         },
         "template_handle": {
-          "description": "New Category template assignment. Omit to leave it unchanged, send `default_category` to use the default Category template, or send another Category template handle available in the store's active theme. An empty string is invalid.",
+          "description": "New Category template assignment. Omit to leave it unchanged, send `default_category` to use the default Category template, or send another Category template handle available in the store's active theme. An empty string is invalid. The handles are each template's `handle` in list_theme_templates (`resource_type` `category`).",
           "type": [
             "string",
             "null"
@@ -5759,7 +5759,7 @@
           ]
         },
         "template_handle": {
-          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_page`. Use `default_page` for the default Page template, or pass an alternate Page template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_page` to reset it to default, and do not send an empty string.",
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_page`. Use `default_page` for the default Page template, or pass an alternate Page template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_page` to reset it to default, and do not send an empty string. The handles are each template's `handle` in list_theme_templates (`resource_type` `page`).",
           "type": [
             "string",
             "null"
@@ -5848,7 +5848,7 @@
           ]
         },
         "template_handle": {
-          "description": "Template assignment. Omit to leave the current assignment unchanged, use default_page to reset to the default Page template, and do not send an empty string.",
+          "description": "Template assignment. Omit to leave the current assignment unchanged, use default_page to reset to the default Page template, and do not send an empty string. The handles are each template's `handle` in list_theme_templates (`resource_type` `page`).",
           "type": [
             "string",
             "null"
@@ -6809,7 +6809,7 @@
           ]
         },
         "template_handle": {
-          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog`. Use `default_blog` for the default Blog Post template, or pass an alternate Blog Post template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog` to reset it to default, and do not send an empty string.",
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog`. Use `default_blog` for the default Blog Post template, or pass an alternate Blog Post template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog` to reset it to default, and do not send an empty string. The handles are each template's `handle` in list_theme_templates (`resource_type` `blog`).",
           "type": [
             "string",
             "null"
@@ -6941,7 +6941,7 @@
           ]
         },
         "template_handle": {
-          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog`. Use `default_blog` for the default Blog Post template, or pass an alternate Blog Post template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog` to reset it to default, and do not send an empty string.",
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog`. Use `default_blog` for the default Blog Post template, or pass an alternate Blog Post template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog` to reset it to default, and do not send an empty string. The handles are each template's `handle` in list_theme_templates (`resource_type` `blog`).",
           "type": [
             "string",
             "null"
@@ -7678,7 +7678,7 @@
           ]
         },
         "template_handle": {
-          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog_category`. Use `default_blog_category` for the default Blog Category template, or pass an alternate Blog Category template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog_category` to reset it to default, and do not send an empty string.",
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog_category`. Use `default_blog_category` for the default Blog Category template, or pass an alternate Blog Category template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog_category` to reset it to default, and do not send an empty string. The handles are each template's `handle` in list_theme_templates (`resource_type` `blog_category`).",
           "type": [
             "string",
             "null"
@@ -7751,7 +7751,7 @@
           ]
         },
         "template_handle": {
-          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog_category`. Use `default_blog_category` for the default Blog Category template, or pass an alternate Blog Category template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog_category` to reset it to default, and do not send an empty string.",
+          "description": "Template assignment. On create, omitting this field or sending an empty string assigns `default_blog_category`. Use `default_blog_category` for the default Blog Category template, or pass an alternate Blog Category template handle configured for the store. On update, omit `template_handle` to leave the assignment unchanged, use `default_blog_category` to reset it to default, and do not send an empty string. The handles are each template's `handle` in list_theme_templates (`resource_type` `blog_category`).",
           "type": [
             "string",
             "null"
@@ -10398,7 +10398,7 @@
           ]
         },
         "template_handle": {
-          "description": "Brand template. Omit this field, send an empty string, or send `default_brand` to use the default brand template. Otherwise, send a brand template handle available in the store's active theme.",
+          "description": "Brand template. Omit this field, send an empty string, or send `default_brand` to use the default brand template. Otherwise, send a brand template handle available in the store's active theme. The handles are each template's `handle` in list_theme_templates (`resource_type` `brand`).",
           "type": [
             "string",
             "null"
@@ -10510,7 +10510,7 @@
           ]
         },
         "template_handle": {
-          "description": "New brand template. Omit to leave it unchanged, send `default_brand` to use the default brand template, or send another brand template handle available in the store's active theme. An empty string is invalid.",
+          "description": "New brand template. Omit to leave it unchanged, send `default_brand` to use the default brand template, or send another brand template handle available in the store's active theme. An empty string is invalid. The handles are each template's `handle` in list_theme_templates (`resource_type` `brand`).",
           "type": [
             "string",
             "null"
@@ -11105,7 +11105,7 @@
           ]
         },
         "template_handle": {
-          "description": "Vendor template. Omit this field, send an empty string, or send `default_vendor` to use the default vendor template. Otherwise, send a vendor template handle available in the store's active theme.",
+          "description": "Vendor template. Omit this field, send an empty string, or send `default_vendor` to use the default vendor template. Otherwise, send a vendor template handle available in the store's active theme. The handles are each template's `handle` in list_theme_templates (`resource_type` `vendor`).",
           "type": [
             "string",
             "null"
@@ -11217,7 +11217,7 @@
           ]
         },
         "template_handle": {
-          "description": "New vendor template. Omit to leave it unchanged, send `default_vendor` to use the default vendor template, or send another vendor template handle available in the store's active theme. An empty string is invalid.",
+          "description": "New vendor template. Omit to leave it unchanged, send `default_vendor` to use the default vendor template, or send another vendor template handle available in the store's active theme. An empty string is invalid. The handles are each template's `handle` in list_theme_templates (`resource_type` `vendor`).",
           "type": [
             "string",
             "null"
@@ -14607,7 +14607,7 @@
           ]
         },
         "template_handle": {
-          "description": "Existing product template handle for this store. Use default_product for the default template. Omit on update to keep the assignment; an empty string is invalid.",
+          "description": "Existing product template handle for this store. Use default_product for the default template. Omit on update to keep the assignment; an empty string is invalid. The handles are each template's `handle` in list_theme_templates (`resource_type` `product`).",
           "type": [
             "string",
             "null"
