@@ -6,6 +6,7 @@
 - `preview_email_template` renders an unsaved template as a send would, with the type's sample data (`sample_variant`) or a translation (`locale`), and returns `subject`, `html`, `issues` and `compat`. `send_test_email` queues a `[TEST]` email to the connected merchant's own address only.
 - Templates are visual (`template_document`) or code (`editor_mode` `code`, `code_html`); an update that omits `editor_mode` keeps the template's mode.
 - Email translations by text: `get_email_template_translation`, `set_email_template_translation` (`values` by text key), `delete_email_template_translation` and `get_email_template_translation_coverage`.
+- `list_email_types` takes `type` (one key or several, comma-separated) and `summary`; without `type` it lists every type briefly (all types in full are too large for one tool response).
 - The server instructions say customer emails are live and to preview, test and get the merchant's approval before saving.
 
 ## Checkout fee conditions and items-per-order limits — 2 November 2026
