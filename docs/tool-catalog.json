@@ -12415,7 +12415,7 @@
       "additionalProperties": false,
       "properties": {
         "billing_address": {
-          "description": "Billing address snapshot. Its country selects the market when no shipping country is present. `state` follows the same rule as the shipping address.",
+          "description": "Billing address snapshot. Its country selects the market when no shipping country is present. Same rules as the shipping address.",
           "type": [
             "object",
             "null"
@@ -12429,7 +12429,11 @@
           ]
         },
         "cod_fee_override": {
-          "description": "Non-negative COD fee amount in the order currency; requires the cod override scope and an eligible COD order."
+          "description": "Non-negative COD fee amount in the order currency as a plain decimal string; requires the cod override scope and an eligible COD order.",
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "coupon_codes": {
           "description": "Coupon codes to evaluate through the pricing engine. A free-gift offer prices its gift at zero only when the gift is sent as an ordinary item line (product_id and, for a variant, variant_id), up to the offered quantity; extra units are charged.",
@@ -12499,7 +12503,11 @@
           ]
         },
         "duty_override": {
-          "description": "Non-negative duty amount in the order currency; requires the duties override scope. Currency precision is enforced."
+          "description": "Non-negative duty amount in the order currency as a plain decimal string; requires the duties override scope. Currency precision is enforced.",
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "excluded_discount_ids": {
           "description": "Automatic discounts to omit, up to 250 identifiers. These exclusions apply when the order is priced and saved.",
@@ -12512,7 +12520,11 @@
           ]
         },
         "expected_total": {
-          "description": "Optional reviewed grand total in the order currency, before Store Credit or gift-card payment. Creation recalculates current prices and returns ORDER_TOTAL_CHANGED (409) if the total has changed. Review the new total before submitting a new request."
+          "description": "Optional reviewed grand total in the order currency, before Store Credit or gift-card payment. Creation recalculates current prices and returns ORDER_TOTAL_CHANGED (409) if the total has changed. Review the new total before submitting a new request.",
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "external_order_id": {
           "description": "Stable source order id. Required for app tokens; omit for a store-admin token creating a manual order.",
@@ -12594,14 +12606,18 @@
           ]
         },
         "shipping_address": {
-          "description": "Shipping address snapshot. Its country selects the market when present. `state` is a code from `GET /reference/subdivisions/{country}` (e.g. `US-NY`) or any name of it, stored as the code (refused with `SUBDIVISION_INVALID` when unknown, and must be empty for a country without subdivisions); reads add `state_display`, its name in the request language.",
+          "description": "Shipping address snapshot (the platform address shape). Its country selects the market when present. Fields follow `GET /reference/address-format/{country_code}`: its `required` fields must be present, `province_code` is a code from `province.options` (`SUBDIVISION_INVALID` otherwise), `postal_code` must match `postal` and is stored in its standard form (`POSTAL_CODE_INVALID`), `district` only where the layout has it. Reads add `province_name` and `country_name` in the request language.",
           "type": [
             "object",
             "null"
           ]
         },
         "shipping_amount": {
-          "description": "Final shipping charge in currency_code. Used only when shipping_override is true."
+          "description": "Final shipping charge in currency_code as a plain decimal string. Used only when shipping_override is true.",
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "shipping_method": {
           "description": "Customer-facing shipping method name. Required when shipping_override is true.",
@@ -12632,7 +12648,11 @@
           ]
         },
         "store_credit_amount": {
-          "description": "Store Credit payment in the order currency. Checked against the live customer balance, order total and merchant per-order allowance, then reserved atomically. It does not reduce the taxable base. Any remaining amount remains unpaid. It cannot be combined with a non-COD payment record."
+          "description": "Store Credit payment in the order currency. Checked against the live customer balance, order total and merchant per-order allowance, then reserved atomically. It does not reduce the taxable base. Any remaining amount remains unpaid. It cannot be combined with a non-COD payment record.",
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "tags": {
           "description": "Order tag names to assign.",
@@ -19247,7 +19267,7 @@
           "type": "string"
         },
         "subdivisions": {
-          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each must belong to a selected country and not be claimed by another zone. Listing a subdivision limits the zone to the listed subdivisions of that country only; other listed countries are still covered whole.",
+          "description": "Subdivision codes from `province.options` in `GET /reference/address-format/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each must belong to a selected country and not be claimed by another zone. Listing a subdivision limits the zone to the listed subdivisions of that country only; other listed countries are still covered whole.",
           "items": {},
           "type": [
             "array",
@@ -19343,7 +19363,7 @@
           "type": "string"
         },
         "subdivisions": {
-          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each must belong to a selected country and not be claimed by another zone. Listing a subdivision limits the zone to the listed subdivisions of that country only; other listed countries are still covered whole.",
+          "description": "Subdivision codes from `province.options` in `GET /reference/address-format/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each must belong to a selected country and not be claimed by another zone. Listing a subdivision limits the zone to the listed subdivisions of that country only; other listed countries are still covered whole.",
           "items": {},
           "type": [
             "array",
@@ -21217,7 +21237,7 @@
           "type": "string"
         },
         "subdivisions": {
-          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each belongs to a selected country. Explicit subdivision zones take precedence over country fallbacks. Duplicate subdivision claims are rejected."
+          "description": "Subdivision codes from `province.options` in `GET /reference/address-format/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each belongs to a selected country. Explicit subdivision zones take precedence over country fallbacks. Duplicate subdivision claims are rejected."
         }
       },
       "required": [
@@ -21296,7 +21316,7 @@
           "type": "string"
         },
         "subdivisions": {
-          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each belongs to a selected country. Explicit subdivision zones take precedence over country fallbacks. Duplicate subdivision claims are rejected."
+          "description": "Subdivision codes from `province.options` in `GET /reference/address-format/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each belongs to a selected country. Explicit subdivision zones take precedence over country fallbacks. Duplicate subdivision claims are rejected."
         },
         "zone_id": {
           "description": "Shipping zone ID.",
@@ -22366,7 +22386,7 @@
           ]
         },
         "subdivisions": {
-          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each subdivision must belong to a selected country.",
+          "description": "Subdivision codes from `province.options` in `GET /reference/address-format/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each subdivision must belong to a selected country.",
           "items": {
             "type": "string"
           },
@@ -22573,7 +22593,7 @@
           ]
         },
         "subdivisions": {
-          "description": "Subdivision codes from `GET /reference/subdivisions/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each subdivision must belong to a selected country.",
+          "description": "Subdivision codes from `province.options` in `GET /reference/address-format/{country}` (e.g. `US-CA`); any name of a subdivision is accepted and stored as its code. An unknown subdivision is refused with `SUBDIVISION_INVALID`. Reads add `subdivisions_display`, their names in the request language in the same order. Each subdivision must belong to a selected country.",
           "items": {
             "type": "string"
           },
@@ -29711,7 +29731,7 @@
           "type": "integer"
         },
         "search": {
-          "description": "Search locations by name, slug, city, state/province, or address line.",
+          "description": "Search locations by name, slug, city, province, or street address.",
           "type": "string"
         },
         "sort_by": {
@@ -29794,15 +29814,15 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
-        "address_line1": {
-          "description": "Street address line 1.",
+        "address1": {
+          "description": "Street address.",
           "type": [
             "string",
             "null"
           ]
         },
-        "address_line2": {
-          "description": "Street address line 2.",
+        "address2": {
+          "description": "Apartment, suite, unit or building.",
           "type": [
             "string",
             "null"
@@ -29817,6 +29837,13 @@
         },
         "country_code": {
           "description": "Uppercase ISO 3166-1 alpha-2 country code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "district": {
+          "description": "District or neighbourhood, only for a country whose address layout has one (see `GET /reference/address-format/{country_code}`); refused with `INVALID_INPUT` (`error.details.field` = `district`) elsewhere.",
           "type": [
             "string",
             "null"
@@ -29876,7 +29903,14 @@
           ]
         },
         "postal_code": {
-          "description": "Postal, ZIP, or PIN code. Validated against the selected country's format. India PINs are checked against the India Post directory; unknown PINs and PIN/state mismatches are rejected.",
+          "description": "Postal code, checked against the country's format and stored in its standard written form (`sw1a1aa` is stored as `SW1A 1AA`). Refused with `POSTAL_CODE_INVALID` when it doesn't match (`error.details.example` is a valid one) or the country has no postal codes. An India PIN must belong to `province_code`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "province_code": {
+          "description": "Province code: an ISO 3166-2 code from the country's `province.options` in `GET /reference/address-format/{country_code}` (e.g. `US-CA`). A retired code is accepted and stored as its successor. Required for an online-fulfillment or pickup location when the country's address format requires it; refused for a country without provinces. An unknown or other-country code is refused with `SUBDIVISION_INVALID`. Responses add `province_name` in the request language.",
           "type": [
             "string",
             "null"
@@ -29894,13 +29928,6 @@
         },
         "slug": {
           "description": "Optional slug. Omit to generate from name.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "state_province": {
-          "description": "State, province or region: a code from `GET /reference/subdivisions/{country_code}` (e.g. `US-CA`), or any name of it (in English, German, Spanish, French, Italian or the local language), its ISO suffix or a short form; stored and returned as the code, with its name in the request language in `state_province_display`. Required for an online-fulfillment or pickup location in a country whose addresses name a subdivision; must be empty for a country without subdivisions. An unknown value is refused with `SUBDIVISION_INVALID`.",
           "type": [
             "string",
             "null"
@@ -29925,15 +29952,15 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
-        "address_line1": {
-          "description": "Street address line 1.",
+        "address1": {
+          "description": "Street address.",
           "type": [
             "string",
             "null"
           ]
         },
-        "address_line2": {
-          "description": "Street address line 2.",
+        "address2": {
+          "description": "Apartment, suite, unit or building.",
           "type": [
             "string",
             "null"
@@ -29948,6 +29975,13 @@
         },
         "country_code": {
           "description": "Uppercase ISO 3166-1 alpha-2 country code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "district": {
+          "description": "District or neighbourhood, only for a country whose address layout has one (see `GET /reference/address-format/{country_code}`); refused with `INVALID_INPUT` (`error.details.field` = `district`) elsewhere.",
           "type": [
             "string",
             "null"
@@ -30022,7 +30056,14 @@
           ]
         },
         "postal_code": {
-          "description": "Postal, ZIP, or PIN code. Validated against the selected country's format. India PINs are checked against the India Post directory; unknown PINs and PIN/state mismatches are rejected.",
+          "description": "Postal code, checked against the country's format and stored in its standard written form (`sw1a1aa` is stored as `SW1A 1AA`). Refused with `POSTAL_CODE_INVALID` when it doesn't match (`error.details.example` is a valid one) or the country has no postal codes. An India PIN must belong to `province_code`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "province_code": {
+          "description": "Province code: an ISO 3166-2 code from the country's `province.options` in `GET /reference/address-format/{country_code}` (e.g. `US-CA`). A retired code is accepted and stored as its successor. Required for an online-fulfillment or pickup location when the country's address format requires it; refused for a country without provinces. An unknown or other-country code is refused with `SUBDIVISION_INVALID`. Responses add `province_name` in the request language.",
           "type": [
             "string",
             "null"
@@ -30040,13 +30081,6 @@
         },
         "slug": {
           "description": "Optional slug. Omitted values are unchanged; a supplied slug must be non-empty and valid.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "state_province": {
-          "description": "State, province or region: a code from `GET /reference/subdivisions/{country_code}` (e.g. `US-CA`), or any name of it (in English, German, Spanish, French, Italian or the local language), its ISO suffix or a short form; stored and returned as the code, with its name in the request language in `state_province_display`. Required for an online-fulfillment or pickup location in a country whose addresses name a subdivision; must be empty for a country without subdivisions. An unknown value is refused with `SUBDIVISION_INVALID`.",
           "type": [
             "string",
             "null"
@@ -30657,10 +30691,17 @@
     "api_key": "imports.confirm",
     "api_method": "POST",
     "api_path": "/api/2025-01/imports/{importId}/confirm",
-    "description": "Run a previewed import. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/imports/{importId}/confirm. Only the connected store is accessible. Starts the job for the previewed file, exactly as Start import in Store Admin, and returns the import with `status` `validating` or `processing`. Confirm only after reviewing the preview counts and errors with the merchant. Repeating it returns `CSV_IMPORT_ALREADY_CONFIRMED`. The token needs the scopes of the request's `type` (see `GET /imports/types` and `GET /exports/types`); a missing one returns 403 `CSV_JOB_SCOPE_REQUIRED` naming it. Changes the store's data. Before calling it, show the merchant what the import will change (creates, updates, skips, errors, warnings, ignored columns) and get their approval; never confirm automatically. Do not retry an uncertain confirm: read get_import.",
+    "description": "Run a previewed import. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/imports/{importId}/confirm. Only the connected store is accessible. Starts the job for the previewed file, exactly as Start import in Store Admin, and returns the import with `status` `validating` or `processing`. Confirm only after reviewing the preview counts and errors with the merchant. For review imports, `preview.previous_import` identifies a prior recorded result for identical CSV bytes (job_id, completed_at, status, status_display, succeeded, failed). Show this result and explain that importing again creates additional reviews. Send its job_id as `acknowledged_import_id` only after explicit acknowledgment. Changed or rearranged files are not detected as identical. History is recorded for imports started after this feature was enabled. Repeating it returns `CSV_IMPORT_ALREADY_CONFIRMED`. The token needs the scopes of the request's `type` (see `GET /imports/types` and `GET /exports/types`); a missing one returns 403 `CSV_JOB_SCOPE_REQUIRED` naming it. Changes the store's data. Before calling it, show the merchant what the import will change (creates, updates, skips, errors, warnings, ignored columns) and get their approval; never confirm automatically. For reviews with preview.previous_import, show the previous date and result, explain duplicate creation, and send acknowledged_import_id with that job_id only after explicit acknowledgment. Do not retry an uncertain confirm: read get_import.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "acknowledged_import_id": {
+          "description": "The previous review import job_id whose duplicate-review warning the merchant explicitly acknowledged. Omit for other imports.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "import_id": {
           "description": "Import id.",
           "minLength": 1,
