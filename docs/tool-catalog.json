@@ -22900,7 +22900,7 @@
     "api_key": "checkout.settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/checkout-settings",
-    "description": "Read a market's minimum and maximum checkout rules. The enabled limits are compared with merchandise after product and order discounts. Shipping, tax, duties, cash-on-delivery charges, checkout fees, online-payment discounts, store credit, and other payment methods do not change this comparison. Minimum and maximum boundaries are inclusive. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/checkout-settings. Only the connected store is accessible.",
+    "description": "Read a market's minimum and maximum checkout rules. The enabled value limits are compared with merchandise after product and order discounts. Shipping, tax, duties, cash-on-delivery charges, checkout fees, online-payment discounts, store credit, and other payment methods do not change this comparison. The enabled quantity limits are compared with the order's total merchandise quantity. Minimum and maximum boundaries are inclusive. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/checkout-settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22924,7 +22924,7 @@
     "api_key": "checkout.settings.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/checkout-settings",
-    "description": "Set the discounted merchandise subtotal range accepted by a market. Send both toggles and their complete currency maps. An enabled limit requires a positive amount for every currency assigned to the market. Disabled limits ignore and clear their amount maps. When both limits are enabled, the maximum must be greater than the minimum in every currency. An unchanged request leaves timestamps untouched and publishes no event; a successful change publishes `checkout_settings/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/checkout-settings. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set the discounted merchandise subtotal range and the item quantity range accepted by a market. Send every toggle with its complete currency map or quantity. An enabled value limit requires a positive amount for every currency assigned to the market; an enabled quantity limit requires a whole number of at least 1. Disabled limits ignore and clear their amounts and quantities. When both value limits are enabled, the maximum must be greater than the minimum in every currency; when both quantity limits are enabled, the maximum must be at least the minimum. An unchanged request leaves timestamps untouched and publishes no event; a successful change publishes `checkout_settings/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/checkout-settings. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22941,6 +22941,20 @@
           "description": "Whether checkout enforces a maximum discounted merchandise subtotal.",
           "type": "boolean"
         },
+        "max_quantity": {
+          "description": "Inclusive maximum total merchandise quantity, at least 1 and at least `min_quantity` when both are enabled. Required when `max_quantity_enabled` is true; ignored and returned as `null` otherwise.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "max_quantity_enabled": {
+          "description": "Whether checkout enforces a maximum total merchandise quantity. Defaults to `false`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "min_order_amounts": {
           "description": "Inclusive minimum subtotal keyed by every assigned market currency. Send an empty object when the limit is disabled.",
           "type": "object"
@@ -22948,6 +22962,20 @@
         "min_order_enabled": {
           "description": "Whether checkout requires a minimum discounted merchandise subtotal.",
           "type": "boolean"
+        },
+        "min_quantity": {
+          "description": "Inclusive minimum total merchandise quantity, at least 1. Required when `min_quantity_enabled` is true; ignored and returned as `null` otherwise.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "min_quantity_enabled": {
+          "description": "Whether checkout requires a minimum total merchandise quantity (the sum of every line's quantity). Defaults to `false`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       },
       "required": [
@@ -22968,7 +22996,7 @@
     "api_key": "checkout.fees.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/checkout-fees",
-    "description": "List the required charges and optional services configured for a market. Fees are returned in checkout order together with the live authoring contract. Required fees are applied automatically. Optional fees are available for the customer or an admin to select. Percentage fees use merchandise after product and order discounts; fixed per-item fees multiply by the total merchandise quantity. Per-item and percentage fees show a calculation line under the fee name at checkout (for example `₹100.00 per item × 3` or `5% of ₹1,000.00`) unless `show_calculation` is false; `checkout_fee_catalog.calculation_kinds` says which fees have one and the placeholders its text may use, and `calculation_defaults` gives the platform wording in each of the store's storefront languages, with the language's name in the request language as `label`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/checkout-fees. Only the connected store is accessible.",
+    "description": "List the required charges and optional services configured for a market. Fees are returned in checkout order together with the live authoring contract. Required fees are applied automatically. Optional fees are available for the customer or an admin to select. Percentage fees use merchandise after product and order discounts; fixed per-item fees multiply by the total merchandise quantity. Per-item and percentage fees show a calculation line under the fee name at checkout (for example `₹100.00 per item × 3` or `5% of ₹1,000.00`) unless `show_calculation` is false; `checkout_fee_catalog.calculation_kinds` says which fees have one and the placeholders its text may use, and `calculation_defaults` gives the platform wording in each of the store's storefront languages, with the language's name in the request language as `label` and the platform label of a fee's text field as `text_prompt`. A fee may apply only to carts holding chosen products or products of chosen collections (`applies_to_options`, at most `max_targets_per_fee` targets), only from or below a discounted merchandise subtotal, and a percentage fee may be capped (`condition_types`). `hsn_code_applies` is true when the market sells to India; forms show `hsn_code` only then. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/checkout-fees. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -23022,10 +23050,17 @@
     "api_key": "checkout.fees.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/checkout-fees",
-    "description": "Add a required charge or optional service to a market. Fixed fees require an amount for every market currency and may apply once per order or once per merchandise unit. Percentage fees apply once per order to discounted merchandise. A selected tax class must belong to this market. A successful create publishes `checkout_fees/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/checkout-fees. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a required charge or optional service to a market. Fixed fees require an amount for every market currency and may apply once per order or once per merchandise unit. Percentage fees apply once per order to discounted merchandise. A selected tax class must belong to this market. Subtotal conditions and a percentage fee's cap need an amount for every market currency when enabled, like fixed amounts. An optional fee may ask the customer for text (`collect_text`). A successful create publishes `checkout_fees/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/checkout-fees. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "applies_to": {
+          "description": "`all` (every cart, the default), `products` or `collections`. With `products` or `collections`, the fee applies only when the cart holds a targeted product or a product of a targeted collection; a per-item fee then counts only those items, and a percentage fee takes only their discounted line totals as its base.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "apply_per": {
           "description": "Use `order` to charge once or `item` to multiply a fixed fee by total merchandise quantity. Percentage fees use `order`.",
           "type": "string"
@@ -23034,6 +23069,13 @@
           "description": "Your own wording of the calculation line, keyed by storefront language (an enabled store language). A language left out uses the platform default. A per-item fee's text may use `{{amount}}` (the amount per item) and `{{quantity}}` (the number of items); a percentage fee's `{{rate}}` (the percentage, without the % sign) and `{{base}}` (the discounted merchandise amount). At most `calculation_text_max_length` characters each. Not allowed on a fixed fee charged once per order. Replaces the saved texts; send `{}` to use the defaults everywhere.",
           "type": [
             "object",
+            "null"
+          ]
+        },
+        "collect_text": {
+          "description": "Whether the fee asks the customer for text, such as a gift message, when they select it. Only for optional fees. The text is kept on the order's fee line. Defaults to `false`.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
@@ -23082,9 +23124,51 @@
           "minLength": 1,
           "type": "string"
         },
+        "max_subtotal_amounts": {
+          "description": "Positive subtotal keyed by every market currency at which the fee stops applying, when `max_subtotal_enabled` is true. Must be greater than the minimum in every currency when both are enabled. Cleared when disabled.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "max_subtotal_enabled": {
+          "description": "Whether the fee applies only when the discounted merchandise subtotal is below `max_subtotal_amounts` (for example a handling fee waived from ₹999.00). Defaults to `false`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "min_subtotal_amounts": {
+          "description": "Positive minimum subtotal keyed by every market currency, as decimal strings, when `min_subtotal_enabled` is true. Cleared when it is false.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "min_subtotal_enabled": {
+          "description": "Whether the fee applies only when the discounted merchandise subtotal of the whole cart is at least `min_subtotal_amounts` in the order currency. Defaults to `false`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "name": {
           "description": "Merchant-facing fee or service name.",
           "type": "string"
+        },
+        "percent_cap_amounts": {
+          "description": "Positive maximum fee keyed by every market currency when `percent_cap_enabled` is true. Cleared when disabled.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "percent_cap_enabled": {
+          "description": "Whether a percentage fee is at most `percent_cap_amounts`. Only for `fee_type` `percent`. Defaults to `false`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
         },
         "percent_value": {
           "description": "Percentage of discounted merchandise when `fee_type` is `percent`.",
@@ -23100,10 +23184,51 @@
             "null"
           ]
         },
+        "target_collection_ids": {
+          "description": "Targeted collection ids, 1 to `max_targets_per_fee`, when `applies_to` is `collections`. Every collection must exist in the store. Ignored otherwise.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "target_product_ids": {
+          "description": "Targeted product ids as decimal strings, 1 to `max_targets_per_fee`, when `applies_to` is `products`. Every product must exist in the store. Ignored otherwise.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
         "tax_class_id": {
           "description": "Tax class from this market applied to the resolved fee.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "text_max_length": {
+          "description": "The most characters the customer may write, 1 to `text_max_length_limit`. Defaults to `default_text_max_length` when `collect_text` is true; `null` otherwise.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "text_prompts": {
+          "description": "The text field's label keyed by storefront language (an enabled store language), at most `text_prompt_max_length` characters each. An empty value removes the language; a language left out uses the platform label. Replaces the saved prompts. Only with `collect_text`.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "text_required": {
+          "description": "Whether the customer must write the text to place an order with the fee selected. Only with `collect_text`.",
+          "type": [
+            "boolean",
             "null"
           ]
         }
@@ -23127,10 +23252,17 @@
     "api_key": "checkout.fees.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/checkout-fees/{feeId}",
-    "description": "Replace the editable definition of one checkout fee. Send the complete definition you want to keep. An unchanged request leaves timestamps, audit history, and webhooks untouched. A successful change publishes `checkout_fees/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/checkout-fees/{feeId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace the editable definition of one checkout fee. Send the complete definition you want to keep: a condition, cap, targeting or text setting left out is turned off and its amounts, targets or prompts are deleted. An unchanged request leaves timestamps, audit history, and webhooks untouched. A successful change publishes `checkout_fees/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/checkout-fees/{feeId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "applies_to": {
+          "description": "`all` (every cart, the default), `products` or `collections`. With `products` or `collections`, the fee applies only when the cart holds a targeted product or a product of a targeted collection; a per-item fee then counts only those items, and a percentage fee takes only their discounted line totals as its base.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "apply_per": {
           "description": "Use `order` to charge once or `item` to multiply a fixed fee by total merchandise quantity. Percentage fees use `order`.",
           "type": "string"
@@ -23139,6 +23271,13 @@
           "description": "Your own wording of the calculation line, keyed by storefront language (an enabled store language). A language left out uses the platform default. A per-item fee's text may use `{{amount}}` (the amount per item) and `{{quantity}}` (the number of items); a percentage fee's `{{rate}}` (the percentage, without the % sign) and `{{base}}` (the discounted merchandise amount). At most `calculation_text_max_length` characters each. Not allowed on a fixed fee charged once per order. Replaces the saved texts; send `{}` to use the defaults everywhere.",
           "type": [
             "object",
+            "null"
+          ]
+        },
+        "collect_text": {
+          "description": "Whether the fee asks the customer for text, such as a gift message, when they select it. Only for optional fees. The text is kept on the order's fee line. Defaults to `false`.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
@@ -23192,9 +23331,51 @@
           "minLength": 1,
           "type": "string"
         },
+        "max_subtotal_amounts": {
+          "description": "Positive subtotal keyed by every market currency at which the fee stops applying, when `max_subtotal_enabled` is true. Must be greater than the minimum in every currency when both are enabled. Cleared when disabled.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "max_subtotal_enabled": {
+          "description": "Whether the fee applies only when the discounted merchandise subtotal is below `max_subtotal_amounts` (for example a handling fee waived from ₹999.00). Defaults to `false`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "min_subtotal_amounts": {
+          "description": "Positive minimum subtotal keyed by every market currency, as decimal strings, when `min_subtotal_enabled` is true. Cleared when it is false.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "min_subtotal_enabled": {
+          "description": "Whether the fee applies only when the discounted merchandise subtotal of the whole cart is at least `min_subtotal_amounts` in the order currency. Defaults to `false`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "name": {
           "description": "Merchant-facing fee or service name.",
           "type": "string"
+        },
+        "percent_cap_amounts": {
+          "description": "Positive maximum fee keyed by every market currency when `percent_cap_enabled` is true. Cleared when disabled.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "percent_cap_enabled": {
+          "description": "Whether a percentage fee is at most `percent_cap_amounts`. Only for `fee_type` `percent`. Defaults to `false`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
         },
         "percent_value": {
           "description": "Percentage of discounted merchandise when `fee_type` is `percent`.",
@@ -23210,10 +23391,51 @@
             "null"
           ]
         },
+        "target_collection_ids": {
+          "description": "Targeted collection ids, 1 to `max_targets_per_fee`, when `applies_to` is `collections`. Every collection must exist in the store. Ignored otherwise.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "target_product_ids": {
+          "description": "Targeted product ids as decimal strings, 1 to `max_targets_per_fee`, when `applies_to` is `products`. Every product must exist in the store. Ignored otherwise.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
         "tax_class_id": {
           "description": "Tax class from this market applied to the resolved fee.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "text_max_length": {
+          "description": "The most characters the customer may write, 1 to `text_max_length_limit`. Defaults to `default_text_max_length` when `collect_text` is true; `null` otherwise.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "text_prompts": {
+          "description": "The text field's label keyed by storefront language (an enabled store language), at most `text_prompt_max_length` characters each. An empty value removes the language; a language left out uses the platform label. Replaces the saved prompts. Only with `collect_text`.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "text_required": {
+          "description": "Whether the customer must write the text to place an order with the fee selected. Only with `collect_text`.",
+          "type": [
+            "boolean",
             "null"
           ]
         }
