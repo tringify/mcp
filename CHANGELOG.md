@@ -1,5 +1,13 @@
 # Changelog
 
+## Customer email templates — 3 November 2026
+
+- New tools to read and write customer email templates: `list_email_types` (each type's `data_schema` and `sample_variants`), `list_email_templates`, `get_email_template`, `get_email_template_limits`, `create_email_template`, `update_email_template`, `delete_email_template`, `list_email_starter_templates`, `convert_email_template_to_code`, `list_email_type_settings` and `update_email_type_settings` (assign a template to an email type), plus `list_message_template_types`.
+- `preview_email_template` renders an unsaved template as a send would, with the type's sample data (`sample_variant`) or a translation (`locale`), and returns `subject`, `html`, `issues` and `compat`. `send_test_email` queues a `[TEST]` email to the connected merchant's own address only.
+- Templates are visual (`template_document`) or code (`editor_mode` `code`, `code_html`); an update that omits `editor_mode` keeps the template's mode.
+- Email translations by text: `get_email_template_translation`, `set_email_template_translation` (`values` by text key), `delete_email_template_translation` and `get_email_template_translation_coverage`.
+- The server instructions say customer emails are live and to preview, test and get the merchant's approval before saving.
+
 ## Checkout fee conditions and items-per-order limits — 2 November 2026
 
 - `create_market_checkout_fee` and `update_market_checkout_fee` take `applies_to` (`all`, `products` or `collections`) with `target_product_ids` (product ids as strings) or `target_collection_ids`, up to `max_targets_per_fee` (100); the fee then applies only when the cart holds a targeted item, a per-item fee counts only those items and a percentage fee takes only their discounted amount. `min_subtotal_enabled`/`min_subtotal_amounts` and `max_subtotal_enabled`/`max_subtotal_amounts` limit the fee to a discounted merchandise subtotal from or below an amount; `percent_cap_enabled`/`percent_cap_amounts` cap a percentage fee. Each enabled one needs an amount for every market currency. An optional fee can ask the customer for text: `collect_text`, `text_required`, `text_max_length` (1 to 500, default 150) and `text_prompts` per storefront language. Updates replace the whole definition: a setting left out is turned off and cleared. New errors: `CHECKOUT_FEE_APPLIES_TO_INVALID`, `CHECKOUT_FEE_TARGETS_REQUIRED`, `CHECKOUT_FEE_TARGETS_LIMIT`, `CHECKOUT_FEE_TARGET_NOT_FOUND`, `CHECKOUT_FEE_SUBTOTAL_RANGE_INVALID`, `CHECKOUT_FEE_PERCENT_CAP_NOT_PERCENT`, `CHECKOUT_FEE_TEXT_NOT_OPTIONAL`, `CHECKOUT_FEE_TEXT_MAX_LENGTH_INVALID`, `CHECKOUT_FEE_TEXT_PROMPT_TOO_LONG`, `CHECKOUT_FEE_TEXT_PROMPT_LANGUAGE`.

@@ -11647,6 +11647,30 @@
         "items": {
           "description": "Files to reserve. Each item requires `original_filename`, `mime_type`, and exact `size_bytes`; `alt_text` is optional.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "alt_text": {
+                "description": "Alt text for the file.",
+                "type": "string"
+              },
+              "mime_type": {
+                "description": "The file's MIME type.",
+                "type": "string"
+              },
+              "original_filename": {
+                "description": "The file's name.",
+                "type": "string"
+              },
+              "size_bytes": {
+                "description": "The file's exact size in bytes.",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "original_filename",
+              "mime_type",
+              "size_bytes"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -11748,7 +11772,7 @@
     "api_key": "files.remote-uploads.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/files/remote-uploads",
-    "description": "Have Tringify fetch images from URLs into Media. Creates one upload intent for each item, in request order, at most `max_files_per_upload` per call. Tringify fetches each `source_url` (HTTP or HTTPS) in the background and validates it as a Media image (JPEG, PNG, GIF or WebP) under the store's image limits; nothing is uploaded by the caller. An identical image already in Media is reused instead of stored again. Poll POST /files/upload-intents/status with the returned `intent_id`s: a `ready` result has the `file`, whose `id` is the file ID to use in products (`images[].file_id`), POST /products/bulk and other resources; a `rejected` result has the reason, for example a URL that could not be fetched or is not an image. Give each item an `idempotency_key` (for example the supplier's image ID) so a repeated call returns the same intents instead of fetching again. App uploads belong to the app installation, like signed uploads. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/remote-uploads. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Have Tringify fetch images from URLs into Media or Site Assets. Creates one upload intent for each item, in request order, at most `max_files_per_upload` per call. Tringify fetches each `source_url` (HTTP or HTTPS) in the background and validates it as an image (JPEG, PNG, GIF or WebP) under the store's image limits; nothing is uploaded by the caller. `file_type` picks the library: `upload` (Media, the default) for products and other catalog resources, or `site_asset` (Site Assets) for theme and Online Store image settings, which accept only Site Assets files. An identical image already in Media is reused instead of stored again; Site Assets imports always store a new file. Poll POST /files/upload-intents/status with the returned `intent_id`s and the same `file_type`: a `ready` result has the `file`, whose `id` is the file ID to use in products (`images[].file_id`), POST /products/bulk, theme settings and other resources; a `rejected` result has the reason, for example a URL that could not be fetched or is not an image. Give each item an `idempotency_key` (for example the supplier's image ID) so a repeated call returns the same intents instead of fetching again. App uploads belong to the app installation, like signed uploads. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/remote-uploads. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -12567,6 +12591,13 @@
             "null"
           ]
         },
+        "optional_fee_texts": {
+          "description": "Map of selected optional checkout fee IDs to the customer's text for fees that ask for one, such as a gift message. Each text is at most the fee's text_max_length characters (CHECKOUT_FEE_TEXT_TOO_LONG otherwise). A fee whose text is required needs it unless its amount is overridden (CHECKOUT_FEE_TEXT_REQUIRED). The order keeps it as checkout_fee_lines[].customer_text.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
         "order_confirmation": {
           "description": "The Order Placed notification only: email and message are independent booleans, each defaulting to false. For example {\"email\":true,\"message\":false}. Null, non-boolean values and unknown keys are rejected. Choices are saved with the order and respected when payment completes. True requests sending subject to store notification settings, customer contact, template, sender/provider and allowance. Omission requests neither. Other order notifications use the merchant’s independent event controls. Successful refunds distinguish partial from full repayment of captured funds. Cancellation does not move money and selects one cancellation notification based on completed refunds at cancellation; a refund completed later can notify separately. Pending or failed provider refunds do not send completed-refund notifications. Customer-facing refund amounts preserve settlement decimals in the order currency; API money remains exact decimal strings. Order history records the request and subsequent sending outcomes.",
           "type": [
@@ -12575,7 +12606,7 @@
           ]
         },
         "override_scopes": {
-          "description": "Independent boolean exceptions: discounts, limits, cod, fees and duties. Omitted members, or an omitted object, are false. Overriding one scope never enables another. The discounts scope lifts the market stacking rules (single mode, coupon limit, automatic-and-code combination) up to the platform code limit, but two offers still cannot use the same item units: a bundle, buy X get Y or free-gift offer whose items are already claimed by a higher-ranked offer does not apply. COD fee overrides do not bypass destination eligibility.",
+          "description": "Independent boolean exceptions: discounts, limits, cod, fees and duties. Omitted members, or an omitted object, are false. Overriding one scope never enables another. The limits scope lifts the market's minimum and maximum order value and order quantity (total items; CHECKOUT_ORDER_BELOW_MINIMUM_QUANTITY or CHECKOUT_ORDER_ABOVE_MAXIMUM_QUANTITY otherwise). The discounts scope lifts the market stacking rules (single mode, coupon limit, automatic-and-code combination) up to the platform code limit, but two offers still cannot use the same item units: a bundle, buy X get Y or free-gift offer whose items are already claimed by a higher-ranked offer does not apply. COD fee overrides do not bypass destination eligibility.",
           "type": [
             "object",
             "null"
@@ -12682,7 +12713,7 @@
     "api_key": "orders.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders/{id}",
-    "description": "Fetch one order with fulfillment plans. `base_currency_rate` and each payment and refund `exchange_rate` are exact; `base_currency_rate_display` and `exchange_rate_display` are the same rates for showing to people, rounded to six significant digits like currency `conversion_rate_display`. Never calculate with the display values. Order numbers are assigned using the merchant’s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Tax is split across `items[].tax_lines`, `shipping_tax_lines`, `cod_fee_tax_lines`, `duty_tax_lines` and `checkout_fee_lines[].tax_lines`; these amounts sum to `tax_total`. Each `checkout_fee_lines` entry carries `calculation` when checkout showed how the fee was worked out: `kind` (`per_item` or `percent`), `unit_amount` and `quantity` or `rate` and `base`, and `text`, the line the shopper read in the order's language; it is absent for a fixed per-order fee, a fee set to hide it, and a fee whose amount staff overrode. `status_name` is the order's status for `status_slug` in the request language (a system status in Tringify's wording, one of the store's own statuses by its translation in that language, else by its own name) and `status_color` its colour from Order Settings. The order names its codes in the request language (English by default) beside them: `financial_status_display`, `payment_status_display` (empty while the order has no payment), `channel_type_display` (null without a channel), `tax_exemption_source_display`, and `attribution_status.status_display` with `reason_display`. Each payment carries `status_display`, and `provider_label` with the gateway name an app or import sent when it is not one of Tringify's own; each refund carries `method_display`, and where they apply `provider_status_display`, `gift_card_status_display` and `store_credit_status_display` (the Store Credit progress, with the reason when it failed). Refunds expose `goods_total`, `tax_total` and `components` (actual returned amount, goods_amount, tax_amount, original tax_lines and item or charge identity). Item refunds also expose goods_amount, tax_amount and tax_lines. Components include amount-only allocations; quantities of zero do not return stock. Tax is prorated from the saved tax lines over remaining units or charge amounts, with the final unit taking the remainder, capped at collected tax less active refund reservations. Smaller refund amounts reduce tax proportionally. Money above selected units and charges is allocated across the remaining order without returning additional units. A component key identifies its source and can repeat for selected-unit and additional monetary allocations. Surplus money that was never sale value has no tax. Only completed refunds reduce tax reports. Base refund goods and tax consume each item's or charge's saved base allocations cumulatively, including its final remainder. Fully refunded products have zero net goods revenue. The signed base_rounding_amount reconciles settled cash with base_goods_amount plus base_tax_amount without moving revenue or tax between products. Snapshot items carry an immutable allocation_key, preserved when imports replace database IDs; supplied sale allocations and original refund evidence are validated and retained. Historical order CSV exports preserve refunds (per-refund components and original tax_lines), line_id and base_refunded_total. Imports reject missing or inconsistent refund evidence with ORDER_IMPORT_REFUND_EVIDENCE_INVALID; they never estimate taxable refund history from refunded_total. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` and `customer_tax_id_type` record the normalized, offline-validated ID and never prove registration or exemption. `tax_exemption_source` is customer_flag, staff_order or none, and `tax_id_state_mismatch` flags a GSTIN whose state differs from the Indian tax address. Saved customer IDs are used only when their type and validation match the zone; invalid saved IDs are ignored without blocking pricing or payment; `tax_exempt` and `invoice_only` are server-computed outcomes. `is_tax_included` records whether the order's prices include tax, and `tax_basis_applied` which address taxed it (`shipping` or `billing`). Each item's `tax_lines` list its taxes with `name`, `rate`, `amount`, `base_amount` (the amount in the store's base currency), `jurisdiction` (the ISO 3166-2 subdivision of the matched state zone, such as `IN-UP`, otherwise the tax country, such as `IN`) and `jurisdiction_type` (`subdivision` or `country`). Inclusive checkout shows VAT on duty as a separate added amount: 120 goods + 12 duty + 2.40 duty VAT = 134.40, with only 20 goods VAT labelled included. The item's `tax_rate` is the sum of its tax lines' rates (4% state tax + 4.5% county tax is 8.5), on create and edit alike. Tax is calculated at full precision on discounted amounts across the order; `tax_total` is rounded once to currency precision (half to even), then allocated across item lines, shipping, COD, duty tax and checkout fees by largest remainder, so line amounts always add up. Cart and checkout use each line's allocated tax for display. Thus 100 separate exclusive 0.25 lines at 19% have 4.75 tax: 75 lines receive 0.05 and 25 receive 0.04, displaying 75 times 0.30 plus 25 times 0.29 = 29.75, exactly the amount charged, with zero savings. A single 100-unit line also has 4.75 tax and 29.75 payable. When a merchant-approved tax-exempt buyer orders in a tax-inclusive market, every amount is charged without its included tax: `tax_exempt` is `true`, `is_tax_included` stays `true` and `tax_total` is 0. An item's `duty_customs_value` is its value after discounts without the tax its price includes, plus its share of shipping (when the country rule includes shipping) and of checkout fees that count toward customs value. When duty is collected at checkout, the import VAT on it is part of `tax_total` and listed in `pricing_snapshot.tax.duty_tax_lines`. `duty_collection_mode` records who pays import duties on an international shipment and is empty for domestic orders. When it is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`. When it is `pay_on_delivery`, `duty_total` plus `duty_tax_estimate` is the customer's estimate, outside `grand_total`. When it is `included_in_price`, they are the merchant's estimated duty cost, outside `grand_total` and not revenue. Estimates come from the merchant's rules; carriers and customs may charge differently. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token’s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Each entry in `discounts` lists its `allocations`: the part of that discount that reduced each order item (`order_item_id`, the `quantity` of units it reduced, `amount`, and `is_free` when it made those units free). A discount's allocations sum to its amount and an item's allocations sum to its `discount_amount`; an order-level manual discount is split in proportion to what each item has left after the other discounts. Quantity edits preserve discount shares consumed or reserved by refunds and prorate only the remaining aggregate discount over the remaining units; the saved allocations and pricing totals reconcile to those shares. Orders saved without pricing evidence have none. Each refund item reports `amount`, the refunded units at the item's unit price less their share of its discounts, and `discount_allocations`, each discount's share: the remaining aggregate line discount is prorated over the remaining units and rounded once, then distributed between discounts with each share capped at its remaining allocation. Successful and pending refunds consume shares; failed provider refunds release them. The final available units receive the unconsumed discount. Item amounts always subtract the authoritative line discount, even if historical per-discount allocations are unavailable. Historical refund breakdowns are reconstructed deterministically from the saved line allocations. The refund's own amount is what was returned and can differ from its items. An item that does not require shipping has no fulfillment: its `fulfillment_status` becomes `fulfilled` and `fulfilled_quantity` equals its quantity when captured payments cover the order total plus any returned surplus and the order is not cancelled. Refund status alone never fulfills a line. The order's `fulfillment_status` counts every item, so an unpaid order of only such items is `unfulfilled`. A pickup order carries `pickup_location`: the store location the customer collects it from, as chosen at checkout (`id`, `name`, address fields, `phone`, `ready_in`, `instructions`, `hours`); it is null for a delivery order. A pickup order's fulfillments move `pending` → `ready_for_pickup` → `picked_up` (or `cancelled`), with `ready_for_pickup_at` and `picked_up_at`; `picked_up` counts as delivered. A delivery order never takes a pickup status, and a pickup order never a delivery one. `checkout_answers` lists the shopper's answers to the store's checkout question, frozen when the order was placed: `block_id`, `kind` (`text` or `checkbox`), `label` (the question in the store's default language), `value` (what the shopper entered, `yes` for a ticked checkbox) and `locale` (the shopper's checkout language); it is empty when checkout asked nothing. Nobody can change answers after the order exists. Each entry in `payments` carries `label`, the payment method's name in the request language: a payment app's payment is named by the app that collected it, the platform's own methods by their name (for example Gift card or Cash on Delivery), and any other recorded method reads Other payment method. Show `label`; `method` stays the recorded identifier. While `can_create_refund` is true, `refund_destinations` lists where a refund can go back to: `method` (`original_payment` when a payment app collected money, `gift_card` once per Gift Card that paid, with the tender's id as `reference_id`, `store_credit` and `manual`), `label` in the request language (a Gift Card's shows its masked code, such as Original Gift Card **** 7K9P), `available`, `available_amount` (the most that destination can take now) and, when `available` is false, `unavailable_reason` saying why (for example, a guest checkout can't take Store Credit). An order paid more than one way (payment apps and Gift Cards) also lists `original_payment_methods` first: the refund goes back to every payment, each getting a share in proportion to what it still holds and never more than it paid, as one refund per payment. Its `sources` list each payment with `source`, `method`, `reference_id`, `label`, `available`, `available_amount` and, when it can't take money back, `unavailable_reason`; that share then goes to Store Credit or Manual, as the merchant chooses. Destinations are listed in the order Store Admin suggests them: the original payment methods, the original payment, then each Gift Card that paid, then Store Credit and Manual. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
+    "description": "Fetch one order with fulfillment plans. `base_currency_rate` and each payment and refund `exchange_rate` are exact; `base_currency_rate_display` and `exchange_rate_display` are the same rates for showing to people, rounded to six significant digits like currency `conversion_rate_display`. Never calculate with the display values. Order numbers are assigned using the merchant’s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Tax is split across `items[].tax_lines`, `shipping_tax_lines`, `cod_fee_tax_lines`, `duty_tax_lines` and `checkout_fee_lines[].tax_lines`; these amounts sum to `tax_total`. Each `checkout_fee_lines` entry carries `calculation` when checkout showed how the fee was worked out: `kind` (`per_item` or `percent`), `unit_amount` and `quantity` or `rate` and `base`, and `text`, the line the shopper read in the order's language; it is absent for a fixed per-order fee, a fee set to hide it, and a fee whose amount staff overrode. A percentage fee with a cap adds `cap`, the most it could be, and `capped`, true when the cap set the amount. A fee that asked the shopper for text, such as a gift message, carries `customer_text`, what the shopper wrote, and `text_prompt`, the prompt they answered in the order's language; show them under the fee name as `text_prompt: customer_text`. Both are absent when the fee asked for no text or the shopper left it empty, and an order edit keeps them with the unchanged fee. `status_name` is the order's status for `status_slug` in the request language (a system status in Tringify's wording, one of the store's own statuses by its translation in that language, else by its own name) and `status_color` its colour from Order Settings. The order names its codes in the request language (English by default) beside them: `financial_status_display`, `payment_status_display` (empty while the order has no payment), `channel_type_display` (null without a channel), `tax_exemption_source_display`, and `attribution_status.status_display` with `reason_display`. Each payment carries `status_display`, and `provider_label` with the gateway name an app or import sent when it is not one of Tringify's own; each refund carries `method_display`, and where they apply `provider_status_display`, `gift_card_status_display` and `store_credit_status_display` (the Store Credit progress, with the reason when it failed). Refunds expose `goods_total`, `tax_total` and `components` (actual returned amount, goods_amount, tax_amount, original tax_lines and item or charge identity). Item refunds also expose goods_amount, tax_amount and tax_lines. Components include amount-only allocations; quantities of zero do not return stock. Tax is prorated from the saved tax lines over remaining units or charge amounts, with the final unit taking the remainder, capped at collected tax less active refund reservations. Smaller refund amounts reduce tax proportionally. Money above selected units and charges is allocated across the remaining order without returning additional units. A component key identifies its source and can repeat for selected-unit and additional monetary allocations. Surplus money that was never sale value has no tax. Only completed refunds reduce tax reports. Base refund goods and tax consume each item's or charge's saved base allocations cumulatively, including its final remainder. Fully refunded products have zero net goods revenue. The signed base_rounding_amount reconciles settled cash with base_goods_amount plus base_tax_amount without moving revenue or tax between products. Snapshot items carry an immutable allocation_key, preserved when imports replace database IDs; supplied sale allocations and original refund evidence are validated and retained. Historical order CSV exports preserve refunds (per-refund components and original tax_lines), line_id and base_refunded_total. Imports reject missing or inconsistent refund evidence with ORDER_IMPORT_REFUND_EVIDENCE_INVALID; they never estimate taxable refund history from refunded_total. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` and `customer_tax_id_type` record the normalized, offline-validated ID and never prove registration or exemption. `tax_exemption_source` is customer_flag, staff_order or none, and `tax_id_state_mismatch` flags a GSTIN whose state differs from the Indian tax address. Saved customer IDs are used only when their type and validation match the zone; invalid saved IDs are ignored without blocking pricing or payment; `tax_exempt` and `invoice_only` are server-computed outcomes. `is_tax_included` records whether the order's prices include tax, and `tax_basis_applied` which address taxed it (`shipping` or `billing`). Each item's `tax_lines` list its taxes with `name`, `rate`, `amount`, `base_amount` (the amount in the store's base currency), `jurisdiction` (the ISO 3166-2 subdivision of the matched state zone, such as `IN-UP`, otherwise the tax country, such as `IN`) and `jurisdiction_type` (`subdivision` or `country`). Inclusive checkout shows VAT on duty as a separate added amount: 120 goods + 12 duty + 2.40 duty VAT = 134.40, with only 20 goods VAT labelled included. The item's `tax_rate` is the sum of its tax lines' rates (4% state tax + 4.5% county tax is 8.5), on create and edit alike. Tax is calculated at full precision on discounted amounts across the order; `tax_total` is rounded once to currency precision (half to even), then allocated across item lines, shipping, COD, duty tax and checkout fees by largest remainder, so line amounts always add up. Cart and checkout use each line's allocated tax for display. Thus 100 separate exclusive 0.25 lines at 19% have 4.75 tax: 75 lines receive 0.05 and 25 receive 0.04, displaying 75 times 0.30 plus 25 times 0.29 = 29.75, exactly the amount charged, with zero savings. A single 100-unit line also has 4.75 tax and 29.75 payable. When a merchant-approved tax-exempt buyer orders in a tax-inclusive market, every amount is charged without its included tax: `tax_exempt` is `true`, `is_tax_included` stays `true` and `tax_total` is 0. An item's `duty_customs_value` is its value after discounts without the tax its price includes, plus its share of shipping (when the country rule includes shipping) and of checkout fees that count toward customs value. When duty is collected at checkout, the import VAT on it is part of `tax_total` and listed in `pricing_snapshot.tax.duty_tax_lines`. `duty_collection_mode` records who pays import duties on an international shipment and is empty for domestic orders. When it is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`. When it is `pay_on_delivery`, `duty_total` plus `duty_tax_estimate` is the customer's estimate, outside `grand_total`. When it is `included_in_price`, they are the merchant's estimated duty cost, outside `grand_total` and not revenue. Estimates come from the merchant's rules; carriers and customs may charge differently. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token’s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Each entry in `discounts` lists its `allocations`: the part of that discount that reduced each order item (`order_item_id`, the `quantity` of units it reduced, `amount`, and `is_free` when it made those units free). A discount's allocations sum to its amount and an item's allocations sum to its `discount_amount`; an order-level manual discount is split in proportion to what each item has left after the other discounts. Quantity edits preserve discount shares consumed or reserved by refunds and prorate only the remaining aggregate discount over the remaining units; the saved allocations and pricing totals reconcile to those shares. Orders saved without pricing evidence have none. Each refund item reports `amount`, the refunded units at the item's unit price less their share of its discounts, and `discount_allocations`, each discount's share: the remaining aggregate line discount is prorated over the remaining units and rounded once, then distributed between discounts with each share capped at its remaining allocation. Successful and pending refunds consume shares; failed provider refunds release them. The final available units receive the unconsumed discount. Item amounts always subtract the authoritative line discount, even if historical per-discount allocations are unavailable. Historical refund breakdowns are reconstructed deterministically from the saved line allocations. The refund's own amount is what was returned and can differ from its items. An item that does not require shipping has no fulfillment: its `fulfillment_status` becomes `fulfilled` and `fulfilled_quantity` equals its quantity when captured payments cover the order total plus any returned surplus and the order is not cancelled. Refund status alone never fulfills a line. The order's `fulfillment_status` counts every item, so an unpaid order of only such items is `unfulfilled`. A pickup order carries `pickup_location`: the store location the customer collects it from, as chosen at checkout (`id`, `name`, address fields, `phone`, `ready_in`, `instructions`, `hours`); it is null for a delivery order. A pickup order's fulfillments move `pending` → `ready_for_pickup` → `picked_up` (or `cancelled`), with `ready_for_pickup_at` and `picked_up_at`; `picked_up` counts as delivered. A delivery order never takes a pickup status, and a pickup order never a delivery one. `checkout_answers` lists the shopper's answers to the store's checkout question, frozen when the order was placed: `block_id`, `kind` (`text` or `checkbox`), `label` (the question in the store's default language), `value` (what the shopper entered, `yes` for a ticked checkbox) and `locale` (the shopper's checkout language); it is empty when checkout asked nothing. Nobody can change answers after the order exists. Each entry in `payments` carries `label`, the payment method's name in the request language: a payment app's payment is named by the app that collected it, the platform's own methods by their name (for example Gift card or Cash on Delivery), and any other recorded method reads Other payment method. Show `label`; `method` stays the recorded identifier. While `can_create_refund` is true, `refund_destinations` lists where a refund can go back to: `method` (`original_payment` when a payment app collected money, `gift_card` once per Gift Card that paid, with the tender's id as `reference_id`, `store_credit` and `manual`), `label` in the request language (a Gift Card's shows its masked code, such as Original Gift Card **** 7K9P), `available`, `available_amount` (the most that destination can take now) and, when `available` is false, `unavailable_reason` saying why (for example, a guest checkout can't take Store Credit). An order paid more than one way (payment apps and Gift Cards) also lists `original_payment_methods` first: the refund goes back to every payment, each getting a share in proportion to what it still holds and never more than it paid, as one refund per payment. Its `sources` list each payment with `source`, `method`, `reference_id`, `label`, `available`, `available_amount` and, when it can't take money back, `unavailable_reason`; that share then goes to Store Credit or Manual, as the merchant chooses. Destinations are listed in the order Store Admin suggests them: the original payment methods, the original payment, then each Gift Card that paid, then Store Credit and Manual. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13701,7 +13732,7 @@
           ]
         },
         "send_welcome_email": {
-          "description": "Request the configured welcome email for this new customer. Defaults to false. Does not verify email or change marketing consent. Not accepted on update.",
+          "description": "Whether the customer gets the store welcome email the first time they sign in. Defaults to true; nothing is sent at creation. Set false for a customer who should not be welcomed as new, such as one moving from another platform. Does not verify email or change marketing consent. Not accepted on update.",
           "type": [
             "boolean",
             "null"
@@ -13870,6 +13901,49 @@
       "type": "object"
     },
     "name": "delete_customer",
+    "scopes": [
+      "store:customers:write"
+    ]
+  },
+  {
+    "api_key": "customers.merge",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/customers/{id}/merge",
+    "description": "Merge another customer into this one. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/customers/{id}/merge. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token from the CONFIRMATION_REQUIRED response. Omit it on the first request and resend the exact same id selection when using it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "On a confirmation retry, set this to true and send the returned confirmation_token. Omit it on the first request.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "Customer UUID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "merge_customer_id": {
+          "description": "UUID of the customer to merge into the customer in the path. It is deleted.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "merge_customer_id"
+      ],
+      "type": "object"
+    },
+    "name": "merge_customers",
     "scopes": [
       "store:customers:write"
     ]
@@ -15377,7 +15451,7 @@
           "type": "string"
         },
         "slug": {
-          "description": "Customer Tag slug. Omit on create to generate it from the name.",
+          "description": "Customer Tag slug: lowercase letters, numbers and hyphens. Omit it to generate it from the name.",
           "type": [
             "string",
             "null"
@@ -15441,7 +15515,7 @@
           ]
         },
         "slug": {
-          "description": "Customer Tag slug. Omit on create to generate it from the name.",
+          "description": "Customer Tag slug: lowercase letters, numbers and hyphens.",
           "type": [
             "string",
             "null"
@@ -15454,6 +15528,70 @@
       "type": "object"
     },
     "name": "update_customer_tag",
+    "scopes": [
+      "store:customers:write"
+    ]
+  },
+  {
+    "api_key": "customer-tags.add-customers",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/customer-tags/{id}/customers",
+    "description": "Add the Customer Tag to customers. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/customer-tags/{id}/customers. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_ids": {
+          "description": "Customer UUIDs to tag.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "id": {
+          "description": "Customer Tag UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "customer_ids"
+      ],
+      "type": "object"
+    },
+    "name": "add_customer_tag_to_customers",
+    "scopes": [
+      "store:customers:write"
+    ]
+  },
+  {
+    "api_key": "customer-tags.remove-customers",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/customer-tags/{id}/customers/remove",
+    "description": "Remove the Customer Tag from customers. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/customer-tags/{id}/customers/remove. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_ids": {
+          "description": "Customer UUIDs to untag.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "id": {
+          "description": "Customer Tag UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "customer_ids"
+      ],
+      "type": "object"
+    },
+    "name": "remove_customer_tag_from_customers",
     "scopes": [
       "store:customers:write"
     ]
@@ -28349,6 +28487,26 @@
         "items": {
           "description": "Exactly one file: `original_filename`, `mime_type` (`text/csv`) and `size_bytes`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "mime_type": {
+                "description": "The file's MIME type.",
+                "type": "string"
+              },
+              "original_filename": {
+                "description": "The file's name.",
+                "type": "string"
+              },
+              "size_bytes": {
+                "description": "The file's exact size in bytes.",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "original_filename",
+              "mime_type",
+              "size_bytes"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -30583,6 +30741,26 @@
         "items": {
           "description": "Exactly one file: `original_filename` ending in `.csv`, `mime_type` `text/csv` and `size_bytes`.",
           "items": {
+            "additionalProperties": false,
+            "properties": {
+              "mime_type": {
+                "description": "The file's MIME type.",
+                "type": "string"
+              },
+              "original_filename": {
+                "description": "The file's name.",
+                "type": "string"
+              },
+              "size_bytes": {
+                "description": "The file's exact size in bytes.",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "original_filename",
+              "mime_type",
+              "size_bytes"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -31560,10 +31738,700 @@
     ]
   },
   {
+    "api_key": "email-templates.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email-templates/limits",
+    "description": "Fetch email-template limits and supported types. Returns list, field-length, per-store, status, and template-type constraints for the block-document endpoints. `template_type_options` lists the template types and `status_options` the list's status filter (`active`, `inactive`), each `value` with its `label` in the request language (English by default). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_email_template_limits",
+    "scopes": [
+      "store:marketing:read"
+    ]
+  },
+  {
+    "api_key": "email-templates.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email-templates",
+    "description": "List the store's reusable customer email templates. Returns paginated transactional and promotional templates with their complete EmailBuilder block documents. Use template_type and status to narrow assignment choices. A template with a template_type carries `template_type_name`, the type named in the request language (English by default). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search template names and subjects.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Filter by `active` or `inactive`.",
+          "type": "string"
+        },
+        "template_type": {
+          "description": "Filter by a supported template type.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_email_templates",
+    "scopes": [
+      "store:marketing:read"
+    ]
+  },
+  {
+    "api_key": "email-templates.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/email-templates",
+    "description": "Create a block-document email template. A visual template (`editor_mode` `visual`, the default) is its `template_document`, an EmailBuilder block document with a renderable root; start from a starter design or an existing template. A code-mode template (`editor_mode` `code`) renders from `code_html`, Vascula source, and keeps `template_document` as its design. Texts, subjects and code are Vascula, the template language of themes: `{{ order.number }}` prints a value, `{{ order.totals.total | money }}` filters it, `{% if order.note %}…{% endif %}` decides; a template reads only the values in its email type's `data_schema` (email-types.list), and a value that may be empty takes `| default: \"…\"`. A save is checked like a send: a template that does not compile or reads an unknown value is refused with MARKETING_TEMPLATE_INVALID and its `issues`, each with its `code`, `block_id`, `prop`, `line`, `col` and `message`; warnings come back in the saved template's `issues`. Preview with email-templates.render before saving. Creating a template does not assign it: call email-type-settings.update after creation. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email-templates. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code_html": {
+          "description": "Vascula source of a code-mode template. Required with editor_mode code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "Internal template description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "editor_mode": {
+          "description": "`visual` (the block document) or `code` (code_html). Omitted on update keeps the template's mode; omitted on create is visual.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_active": {
+          "description": "Whether the template is available for assignment.",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "Merchant-facing template name.",
+          "type": "string"
+        },
+        "preview_text": {
+          "description": "Inbox preview text.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subject": {
+          "description": "Email subject.",
+          "type": "string"
+        },
+        "template_document": {
+          "description": "Complete canonical EmailBuilder document.",
+          "type": "object"
+        },
+        "template_type": {
+          "description": "Compatible transactional email type.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "subject",
+        "template_document",
+        "is_active"
+      ],
+      "type": "object"
+    },
+    "name": "create_email_template",
+    "scopes": [
+      "store:marketing:write"
+    ]
+  },
+  {
+    "api_key": "email-templates.render",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/email-templates/render",
+    "description": "Render an unsaved email template with sample data. Renders the template exactly as a send would, without saving or sending, with the sample data of `email_type` (a campaign when omitted); no customer or order records are read. `sample_variant` picks one of the type's `sample_variants` (email-types.list), for example `minimal` (only the values every send has, to check empty fields), `cod`, `pickup` or `many_items`; omitted uses `full`. Send the visual template's `template_document`, or `editor_mode` `code` with `code_html`; `template_id` names the saved template being edited. `locale` renders the template's translation in that language. Returns the rendered `subject` and `html`, the template `issues` (severity `error` stops a save and a send; `warning` does not) and `compat`, the email-client compatibility warnings. Template problems are returned as issues with whatever could be rendered, never as a failed request. Texts, subjects and code are Vascula, the template language of themes: `{{ order.number }}` prints a value, `{{ order.totals.total | money }}` filters it, `{% if order.note %}…{% endif %}` decides; a template reads only the values in its email type's `data_schema` (email-types.list), and a value that may be empty takes `| default: \"…\"`. A save is checked like a send: a template that does not compile or reads an unknown value is refused with MARKETING_TEMPLATE_INVALID and its `issues`, each with its `code`, `block_id`, `prop`, `line`, `col` and `message`; warnings come back in the saved template's `issues`. Preview with email-templates.render before saving. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email-templates/render. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code_html": {
+          "description": "Vascula source of a code-mode template.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "editor_mode": {
+          "description": "`visual` (default) or `code`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email_type": {
+          "description": "Email type whose sample data the template renders with, from email-types. Omitted renders a campaign.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "locale": {
+          "description": "Render the template's translation in this language.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "preview_text": {
+          "description": "Inbox preview text.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sample_variant": {
+          "description": "One of the email type's sample_variants, such as minimal, cod or pickup; full when omitted.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subject": {
+          "description": "Subject to render.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_document": {
+          "description": "Block document of a visual template. Required unless editor_mode is code.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "template_id": {
+          "description": "Saved template being edited.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "preview_email_template",
+    "scopes": [
+      "store:marketing:read"
+    ]
+  },
+  {
+    "api_key": "email-templates.convert-to-code",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/email-templates/convert-to-code",
+    "description": "Turn a visual template into Vascula code. Converts a visual template (its block document, subject and preview text) into the code-mode source the same design renders from, with what the conversion found in `issues`: errors for logic it could not keep, warnings for blocks or values it left out. Nothing is saved; to keep it, update the template with `editor_mode` `code` and the returned `code_html`. The code is returned even when it has issues so they can be fixed first. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email-templates/convert-to-code. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "email_type": {
+          "description": "Email type whose values the template reads, from email-types.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "preview_text": {
+          "description": "Inbox preview text.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subject": {
+          "description": "Subject of the template.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_document": {
+          "description": "Block document of the visual template.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "template_document"
+      ],
+      "type": "object"
+    },
+    "name": "convert_email_template_to_code",
+    "scopes": [
+      "store:marketing:read"
+    ]
+  },
+  {
+    "api_key": "email-templates.starters",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email-templates/starters",
+    "description": "List the platform's starter designs to create a template from. Returns the starter designs Store Admin offers when a template is created, each with its `slug`, `name`, `category` and complete `template_document`. Create a template from one by sending its `template_document` (with a name and subject) to email-templates.create; it is a copy, so later changes to the starter never touch it. `category` narrows the list (for example `transactional`), `search` matches names. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates/starters. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "description": "Starter category.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "Page number.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Search starter names.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_email_starter_templates",
+    "scopes": [
+      "store:marketing:read"
+    ]
+  },
+  {
+    "api_key": "email-templates.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email-templates/{templateId}",
+    "description": "Fetch one email template and its complete block document. The template must belong to the token's store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates/{templateId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "template_id": {
+          "description": "Email template id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_email_template",
+    "scopes": [
+      "store:marketing:read"
+    ]
+  },
+  {
+    "api_key": "email-templates.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/email-templates/{templateId}",
+    "description": "Replace one email template's editable definition. Replaces the template with the fields sent: send the complete current block document. Omitting `editor_mode` keeps the template's mode, and `code_html` then replaces a code-mode template's code; `editor_mode` `visual` returns a code-mode template to its design and drops its code. Complex nested blocks are retained exactly. Texts, subjects and code are Vascula, the template language of themes: `{{ order.number }}` prints a value, `{{ order.totals.total | money }}` filters it, `{% if order.note %}…{% endif %}` decides; a template reads only the values in its email type's `data_schema` (email-types.list), and a value that may be empty takes `| default: \"…\"`. A save is checked like a send: a template that does not compile or reads an unknown value is refused with MARKETING_TEMPLATE_INVALID and its `issues`, each with its `code`, `block_id`, `prop`, `line`, `col` and `message`; warnings come back in the saved template's `issues`. Preview with email-templates.render before saving. A template assigned to an email type cannot be deactivated (EMAIL_TEMPLATE_ASSIGNED_CANNOT_DEACTIVATE). There is no version check: read the template again right before writing so another person's change is not overwritten. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email-templates/{templateId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code_html": {
+          "description": "Vascula source of a code-mode template. Required with editor_mode code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "description": "Internal template description.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "editor_mode": {
+          "description": "`visual` (the block document) or `code` (code_html). Omitted on update keeps the template's mode; omitted on create is visual.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_active": {
+          "description": "Whether the template is available for assignment.",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "Merchant-facing template name.",
+          "type": "string"
+        },
+        "preview_text": {
+          "description": "Inbox preview text.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subject": {
+          "description": "Email subject.",
+          "type": "string"
+        },
+        "template_document": {
+          "description": "Complete canonical EmailBuilder document.",
+          "type": "object"
+        },
+        "template_id": {
+          "description": "Email template id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id",
+        "name",
+        "subject",
+        "template_document",
+        "is_active"
+      ],
+      "type": "object"
+    },
+    "name": "update_email_template",
+    "scopes": [
+      "store:marketing:write"
+    ]
+  },
+  {
+    "api_key": "email-templates.send-test",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/email-templates/{templateId}/send-test",
+    "description": "Send a test of a template to yourself. Queues a test email of the saved template, rendered with sample data and marked [TEST] in the subject, to the person the request acts for: the staff member who created the admin token, or the merchant using the connected tool. It always goes to that address, so a test never reaches a customer. App tokens cannot send tests. Fields sent replace the saved template's for this send only, so an unsaved edit can be tried first; nothing is saved. `sample_variant` picks one of the type's `sample_variants`; `from_address_id` one of the store's sender addresses (the default sender when omitted). A test uses the store's email allowance like any email. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email-templates/{templateId}/send-test. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code_html": {
+          "description": "Vascula source for this test.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "editor_mode": {
+          "description": "`visual` or `code` for this test.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email_type": {
+          "description": "Email type whose sample data to use; the template's own type when omitted.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "from_address_id": {
+          "description": "Sender address id; the default sender when omitted.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "preview_text": {
+          "description": "Preview text for this test.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sample_variant": {
+          "description": "One of the email type's sample_variants, such as minimal, cod or pickup; full when omitted.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subject": {
+          "description": "Subject for this test instead of the saved one.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_document": {
+          "description": "Block document for this test.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "template_id": {
+          "description": "Email template id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "type": "object"
+    },
+    "name": "send_test_email",
+    "scopes": [
+      "store:marketing:write"
+    ]
+  },
+  {
+    "api_key": "email-templates.translation.coverage",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email-templates/translations/coverage",
+    "description": "Count translated and outdated texts per template and language. Returns `templates`: for each id in `template_ids` (comma-separated, at most 200), each of the store's languages other than the default with its `status` and how many of the template's texts are `translated`, `outdated` (the original changed after the translation was written) and their `total`, plus `complete_count` of `language_count` and a worded `summary`. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates/translations/coverage. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "template_ids": {
+          "description": "Comma-separated email template ids.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_ids"
+      ],
+      "type": "object"
+    },
+    "name": "get_email_template_translation_coverage",
+    "scopes": [
+      "store:marketing:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "email-templates.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email-templates/{templateId}/translations/{locale}",
+    "description": "Read every text of a template in one language. An email template is translated text by text: its subject (`subject`), preview text (`preview_text`) and each text of its blocks (`block.\u003cblockId\u003e.\u003cprop\u003e`) or of its code have a key. A customer whose language has a translation gets it; a missing text falls back to the default language's. `locale` is one of the store's languages other than its default. Returns `fields`: one per text, with its `key`, `kind`, the `source` text, the translated `value` (empty when untranslated), its `status` (`translated`, `outdated` or `missing`), the `variables` the translation must keep, `max_length` and whether it is `multiline`. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates/{templateId}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "One of the store's languages other than its default.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "template_id": {
+          "description": "Email template id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_email_template_translation",
+    "scopes": [
+      "store:marketing:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "email-templates.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/email-templates/{templateId}/translations/{locale}",
+    "description": "Save translated texts of a template by key. An email template is translated text by text: its subject (`subject`), preview text (`preview_text`) and each text of its blocks (`block.\u003cblockId\u003e.\u003cprop\u003e`) or of its code have a key. A customer whose language has a translation gets it; a missing text falls back to the default language's. `locale` is one of the store's languages other than its default. Send `values`, an object of text key to translated text, with the keys email-templates.translation.get returns; texts not sent keep their current translation. A translation must keep every value in the text's `variables` (`{{ order.number }}`) and stay within `max_length`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email-templates/{templateId}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "One of the store's languages other than its default.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "template_id": {
+          "description": "Email template id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "values": {
+          "description": "Text key to translated text.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "template_id",
+        "locale",
+        "values"
+      ],
+      "type": "object"
+    },
+    "name": "set_email_template_translation",
+    "scopes": [
+      "store:marketing:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "email-templates.translation.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/email-templates/{templateId}/translations/{locale}",
+    "description": "Remove a template's translation in one language. An email template is translated text by text: its subject (`subject`), preview text (`preview_text`) and each text of its blocks (`block.\u003cblockId\u003e.\u003cprop\u003e`) or of its code have a key. A customer whose language has a translation gets it; a missing text falls back to the default language's. `locale` is one of the store's languages other than its default. Afterwards the email goes out in the store's default language to customers who use this one. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email-templates/{templateId}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "One of the store's languages other than its default.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "template_id": {
+          "description": "Email template id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "delete_email_template_translation",
+    "scopes": [
+      "store:marketing:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "email-templates.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/email-templates/{templateId}",
+    "description": "Delete an unused email template. Deletion is blocked while any transactional or promotional email type is assigned to the template. Reassign the type first so customer communications never silently lose their template. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email-templates/{templateId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "template_id": {
+          "description": "Email template id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_email_template",
+    "scopes": [
+      "store:marketing:write"
+    ]
+  },
+  {
+    "api_key": "email-types.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email-types",
+    "description": "List the transactional and promotional customer-email registry. Returns every supported email type, compatible template type, whether merchants may disable it, and its `data_schema`: the values its templates read, as dotted paths such as `order.number` (the same values as the SMS and WhatsApp templates of the type, apart from the per-channel `email` root and the `message` root that only texts of promotional types have). Each type carries `type_info`; classify a type by `type_info.category` rather than by its name. `sample_variants` names the sample data a preview or test send of the type can use (email-templates.render, email-templates.send-test), `full` first; `minimal` holds only the values every send has, so it shows how a template reads when optional values are empty. Write templates from the `data_schema`: the platform refuses any other value. Promotional campaigns use the marketing sender and consent rules. A type whose `type_info.tax_details` is true also returns `sample_tax_details`: the `heading` and `rows` (`label`, `value`) of its sample tax breakdown, as its Tax details block shows them. A type whose data has the `order` root also returns `sample_order_details`: the parts of its sample order (`key` is `shipping_address`, `billing_address`, `delivery` (the shipping method, or the pickup location of a pickup order), `payment` or `note`; `heading`; `lines`), in their default order, as its Order details block shows them; a type without it does not offer the block. The samples follow the store: amounts in its base currency, addresses and phone numbers in its home country, and one tax line per tax its own tax setup charges there, marked Included or Added as its prices include tax or not; a store with no tax there shows one line, `Tax (10%)`. `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its template places the Tax details block or `{% tax_details %}`, and at the end of the email when the template has neither; no other email shows it). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-types. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_email_types",
+    "scopes": [
+      "store:marketing:read"
+    ]
+  },
+  {
+    "api_key": "email-type-settings.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/email-type-settings",
+    "description": "Read the selected template and enabled state for every email type. Always-on security and access-code emails are identified by the email-type registry and cannot be disabled. Each entry carries the email type's `type_info`. `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its template places the Tax details block or `{% tax_details %}`, and at the end of the email when the template has neither; no other email shows it). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-type-settings. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_email_type_settings",
+    "scopes": [
+      "store:marketing:read"
+    ]
+  },
+  {
+    "api_key": "email-type-settings.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/email-type-settings/{type}",
+    "description": "Assign a compatible template or change a toggleable email's enabled state. template_id is required on every write, including enabled-state changes. The template must belong to this store and either match the email type or have no specific template type. Only types with toggleable=true accept enabled=false; currently restock_notification and gift_card_cancelled. Other order-event sending controls are on customer-notifications. Creating a template does not assign it: call this endpoint after creation. A successful assignment does not confirm delivery. Sender verification, event controls, and available email allowance still apply. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email-type-settings/{type}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "description": "Enabled state for a toggleable email type.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "template_id": {
+          "description": "Compatible email template id. Required even when changing enabled.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Email type from the email-types endpoint.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "template_id"
+      ],
+      "type": "object"
+    },
+    "name": "update_email_type_settings",
+    "scopes": [
+      "store:marketing:write"
+    ]
+  },
+  {
+    "api_key": "message-templates.types",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/message-templates/types",
+    "description": "List supported customer message types. Returns every message type, its `type_info`, its supported template channels and its `data_schema`: the values its templates read, in the same shape and with the same paths as the email of the type (`{{ order.number }}`). Promotional types (`type_info.category.key` `promotional`) also have the per-send `message` root (`message.opt_out_url`, the text's opt-out link); no other type has it. `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its template places the Tax details block or `{% tax_details %}`, and at the end of the email when the template has neither; no other email shows it). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates/types. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_message_template_types",
+    "scopes": [
+      "store:marketing:read"
+    ]
+  },
+  {
     "api_key": "message-templates.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/message-templates",
-    "description": "List SMS and WhatsApp templates. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates. Only the connected store is accessible.",
+    "description": "List SMS and WhatsApp templates. Returns a separate template row for each message type and channel. SMS and WhatsApp content is never shared implicitly. Each row carries `type_info` for its message type. `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its template places the Tax details block or `{% tax_details %}`, and at the end of the email when the template has neither; no other email shows it). Each row has its `id` (the ID its translations use), `default_locale` and `default_label` (the language of `content`), `translations`: its state in every other store language (`translated`, `outdated` or `not_translated`, with `updated_at` of the translation), and `translations_updated_at`. Read and write the other languages with the message template translation endpoints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -31578,7 +32446,7 @@
     "api_key": "message-templates.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/message-templates/{type}",
-    "description": "Fetch one channel-specific message template. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates/{type}. Only the connected store is accessible.",
+    "description": "Fetch one channel-specific message template. `channel` is required: pass `channel=sms` or `channel=whatsapp`. A request without it is refused with MESSAGE_TEMPLATE_CHANNEL_REQUIRED. Each row has its `id` (the ID its translations use), `default_locale` and `default_label` (the language of `content`), `translations`: its state in every other store language (`translated`, `outdated` or `not_translated`, with `updated_at` of the translation), and `translations_updated_at`. Read and write the other languages with the message template translation endpoints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates/{type}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31607,7 +32475,7 @@
     "api_key": "message-templates.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/message-templates/{type}",
-    "description": "Update one channel-specific template. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/message-templates/{type}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update one channel-specific template. `channel` is required so an integration cannot accidentally overwrite SMS while intending to edit WhatsApp; a request without it is refused with MESSAGE_TEMPLATE_CHANNEL_REQUIRED. Content is checked like an email template of the type: it must compile and read only values in the type's `data_schema` (otherwise MARKETING_TEMPLATE_INVALID with the `issues`), and a type that sends a code (login, contact confirmation and order tracking codes) must print `{{ access.code }}` and every promotional type `{{ message.opt_out_url }}` (otherwise MESSAGE_TEMPLATE_MISSING_VARIABLE). Only promotional types have `message.opt_out_url`; any other type using it is refused like any value its `data_schema` does not have. A changed text leaves its translations in place and reports them outdated until they are updated. A change sends `message_templates/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/message-templates/{type}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31641,7 +32509,7 @@
     "api_key": "message-templates.reset",
     "api_method": "POST",
     "api_path": "/api/2025-01/message-templates/{type}/reset",
-    "description": "Reset one channel-specific template to its platform default. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/message-templates/{type}/reset. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Reset one channel-specific template to its platform default. `channel` is required: pass `channel=sms` or `channel=whatsapp`; a request without it is refused with MESSAGE_TEMPLATE_CHANNEL_REQUIRED. The reset affects only the requested channel. Translations stay and are reported outdated when the default text differs from the one they were written against. A reset that changes the text sends `message_templates/update`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/message-templates/{type}/reset. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31670,7 +32538,7 @@
     "api_key": "message-templates.translation.batch-get",
     "api_method": "GET",
     "api_path": "/api/2025-01/message-templates/translations/{locale}",
-    "description": "Fetch message template translations in batch. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch message template translations in batch. A message template is one SMS or WhatsApp text: one message type and channel, addressed here by the `id` that List message templates and Get a message template return. Its `content` translates per store language; a customer whose language has a translation receives it, every other customer the template's own text. A translation keeps the original's values and tags exactly (`{{ ... }}` and `{% ... %}`, in any order within the same block): only the text around them changes, and one that does not is refused with MARKETING_TRANSLATION_VARIABLES_MISMATCH and `details.variables` listing what to keep. It must not be blank (MESSAGE_TEMPLATE_CONTENT_REQUIRED) and holds at most the template's `max_content_length` characters (MESSAGE_TEMPLATE_CONTENT_TOO_LONG). A translation written against an earlier original is reported outdated. Store Admin, the Tringify mobile app, translation CSV (resource `message_template`), AI translation and MCP translate the same texts. Each change sends `message_templates/translations/update`, or `message_templates/translations/delete` when a translation is cleared. Returns a `resources` entry keyed by `message_template:{id}` for each requested template (at most 100 per call); a template without a translation has an empty object. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31751,7 +32619,7 @@
     "api_key": "message-templates.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/message-templates/{id}/translations/{locale}",
-    "description": "Fetch one message template's text in another store language. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates/{id}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Fetch one message template's text in another store language. A message template is one SMS or WhatsApp text: one message type and channel, addressed here by the `id` that List message templates and Get a message template return. Its `content` translates per store language; a customer whose language has a translation receives it, every other customer the template's own text. A translation keeps the original's values and tags exactly (`{{ ... }}` and `{% ... %}`, in any order within the same block): only the text around them changes, and one that does not is refused with MARKETING_TRANSLATION_VARIABLES_MISMATCH and `details.variables` listing what to keep. It must not be blank (MESSAGE_TEMPLATE_CONTENT_REQUIRED) and holds at most the template's `max_content_length` characters (MESSAGE_TEMPLATE_CONTENT_TOO_LONG). A translation written against an earlier original is reported outdated. Store Admin, the Tringify mobile app, translation CSV (resource `message_template`), AI translation and MCP translate the same texts. Each change sends `message_templates/translations/update`, or `message_templates/translations/delete` when a translation is cleared. Returns the stored `content` translation in the selected locale with `is_outdated`; a template without a translation in this locale returns an empty `fields` object. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates/{id}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31782,7 +32650,7 @@
     "api_key": "message-templates.translation.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/message-templates/{id}/translations/{locale}",
-    "description": "Set or clear one message template's text in another store language. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/message-templates/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set or clear one message template's text in another store language. A message template is one SMS or WhatsApp text: one message type and channel, addressed here by the `id` that List message templates and Get a message template return. Its `content` translates per store language; a customer whose language has a translation receives it, every other customer the template's own text. A translation keeps the original's values and tags exactly (`{{ ... }}` and `{% ... %}`, in any order within the same block): only the text around them changes, and one that does not is refused with MARKETING_TRANSLATION_VARIABLES_MISMATCH and `details.variables` listing what to keep. It must not be blank (MESSAGE_TEMPLATE_CONTENT_REQUIRED) and holds at most the template's `max_content_length` characters (MESSAGE_TEMPLATE_CONTENT_TOO_LONG). A translation written against an earlier original is reported outdated. Store Admin, the Tringify mobile app, translation CSV (resource `message_template`), AI translation and MCP translate the same texts. Each change sends `message_templates/translations/update`, or `message_templates/translations/delete` when a translation is cleared. Only `content` is translatable. Send an empty string to clear the translation; customers in that language then receive the template's own text. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/message-templates/{id}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {

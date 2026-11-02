@@ -913,12 +913,39 @@ Each tool needs the access of the import or export `type` it works on: read for 
 | `bulk_delete_files` | `POST /api/2025-01/files/bulk-delete` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `health_market_duty_country_rule` | `GET /api/2025-01/markets/duty-health` | store:markets:read, store:products:read |
 
+## Customer emails
+
+Customer emails are live: a template assigned to an email type is what customers receive from the next send. Start with `list_email_types`: each type's `data_schema` lists the only values its templates may read (`{{ order.number }}`), and `sample_variants` the sample data a preview or test can use (`full`; `minimal` shows empty optional values; `cod`, `pickup`, `many_items` and others). Texts, subjects and code are Vascula, the template language of themes: `{{ value | filter }}`, `{% if %}…{% endif %}`, and `| default: "…"` for a value that may be empty.
+
+A template is visual (`editor_mode` `visual`: `template_document`, an EmailBuilder block document) or code (`editor_mode` `code`: `code_html`). Create one from `list_email_starter_templates` or from an existing template; `convert_email_template_to_code` turns a visual template into code without saving. An update that omits `editor_mode` keeps the template's mode. Before saving, render with `preview_email_template` and fix every issue of severity `error` (a save with one is refused with `MARKETING_TEMPLATE_INVALID` and its `issues`), then `send_test_email`, which always goes to the connected merchant's own address and never to a customer. Save only once the merchant approves; to try a design without changing what customers get, create a separate template and assign it with `update_email_type_settings` when approved. Templates are translated text by text: `get_email_template_translation` returns every text's `key`, original, translation, `status` and the `variables` a translation must keep; `set_email_template_translation` saves `values` by key.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_email_types` | `GET /api/2025-01/email-types` | store:marketing:read |
+| `list_email_type_settings` | `GET /api/2025-01/email-type-settings` | store:marketing:read |
+| `update_email_type_settings` | `PUT /api/2025-01/email-type-settings/{type}` | store:marketing:write |
+| `get_email_template_limits` | `GET /api/2025-01/email-templates/limits` | store:marketing:read |
+| `list_email_templates` | `GET /api/2025-01/email-templates` | store:marketing:read |
+| `get_email_template` | `GET /api/2025-01/email-templates/{templateId}` | store:marketing:read |
+| `list_email_starter_templates` | `GET /api/2025-01/email-templates/starters` | store:marketing:read |
+| `create_email_template` | `POST /api/2025-01/email-templates` | store:marketing:write |
+| `update_email_template` | `PUT /api/2025-01/email-templates/{templateId}` | store:marketing:write |
+| `delete_email_template` | `DELETE /api/2025-01/email-templates/{templateId}` | store:marketing:write |
+| `preview_email_template` | `POST /api/2025-01/email-templates/render` | store:marketing:read |
+| `send_test_email` | `POST /api/2025-01/email-templates/{templateId}/send-test` | store:marketing:write |
+| `convert_email_template_to_code` | `POST /api/2025-01/email-templates/convert-to-code` | store:marketing:read |
+| `get_email_template_translation_coverage` | `GET /api/2025-01/email-templates/translations/coverage` | store:marketing:read, store:settings.languages:read |
+| `get_email_template_translation` | `GET /api/2025-01/email-templates/{templateId}/translations/{locale}` | store:marketing:read, store:settings.languages:read |
+| `set_email_template_translation` | `PUT /api/2025-01/email-templates/{templateId}/translations/{locale}` | store:marketing:write, store:settings.languages:write |
+| `delete_email_template_translation` | `DELETE /api/2025-01/email-templates/{templateId}/translations/{locale}` | store:marketing:write, store:settings.languages:write |
+
 ## Message templates
 
 SMS and WhatsApp templates are one row per message type and channel: list them with `list_message_templates` and pass `type` and `channel` (`sms` or `whatsapp`) to the others. Each row carries its `id`, `default_locale` and `translations`, its state in every other store language (`translated`, `outdated` or `not_translated`). The translation tools take that `id`. A translation keeps the original's values and tags exactly (`{{ ... }}`, `{% ... %}`); otherwise it is refused with `MARKETING_TRANSLATION_VARIABLES_MISMATCH` and `details.variables` lists what to keep. Blank text is refused with `MESSAGE_TEMPLATE_CONTENT_REQUIRED`, text over the template limit with `MESSAGE_TEMPLATE_CONTENT_TOO_LONG`; an empty string clears a translation. Translation changes send `message_templates/translations/update`, or `message_templates/translations/delete` when cleared. Source edits use `message_templates/update`.
 
 | Tool | Store API operation | Required access |
 | --- | --- | --- |
+| `list_message_template_types` | `GET /api/2025-01/message-templates/types` | store:marketing:read |
 | `list_message_templates` | `GET /api/2025-01/message-templates` | store:marketing:read |
 | `get_message_template` | `GET /api/2025-01/message-templates/{type}` | store:marketing:read |
 | `update_message_template` | `PUT /api/2025-01/message-templates/{type}` | store:marketing:write |
