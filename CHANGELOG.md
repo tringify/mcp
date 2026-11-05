@@ -1,5 +1,11 @@
 # Changelog
 
+## Emails built from sections — 5 November 2026
+
+- An email template is a list of sections (`document`) styled by the store's email brand; `template_document`, `editor_mode`, `code_html` and `convert_email_template_to_code` are gone.
+- New tools: `get_email_design` (sections, brand, the email's `data_schema` and `sample_variants`), `update_email_brand`, `get_email_section`, `save_email_section` and `delete_email_section` (the store's own sections in Vascula, used as `custom:<name>`).
+- Translation keys of section texts are `section.<id>.<setting>`.
+
 ## Customer email templates — 3 November 2026
 
 - New tools to read and write customer email templates: `list_email_types` (each type's `data_schema` and `sample_variants`), `list_email_templates`, `get_email_template`, `get_email_template_limits`, `create_email_template`, `update_email_template`, `delete_email_template`, `list_email_starter_templates`, `convert_email_template_to_code`, `list_email_type_settings` and `update_email_type_settings` (assign a template to an email type), plus `list_message_template_types`.
