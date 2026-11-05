@@ -866,7 +866,7 @@ Gift Cards are also a CSV type for the [CSV import and export tools](#csv-import
 
 ## CSV imports and exports
 
-Translation CSV uses `type: "translations"` and `options: {resource: "message_template" | "email_template" | "order_status" | "file" | "product_media", locale: "fr"}` for these resources, alongside the other types returned by the backend. List the current import/export types and use their permissions and limits. Upload-intent creation keeps `resource` at its existing top level.
+Translation CSV uses `type: "translations"` and `options: {resource: "message_template" | "email" | "order_status" | "file" | "product_media", locale: "fr"}` for these resources, alongside the other types returned by the backend. List the current import/export types and use their permissions and limits. Upload-intent creation keeps `resource` at its existing top level.
 
 - Message Templates: one SMS/WhatsApp message type and channel per row, field `content`.
 - Emails: one editor text per row, field `content`; `text_id` is `<template UUID>:<exact text_key>`. Subject, preview line, preheader, reachable visual block texts and code-mode text runs have the same granularity as the editor. Keep the exported keys, source columns and template syntax; edit translated text. Layout stays with the source template.
