@@ -34527,136 +34527,90 @@
     ]
   },
   {
-    "api_key": "email-templates.limits",
+    "api_key": "emails.limits",
     "api_method": "GET",
-    "api_path": "/api/2025-01/email-templates/limits",
-    "description": "Fetch email-template limits and supported types. Returns list, field-length, per-store, status, and template-type constraints for the block-document endpoints. `template_type_options` lists the template types and `status_options` the list's status filter (`active`, `inactive`), each `value` with its `label` in the request language (English by default). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates/limits. Only the connected store is accessible.",
+    "api_path": "/api/2025-01/emails/limits",
+    "description": "Fetch the email field limits. Returns `max_subject_length` and `max_preview_text_length` (characters) and `test_email_max_length`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/emails/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
       "type": "object"
     },
-    "name": "get_email_template_limits",
+    "name": "get_email_limits",
     "scopes": [
       "store:marketing:read"
     ]
   },
   {
-    "api_key": "email-templates.list",
+    "api_key": "emails.list",
     "api_method": "GET",
-    "api_path": "/api/2025-01/email-templates",
-    "description": "List the store's reusable customer email templates. Returns paginated transactional and promotional templates with their complete section documents. Use template_type and status to narrow assignment choices. A template with a template_type carries `template_type_name`, the type named in the request language (English by default). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates. Only the connected store is accessible.",
+    "api_path": "/api/2025-01/emails",
+    "description": "List the store's order and account emails. Each email type (email-types.list) has exactly one email in the store: its `subject`, `preview_text` and `code`. Returns `emails`, one per email type in the registry's order, each with its `email_type`, `type_info`, `toggleable`, `enabled`, `subject`, `preview_text` and `updated_at` (read an email's code with emails.get). `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its code places `{% render 'tax_details' %}`, and at the end of the email when it doesn't; no other email shows it). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/emails. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
-      "properties": {
-        "limit": {
-          "description": "Page size.",
-          "type": "integer"
-        },
-        "page": {
-          "description": "Page number.",
-          "type": "integer"
-        },
-        "search": {
-          "description": "Search template names and subjects.",
-          "type": "string"
-        },
-        "status": {
-          "description": "Filter by `active` or `inactive`.",
-          "type": "string"
-        },
-        "template_type": {
-          "description": "Filter by a supported template type.",
-          "type": "string"
-        }
-      },
+      "properties": {},
       "type": "object"
     },
-    "name": "list_email_templates",
+    "name": "list_emails",
     "scopes": [
       "store:marketing:read"
     ]
   },
   {
-    "api_key": "email-templates.create",
-    "api_method": "POST",
-    "api_path": "/api/2025-01/email-templates",
-    "description": "Create an email template from sections. An email is a `document` of sections: `{\"sections\":[{\"id\",\"type\",\"settings\",\"disabled\",\"visibility\"}]}`. `type` is a section from email-design.get (a library section such as `hero` or `line_items`, or one of the store's own as `custom:\u003cname\u003e`), `settings` its values by the section's settings schema (sections with blocks keep them in `settings.blocks`), `id` a stable name of your choice used by translations. Start from a starter (email-templates.starters) or an existing template. How each section looks is its code and the store's brand (email-design.get); the template holds only the content. Texts, rich texts, links, subjects and section code are Vascula, the template language of themes: `{{ order.number }}` prints a value, `{{ order.totals.total | money }}` filters it, `{% if order.note %}…{% endif %}` decides; a template reads only the values in its email type's `data_schema` (email-types.list), and a value that may be empty takes `| default: \"…\"`. A save is checked like a send: a template that does not compile or reads an unknown value is refused with MARKETING_TEMPLATE_INVALID and its `issues`, each with its `code`, `block_id` (the section id, or `section/block`), `prop` (the setting), `line`, `col` and `message`; warnings come back in the saved template's `issues`. Preview with email-templates.render before saving. Creating a template does not assign it: call email-type-settings.update after creation. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email-templates. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_key": "emails.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/emails/{type}",
+    "description": "Fetch one email with its code. Each email type (email-types.list) has exactly one email in the store: its `subject`, `preview_text` and `code`. Returns `email`: its `email_type`, `type_info`, `toggleable`, `enabled`, `subject`, `preview_text`, `code` and `updated_at`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/emails/{type}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
-        "description": {
-          "description": "Internal template description.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "document": {
-          "description": "The email's sections and their settings.",
-          "type": "object"
-        },
-        "is_active": {
-          "description": "Whether the template is available for assignment.",
-          "type": "boolean"
-        },
-        "name": {
-          "description": "Merchant-facing template name.",
+        "type": {
+          "description": "Email type, from email-types.list.",
+          "minLength": 1,
           "type": "string"
-        },
-        "preview_text": {
-          "description": "Inbox preview text.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "subject": {
-          "description": "Email subject.",
-          "type": "string"
-        },
-        "template_type": {
-          "description": "Compatible transactional email type.",
-          "type": [
-            "string",
-            "null"
-          ]
         }
       },
       "required": [
-        "name",
-        "subject",
-        "document",
-        "is_active"
+        "type"
       ],
       "type": "object"
     },
-    "name": "create_email_template",
+    "name": "get_email",
     "scopes": [
-      "store:marketing:write"
+      "store:marketing:read"
     ]
   },
   {
-    "api_key": "email-templates.render",
+    "api_key": "emails.render",
     "api_method": "POST",
-    "api_path": "/api/2025-01/email-templates/render",
-    "description": "Render an unsaved email template with sample data. Renders the template exactly as a send would, without saving or sending, with the sample data of `email_type` (a campaign when omitted); no customer or order records are read. `sample_variant` picks one of the type's `sample_variants` (email-types.list), for example `minimal` (only the values every send has, to check empty fields), `cod`, `pickup` or `many_items`; omitted uses `full`. Send the template's `document`; `template_id` names the saved template being edited. `locale` renders the template's translation in that language. Returns the rendered `subject` and `html`, the template `issues` (severity `error` stops a save and a send; `warning` does not) and `compat`, the email-client compatibility warnings. Template problems are returned as issues with whatever could be rendered, never as a failed request. Texts, rich texts, links, subjects and section code are Vascula, the template language of themes: `{{ order.number }}` prints a value, `{{ order.totals.total | money }}` filters it, `{% if order.note %}…{% endif %}` decides; a template reads only the values in its email type's `data_schema` (email-types.list), and a value that may be empty takes `| default: \"…\"`. A save is checked like a send: a template that does not compile or reads an unknown value is refused with MARKETING_TEMPLATE_INVALID and its `issues`, each with its `code`, `block_id` (the section id, or `section/block`), `prop` (the setting), `line`, `col` and `message`; warnings come back in the saved template's `issues`. Preview with email-templates.render before saving. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email-templates/render. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/emails/render",
+    "description": "Render unsaved email code with sample data. Renders the code exactly as a send would, without saving or sending, with the sample data of `email_type` (a campaign's `document` when omitted); no customer or order records are read. `sample_variant` picks one of the type's `sample_variants` (email-types.list), for example `minimal` (only the values every send has, to check empty fields), `cod`, `pickup` or `many_items`; omitted uses `full`. `locale` renders the email's translation in that language. Returns the rendered `subject` and `html`, the `issues` (severity `error` stops a save and a send; `warning` does not) and `compat`, the email-client compatibility warnings. Problems are returned as issues with whatever could be rendered, never as a failed request. Subjects and code are Vascula, the template language of themes: `{{ order.number }}` prints a value, `{{ order.totals.total | money }}` filters it, `{% if order.note %}…{% endif %}` decides; an email reads only the values in its type's `data_schema` (email-types.list) and `brand`, and a value that may be empty takes `| default: \"…\"`. A save is checked like a send: code that does not compile or reads an unknown value is refused with MARKETING_TEMPLATE_INVALID and its `issues`, each with its `code`, `line`, `col` and `message`; warnings come back in the saved email's `issues`. Preview with emails.render before saving. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/emails/render. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "code": {
+          "description": "The email's code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "document": {
-          "description": "The email's sections and their settings.",
-          "type": "object"
+          "description": "A campaign's sections and their settings.",
+          "type": [
+            "object",
+            "null"
+          ]
         },
         "email_type": {
-          "description": "Email type whose sample data the template renders with, from email-types. Omitted renders a campaign.",
+          "description": "Email type whose sample data the code renders with, from email-types. Omitted renders a campaign.",
           "type": [
             "string",
             "null"
           ]
         },
         "locale": {
-          "description": "Render the template's translation in this language.",
+          "description": "Render the email's translation in this language.",
           "type": [
             "string",
             "null"
@@ -34682,30 +34636,20 @@
             "string",
             "null"
           ]
-        },
-        "template_id": {
-          "description": "Saved template being edited.",
-          "type": [
-            "string",
-            "null"
-          ]
         }
       },
-      "required": [
-        "document"
-      ],
       "type": "object"
     },
-    "name": "preview_email_template",
+    "name": "preview_email",
     "scopes": [
       "store:marketing:read"
     ]
   },
   {
-    "api_key": "email-templates.starters",
+    "api_key": "email-starters.list",
     "api_method": "GET",
-    "api_path": "/api/2025-01/email-templates/starters",
-    "description": "List the platform's starter emails to create a template from. Returns the starter emails Store Admin offers, each with its `slug`, `name` (in the request language), `category`, `email_type` (empty for campaigns), `subject`, `preview_text`, complete `document` and `translations` (its wording in the other library languages, by field key). Create a template from one by sending its `document` (with a name and subject) to email-templates.create; it is a copy, so later changes to the starter never touch it. `category` narrows the list (an email type, or `campaign`), `search` matches names. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates/starters. Only the connected store is accessible.",
+    "api_path": "/api/2025-01/email-starters",
+    "description": "List the platform's default emails and campaign starters. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-starters. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -34728,60 +34672,21 @@
       },
       "type": "object"
     },
-    "name": "list_email_starter_templates",
+    "name": "list_email_starters",
     "scopes": [
       "store:marketing:read"
     ]
   },
   {
-    "api_key": "email-templates.get",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/email-templates/{templateId}",
-    "description": "Fetch one email template and its complete section document. The template must belong to the token's store. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates/{templateId}. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "template_id": {
-          "description": "Email template id.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "template_id"
-      ],
-      "type": "object"
-    },
-    "name": "get_email_template",
-    "scopes": [
-      "store:marketing:read"
-    ]
-  },
-  {
-    "api_key": "email-templates.update",
+    "api_key": "emails.update",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/email-templates/{templateId}",
-    "description": "Replace one email template's editable definition. Replaces the template with the fields sent: send the complete current `document`. Keep each section's `id` when you change its settings, so its translations stay attached. Texts, rich texts, links, subjects and section code are Vascula, the template language of themes: `{{ order.number }}` prints a value, `{{ order.totals.total | money }}` filters it, `{% if order.note %}…{% endif %}` decides; a template reads only the values in its email type's `data_schema` (email-types.list), and a value that may be empty takes `| default: \"…\"`. A save is checked like a send: a template that does not compile or reads an unknown value is refused with MARKETING_TEMPLATE_INVALID and its `issues`, each with its `code`, `block_id` (the section id, or `section/block`), `prop` (the setting), `line`, `col` and `message`; warnings come back in the saved template's `issues`. Preview with email-templates.render before saving. A template assigned to an email type cannot be deactivated (EMAIL_TEMPLATE_ASSIGNED_CANNOT_DEACTIVATE). There is no version check: read the template again right before writing so another person's change is not overwritten. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email-templates/{templateId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/emails/{type}",
+    "description": "Replace an email's subject, preview text and code. Send the complete `subject` and `code` (and `preview_text`, empty for none). The code is Vascula HTML: a whole email document, written like a web page, with the `brand` values (the store's logo, accent colour and typography from email-design.get) for its styles. `{% render 'header' %}`, `{% render 'items' %}`, `{% render 'order_details' %}`, `{% render 'tax_details' %}`, `{% render 'progress', stage: 'shipped' %}`, `{% render 'shipment' %}`, `{% render 'access_code' %}`, `{% render 'gift_card' %}`, `{% render 'product', item: product %}`, `{% render 'button', label: 'View your order', url: order.status_url %}` and `{% render 'footer' %}` add the library's parts; email-design.get lists each snippet with its `params`. Nothing is added to the code for you: what it prints is what is sent. A promotional email (`type_info.category` `promotional`) must print `{{ email.unsubscribe_url }}` (an `unsubscribe_missing` issue otherwise), and the newsletter confirmation must print `{{ newsletter.confirmation_url }}`. A text keeps its translations while its wording is unchanged. Subjects and code are Vascula, the template language of themes: `{{ order.number }}` prints a value, `{{ order.totals.total | money }}` filters it, `{% if order.note %}…{% endif %}` decides; an email reads only the values in its type's `data_schema` (email-types.list) and `brand`, and a value that may be empty takes `| default: \"…\"`. A save is checked like a send: code that does not compile or reads an unknown value is refused with MARKETING_TEMPLATE_INVALID and its `issues`, each with its `code`, `line`, `col` and `message`; warnings come back in the saved email's `issues`. Preview with emails.render before saving. There is no version check: read the email again right before writing so another person's change is not overwritten. To return to the platform's default, send the code of the type's starter (email-starters.list). Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/emails/{type}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
-        "description": {
-          "description": "Internal template description.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "document": {
-          "description": "The email's sections and their settings.",
-          "type": "object"
-        },
-        "is_active": {
-          "description": "Whether the template is available for assignment.",
-          "type": "boolean"
-        },
-        "name": {
-          "description": "Merchant-facing template name.",
+        "code": {
+          "description": "The email's code.",
           "type": "string"
         },
         "preview_text": {
@@ -34795,43 +34700,63 @@
           "description": "Email subject.",
           "type": "string"
         },
-        "template_id": {
-          "description": "Email template id.",
+        "type": {
+          "description": "Email type, from email-types.list.",
           "minLength": 1,
           "type": "string"
         }
       },
       "required": [
-        "template_id",
-        "name",
+        "type",
         "subject",
-        "document",
-        "is_active"
+        "code"
       ],
       "type": "object"
     },
-    "name": "update_email_template",
+    "name": "update_email",
     "scopes": [
       "store:marketing:write"
     ]
   },
   {
-    "api_key": "email-templates.send-test",
-    "api_method": "POST",
-    "api_path": "/api/2025-01/email-templates/{templateId}/send-test",
-    "description": "Send a test of a template to yourself. Queues a test email of the saved template, rendered with sample data and marked [TEST] in the subject, to the person the request acts for: the staff member who created the admin token, or the merchant using the connected tool. It always goes to that address, so a test never reaches a customer. App tokens cannot send tests. Fields sent replace the saved template's for this send only, so an unsaved edit can be tried first; nothing is saved. `sample_variant` picks one of the type's `sample_variants`; `from_address_id` one of the store's sender addresses (the default sender when omitted). A test uses the store's email allowance like any email. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/email-templates/{templateId}/send-test. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_key": "emails.set-enabled",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/emails/{type}/enabled",
+    "description": "Turn a toggleable email on or off. Only types with `toggleable` true accept it (restock_notification, gift_card_cancelled and newsletter_welcome); the others always send (EMAIL_TYPE_ALWAYS_ON). Order-event emails are switched on customer-notifications. Sender verification and the store's email allowance still apply. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/emails/{type}/enabled. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
-        "document": {
-          "description": "Sections for this test instead of the saved ones.",
-          "type": [
-            "object",
-            "null"
-          ]
+        "enabled": {
+          "description": "Whether the email is sent.",
+          "type": "boolean"
         },
-        "email_type": {
-          "description": "Email type whose sample data to use; the template's own type when omitted.",
+        "type": {
+          "description": "Email type, from email-types.list.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "enabled"
+      ],
+      "type": "object"
+    },
+    "name": "set_email_enabled",
+    "scopes": [
+      "store:marketing:write"
+    ]
+  },
+  {
+    "api_key": "emails.send-test",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/emails/{type}/send-test",
+    "description": "Send a test of an email to yourself. Queues a test of the saved email, rendered with sample data and marked [TEST] in the subject, to the person the request acts for: the staff member who created the admin token, or the merchant using the connected tool. It always goes to that address, so a test never reaches a customer. App tokens cannot send tests. `subject`, `preview_text` and `code` sent replace the saved email's for this send only, so an unsaved edit can be tried first; nothing is saved. `sample_variant` picks one of the type's `sample_variants`; `from_address_id` one of the store's sender addresses (the default sender when omitted). A test uses the store's email allowance like any email. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/emails/{type}/send-test. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Code for this test instead of the saved code.",
           "type": [
             "string",
             "null"
@@ -34865,14 +34790,14 @@
             "null"
           ]
         },
-        "template_id": {
-          "description": "Email template id.",
+        "type": {
+          "description": "Email type, from email-types.list.",
           "minLength": 1,
           "type": "string"
         }
       },
       "required": [
-        "template_id"
+        "type"
       ],
       "type": "object"
     },
@@ -35002,34 +34927,34 @@
     ]
   },
   {
-    "api_key": "email-templates.translation.coverage",
+    "api_key": "emails.translation.coverage",
     "api_method": "GET",
-    "api_path": "/api/2025-01/email-templates/translations/coverage",
-    "description": "Count translated and outdated texts per template and language. Returns `templates`: for each id in `template_ids` (comma-separated, at most 200), each of the store's languages other than the default with its `status` and how many of the template's texts are `translated`, `outdated` (the original changed after the translation was written) and their `total`, plus `complete_count` of `language_count` and a worded `summary`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates/translations/coverage. Only the connected store is accessible.",
+    "api_path": "/api/2025-01/emails/translations/coverage",
+    "description": "Count translated and outdated texts per email and language. Returns `emails`: for each type in `email_types` (comma-separated), each of the store's languages other than the default with its `status` and how many of the email's texts are `translated`, `outdated` (the original changed after the translation was written) and their `total`, plus `complete_count` of `language_count` and a worded `summary`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/emails/translations/coverage. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
-        "template_ids": {
-          "description": "Comma-separated email template ids.",
+        "email_types": {
+          "description": "Comma-separated email types.",
           "type": "string"
         }
       },
       "required": [
-        "template_ids"
+        "email_types"
       ],
       "type": "object"
     },
-    "name": "get_email_template_translation_coverage",
+    "name": "get_email_translation_coverage",
     "scopes": [
       "store:marketing:read",
       "store:settings.languages:read"
     ]
   },
   {
-    "api_key": "email-templates.translation.get",
+    "api_key": "emails.translation.get",
     "api_method": "GET",
-    "api_path": "/api/2025-01/email-templates/{templateId}/translations/{locale}",
-    "description": "Read every text of a template in one language. An email template is translated text by text: its subject (`subject`), preview text (`preview_text`) and each text of its blocks (`block.\u003cblockId\u003e.\u003cprop\u003e`) or of its code have a key. A customer whose language has a translation gets it; a missing text falls back to the default language's. `locale` is one of the store's languages other than its default. Returns `fields`: one per text, with its `key`, `kind`, the `source` text, the translated `value` (empty when untranslated), its `status` (`translated`, `outdated` or `missing`), the `variables` the translation must keep, `max_length` and whether it is `multiline`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-templates/{templateId}/translations/{locale}. Only the connected store is accessible.",
+    "api_path": "/api/2025-01/emails/{type}/translations/{locale}",
+    "description": "Read every text of an email in one language. An email is translated text by text: its subject (`subject`), preview text (`preview_text`) and each text of its code (`text.\u003cfingerprint\u003e`: the words between two tags, or a snippet's quoted `label`, `heading`, `button_label` or `text`, keyed by a fingerprint of its wording) have a key. A customer whose language has a translation gets it; a missing text falls back to the default language's. `locale` is one of the store's languages other than its default. Returns `fields`: one per text, with its `key`, `kind`, the `source` text, the translated `value` (empty when untranslated), its `status` (`translated`, `outdated` or `missing`), the `variables` the translation must keep, `max_length` and whether it is `multiline`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/emails/{type}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -35038,29 +34963,29 @@
           "minLength": 1,
           "type": "string"
         },
-        "template_id": {
-          "description": "Email template id.",
+        "type": {
+          "description": "Email type, from email-types.list.",
           "minLength": 1,
           "type": "string"
         }
       },
       "required": [
-        "template_id",
+        "type",
         "locale"
       ],
       "type": "object"
     },
-    "name": "get_email_template_translation",
+    "name": "get_email_translation",
     "scopes": [
       "store:marketing:read",
       "store:settings.languages:read"
     ]
   },
   {
-    "api_key": "email-templates.translation.set",
+    "api_key": "emails.translation.set",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/email-templates/{templateId}/translations/{locale}",
-    "description": "Save translated texts of a template by key. An email template is translated text by text: its subject (`subject`), preview text (`preview_text`) and each text of its blocks (`block.\u003cblockId\u003e.\u003cprop\u003e`) or of its code have a key. A customer whose language has a translation gets it; a missing text falls back to the default language's. `locale` is one of the store's languages other than its default. Send `values`, an object of text key to translated text, with the keys email-templates.translation.get returns; texts not sent keep their current translation. A translation must keep every value in the text's `variables` (`{{ order.number }}`) and stay within `max_length`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email-templates/{templateId}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/emails/{type}/translations/{locale}",
+    "description": "Save translated texts of an email by key. An email is translated text by text: its subject (`subject`), preview text (`preview_text`) and each text of its code (`text.\u003cfingerprint\u003e`: the words between two tags, or a snippet's quoted `label`, `heading`, `button_label` or `text`, keyed by a fingerprint of its wording) have a key. A customer whose language has a translation gets it; a missing text falls back to the default language's. `locale` is one of the store's languages other than its default. Send `values`, an object of text key to translated text, with the keys emails.translation.get returns; texts not sent keep their current translation. A translation must keep every value in the text's `variables` (`{{ order.number }}`) and stay within `max_length`. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/emails/{type}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -35073,8 +34998,8 @@
           "minLength": 1,
           "type": "string"
         },
-        "template_id": {
-          "description": "Email template id.",
+        "type": {
+          "description": "Email type, from email-types.list.",
           "minLength": 1,
           "type": "string"
         },
@@ -35084,23 +35009,23 @@
         }
       },
       "required": [
-        "template_id",
+        "type",
         "locale",
         "values"
       ],
       "type": "object"
     },
-    "name": "set_email_template_translation",
+    "name": "set_email_translation",
     "scopes": [
       "store:marketing:write",
       "store:settings.languages:write"
     ]
   },
   {
-    "api_key": "email-templates.translation.delete",
+    "api_key": "emails.translation.delete",
     "api_method": "DELETE",
-    "api_path": "/api/2025-01/email-templates/{templateId}/translations/{locale}",
-    "description": "Remove a template's translation in one language. An email template is translated text by text: its subject (`subject`), preview text (`preview_text`) and each text of its blocks (`block.\u003cblockId\u003e.\u003cprop\u003e`) or of its code have a key. A customer whose language has a translation gets it; a missing text falls back to the default language's. `locale` is one of the store's languages other than its default. Afterwards the email goes out in the store's default language to customers who use this one. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email-templates/{templateId}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/emails/{type}/translations/{locale}",
+    "description": "Remove an email's translation in one language. An email is translated text by text: its subject (`subject`), preview text (`preview_text`) and each text of its code (`text.\u003cfingerprint\u003e`: the words between two tags, or a snippet's quoted `label`, `heading`, `button_label` or `text`, keyed by a fingerprint of its wording) have a key. A customer whose language has a translation gets it; a missing text falls back to the default language's. `locale` is one of the store's languages other than its default. Afterwards the email goes out in the store's default language to customers who use this one. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/emails/{type}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -35113,53 +35038,29 @@
           "minLength": 1,
           "type": "string"
         },
-        "template_id": {
-          "description": "Email template id.",
+        "type": {
+          "description": "Email type, from email-types.list.",
           "minLength": 1,
           "type": "string"
         }
       },
       "required": [
-        "template_id",
+        "type",
         "locale"
       ],
       "type": "object"
     },
-    "name": "delete_email_template_translation",
+    "name": "delete_email_translation",
     "scopes": [
       "store:marketing:write",
       "store:settings.languages:write"
     ]
   },
   {
-    "api_key": "email-templates.delete",
-    "api_method": "DELETE",
-    "api_path": "/api/2025-01/email-templates/{templateId}",
-    "description": "Delete an unused email template. Deletion is blocked while any transactional or promotional email type is assigned to the template. Reassign the type first so customer communications never silently lose their template. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/email-templates/{templateId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "template_id": {
-          "description": "Email template id.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "template_id"
-      ],
-      "type": "object"
-    },
-    "name": "delete_email_template",
-    "scopes": [
-      "store:marketing:write"
-    ]
-  },
-  {
     "api_key": "email-types.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/email-types",
-    "description": "List the transactional and promotional customer-email registry. Returns the supported email types (without `type`, each type is listed briefly; read the types you need in full with `type`, or all of them with `summary=false`), compatible template type, whether merchants may disable it, and its `data_schema`: the values its templates read, as dotted paths such as `order.number` (the same values as the SMS and WhatsApp templates of the type, apart from the per-channel `email` root and the `message` root that only texts of promotional types have). Each type carries `type_info`; classify a type by `type_info.category` rather than by its name. `sample_variants` names the sample data a preview or test send of the type can use (email-templates.render, email-templates.send-test), `full` first; `minimal` holds only the values every send has, so it shows how a template reads when optional values are empty. Write templates from the `data_schema`: the platform refuses any other value. Promotional campaigns use the marketing sender and consent rules. A type whose `type_info.tax_details` is true also returns `sample_tax_details`: the `heading` and `rows` (`label`, `value`) of its sample tax breakdown, as its Tax details block shows them. A type whose data has the `order` root also returns `sample_order_details`: the parts of its sample order (`key` is `shipping_address`, `billing_address`, `delivery` (the shipping method, or the pickup location of a pickup order), `payment` or `note`; `heading`; `lines`), in their default order, as its Order details block shows them; a type without it does not offer the block. The samples follow the store: amounts in its base currency, addresses and phone numbers in its home country, and one tax line per tax its own tax setup charges there, marked Included or Added as its prices include tax or not; a store with no tax there shows one line, `Tax (10%)`. `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its template places the Tax details block or `{% tax_details %}`, and at the end of the email when the template has neither; no other email shows it). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-types. Only the connected store is accessible.",
+    "description": "List the transactional and promotional customer-email registry. Returns the supported email types (without `type`, each type is listed briefly; read the types you need in full with `type`, or all of them with `summary=false`), whether merchants may turn it off, and its `data_schema`: the values its templates read, as dotted paths such as `order.number` (the same values as the SMS and WhatsApp templates of the type, apart from the per-channel `email` root and the `message` root that only texts of promotional types have). Each type carries `type_info`; classify a type by `type_info.category` rather than by its name. `sample_variants` names the sample data a preview or test send of the type can use (emails.render, emails.send-test), `full` first; `minimal` holds only the values every send has, so it shows how an email reads when optional values are empty. Write emails from the `data_schema`: the platform refuses any other value. Promotional campaigns use the marketing sender and consent rules. A type whose `type_info.tax_details` is true also returns `sample_tax_details`: the `heading` and `rows` (`label`, `value`) of its sample tax breakdown, as its Tax details block shows them. A type whose data has the `order` root also returns `sample_order_details`: the parts of its sample order (`key` is `shipping_address`, `billing_address`, `delivery` (the shipping method, or the pickup location of a pickup order), `payment` or `note`; `heading`; `lines`), in their default order, as its Order details block shows them; a type without it does not offer the block. The samples follow the store: amounts in its base currency, addresses and phone numbers in its home country, and one tax line per tax its own tax setup charges there, marked Included or Added as its prices include tax or not; a store with no tax there shows one line, `Tax (10%)`. `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its code places `{% render 'tax_details' %}`, and at the end of the email when it doesn't; no other email shows it). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-types. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -35180,61 +35081,10 @@
     ]
   },
   {
-    "api_key": "email-type-settings.list",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/email-type-settings",
-    "description": "Read the selected template and enabled state for every email type. Always-on security and access-code emails are identified by the email-type registry and cannot be disabled. Each entry carries the email type's `type_info`. `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its template places the Tax details block or `{% tax_details %}`, and at the end of the email when the template has neither; no other email shows it). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/email-type-settings. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {},
-      "type": "object"
-    },
-    "name": "list_email_type_settings",
-    "scopes": [
-      "store:marketing:read"
-    ]
-  },
-  {
-    "api_key": "email-type-settings.update",
-    "api_method": "PUT",
-    "api_path": "/api/2025-01/email-type-settings/{type}",
-    "description": "Assign a compatible template or change a toggleable email's enabled state. template_id is required on every write, including enabled-state changes. The template must belong to this store and either match the email type or have no specific template type. Only types with toggleable=true accept enabled=false; currently restock_notification and gift_card_cancelled. Other order-event sending controls are on customer-notifications. Creating a template does not assign it: call this endpoint after creation. A successful assignment does not confirm delivery. Sender verification, event controls, and available email allowance still apply. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/email-type-settings/{type}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "enabled": {
-          "description": "Enabled state for a toggleable email type.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "template_id": {
-          "description": "Compatible email template id. Required even when changing enabled.",
-          "type": "string"
-        },
-        "type": {
-          "description": "Email type from the email-types endpoint.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "type",
-        "template_id"
-      ],
-      "type": "object"
-    },
-    "name": "update_email_type_settings",
-    "scopes": [
-      "store:marketing:write"
-    ]
-  },
-  {
     "api_key": "message-templates.types",
     "api_method": "GET",
     "api_path": "/api/2025-01/message-templates/types",
-    "description": "List supported customer message types. Returns every message type, its `type_info`, its supported template channels and its `data_schema`: the values its templates read, in the same shape and with the same paths as the email of the type (`{{ order.number }}`). Promotional types (`type_info.category.key` `promotional`) also have the per-send `message` root (`message.opt_out_url`, the text's opt-out link); no other type has it. `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its template places the Tax details block or `{% tax_details %}`, and at the end of the email when the template has neither; no other email shows it). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates/types. Only the connected store is accessible.",
+    "description": "List supported customer message types. Returns every message type, its `type_info`, its supported template channels and its `data_schema`: the values its templates read, in the same shape and with the same paths as the email of the type (`{{ order.number }}`). Promotional types (`type_info.category.key` `promotional`) also have the per-send `message` root (`message.opt_out_url`, the text's opt-out link); no other type has it. `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its code places `{% render 'tax_details' %}`, and at the end of the email when it doesn't; no other email shows it). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates/types. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -35249,7 +35099,7 @@
     "api_key": "message-templates.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/message-templates",
-    "description": "List SMS and WhatsApp templates. Returns a separate template row for each message type and channel. SMS and WhatsApp content is never shared implicitly. Each row carries `type_info` for its message type. `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its template places the Tax details block or `{% tax_details %}`, and at the end of the email when the template has neither; no other email shows it). Each row has its `id` (the ID its translations use), `default_locale` and `default_label` (the language of `content`), `translations`: its state in every other store language (`translated`, `outdated` or `not_translated`, with `updated_at` of the translation), and `translations_updated_at`. Read and write the other languages with the message template translation endpoints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates. Only the connected store is accessible.",
+    "description": "List SMS and WhatsApp templates. Returns a separate template row for each message type and channel. SMS and WhatsApp content is never shared implicitly. Each row carries `type_info` for its message type. `type_info` is the notification type worded in the request language (English by default): `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its code places `{% render 'tax_details' %}`, and at the end of the email when it doesn't; no other email shows it). Each row has its `id` (the ID its translations use), `default_locale` and `default_label` (the language of `content`), `translations`: its state in every other store language (`translated`, `outdated` or `not_translated`, with `updated_at` of the translation), and `translations_updated_at`. Read and write the other languages with the message template translation endpoints. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
