@@ -15580,6 +15580,34 @@
     ]
   },
   {
+    "api_key": "customers.activity.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/customers/{id}/activity",
+    "description": "Read what a customer did on the storefront. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/customers/{id}/activity. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "`next_cursor` from the previous response, to read the next page of visits.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Customer UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "get_customer_activity",
+    "scopes": [
+      "store:customers:read"
+    ]
+  },
+  {
     "api_key": "customers.store-credit.ledger.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/customers/{id}/store-credit/ledger",
