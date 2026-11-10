@@ -13246,7 +13246,7 @@
     "api_key": "orders.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders",
-    "description": "List store orders. Returns active orders by default; archived=true returns archived orders. Cursors are bound to the store, filters, search and sort. Restart without a cursor after changing that query. Each order names financial_status, payment_status and channel_type in the request language as financial_status_display, payment_status_display and channel_type_display (null without a channel). status_name is the order's status for status_slug in the request language (a system status in Tringify's wording, one of the store's own statuses by its translation in that language, else by its own name) and status_color its colour from Order Settings. Raw grand_total is a canonical decimal string in currency_code; formatted_grand_total follows the request language and currency rules, independently of merchant General preferences. Use raw amounts for calculations. is_archived identifies archive state. tags lists the order's Order Tags (id, name, slug), sorted by name; `tag` filters by a tag name, ignoring capitalization. Fetch an order for fulfillment plans and line details. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders. Only the connected store is accessible.",
+    "description": "List store orders. Returns active orders by default; archived=true returns archived orders. return_status is the order's return state, the most pressing of its returns: requested, exchange_waiting, approved, returned or declined, named in the request language as return_status_display (absent without a return); is_exchange marks an order an exchange created. Cursors are bound to the store, filters, search and sort. Restart without a cursor after changing that query. Each order names financial_status, payment_status and channel_type in the request language as financial_status_display, payment_status_display and channel_type_display (null without a channel). status_name is the order's status for status_slug in the request language (a system status in Tringify's wording, one of the store's own statuses by its translation in that language, else by its own name) and status_color its colour from Order Settings. Raw grand_total is a canonical decimal string in currency_code; formatted_grand_total follows the request language and currency rules, independently of merchant General preferences. Use raw amounts for calculations. is_archived identifies archive state. tags lists the order's Order Tags (id, name, slug), sorted by name; `tag` filters by a tag name, ignoring capitalization. Fetch an order for fulfillment plans and line details. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13325,6 +13325,10 @@
         "product_id": {
           "description": "Positive product ID. Return orders containing this product, including any of its variants.",
           "type": "integer"
+        },
+        "return_state": {
+          "description": "Comma-separated requested, approved, exchange_waiting (an exchange whose item is out of stock), returned (a completed return), declined or exchange_order (the order an exchange created). An order matches when any of its returns is in a chosen state.",
+          "type": "string"
         },
         "search": {
           "description": "Search order ID, order number, external order ID, customer first/last name, full name, email or phone; at most 200 characters. Literal substring matching; SQL wildcard characters are treated literally.",
