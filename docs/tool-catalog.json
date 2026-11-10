@@ -19831,6 +19831,10 @@
               "value_id": {
                 "description": "ID of the customer tag, for `tags` rules only.",
                 "type": "string"
+              },
+              "window_days": {
+                "description": "Required on `visits_30_days`, `viewed_product`, `viewed_not_bought` and `carted_not_bought` rules and not accepted on others: the number of days the rule looks back, 1 to 30. The limits' `rule_fields[].window_max_days` gives the maximum.",
+                "type": "integer"
               }
             },
             "required": [
@@ -19923,6 +19927,10 @@
               "value_id": {
                 "description": "ID of the customer tag, for `tags` rules only.",
                 "type": "string"
+              },
+              "window_days": {
+                "description": "Required on `visits_30_days`, `viewed_product`, `viewed_not_bought` and `carted_not_bought` rules and not accepted on others: the number of days the rule looks back, 1 to 30. The limits' `rule_fields[].window_max_days` gives the maximum.",
+                "type": "integer"
               }
             },
             "required": [
@@ -20017,6 +20025,10 @@
               "value_id": {
                 "description": "ID of the customer tag, for `tags` rules only.",
                 "type": "string"
+              },
+              "window_days": {
+                "description": "Required on `visits_30_days`, `viewed_product`, `viewed_not_bought` and `carted_not_bought` rules and not accepted on others: the number of days the rule looks back, 1 to 30. The limits' `rule_fields[].window_max_days` gives the maximum.",
+                "type": "integer"
               }
             },
             "required": [
