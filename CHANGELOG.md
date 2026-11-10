@@ -1,5 +1,15 @@
 # Changelog
 
+## Returns, returned shipments and order cancellation — 10 November 2026
+
+- New order cancellation tools (`store:orders:read` / `store:orders:write`): `get_order_cancellation_settings`, `update_order_cancellation_settings` and `delete_order_cancellation_market_rules` for the rules that let customers cancel their own orders, and `list_order_cancellation_requests`, `get_order_cancellation_request`, `approve_order_cancellation_request` and `decline_order_cancellation_request` for cancellations customers ask for.
+- Returns: `get_return_settings`, `update_return_settings`, `list_returns`, `get_return`, `get_return_options`, `create_return`, `approve_return`, `decline_return`, `cancel_return`, `set_return_shipment`, `receive_return`, `refund_return` and `exchange_return`.
+- Returned shipments and delivery issues: `get_rto_settings`, `update_rto_settings`, `list_rtos`, `get_rto`, `get_rto_report`, `refund_rto`, `reship_rto`, `close_rto_undelivered`, `close_rto`, `customer_choice_rtos`, `list_order_delivery_issues` and `answer_order_delivery_issues`.
+- Orders: `retry_order_refunds`, `redirect_order_refunds` and `update_fulfillment_status`.
+- Markets: translations of payment providers and payment adjustments, `get_market_cod_blocked_postcodes`, `update_market_cod_blocked_postcodes` and `check_market_cod_address`.
+- Also new: site verification tags, `list_product_deleteds`, `list_variant_deleteds`, `bulk_set_product_metafield` and `bulk_set_product_variant_metafield`.
+- The [tool inventory](docs/catalog-tools.md) and `docs/tool-catalog.json` now list all 885 tools of the hosted connector, including order, order tag and customer settings tools the inventory had left out.
+
 ## Emails built from sections — 5 November 2026
 
 - An email template is a list of sections (`document`) styled by the store's email brand; `template_document`, `editor_mode`, `code_html` and `convert_email_template_to_code` are gone.

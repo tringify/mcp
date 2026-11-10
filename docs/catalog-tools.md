@@ -1007,3 +1007,155 @@ Read `get_gift_card` before editing or resending. Use `can_edit_delivery` and `e
 `update_gift_card` with a future `delivery_scheduled_at` before expiry creates or moves the waiting send, preferring recipient email, otherwise phone through the store’s configured route. `clear_delivery_schedule` cancels the waiting send and never sends now. `resend_gift_card` takes `id`, `delivery_method` and `idempotency_key`; recipient and language overrides are not accepted. See the [Gift Cards Store API contract](https://dev-docs.tringify.com/store-api/orders/gift-cards) for response flags and refusal codes.
 
 Fake Pay is a simulator and moves no real money. Use `get_order` and the ordinary refund tools to show the platform’s recorded results. The platform reads the app’s live status endpoints; browser returns and provider notifications never establish payment. There are no separate merchant tools for the app’s signed provider operations.
+
+## Orders: lists, fulfilment, refunds and settings
+
+Use `get_order_refund_options` before `refund_order`: it returns what the order can still give back and the destinations it can use. `retry_order_refunds` retries a refund whose provider payout failed and `redirect_order_refunds` sends it to another destination the order allows. `cancel_order` cancels with or without a refund. Fulfilments are created with `create_order_fulfillment`; `update_fulfillment_tracking`, `update_fulfillment_status` and `record_fulfillment_event` move a shipment forward, and `cancel_order_fulfillment` cancels one that has not shipped.
+
+| Tool | Store API operation | OAuth scopes |
+| --- | --- | --- |
+| `list_orders` | `GET /api/2025-01/orders` | store:orders:read |
+| `cancel_order` | `POST /api/2025-01/orders/{id}/cancel` | store:orders:write |
+| `get_order_refund_options` | `GET /api/2025-01/orders/{id}/refund-options` | store:orders:read |
+| `refund_order` | `POST /api/2025-01/orders/{id}/refunds` | store:orders:write |
+| `retry_order_refunds` | `POST /api/2025-01/orders/{id}/refunds/{refund_id}/retry` | store:orders:write |
+| `redirect_order_refunds` | `POST /api/2025-01/orders/{id}/refunds/{refund_id}/redirect` | store:orders:write |
+| `create_order_fulfillment` | `POST /api/2025-01/orders/{id}/fulfillment-orders/{fulfillment_order_id}/fulfillments` | store:orders:write |
+| `update_fulfillment_tracking` | `PUT /api/2025-01/orders/{id}/fulfillments/{fulfillment_id}/tracking` | store:orders:write |
+| `update_fulfillment_status` | `PUT /api/2025-01/orders/{id}/fulfillments/{fulfillment_id}/status` | store:orders:write |
+| `record_fulfillment_event` | `POST /api/2025-01/orders/{id}/fulfillments/{fulfillment_id}/events` | store:orders:write |
+| `cancel_order_fulfillment` | `POST /api/2025-01/orders/{id}/fulfillments/{fulfillment_id}/cancel` | store:orders:write |
+| `get_order_settings` | `GET /api/2025-01/orders/settings` | store:orders:read |
+| `get_order_settings_limits` | `GET /api/2025-01/orders/settings/limits` | store:orders:read |
+| `update_order_settings` | `PUT /api/2025-01/orders/settings` | store:orders:write |
+| `list_order_channel_prefixes` | `GET /api/2025-01/orders/settings/channel-prefixes` | store:orders:read |
+| `set_order_channel_prefix` | `PUT /api/2025-01/orders/settings/channel-prefixes/{channel_id}` | store:orders:write |
+
+## Order tags
+
+Order tags label orders for the store's own use. Read `get_order_tag_limits` before creating tags in bulk.
+
+| Tool | Store API operation | OAuth scopes |
+| --- | --- | --- |
+| `get_order_tag_limits` | `GET /api/2025-01/order-tags/limits` | store:orders:read |
+| `list_order_tags` | `GET /api/2025-01/order-tags` | store:orders:read |
+| `get_order_tag` | `GET /api/2025-01/order-tags/{id}` | store:orders:read |
+| `create_order_tag` | `POST /api/2025-01/order-tags` | store:orders:write |
+| `update_order_tag` | `PUT /api/2025-01/order-tags/{id}` | store:orders:write |
+| `delete_order_tag` | `DELETE /api/2025-01/order-tags/{id}` | store:orders:write |
+| `bulk_create_order_tags` | `POST /api/2025-01/order-tags/bulk-create` | store:orders:write |
+| `bulk_delete_order_tags` | `POST /api/2025-01/order-tags/bulk-delete` | store:orders:write |
+| `add_order_tag_to_orders` | `POST /api/2025-01/order-tags/{id}/orders` | store:orders:write |
+| `remove_order_tag_from_orders` | `POST /api/2025-01/order-tags/{id}/orders/remove` | store:orders:write |
+
+## Order cancellation by customers
+
+The cancellation settings decide when customers can cancel their own orders, for the store and for any market with its own rules (`delete_order_cancellation_market_rules` returns a market to the store's rules). With `mode` `request`, or for a customer over the store's cancellation limit, the customer asks instead: the request waits as `requested` until `approve_order_cancellation_request` cancels the order and returns what was paid, or `decline_order_cancellation_request` declines it with an optional reason the customer is emailed. Show the merchant the request, including its `limit_flag` when present, before approving or declining.
+
+| Tool | Store API operation | OAuth scopes |
+| --- | --- | --- |
+| `get_order_cancellation_settings` | `GET /api/2025-01/orders/cancellation-settings` | store:orders:read |
+| `update_order_cancellation_settings` | `PUT /api/2025-01/orders/cancellation-settings` | store:orders:write |
+| `delete_order_cancellation_market_rules` | `DELETE /api/2025-01/orders/cancellation-settings` | store:orders:write |
+| `list_order_cancellation_requests` | `GET /api/2025-01/orders/cancellation-requests` | store:orders:read |
+| `get_order_cancellation_request` | `GET /api/2025-01/orders/{id}/cancellation-request` | store:orders:read |
+| `approve_order_cancellation_request` | `POST /api/2025-01/orders/{id}/cancellation-request/approve` | store:orders:write |
+| `decline_order_cancellation_request` | `POST /api/2025-01/orders/{id}/cancellation-request/decline` | store:orders:write |
+
+## Returns
+
+A return covers delivered items a customer sends back. Read `get_return_options` for what an order can still return before `create_return`. A requested return is answered with `approve_return` or `decline_return`; an approved one is received with `receive_return` and completed with `refund_return` or `exchange_return`. `get_return_settings` and `update_return_settings` hold the Returns portal rules, return window, reasons, instructions and return limits.
+
+| Tool | Store API operation | OAuth scopes |
+| --- | --- | --- |
+| `get_return_settings` | `GET /api/2025-01/returns/settings` | store:orders:read |
+| `update_return_settings` | `PUT /api/2025-01/returns/settings` | store:orders:write |
+| `list_returns` | `GET /api/2025-01/returns` | store:orders:read |
+| `get_return` | `GET /api/2025-01/returns/{id}` | store:orders:read |
+| `get_return_options` | `GET /api/2025-01/orders/{id}/return-options` | store:orders:read |
+| `create_return` | `POST /api/2025-01/orders/{id}/returns` | store:orders:write |
+| `approve_return` | `POST /api/2025-01/returns/{id}/approve` | store:orders:write |
+| `decline_return` | `POST /api/2025-01/returns/{id}/decline` | store:orders:write |
+| `cancel_return` | `POST /api/2025-01/returns/{id}/cancel` | store:orders:write |
+| `set_return_shipment` | `PUT /api/2025-01/returns/{id}/shipment` | store:orders:write |
+| `receive_return` | `POST /api/2025-01/returns/{id}/receive` | store:orders:write |
+| `refund_return` | `POST /api/2025-01/returns/{id}/refund` | store:orders:write |
+| `exchange_return` | `POST /api/2025-01/returns/{id}/exchange` | store:orders:write |
+
+## Returned shipments and delivery issues
+
+A returned shipment (RTO) is a shipment that came back to the store undelivered. Each one waits for a decision: `refund_rto`, `reship_rto`, `close_rto_undelivered` (cash on delivery orders) or `close_rto`; `customer_choice_rtos` records the customer's own choice. `get_rto_report` summarises returned shipments, and the settings hold the Delivery portal options. A failed delivery attempt opens a delivery issue on the order, read with `list_order_delivery_issues` and answered with `answer_order_delivery_issues`.
+
+| Tool | Store API operation | OAuth scopes |
+| --- | --- | --- |
+| `get_rto_settings` | `GET /api/2025-01/rtos/settings` | store:orders:read |
+| `update_rto_settings` | `PUT /api/2025-01/rtos/settings` | store:orders:write |
+| `list_rtos` | `GET /api/2025-01/rtos` | store:orders:read |
+| `get_rto` | `GET /api/2025-01/rtos/{id}` | store:orders:read |
+| `get_rto_report` | `GET /api/2025-01/rtos/report` | store:orders:read |
+| `refund_rto` | `POST /api/2025-01/rtos/{id}/refund` | store:orders:write |
+| `reship_rto` | `POST /api/2025-01/rtos/{id}/reship` | store:orders:write |
+| `close_rto_undelivered` | `POST /api/2025-01/rtos/{id}/close-undelivered` | store:orders:write |
+| `close_rto` | `POST /api/2025-01/rtos/{id}/close` | store:orders:write |
+| `customer_choice_rtos` | `POST /api/2025-01/rtos/{id}/customer-choice` | store:orders:write |
+| `list_order_delivery_issues` | `GET /api/2025-01/orders/{id}/delivery-issues` | store:orders:read |
+| `answer_order_delivery_issues` | `POST /api/2025-01/orders/{id}/delivery-issues/{issueId}/answer` | store:orders:write |
+
+## Customer settings, tags on customers and merging
+
+Customer settings are read together with `get_customer_settings` and saved one area at a time. `merge_customers` cannot be undone: show the merchant which customer is kept before calling it.
+
+| Tool | Store API operation | OAuth scopes |
+| --- | --- | --- |
+| `get_customer_settings` | `GET /api/2025-01/customers/settings` | store:customers:read |
+| `get_customer_settings_limits` | `GET /api/2025-01/customers/settings/limits` | store:customers:read |
+| `update_customer_account_settings` | `PUT /api/2025-01/customers/settings/accounts` | store:customers:write |
+| `update_customer_email_settings` | `PUT /api/2025-01/customers/settings/email` | store:customers:write |
+| `update_customer_marketing_settings` | `PUT /api/2025-01/customers/settings/marketing` | store:customers:write |
+| `update_customer_privacy_settings` | `PUT /api/2025-01/customers/settings/privacy` | store:customers:write |
+| `update_customer_session_settings` | `PUT /api/2025-01/customers/settings/sessions` | store:customers:write |
+| `update_customer_wishlist_settings` | `PUT /api/2025-01/customers/settings/wishlist` | store:customers:write |
+| `add_customer_tag_to_customers` | `POST /api/2025-01/customer-tags/{id}/customers` | store:customers:write |
+| `remove_customer_tag_from_customers` | `POST /api/2025-01/customer-tags/{id}/customers/remove` | store:customers:write |
+| `merge_customers` | `POST /api/2025-01/customers/{id}/merge` | store:customers:write |
+
+## Market translations and cash on delivery checks
+
+Translations of a market's discounts, payment providers and payment adjustments also need Languages access. `check_market_cod_address` says whether an address can pay by cash on delivery under the market's rules, zones and blocked postcodes.
+
+| Tool | Store API operation | OAuth scopes |
+| --- | --- | --- |
+| `get_market_discount_translation` | `GET /api/2025-01/markets/{marketId}/discounts/{discountId}/translations/{locale}` | store:markets:read, store:settings.languages:read |
+| `set_market_discount_translation` | `PUT /api/2025-01/markets/{marketId}/discounts/{discountId}/translations/{locale}` | store:markets:write, store:settings.languages:write |
+| `get_market_payment_provider_translation` | `GET /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/translations/{locale}` | store:markets:read, store:settings.languages:read |
+| `set_market_payment_provider_translation` | `PUT /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/translations/{locale}` | store:markets:write, store:settings.languages:write |
+| `get_market_payment_adjustment_translation` | `GET /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}/translations/{locale}` | store:markets:read, store:settings.languages:read |
+| `set_market_payment_adjustment_translation` | `PUT /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}/translations/{locale}` | store:markets:write, store:settings.languages:write |
+| `get_market_cod_blocked_postcodes` | `GET /api/2025-01/markets/{marketId}/cod-settings/blocked-postcodes` | store:markets:read |
+| `update_market_cod_blocked_postcodes` | `PUT /api/2025-01/markets/{marketId}/cod-settings/blocked-postcodes` | store:markets:write |
+| `check_market_cod_address` | `POST /api/2025-01/markets/{marketId}/cod-settings/check` | store:markets:read |
+
+## Site verification tags
+
+Verification tags prove ownership of the store's domains to services such as search consoles and ad platforms.
+
+| Tool | Store API operation | OAuth scopes |
+| --- | --- | --- |
+| `list_site_verification_tagss` | `GET /api/2025-01/site-verification-tags` | store:online_store.site_verification:read |
+| `create_site_verification_tags` | `POST /api/2025-01/site-verification-tags` | store:online_store.site_verification:write |
+| `delete_site_verification_tags` | `DELETE /api/2025-01/site-verification-tags/{tagId}` | store:online_store.site_verification:write |
+
+## Deleted products, bulk metafield values and other tools
+
+`list_product_deleteds` and `list_variant_deleteds` list recently deleted products and variants so an integration can remove them on its side.
+
+| Tool | Store API operation | OAuth scopes |
+| --- | --- | --- |
+| `list_product_deleteds` | `GET /api/2025-01/products/deleted` | store:products:read |
+| `list_variant_deleteds` | `GET /api/2025-01/variants/deleted` | store:products:read |
+| `bulk_set_product_metafield` | `PUT /api/2025-01/products/metafields` | store:products:write |
+| `bulk_set_product_variant_metafield` | `PUT /api/2025-01/products/variants/metafields` | store:products:write |
+| `delete_review_photo` | `DELETE /api/2025-01/reviews/{id}/images/{imageId}` | store:reviews:write |
+| `get_blog_author_lifecycle_job` | `GET /api/2025-01/blog/authors/lifecycle-jobs/{job_id}` | store:blog:read |
+| `get_blog_list_seo_limits` | `GET /api/2025-01/blog/list-seo/limits` | store:blog:read |
+| `get_list_page_seo_limits` | `GET /api/2025-01/list-page-seo/limits` | store:products:read |
