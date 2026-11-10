@@ -4143,7 +4143,7 @@
       "additionalProperties": false,
       "properties": {
         "field": {
-          "description": "Rule field: tag, category, vendor, brand, or title.",
+          "description": "Rule field: tag, category, vendor, brand, title, price, regular_price, on_sale, in_stock, stock, created, or option. The limits endpoint lists each field's operators and `value_kind`.",
           "type": "string"
         },
         "id": {
@@ -4163,7 +4163,7 @@
           "type": "string"
         },
         "value": {
-          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag rules take the tag's ID as a string (for example `\"7\"`) or its slug (for example `\"summer-sale\"`): a slug is resolved to the tag ID when the rule is saved, and the rule stores and returns the ID with the tag's name in `value_label`. A value that is the ID of a tag in this store is read as that ID, even when another tag has it as its slug. An ID or slug that matches no tag in this store is rejected with `COLLECTION_RULE_TAG_NOT_FOUND`. Category, vendor and brand rules take the entity's numeric ID as a string, not its slug or name. Title rules take the text to match, case-insensitively.",
+          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag rules take the tag's ID as a string (for example `\"7\"`) or its slug (for example `\"summer-sale\"`): a slug is resolved to the tag ID when the rule is saved, and the rule stores and returns the ID with the tag's name in `value_label`. A value that is the ID of a tag in this store is read as that ID, even when another tag has it as its slug. An ID or slug that matches no tag in this store is rejected with `COLLECTION_RULE_TAG_NOT_FOUND`. Category, vendor and brand rules take the entity's numeric ID as a string, not its slug or name. Title rules take the text to match, case-insensitively. `price` and `regular_price` take an amount in the store currency (up to 4 decimals) for `greater_than` and `less_than`, or `from..to` for `between` (both included); they compare the lowest of the product's prices, where `price` is the sale price while a sale runs. `stock` takes a whole number of available units across tracked stock. `created` takes a number of days (1 to 3650) for `within_last_days` and `not_within_last_days`. `option` takes an option value's numeric ID and matches products with a variant that has it. `on_sale` and `in_stock` take no value with `is_true` and `is_false`; a product with any untracked variant is in stock. Price, stock and option rules follow product changes within about a minute, and sales that start or end on a schedule within about ten minutes.",
           "type": [
             "string",
             "null"
@@ -4191,7 +4191,7 @@
       "additionalProperties": false,
       "properties": {
         "field": {
-          "description": "Rule field: tag, category, vendor, brand, or title.",
+          "description": "Rule field: tag, category, vendor, brand, title, price, regular_price, on_sale, in_stock, stock, created, or option. The limits endpoint lists each field's operators and `value_kind`.",
           "type": "string"
         },
         "id": {
@@ -4216,7 +4216,7 @@
           "type": "string"
         },
         "value": {
-          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag rules take the tag's ID as a string (for example `\"7\"`) or its slug (for example `\"summer-sale\"`): a slug is resolved to the tag ID when the rule is saved, and the rule stores and returns the ID with the tag's name in `value_label`. A value that is the ID of a tag in this store is read as that ID, even when another tag has it as its slug. An ID or slug that matches no tag in this store is rejected with `COLLECTION_RULE_TAG_NOT_FOUND`. Category, vendor and brand rules take the entity's numeric ID as a string, not its slug or name. Title rules take the text to match, case-insensitively.",
+          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag rules take the tag's ID as a string (for example `\"7\"`) or its slug (for example `\"summer-sale\"`): a slug is resolved to the tag ID when the rule is saved, and the rule stores and returns the ID with the tag's name in `value_label`. A value that is the ID of a tag in this store is read as that ID, even when another tag has it as its slug. An ID or slug that matches no tag in this store is rejected with `COLLECTION_RULE_TAG_NOT_FOUND`. Category, vendor and brand rules take the entity's numeric ID as a string, not its slug or name. Title rules take the text to match, case-insensitively. `price` and `regular_price` take an amount in the store currency (up to 4 decimals) for `greater_than` and `less_than`, or `from..to` for `between` (both included); they compare the lowest of the product's prices, where `price` is the sale price while a sale runs. `stock` takes a whole number of available units across tracked stock. `created` takes a number of days (1 to 3650) for `within_last_days` and `not_within_last_days`. `option` takes an option value's numeric ID and matches products with a variant that has it. `on_sale` and `in_stock` take no value with `is_true` and `is_false`; a product with any untracked variant is in stock. Price, stock and option rules follow product changes within about a minute, and sales that start or end on a schedule within about ten minutes.",
           "type": [
             "string",
             "null"
