@@ -15565,6 +15565,13 @@
             "null"
           ]
         },
+        "clear_fee_free_hours": {
+          "description": "true removes the free period.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "clear_max_order_value": {
           "description": "true removes the order value cap.",
           "type": [
@@ -15593,6 +15600,34 @@
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "fee_amount": {
+          "description": "Fixed fee in the store's currency, at most 2 decimals.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fee_free_hours": {
+          "description": "No fee within this many hours of placement, 1 to limits.fee_free_hours_max.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "fee_percent": {
+          "description": "Percentage of the order total, above 0 and at most limits.fee_percent_max, at most 2 decimals.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fee_type": {
+          "description": "none, fixed (needs fee_amount) or percent (needs fee_percent).",
+          "type": [
+            "string",
             "null"
           ]
         },
