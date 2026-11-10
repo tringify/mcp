@@ -16251,7 +16251,7 @@
     "api_key": "returns.settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/returns/settings",
-    "description": "Read whether customers can request returns, and the rules. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/returns/settings. Only the connected store is accessible.",
+    "description": "Read whether customers can request returns, and the rules. With `auto_approve` enabled, a customer's request that passes the return limits is approved at once by the first of `rules`, in order, whose conditions all hold: every item's reason in `reasons` (empty: any), the order total at most `max_order_value` (store currency), every item delivered at most `max_days_since_delivery` days ago, and the customer in one of `customer_group_ids` (empty: anyone; guest orders never match a rule that names groups). The customer gets the Return Approved email and the return's `auto_approved_rule` names the rule; nothing matching leaves the request for you. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/returns/settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -16270,6 +16270,13 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "auto_approve": {
+          "description": "Auto-approve rules, sent whole: enabled and rules, in order. Each rule has a name and optional conditions: reasons (every requested item's reason is one of them; empty for any), max_order_value (order total in the store's currency), max_days_since_delivery (every item delivered at most this many days ago) and customer_group_ids (the customer is in one of them; empty for anyone). Bounds are in limits.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
         "auto_refund_method": {
           "description": "Where automatic refunds go: original_payment or store_credit.",
           "type": [
