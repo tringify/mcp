@@ -3696,6 +3696,13 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "default_sort": {
+          "description": "The storefront's sort for this collection when the shopper has not chosen one: `featured`, `created_at` (newest), `best_selling`, `title`, `price_asc`, `price_desc` or `updated_at`. Send null or an empty string to use the theme's default. `featured` lists the pinned products first, in their order, then the catalog's featured order.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "description": {
           "description": "Optional plain-text description.",
           "type": [
@@ -3727,6 +3734,16 @@
         "name": {
           "description": "Collection name.",
           "type": "string"
+        },
+        "pinned_product_ids": {
+          "description": "Products listed first, in this order, when the collection is sorted by `featured` (up to 250, each in this store). A pinned product shows only while the collection's rules match it. Replaces the list; send [] to clear it and omit it to keep it.",
+          "items": {
+            "type": "integer"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
         },
         "rules": {
           "description": "Automatic collection rules. Each rule has field, operator, optional value, and include_subcategories (see the Add rule endpoint for the value of each field). A tag rule value may be the tag's ID or its slug; the slug is resolved to the ID when the rule is saved.",
@@ -3818,6 +3835,13 @@
             "null"
           ]
         },
+        "default_sort": {
+          "description": "The storefront's sort for this collection when the shopper has not chosen one: `featured`, `created_at` (newest), `best_selling`, `title`, `price_asc`, `price_desc` or `updated_at`. Send null or an empty string to use the theme's default. `featured` lists the pinned products first, in their order, then the catalog's featured order.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "description": {
           "description": "Optional plain-text description.",
           "type": [
@@ -3855,6 +3879,16 @@
           "description": "Collection name.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "pinned_product_ids": {
+          "description": "Products listed first, in this order, when the collection is sorted by `featured` (up to 250, each in this store). A pinned product shows only while the collection's rules match it. Replaces the list; send [] to clear it and omit it to keep it.",
+          "items": {
+            "type": "integer"
+          },
+          "type": [
+            "array",
             "null"
           ]
         },
