@@ -15914,7 +15914,8 @@
             "approved",
             "declined",
             "closed",
-            "cancelled"
+            "cancelled",
+            "expired"
           ],
           "type": "string"
         }
@@ -16251,7 +16252,7 @@
     "api_key": "returns.settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/returns/settings",
-    "description": "Read whether customers can request returns, and the rules. With `auto_approve` enabled, a customer's request that passes the return limits is approved at once by the first of `rules`, in order, whose conditions all hold: every item's reason in `reasons` (empty: any), the order total at most `max_order_value` (store currency), every item delivered at most `max_days_since_delivery` days ago, and the customer in one of `customer_group_ids` (empty: anyone; guest orders never match a rule that names groups). The customer gets the Return Approved email and the return's `auto_approved_rule` names the rule; nothing matching leaves the request for you. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/returns/settings. Only the connected store is accessible.",
+    "description": "Read whether customers can request returns, and the rules. With `auto_approve` enabled, a customer's request that passes the return limits is approved at once by the first of `rules`, in order, whose conditions all hold: every item's reason in `reasons` (empty: any), the order total at most `max_order_value` (store currency), every item delivered at most `max_days_since_delivery` days ago, and the customer in one of `customer_group_ids` (empty: anyone; guest orders never match a rule that names groups). The customer gets the Return Approved email and the return's `auto_approved_rule` names the rule; nothing matching leaves the request for you. With `reminders` enabled, a return the customer asked for that is approved but not sent back gets a Return Reminder `first_after_days` after approval and a last one `last_after_days` after approval; at `expire_after_days` it closes as expired (`returns/expired`, Return Expired email). Any recorded or tracked return shipment, or receiving the return, stops the reminders. Returns you record yourself never get reminders. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/returns/settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -16339,6 +16340,13 @@
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "reminders": {
+          "description": "Return reminders, sent whole: enabled, first_after_days, last_after_days and expire_after_days, counted from approval; each later than the one before, at most limits.reminder_days_max.",
+          "type": [
+            "object",
             "null"
           ]
         },
