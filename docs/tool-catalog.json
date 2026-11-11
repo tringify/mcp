@@ -24564,7 +24564,7 @@
     "api_key": "discounts.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/discounts",
-    "description": "Add a merchandise discount to a market. Choose one discount type and provide the fields for that type. `value`, `amounts`, Buy X Get Y, bundle and gift fields sent for another type are rejected; `tier_value_kind` and `tiers` sent for a type other than tiered are ignored. A property the request does not accept is refused with `STORE_API_BODY_PROPERTY_UNKNOWN`. Empty money maps (`{}`) are treated as not set, so money maps from a GET can be sent back unchanged for any type. Percentage discounts use `value`; fixed-amount discounts use `amounts`; Buy X Get Y offers define qualifying and reward sets; bundles define every required component and either a set price or percentage reduction. Free gifts specify gift-only products and how they enter the cart; tiered discounts specify ascending base-currency subtotal thresholds and apply only the highest reached tier. Coupon discounts need a code that is unique within the market, while automatic discounts apply without one. Product, collection, category, customer, and group ids must belong to the same store. Free delivery is configured with the market's shipping methods. The response is the saved discount, with `usage_count` and `usage_held_count` at 0 and a matching `usage_summary`. A successful create publishes `discounts/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a merchandise discount to a market. Choose one discount type and provide the fields for that type. `value`, `amounts`, Buy X Get Y, bundle and gift fields sent for another type are rejected; `tier_value_kind` and `tiers` sent for a type other than tiered are ignored. A property the request does not accept is refused with `STORE_API_BODY_PROPERTY_UNKNOWN`. Empty money maps (`{}`) are treated as not set, so money maps from a GET can be sent back unchanged for any type. Percentage discounts use `value`; fixed-amount discounts use `amounts`; Buy X Get Y offers define qualifying and reward sets; bundles define every required component and either a set price or percentage reduction. Free gifts specify gift-only products and how they enter the cart; tiered discounts specify ascending base-currency subtotal thresholds and apply only the highest reached tier. Coupon discounts with code_mode single need a code that is unique within the market; with code_mode unique they have none and mint a code per email through the codes endpoint. Automatic discounts apply without a code. Product, collection, category, customer, and group ids must belong to the same store. Free delivery is configured with the market's shipping methods. The response is the saved discount, with `usage_count` and `usage_held_count` at 0 and a matching `usage_summary`. A successful create publishes `discounts/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -24737,7 +24737,14 @@
           ]
         },
         "code": {
-          "description": "Required for coupon activation. Use letters A–Z, digits, hyphens and underscores, up to code_max_length characters; the code is stored in upper case. Codes are unique within the market and matched without regard to case.",
+          "description": "Required for a coupon with code_mode single; leave it out for code_mode unique (DISCOUNT_UNIQUE_CODE_SHARED). Use letters A–Z, digits, hyphens and underscores, up to code_max_length characters; the code is stored in upper case. Codes are unique within the market, across shared and minted codes, and matched without regard to case.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "code_mode": {
+          "description": "For coupons: `single` (default) for one code anyone can use, or `unique` for a code per customer. A unique-code discount has no shared code: mint each code for an email with the codes endpoint. A minted code applies only to a checkout with that email, guests included, and only once. Unique-code discounts are for everyone (customer_eligibility everyone), have per_customer_limit 1 (omitted means 1) and are never shown in the cart, at checkout or on product pages: otherwise DISCOUNT_UNIQUE_CODE_AUDIENCE. Set at creation; an update that changes it is refused with DISCOUNT_CODE_MODE_LOCKED.",
           "type": [
             "string",
             "null"
@@ -24975,6 +24982,20 @@
         "type": {
           "description": "Choose `percentage`, `fixed_amount`, `buy_x_get_y`, `bundle`, `free_gift`, or `tiered`.",
           "type": "string"
+        },
+        "unique_code_prefix": {
+          "description": "For code_mode unique: up to unique_code_prefix_max_length letters, digits, hyphens and underscores that start every generated code, stored in upper case. A generated code is the prefix plus 8 characters without look-alikes (no 0, O, 1, I or L). Changing it affects codes minted afterwards.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "unique_code_valid_days": {
+          "description": "For code_mode unique: how many days each minted code works after it is minted, 1 to unique_code_valid_days_max; null for no end of its own. The discount's own schedule still applies. Changing it affects codes minted afterwards.",
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "usage_limit": {
           "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit. A discount with no usage_limit and no per_customer_limit counts no uses.",
@@ -25306,7 +25327,14 @@
           ]
         },
         "code": {
-          "description": "Required for coupon activation. Use letters A–Z, digits, hyphens and underscores, up to code_max_length characters; the code is stored in upper case. Codes are unique within the market and matched without regard to case.",
+          "description": "Required for a coupon with code_mode single; leave it out for code_mode unique (DISCOUNT_UNIQUE_CODE_SHARED). Use letters A–Z, digits, hyphens and underscores, up to code_max_length characters; the code is stored in upper case. Codes are unique within the market, across shared and minted codes, and matched without regard to case.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "code_mode": {
+          "description": "For coupons: `single` (default) for one code anyone can use, or `unique` for a code per customer. A unique-code discount has no shared code: mint each code for an email with the codes endpoint. A minted code applies only to a checkout with that email, guests included, and only once. Unique-code discounts are for everyone (customer_eligibility everyone), have per_customer_limit 1 (omitted means 1) and are never shown in the cart, at checkout or on product pages: otherwise DISCOUNT_UNIQUE_CODE_AUDIENCE. Set at creation; an update that changes it is refused with DISCOUNT_CODE_MODE_LOCKED.",
           "type": [
             "string",
             "null"
@@ -25550,6 +25578,20 @@
           "description": "Choose `percentage`, `fixed_amount`, `buy_x_get_y`, `bundle`, `free_gift`, or `tiered`.",
           "type": "string"
         },
+        "unique_code_prefix": {
+          "description": "For code_mode unique: up to unique_code_prefix_max_length letters, digits, hyphens and underscores that start every generated code, stored in upper case. A generated code is the prefix plus 8 characters without look-alikes (no 0, O, 1, I or L). Changing it affects codes minted afterwards.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "unique_code_valid_days": {
+          "description": "For code_mode unique: how many days each minted code works after it is minted, 1 to unique_code_valid_days_max; null for no end of its own. The discount's own schedule still applies. Changing it affects codes minted afterwards.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "usage_limit": {
           "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit. A discount with no usage_limit and no per_customer_limit counts no uses.",
           "type": [
@@ -25714,6 +25756,127 @@
       "type": "object"
     },
     "name": "disable_market_discount",
+    "scopes": [
+      "store:markets:write"
+    ]
+  },
+  {
+    "api_key": "discounts.codes.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}/codes",
+    "description": "Mint a unique-code discount's code for one customer email. Only for a discount with `code_mode` `unique` (otherwise DISCOUNT_NOT_UNIQUE_CODES). The code applies only to a checkout whose email matches, ignoring case, guests included, and only once; a shopper using it with another email, or before entering one, sees that the code works only with the email it was sent to. Minting is idempotent per email: if the email already has a code for this discount, that code is returned with `created` false, and an expired code that was never used is replaced by a new code with a new validity (`created` true). Without `code`, a code is generated from `unique_code_prefix` plus 8 characters; send `code` to use your own, for example to give a customer the same code in every market (each market's discount mints it separately). A code that exists in the market, as a shared or minted code, is refused with MARKET_DISCOUNT_CODE_DUPLICATE. `expires_at` is `unique_code_valid_days` after minting, or null. `status` is `active`, `held` (an order waiting for payment holds it), `used` (with `order_id` and `used_at`) or `expired`, with `status_label` worded in the request language. Minting publishes no webhook; the order that uses the code records it in its discounts. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts/{discountId}/codes. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Your own code instead of a generated one: 4 to code_max_length letters A–Z, digits, hyphens and underscores, stored in upper case. Ignored when the email already has an unexpired code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "discount_id": {
+          "description": "Discount id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "email": {
+          "description": "The customer email the code is for, up to 254 characters. It is stored in lower case.",
+          "type": "string"
+        },
+        "market_id": {
+          "description": "Market id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "market_id",
+        "discount_id",
+        "email"
+      ],
+      "type": "object"
+    },
+    "name": "create_market_discount_code",
+    "scopes": [
+      "store:markets:write"
+    ]
+  },
+  {
+    "api_key": "discounts.codes.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}/codes",
+    "description": "Browse the codes a unique-code discount has minted. Newest first. `search` matches any part of the code or the email, ignoring case. Each code carries its email, so the token needs `read_customers` as well as `read_markets`. `status` is `active`, `held`, `used` or `expired`; a used code names the order and when it was used. A `per_page` above list_max_limit is rejected with `VALIDATION_LIST_INVALID_LIMIT`. Only for a discount with `code_mode` `unique` (otherwise DISCOUNT_NOT_UNIQUE_CODES). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}/codes. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "discount_id": {
+          "description": "Discount id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "market_id": {
+          "description": "Market id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "page": {
+          "description": "The page to return, starting at 1.",
+          "type": "integer"
+        },
+        "per_page": {
+          "description": "Codes per page, up to list_max_limit from the limits endpoint.",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Part of a code or an email.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "market_id",
+        "discount_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_market_discount_codes",
+    "scopes": [
+      "store:markets:read",
+      "store:customers:read"
+    ]
+  },
+  {
+    "api_key": "discounts.codes.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}/codes/{codeId}",
+    "description": "Stop one minted code from working. The code stops applying at once and its email can be given a new code by minting again. An order that already used it keeps its discount; an unpaid checkout holding it keeps it too. The deletion is recorded in the audit log. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/discounts/{discountId}/codes/{codeId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "code_id": {
+          "description": "Code id from the list or create response.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "discount_id": {
+          "description": "Discount id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "market_id": {
+          "description": "Market id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "market_id",
+        "discount_id",
+        "code_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_market_discount_code",
     "scopes": [
       "store:markets:write"
     ]

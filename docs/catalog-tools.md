@@ -1159,3 +1159,13 @@ Verification tags prove ownership of the store's domains to services such as sea
 | `get_blog_author_lifecycle_job` | `GET /api/2025-01/blog/authors/lifecycle-jobs/{job_id}` | store:blog:read |
 | `get_blog_list_seo_limits` | `GET /api/2025-01/blog/list-seo/limits` | store:blog:read |
 | `get_list_page_seo_limits` | `GET /api/2025-01/list-page-seo/limits` | store:products:read |
+
+## Other tools
+
+Tools added to the connector since this page was last edited by hand.
+
+| Tool | Store API operation | OAuth scopes |
+| --- | --- | --- |
+| `create_market_discount_code` | `POST /api/2025-01/markets/{marketId}/discounts/{discountId}/codes` | store:markets:write |
+| `list_market_discount_codes` | `GET /api/2025-01/markets/{marketId}/discounts/{discountId}/codes` | store:markets:read, store:customers:read |
+| `delete_market_discount_code` | `DELETE /api/2025-01/markets/{marketId}/discounts/{discountId}/codes/{codeId}` | store:markets:write |
