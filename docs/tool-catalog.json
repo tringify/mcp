@@ -22762,7 +22762,7 @@
     "api_key": "markets.payment-providers.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/payment-providers/{bindingId}",
-    "description": "Enable or order a connected provider for this market. Only is_enabled, sort_order and checkout_name are editable here. Lower sort_order values appear first in checkout. checkout_name is the name shoppers see for this provider in this market, at checkout and in their order emails, up to checkout_name_max_length characters; send an empty string to show the provider's own name again. Orders, Store Admin, analytics, refunds, webhooks and this API keep the provider app itself (app_id, app_name). You can disable an existing assignment even when its connection is unavailable. Provider connection and credential management belong to the app lifecycle. A provider can be enabled only while it is `eligible`. A market can have up to 5 providers enabled at once; `limits.max_enabled` is that limit and `limits.enabled_count` how many are enabled now. Enabling one more than that is refused with MARKET_PAYMENT_PROVIDERS_LIMIT_REACHED; disabling, reordering and re-saving an enabled provider are always allowed. The response is the provider as the list returns it. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/payment-providers/{bindingId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Enable or order a connected provider for this market. Only is_enabled, sort_order, checkout_name and show_when are editable here. Lower sort_order values appear first in checkout. checkout_name is the name shoppers see for this provider in this market, at checkout and in their order emails, up to checkout_name_max_length characters; send an empty string to show the provider's own name again. Orders, Store Admin, analytics, refunds, webhooks and this API keep the provider app itself (app_id, app_name). You can disable an existing assignment even when its connection is unavailable. Provider connection and credential management belong to the app lifecycle. A provider can be enabled only while it is `eligible`. A market can have up to 5 providers enabled at once; `limits.max_enabled` is that limit and `limits.enabled_count` how many are enabled now. Enabling one more than that is refused with MARKET_PAYMENT_PROVIDERS_LIMIT_REACHED; disabling, reordering and re-saving an enabled provider are always allowed. The response is the provider as the list returns it. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/payment-providers/{bindingId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -22789,6 +22789,13 @@
           "description": "Market id.",
           "minLength": 1,
           "type": "string"
+        },
+        "show_when": {
+          "description": "Offer it only to the shoppers and carts every set condition matches: countries (delivery country), min_subtotal/max_subtotal (amount per currency; a checkout in another currency doesn't match), customer_groups and customer_tags (ids; guests never match), products (product ids in the cart) and collections (collection ids with a product in the cart). null or an empty object offers it to everyone. Checkout applies it when it lists methods and again when the order is placed; a provider with a rule is never offered as an express button outside checkout. Omit to keep the current rule.",
+          "type": [
+            "object",
+            "null"
+          ]
         },
         "sort_order": {
           "description": "Checkout display order, from 0 through the provider response’s sort_order_max.",
@@ -26269,6 +26276,13 @@
             "null"
           ]
         },
+        "show_when": {
+          "description": "Offer it only to the shoppers and carts every set condition matches: countries (delivery country), min_subtotal/max_subtotal (amount per currency; a checkout in another currency doesn't match), customer_groups and customer_tags (ids; guests never match), products (product ids in the cart) and collections (collection ids with a product in the cart). null or an empty object offers it to everyone. Checkout applies it when it lists methods and again when the order is placed. Updates replace it: omit it to offer the method to everyone.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
         "tax_class_id": {
           "description": "Shared market tax class.",
           "type": [
@@ -26388,6 +26402,13 @@
           "items": {},
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "show_when": {
+          "description": "Offer it only to the shoppers and carts every set condition matches: countries (delivery country), min_subtotal/max_subtotal (amount per currency; a checkout in another currency doesn't match), customer_groups and customer_tags (ids; guests never match), products (product ids in the cart) and collections (collection ids with a product in the cart). null or an empty object offers it to everyone. Checkout applies it when it lists methods and again when the order is placed. Updates replace it: omit it to offer the method to everyone.",
+          "type": [
+            "object",
             "null"
           ]
         },
