@@ -16041,7 +16041,7 @@
           "type": "string"
         },
         "items": {
-          "description": "One object per line: order_item_id, quantity, reason (size_too_small, size_too_large, not_as_described, defective, wrong_item, changed_mind or other), optional note (at most 500 characters), preference (refund or exchange, default refund) and, for an exchange, exchange_variant_id (another variant of the same product).",
+          "description": "One object per line: order_item_id, quantity, reason (size_too_small, size_too_large, not_as_described, defective, wrong_item, changed_mind or other), optional note (at most 500 characters), preference (refund or exchange, default refund) and, for an exchange, exchange_variant_id (another variant of the same product) or, when exchange_rules.products is any_product, exchange_product_id for another active product, with exchange_variant_id when that product has variants.",
           "items": {
             "type": "object"
           },
@@ -16282,7 +16282,7 @@
           "type": "string"
         },
         "items": {
-          "description": "One object per returned line: order_item_id, variant_id of the replacement (another variant of the same product), restock (default true) and optional restock_location_id.",
+          "description": "One object per returned line: order_item_id, optional variant_id (another variant of the same product, replacing the one the return asked for; omitted, the return's own exchange_variant_id or exchange_product_id is used), restock (default true) and optional restock_location_id.",
           "items": {
             "type": "object"
           },
@@ -16304,7 +16304,7 @@
     "api_key": "returns.settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/returns/settings",
-    "description": "Read whether customers can request returns, and the rules. With `auto_approve` enabled, a customer's request that passes the return limits is approved at once by the first of `rules`, in order, whose conditions all hold: every item's reason in `reasons` (empty: any), the order total at most `max_order_value` (store currency), every item delivered at most `max_days_since_delivery` days ago, and the customer in one of `customer_group_ids` (empty: anyone; guest orders never match a rule that names groups). The customer gets the Return Approved email and the return's `auto_approved_rule` names the rule; nothing matching leaves the request for you. With `reminders` enabled, a return the customer asked for that is approved but not sent back gets a Return Reminder `first_after_days` after approval and a last one `last_after_days` after approval; at `expire_after_days` it closes as expired (`returns/expired`, Return Expired email). Any recorded or tracked return shipment, or receiving the return, stops the reminders. Returns you record yourself never get reminders. `exchange_fallback` decides what happens when an exchange's replacement is out of stock: the customer may choose among Store Credit and the options turned on (`wait`, `other_variant`, `refund`) for `answer_days`, after which `default` applies; a wait for restock lasts up to `wait_days` and then ends in Store Credit. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/returns/settings. Only the connected store is accessible.",
+    "description": "Read whether customers can request returns, and the rules. With `auto_approve` enabled, a customer's request that passes the return limits is approved at once by the first of `rules`, in order, whose conditions all hold: every item's reason in `reasons` (empty: any), the order total at most `max_order_value` (store currency), every item delivered at most `max_days_since_delivery` days ago, and the customer in one of `customer_group_ids` (empty: anyone; guest orders never match a rule that names groups). The customer gets the Return Approved email and the return's `auto_approved_rule` names the rule; nothing matching leaves the request for you. With `reminders` enabled, a return the customer asked for that is approved but not sent back gets a Return Reminder `first_after_days` after approval and a last one `last_after_days` after approval; at `expire_after_days` it closes as expired (`returns/expired`, Return Expired email). Any recorded or tracked return shipment, or receiving the return, stops the reminders. Returns you record yourself never get reminders. `exchange_fallback` decides what happens when an exchange's replacement is out of stock: the customer may choose among Store Credit and the options turned on (`wait`, `other_variant`, `refund`) for `answer_days`, after which `default` applies; a wait for restock lasts up to `wait_days` and then ends in Store Credit. `exchange_rules` decide which replacements customers may choose (`products`: same_product or any_product) and what happens to a price difference: `costs_more` customer_pays (the exchange order carries the difference) or not_offered (a customer's request whose replacement costs more is refused with RETURN_EXCHANGE_COSTS_MORE), and `costs_less` store_credit, original_payment or store_keeps. With `instant_exchange` enabled, an approved exchange the customer asked for (every item an exchange, a customer account and, when `customer_group_ids` are set, in one of those groups) ships its replacement at once, before the items come back: with `protection` none the exchange credit is issued and pays the exchange order straight away, and the return completes when the items are received; with pay_first the customer pays for the replacement on the exchange order and the returned items are refunded to the original payment when received. The items are due within `return_days` (the return's `instant_due_at`): a none exchange that passes it is flagged to you on the order, a pay_first one expires with no refund. Returned items go back into stock when received. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/returns/settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -16368,6 +16368,13 @@
             "null"
           ]
         },
+        "exchange_rules": {
+          "description": "Exchange rules, sent whole: products (same_product or any_product), costs_more (customer_pays or not_offered) and costs_less (store_credit, original_payment or store_keeps).",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
         "exchanges_enabled": {
           "description": "Customers can ask for another variant instead of a refund.",
           "type": [
@@ -16382,6 +16389,13 @@
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "instant_exchange": {
+          "description": "Instant exchange, sent whole: enabled, customer_group_ids (empty for every customer with an account), protection (none or pay_first) and return_days (1 to 60).",
+          "type": [
+            "object",
             "null"
           ]
         },
@@ -19825,7 +19839,7 @@
                 "type": "string"
               },
               "value": {
-                "description": "Value to compare (for `purchased_product` and `viewed_product`, the product ID); omit for `is_null` and `is_not_null`.",
+                "description": "Value to compare (for `purchased_product` and `viewed_product`, the product ID; for `viewed_collection`, the collection ID; for `viewed_category`, the category ID); omit for `is_null` and `is_not_null`.",
                 "type": "string"
               },
               "value_id": {
@@ -19833,7 +19847,7 @@
                 "type": "string"
               },
               "window_days": {
-                "description": "Required on `visits_30_days`, `viewed_product`, `viewed_not_bought` and `carted_not_bought` rules and not accepted on others: the number of days the rule looks back, 1 to 30. The limits' `rule_fields[].window_max_days` gives the maximum.",
+                "description": "Required on `visits_30_days`, `viewed_product`, `viewed_collection`, `viewed_category`, `viewed_not_bought` and `carted_not_bought` rules and not accepted on others: the number of days the rule looks back, 1 to 30. The limits' `rule_fields[].window_max_days` gives the maximum.",
                 "type": "integer"
               }
             },
@@ -19921,7 +19935,7 @@
                 "type": "string"
               },
               "value": {
-                "description": "Value to compare (for `purchased_product` and `viewed_product`, the product ID); omit for `is_null` and `is_not_null`.",
+                "description": "Value to compare (for `purchased_product` and `viewed_product`, the product ID; for `viewed_collection`, the collection ID; for `viewed_category`, the category ID); omit for `is_null` and `is_not_null`.",
                 "type": "string"
               },
               "value_id": {
@@ -19929,7 +19943,7 @@
                 "type": "string"
               },
               "window_days": {
-                "description": "Required on `visits_30_days`, `viewed_product`, `viewed_not_bought` and `carted_not_bought` rules and not accepted on others: the number of days the rule looks back, 1 to 30. The limits' `rule_fields[].window_max_days` gives the maximum.",
+                "description": "Required on `visits_30_days`, `viewed_product`, `viewed_collection`, `viewed_category`, `viewed_not_bought` and `carted_not_bought` rules and not accepted on others: the number of days the rule looks back, 1 to 30. The limits' `rule_fields[].window_max_days` gives the maximum.",
                 "type": "integer"
               }
             },
@@ -20019,7 +20033,7 @@
                 "type": "string"
               },
               "value": {
-                "description": "Value to compare (for `purchased_product` and `viewed_product`, the product ID); omit for `is_null` and `is_not_null`.",
+                "description": "Value to compare (for `purchased_product` and `viewed_product`, the product ID; for `viewed_collection`, the collection ID; for `viewed_category`, the category ID); omit for `is_null` and `is_not_null`.",
                 "type": "string"
               },
               "value_id": {
@@ -20027,7 +20041,7 @@
                 "type": "string"
               },
               "window_days": {
-                "description": "Required on `visits_30_days`, `viewed_product`, `viewed_not_bought` and `carted_not_bought` rules and not accepted on others: the number of days the rule looks back, 1 to 30. The limits' `rule_fields[].window_max_days` gives the maximum.",
+                "description": "Required on `visits_30_days`, `viewed_product`, `viewed_collection`, `viewed_category`, `viewed_not_bought` and `carted_not_bought` rules and not accepted on others: the number of days the rule looks back, 1 to 30. The limits' `rule_fields[].window_max_days` gives the maximum.",
                 "type": "integer"
               }
             },
