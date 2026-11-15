@@ -13027,7 +13027,7 @@
           "type": "string"
         },
         "mode": {
-          "description": "`gemini` (default, JPEG) or `transparent` (PNG with a transparent background). Transparent images are not offered for stores in the EU yet.",
+          "description": "`gemini` (default, JPEG) or `transparent` (PNG with a transparent background).",
           "type": [
             "string",
             "null"
@@ -13092,7 +13092,7 @@
           "type": "number"
         },
         "mode": {
-          "description": "`gemini` (default, JPEG) or `transparent` (PNG with a transparent background). Transparent images are not offered for stores in the EU yet.",
+          "description": "`gemini` (default, JPEG) or `transparent` (PNG with a transparent background).",
           "type": [
             "string",
             "null"
