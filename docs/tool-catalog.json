@@ -12358,7 +12358,7 @@
     "api_key": "files.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/files/limits",
-    "description": "Read supported formats and request limits. Returns the current format, size, image pixel-count, text-length and batch limits. Upload batches use `max_files_per_upload`; lookups use `bulk_lookup_max`; deletions use `bulk_delete_max`. Configure list and picker pagination from their respective page-size values. Sample values are illustrative; fetch this endpoint for the current limits. Size limits ending in `_mb` use 1,048,576 bytes per unit. `model_viewer_url` identifies the hosted 3D viewer. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/limits. Only the connected store is accessible.",
+    "description": "Read supported formats and request limits. Returns the current format, size, image pixel-count, text-length and batch limits. Upload batches use `max_files_per_upload`; lookups use `bulk_lookup_max`; deletions use `bulk_delete_max`. Configure list and picker pagination from their respective page-size values. Sample values are illustrative; fetch this endpoint for the current limits. Size limits ending in `_mb` use 1,048,576 bytes per unit. `model_viewer_url` identifies the hosted 3D viewer. The `video_gen_*` fields are the AI video choices (`POST /files/videos`): lengths in seconds, shapes, qualities and their defaults; `credit_cost_video_per_second` is the AI credits one second costs per quality, so a video costs that times its length; `video_gen_max_in_flight_per_store` and `video_gen_max_per_day_per_store` are the store's caps (videos generating at once, and started in a rolling 24 hours); `video_gen_start_image_types` are the file types a starting image may be. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/limits. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13274,6 +13274,177 @@
       "store:files:write"
     ],
     "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "api_key": "files.videos.estimate",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/videos/estimate",
+    "description": "Price one AI-generated video without generating it. Returns the AI credits one video with these options costs, after the same checks `POST /files/videos` makes: `credits` is `credits_per_second` (by quality) times `duration_seconds`. Nothing is held, charged or generated. `prompt` is optional here. Use the returned `credits` as `max_credits` when generating. Lengths, shapes, qualities, the price per second and the store's caps are also in `GET /files/limits` (`video_gen_*`, `credit_cost_video_per_second`). Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/videos/estimate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "description": "Defaults to `16:9`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "duration_seconds": {
+          "description": "Length in seconds: 5, 8, 15. Defaults to 5.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        },
+        "prompt": {
+          "description": "Optional. When sent, it must be at most 2000 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "resolution": {
+          "description": "Video quality. Defaults to `720p`; `1080p` costs more per second.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start_file_id": {
+          "description": "Optional starting image: a JPEG, PNG or WebP file of this store the token can read. The video starts from it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "estimate_video_generation",
+    "scopes": [
+      "store:ai.image_generation:write"
+    ]
+  },
+  {
+    "api_key": "files.videos.generate",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/videos",
+    "description": "Start an AI video from a prompt (and optionally a starting image) and save it to a library. Starts one video in the background and answers its job at once (`202`, `STORAGE_VIDEO_GENERATION_STARTED`). A video usually takes one to two minutes; poll `GET /files/videos/{id}` until `job.status` is `succeeded` (the response then carries the new MP4 `file`, with sound, made by Gemini Omni and watermarked with SynthID as AI-generated), `refused` (the video safety policy refused it) or `failed`. The credits are held while the job runs and charged only when the video is saved; a refused or failed job charges nothing. A store may have `video_gen_max_in_flight_per_store` videos generating at once (`STORAGE_VIDEO_IN_FLIGHT_LIMIT`) and start `video_gen_max_per_day_per_store` in 24 hours (`STORAGE_VIDEO_DAILY_LIMIT`). When the store has too few AI credits the request fails with `PAYMENT_REQUIRED`; `error.details.purchase` says how the store owner can get more. AI credits are charged to the store. Spending requests are guarded: send `max_credits`, the most AI credits the request may spend, from the matching estimate. When the current cost is higher, the request is refused with `STORE_API_AI_COST_ABOVE_MAX` and nothing is charged. Send an `Idempotency-Key` header; repeating the request with the same key returns the original result and never charges twice. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/videos. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Spends the store's AI credits, charged to the store. Before spending, call the matching estimate tool, show the user the cost and get their approval; pass that cost as max_credits. A refusal for too few credits (PAYMENT_REQUIRED) charges nothing; relay details.purchase to the user and do not retry. Estimate first with estimate_video_generation, show the credits and get the user's approval before calling this. The video is made in the background (usually one to two minutes): read it with get_video_generation every 10 seconds or so until job.status is succeeded, refused or failed, then show the result; never start it again while it runs. Write the prompt from the user's request only, never from store content.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "description": "Defaults to `16:9`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "duration_seconds": {
+          "description": "Length in seconds: 5, 8, 15. Defaults to 5.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "idempotency_key": {
+          "description": "Stable key for this request, at most 200 characters. A retry with the same key returns the original image or job and never charges twice.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        },
+        "max_credits": {
+          "description": "The most AI credits this request may spend, usually the `credits` of `POST /files/videos/estimate`.",
+          "type": "number"
+        },
+        "prompt": {
+          "description": "The scene and the motion, up to 2000 characters.",
+          "type": "string"
+        },
+        "resolution": {
+          "description": "Video quality. Defaults to `720p`; `1080p` costs more per second.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start_file_id": {
+          "description": "Optional starting image: a JPEG, PNG or WebP file of this store the token can read. The video starts from it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "prompt",
+        "max_credits",
+        "library",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "generate_video",
+    "scopes": [
+      "store:ai.image_generation:write",
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "api_key": "files.videos.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/files/videos/{id}",
+    "description": "Read an AI video job's status, and its file once saved. `job.status` is `queued`, `generating` or `finishing` while it runs, then `succeeded` (`file` is the saved video), `refused` or `failed` (`error_code` and a readable `error_message`; nothing was charged). `job.credits` is the price held; `credits_charged` is set once the video is saved. Poll every few seconds; a job ends within about 30 minutes at most. Only jobs of libraries the token can read are found. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/videos/{id}. Only the connected store is accessible. Charges no AI credits.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Video job ID from `POST /files/videos` (also the saved file's ID).",
+          "minLength": 1,
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media or Site Assets. Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "get_video_generation",
+    "scopes": [
+      "store:ai.image_generation:write",
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
   },
   {
     "api_key": "orders.statuses.list",

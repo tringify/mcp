@@ -272,6 +272,9 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `create_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
 | `get_alt_text_job` | `GET /api/2025-01/files/alt-text-jobs/{id}` | store:ai.image_generation:write, and store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
 | `cancel_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs/{id}/cancel` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `estimate_video_generation` | `POST /api/2025-01/files/videos/estimate` | store:ai.image_generation:write |
+| `generate_video` | `POST /api/2025-01/files/videos` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `get_video_generation` | `GET /api/2025-01/files/videos/{id}` | store:ai.image_generation:write, and store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
 | `list_order_statuses` | `GET /api/2025-01/orders/statuses` | store:orders:read |
 | `get_order` | `GET /api/2025-01/orders/{id}` | store:orders:read |
 | `list_order_edits` | `GET /api/2025-01/orders/{id}/edits` | store:orders:read |
