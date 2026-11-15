@@ -1,5 +1,11 @@
 # Changelog
 
+## AI video — 15 November 2026
+
+- New tools (`store:ai.image_generation:write` plus the library's permission): `estimate_video_generation`, `generate_video` and `get_video_generation`. Videos are 5, 8 or 15 seconds, 16:9 or 9:16, 720p (7 credits/s) or 1080p (10 credits/s), with sound, from a prompt and an optional starting image. Estimate first, show the cost and get the user's approval; `generate_video` answers a job at once and `get_video_generation` reads it until it ends. Credits are charged only for a saved video.
+- `get_file_limits` now includes the video choices, the price per second and the store's caps (`video_gen_*`, `credit_cost_video_per_second`).
+- The [tool inventory](docs/catalog-tools.md) and `docs/tool-catalog.json` list all 891 tools.
+
 ## Returns, returned shipments and order cancellation — 10 November 2026
 
 - New order cancellation tools (`store:orders:read` / `store:orders:write`): `get_order_cancellation_settings`, `update_order_cancellation_settings` and `delete_order_cancellation_market_rules` for the rules that let customers cancel their own orders, and `list_order_cancellation_requests`, `get_order_cancellation_request`, `approve_order_cancellation_request` and `decline_order_cancellation_request` for cancellations customers ask for.
