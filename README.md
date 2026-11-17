@@ -86,7 +86,7 @@ All store-data tools use the corresponding Store API operations. The server retu
 | Blog Posts | Limits, list, search, details, translations, metafields | Create, update, delete, bulk status/category/tag changes, translations and metafields |
 | Blog Tags and Categories | Limits, list, details, translations; category metafields | Create, update, delete, bulk delete, translations; category metafields |
 | Blog Authors | Limits, list, search, details | Create, update, delete, bulk delete with reassignment when required |
-| Markets | All 109 documented JSON operations; live limits, country/currency mappings, tax, discounts, shipping, duties, COD, payments, checkout | Market and specialist configuration, bulk operations, confirmation and fee ordering |
+| Markets | Documented Markets JSON operations: live limits, country/currency mappings, tax, discounts, shipping, duties, COD, payments, checkout | Market and specialist configuration, bulk operations, confirmation and fee ordering |
 | Orders | `list_orders`, `get_order`, `get_order_refund_options`, order edits, order statuses, order tags, order settings | `create_order`, `cancel_order`, `refund_order`, refund retry and redirect, fulfilments and tracking, order edits, order tags, order settings |
 | Order cancellation | `get_order_cancellation_settings`, `list_order_cancellation_requests`, `get_order_cancellation_request` | `update_order_cancellation_settings`, `delete_order_cancellation_market_rules`, `approve_order_cancellation_request`, `decline_order_cancellation_request` |
 | Returns | `get_return_settings`, `list_returns`, `get_return`, `get_return_options` | `update_return_settings`, `create_return`, approve, decline, cancel, shipment, receive, refund and exchange |
@@ -130,9 +130,15 @@ Policies are fixed records: use their type for get/update and their UUID for tra
 
 Use `list_page_metafield_definitions` and `list_blog_metafield_definitions` to discover accessible definitions before setting Page, Blog Post, or Blog Category values. Blog Comments expose single and bulk moderation and permanent deletion. Blog Settings expose comment mode and moderation. Blog index SEO includes source, translations and country SEO, with the same `null`/`*_is_default` resets as page SEO; setting a social image also requires Site Assets read access. Menus have separate `store:menus:read` and `store:menus:write` access, including full and lazy tree reads, item changes, atomic saves and title translations. Send the revision from your menu read with every save; a stale save is refused with `MENU_SAVE_CONFLICT`.
 
+## Blog author translations and deletion
+
+Author name and biography support individual and batch translations: `get_blog_author_translation`, `set_blog_author_translation`, `get_blog_author_translations`, and `set_blog_author_translations`. Reads require `store:blog:read` and `store:settings.languages:read`; writes require both corresponding write scopes. Empty values clear translations. Author slugs are not translatable.
+
+Deleting an assigned author requires `reassign_to_author_id` naming an author in the same store outside the deletion selection. Large reassignments return a `lifecycle` object (single deletion) or `jobs` (bulk). Wait for completion; queued work is not a completed deletion. Posts are never left without an author.
+
 ## Markets
 
-Markets require `store:markets:read` and `store:markets:write`, independently of Products and store Currencies. The hosted connector exposes all 107 documented Markets JSON operations, including country/currency assignments, tax classes/zones/rates/price rules, discounts, shipping, duties, COD, connected payment-provider availability/discounts, checkout limits and fees. Update an existing connection's approved access to add Markets, then refresh discovery.
+Markets require `store:markets:read` and `store:markets:write`, independently of Products and store Currencies. The hosted connector exposes the documented Markets JSON operations, including country/currency assignments, tax classes/zones/rates/price rules, discounts, shipping, duties, COD, connected payment-provider availability/discounts, checkout limits and fees. Update an existing connection's approved access to add Markets, then refresh discovery.
 
 Start with `get_market_limits`, `get_assigned_market_countries`, `list_markets` and `get_market`. Read each specialist's live limits and complete saved definition before changing it. Market PATCH changes supplied fields; specialist PUT requests follow their replacement contract. Amount maps and fields declared as decimal strings retain currency precision. Buy X Get Y `fixed` means an amount off each reward item; a bundle fixed price is the complete set's price.
 
@@ -144,12 +150,18 @@ Online Store tools need the Store Admin permission of the page that manages them
 
 - Page titles: a title saved on a page, translation or country row is final. Generated titles use the effective title pattern for the language and country (`update_storefront_seo`, then `set_storefront_seo_override` per language or language and country); a non-empty pattern replaces the automatic store-name suffix, and the home page's generated title is the store name. Country SEO (`*_country` tools) overrides single fields for shoppers in one country and language.
 - `update_storefront_mode` sets `live`, `maintenance` or `coming_soon`. Taking a live storefront offline first returns `CONFIRMATION_REQUIRED` with warnings and a single-use `confirmation_token`; show the change, get approval, then repeat the same mode with `confirmed: true` and the token. Never confirm automatically. Going live is refused with `STOREFRONT_NOT_READY_TO_GO_LIVE` and the `blockers` to fix (the same list as `go_live` in `get_storefront`; an incomplete address blocker lists `missing_fields` as `field` and `label`, named in the request language). `STOREFRONT_MODE_CONFLICT` means someone else changed the status: read the storefront again.
-- `update_storefront_password` acts at once, without confirmation. Setting a password hides a live storefront from shoppers immediately; an empty string or `null` removes it; a password of only spaces is rejected.
+- `update_storefront_password` acts at once, without confirmation. Setting a password hides a live storefront from shoppers immediately; an empty string or `null` removes it; a password of only spaces is rejected. Passwords need at least 8 characters (`password_min_length` in `get_storefront_limits`).
 - `clear_storefront_cache` clears the cached pages of every storefront in the store. It is allowed once every 12 hours per store; check `cache.can_clear` in `get_storefront`. An earlier call returns `STOREFRONT_CACHE_CLEAR_TOO_SOON` with `next_available_at`.
 
 ## Email settings
 
 Email settings tools use `store:settings.email:read` or `store:settings.email:write`; installed apps can never use them. Start with `get_email_overview`: it shows the four setup steps (sending domain, sender address, default sender, reply-to), the single `next_action` with the `tool` and `arguments` to call, and sending health. Follow `next_action`; call `verify_email_domain` once after the merchant adds DNS records and otherwise look again after `next_action.after` instead of calling it in a loop. Before removing a sending domain or sender, call `check_email_domain_removal` or `check_email_sender_removal`, show the confirmation and impacts, then `request_verification_code` and delete with `otp_code`. See [Email settings](docs/catalog-tools.md#email-settings).
+
+## Email subscribers
+
+Email subscriber tools `list_marketing_subscribers` and `get_marketing_subscriber` read the store's email newsletter subscribers with `store:customers:read`; they are read-only. `source: coming_soon` lists sign-ups from a storefront's Coming Soon page, and the detail returns the proof of consent stored with the sign-up (wording, version, language, time, IP address, user agent and page).
+
+Email subscriber lifecycle webhooks are `subscribers/create`, `subscribers/update` and `subscribers/delete` (app scope `read_customers`). Their `subscriber` payload is the GET resource, including `channel: email`, status, source, and consent proof (`text_version`, `captured_at`, `source_page`, `locale`). Creation includes pending confirmation; confirmation, unsubscribe and resubscription are updates. Delete carries the resource before deletion. Use `get_webhook_topic_schema` to inspect fields and projections.
 
 ## Languages and translations
 
@@ -173,6 +185,40 @@ Currencies use `store:settings.currencies:read` and `store:settings.currencies:w
 - `update_currency` changes only the fields you send; send at least one. Offer only the currency's own `rounding_modes`.
 - In automatic-rate mode, rates and enabled state follow the market (`rate_source: "automatic"`); only rounding can change. Turning automatic rates on requires no additional currencies; turning them off copies the current market rate onto every additional currency.
 - `remove_currency_data` and `bulk_remove_currency_data` preview first and need confirmation. `delete_currency` is blocked while live references or active Gift Card balances in that currency remain.
+
+## Currency and language request contract
+
+Currency and language tools map one for one to Store API operations. Currency reads/writes use read_currencies/write_currencies; language reads/writes use read_translations/write_translations. Reference languages needs no resource scope. Hosted OAuth uses the corresponding store:settings.currencies and store:settings.languages permissions.
+
+For destructive changes, first call without confirmed or confirmation_token. HTTP 409 CONFIRMATION_REQUIRED is an expected preview: keep the server's error body and show error.details.warnings. After explicit approval, repeat the same action with confirmed=true and error.details.confirmation_token within five minutes. Bulk currency cleanup also includes error.details.preview; single-currency cleanup and language operations do not promise that field. Changed or expired previews need fresh review. No-op requests and currency cleanup with no references may succeed immediately.
+
+Rates are positive decimal JSON strings, never numbers. conversion_rate and rate_inverse convert base currency to the selected currency; rate converts in the opposite direction. Read max_conversion_decimals and max_conversion_rate from list_currencies. Count decimal places after removing insignificant trailing zeros. Reference rates round toward six significant digits, capped at ten decimal places; large rates retain all integer digits. Automatic rates may carry more significant precision.
+
+set_languages accepts omitted or null locales as a read. A supplied array replaces the full set and must retain the default language. Default changes do not translate source content. A successful translation reset has no data field; physical cleanup continues asynchronously. Show the returned error code, message and details unchanged.
+
+## Product tags
+
+Product Tag tools include limits, cursor lists (maximum 100 per page), picker search (maximum 50 suggestions), get/create/update/delete, bulk create (50 names), bulk delete (1000 IDs), and individual/batch translations. Only `name` is translatable. Tag slugs are source filter values; tags have no dedicated pages or merge tool. Large deletions detach products in background batches; review `collections_total` and the first 50 collection impacts before confirming. Staff translation tools require product access and the corresponding language-settings scope.
+
+## Customer tax exemption and order tax
+
+Customer tools expose `tax_exempt`, `tax_id` and `tax_id_type` on create, update and reads. Only a merchant-approved customer in an enabled exempt zone receives checkout exemption. Entering an ID alone records it and keeps tax charged. Order creation accepts `customer_tax_id` and explicit `customer_tax_exempt` staff approval, requires `idempotency_key`, and returns `tax_exemption_source` and `tax_id_state_mismatch`. Tax IDs are normalized and validated offline; no registration is checked. Invalid saved IDs are ignored at checkout; shopper-entered IDs receive field errors. CSV update previews validate the effective saved and incoming ID/type pair before approval.
+
+Order reads retain named tax components for items, shipping, COD, checkout fees and collected-duty VAT. These amounts reconcile to `tax_total`. Refunds expose `goods_total`, `tax_total` and `components`, including quantity-zero monetary allocations. Tax comes from the original sale evidence: pending refunds reserve shares and only completed refunds reduce tax reports.
+
+## Gift card sales and reporting
+
+Gift card purchases create liability, so gift card lines never count as gross, net, total or product sales and are never taxed or discounted. Goods paid with a gift card count once as sales, with payment method `gift_card`; store credit uses `store_credit`. Neither tender can pay for gift card products. Gift-card-only orders count as orders but do not enter average order value: total sales divided by recognized orders with sales lines. Completed refunds to gift cards or store credit reduce sales once.
+
+The Store API report catalog includes **Outstanding gift card balance** (`gift_card_balance`): current active, unexpired balances and period movements, separately by currency. Its table requires the currency breakdown and supports CSV exports; it does not accept comparison or sales-channel filters. Discover its measures and control constraints from the report catalog. Order tools return full receipt totals, which include gift card purchases; those totals are not sales totals. The report is available through the Store API reports endpoints; the connector's order and gift card tools retain their documented operations.
+
+## Metafield values and translation permissions
+
+Value translations require both owner and Languages access: read for get, write for set or clear, including product and variant values. Store values use `store:settings.metafield_definitions:read/write`; order and order-item values use `store:orders:read/write`. Orders and order items have no value translations. These tools use the existing Store API endpoints and validation, preserve omitted values, and require no confirmation token. Sharing and merchant-access restrictions still apply.
+
+Use `list_order_metafields` / `set_order_metafield`, `list_order_item_metafields` / `set_order_item_metafield`, and `list_store_metafields` / `set_store_metafield`. Store translations use `get_store_metafield_translation` / `set_store_metafield_translation`. Existing connections need an approved access update to add Languages access; refresh tool discovery after approval.
+
+Every owner with a set tool also has a clear tool: `delete_product_metafield`, `delete_product_variant_metafield`, `delete_collection_metafield`, `delete_category_metafield`, `delete_brand_metafield`, `delete_vendor_metafield`, `delete_page_metafield`, `delete_blog_post_metafield`, `delete_blog_category_metafield`, `delete_customer_metafield`, `delete_order_metafield`, `delete_order_item_metafield`, and `delete_store_metafield`. A clear addresses the value by namespace and key, removes the value and its translations, and keeps the definition. It needs the same write access as setting the value, takes effect immediately without a confirmation token (Store Admin clears values without a confirmation step too), and repeating it for an already-cleared value succeeds.
 
 ## Work with brands and vendors
 
@@ -254,48 +300,3 @@ When reporting a problem, include the Codex version, the failing step, and the r
 - [Changelog](CHANGELOG.md)
 
 This repository contains connection instructions and configuration examples. The service runs at the hosted URL above.
-
-Customer tools expose `tax_exempt`, `tax_id` and `tax_id_type` on create, update and reads. Only a merchant-approved customer in an enabled exempt zone receives checkout exemption. Entering an ID alone records it and keeps tax charged. Order creation accepts `customer_tax_id` and explicit `customer_tax_exempt` staff approval, requires `idempotency_key`, and returns `tax_exemption_source` and `tax_id_state_mismatch`. Tax IDs are normalized and validated offline; no registration is checked. Invalid saved IDs are ignored at checkout; shopper-entered IDs receive field errors. CSV update previews validate the effective saved and incoming ID/type pair before approval.
-
-Email subscriber tools `list_marketing_subscribers` and `get_marketing_subscriber` read the store's email newsletter subscribers with `store:customers:read`; they are read-only. `source: coming_soon` lists sign-ups from a storefront's Coming Soon page, and the detail returns the proof of consent stored with the sign-up (wording, version, language, time, IP address, user agent and page). Storefront passwords set with `update_storefront_password` need at least 8 characters (`password_min_length` in `get_storefront_limits`).
-
-Email subscriber lifecycle webhooks are `subscribers/create`, `subscribers/update` and `subscribers/delete` (app scope `read_customers`). Their `subscriber` payload is the GET resource, including `channel: email`, status, source, and consent proof (`text_version`, `captured_at`, `source_page`, `locale`). Creation includes pending confirmation; confirmation, unsubscribe and resubscription are updates. Delete carries the resource before deletion. Use `get_webhook_topic_schema` to inspect fields and projections.
-
-
-Order reads retain named tax components for items, shipping, COD, checkout fees and collected-duty VAT. These amounts reconcile to `tax_total`. Refunds expose `goods_total`, `tax_total` and `components`, including quantity-zero monetary allocations. Tax comes from the original sale evidence: pending refunds reserve shares and only completed refunds reduce tax reports.
-
-## Currency and language request contract
-
-All 14 currency operations and five language operations map one for one to the Store API. Currency reads/writes use read_currencies/write_currencies; language reads/writes use read_translations/write_translations. Reference languages needs no resource scope. Hosted OAuth uses the corresponding store:settings.currencies and store:settings.languages permissions.
-
-For destructive changes, first call without confirmed or confirmation_token. HTTP 409 CONFIRMATION_REQUIRED is an expected preview: preserve the backend error body and show error.details.warnings. After explicit approval, repeat the same action with confirmed=true and error.details.confirmation_token within five minutes. Bulk currency cleanup also includes error.details.preview; single-currency cleanup and language operations do not promise that field. Changed or expired previews need fresh review. No-op requests and currency cleanup with no references may succeed immediately.
-
-Rates are positive decimal JSON strings, never numbers. conversion_rate and rate_inverse convert base currency to the selected currency; rate converts in the opposite direction. Read max_conversion_decimals and max_conversion_rate from list_currencies. Count decimal places after removing insignificant trailing zeros. Reference rates round toward six significant digits, capped at ten decimal places; large rates retain all integer digits. Automatic rates may carry more significant precision.
-
-set_languages accepts omitted or null locales as a read. A supplied array replaces the full set and must retain the default language. Default changes do not translate source content. A successful translation reset has no data field; physical cleanup continues asynchronously. Pass backend error codes, messages and details to the UI unchanged.
-
-Product Tag tools include limits, cursor lists (maximum 100 per page), picker search
-(maximum 50 suggestions), get/create/update/delete, bulk create (50 names), bulk
-delete (1000 IDs), and individual/batch translations. Only `name` is translatable.
-Tag slugs are source filter values; tags have no dedicated pages or merge tool.
-Large deletions detach products in background batches; review `collections_total`
-and the first 50 collection impacts before confirming. Staff translation tools
-require product access and the corresponding language-settings scope.
-
-## Blog author translations and deletion
-
-Author name and biography support individual and batch translations: `get_blog_author_translation`, `set_blog_author_translation`, `get_blog_author_translations`, and `set_blog_author_translations`. Reads require `store:blog:read` and `store:settings.languages:read`; writes require both corresponding write scopes. Empty values clear translations. Author slugs are not translatable.
-
-Deleting an assigned author requires `reassign_to_author_id` naming an author in the same store outside the deletion selection. Large reassignments return a `lifecycle` object (single deletion) or `jobs` (bulk). Wait for completion; queued work is not a completed deletion. Posts are never left without an author.
-
-## Metafield values and translation permissions
-
-Value translations require both owner and Languages access: read for get, write for set or clear, including product and variant values. Store values use `store:settings.metafield_definitions:read/write`; order and order-item values use `store:orders:read/write`. Orders and order items have no value translations. These tools use the existing Store API endpoints and validation, preserve omitted values, and require no confirmation token. Sharing and merchant-access restrictions still apply.
-
-Use `list_order_metafields` / `set_order_metafield`, `list_order_item_metafields` / `set_order_item_metafield`, and `list_store_metafields` / `set_store_metafield`. Store translations use `get_store_metafield_translation` / `set_store_metafield_translation`. Existing connections need an approved access update to add Languages access; refresh tool discovery after approval.
-
-Every owner with a set tool also has a clear tool: `delete_product_metafield`, `delete_product_variant_metafield`, `delete_collection_metafield`, `delete_category_metafield`, `delete_brand_metafield`, `delete_vendor_metafield`, `delete_page_metafield`, `delete_blog_post_metafield`, `delete_blog_category_metafield`, `delete_customer_metafield`, `delete_order_metafield`, `delete_order_item_metafield`, and `delete_store_metafield`. A clear addresses the value by namespace and key, removes the value and its translations, and keeps the definition. It needs the same write access as setting the value, takes effect immediately without a confirmation token (Store Admin clears values without a confirmation step too), and repeating it for an already-cleared value succeeds.
-
-Gift card purchases create liability, so gift card lines never count as gross, net, total or product sales and are never taxed or discounted. Goods paid with a gift card count once as sales, with payment method `gift_card`; store credit uses `store_credit`. Neither tender can pay for gift card products. Gift-card-only orders count as orders but do not enter average order value: total sales divided by recognized orders with sales lines. Completed refunds to gift cards or store credit reduce sales once.
-
-The Store API report catalog includes **Outstanding gift card balance** (`gift_card_balance`): current active, unexpired balances and period movements, separately by currency. Its table requires the currency breakdown and supports CSV exports; it does not accept comparison or sales-channel filters. Discover its measures and control constraints from the report catalog. Order tools return full receipt totals, which include gift card purchases; those totals are not sales totals. The report is available through the Store API reports endpoints; the connector's order and gift card tools retain their documented operations.

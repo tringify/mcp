@@ -392,6 +392,9 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `disable_market_discount` | `POST /api/2025-01/markets/{marketId}/discounts/{discountId}/disable` | store:markets:write |
 | `get_market_discount_settings` | `GET /api/2025-01/markets/{marketId}/discount-settings` | store:markets:read |
 | `set_market_discount_settings` | `PUT /api/2025-01/markets/{marketId}/discount-settings` | store:markets:write |
+| `create_market_discount_code` | `POST /api/2025-01/markets/{marketId}/discounts/{discountId}/codes` | store:markets:write |
+| `list_market_discount_codes` | `GET /api/2025-01/markets/{marketId}/discounts/{discountId}/codes` | store:markets:read, store:customers:read |
+| `delete_market_discount_code` | `DELETE /api/2025-01/markets/{marketId}/discounts/{discountId}/codes/{codeId}` | store:markets:write |
 | `get_market_shipping_settings` | `GET /api/2025-01/markets/{marketId}/shipping-settings` | store:markets:read |
 | `update_market_shipping_settings` | `PUT /api/2025-01/markets/{marketId}/shipping-settings` | store:markets:write |
 | `get_market_shipping_zone_limits` | `GET /api/2025-01/markets/{marketId}/shipping-zones/limits` | store:markets:read |
@@ -515,7 +518,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 
 Filter definitions are capped at 50 per store, including built-in and disabled filters. Source discovery pages accept at most 100 rows. Update requires the definition revision; reorder requires the complete list revision and every definition ID. Only labels are translatable; source values retain their filter tokens. Built-in filters keep a platform label, provided in every storefront language, until the merchant renames them; translation reads return `label.origin` (`merchant` or `platform`), and clearing a translation restores the platform label. Translation tools require both Products and Languages access.
 
-| Tool | Store API operation | OAuth scopes |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_product_filter_contract` | `GET /api/2025-01/product-filters/contract` | store:products:read |
 | `list_product_filter_sources` | `GET /api/2025-01/product-filters/sources` | store:products:read |
@@ -755,11 +758,11 @@ Publishing a language requires enabling it for the store, adding it to the store
 | `get_localization_prompt` | `GET /api/2025-01/storefronts/{storefrontId}/languages/localization-prompt` | store:online_store.storefronts:read |
 | `set_localization_prompt` | `PUT /api/2025-01/storefronts/{storefrontId}/languages/localization-prompt` | store:online_store.storefronts:write |
 
-Country mappings use `{ "FR": { "locales": ["en", "fr"], "default_locale": "fr" } }`; `null` removes an override. Bulk and all-country assignment add the chosen default while keeping other explicitly assigned languages. Changes return `CONFIRMATION_REQUIRED`: show `error.details.warnings` and the complete `impact`, then repeat the same request with `confirmed` and `confirmation_token` after approval. Country before/after lists use codes; `language_labels` supplies backend-localized display labels once per storefront. Include old/new defaults, implicit primary inheritance, retired country/language address-unit counts and affected translated slugs. Changed state or an expired token requires a fresh preview. Render backend success wording in the merchant's interface language. Unpublishing keeps translations.
+Country mappings use `{ "FR": { "locales": ["en", "fr"], "default_locale": "fr" } }`; `null` removes an override. Bulk and all-country assignment add the chosen default while keeping other explicitly assigned languages. Changes return `CONFIRMATION_REQUIRED`: show `error.details.warnings` and the complete `impact`, then repeat the same request with `confirmed` and `confirmation_token` after approval. Country before/after lists use codes; `language_labels` supplies localized display labels once per storefront. Include old/new defaults, implicit primary inheritance, retired country/language address-unit counts and affected translated slugs. Changed state or an expired token requires a fresh preview. Render the returned success wording in the merchant's interface language. Unpublishing keeps translations.
 
 `replace_only_language` is the atomic operation for a store with exactly one enabled language, including a one-language plan. It replaces references across all storefronts without ever enabling two languages, resets old-language translation/search data and cancels translation work. Source text is not translated. Store-default changes publish the resulting primary storefront's `storefront/locales/update`; replace-only publishes it for every storefront, together with store lifecycle events.
 
-`get_language_readiness` scans up to 500 source identities per call and returns cumulative field counts and backend labels. Follow `next_cursor` until `complete=true`; only then consider `ready`. Content changes invalidate the cursor. It covers catalog/content, platform messages and the selected storefront's live theme and gate text; missing translations never block publication. Theme freshness can require review because author dictionaries do not carry source hashes. A missing active theme requires review. Counts do not certify linguistic quality.
+`get_language_readiness` scans up to 500 source identities per call and returns cumulative field counts and localized labels. Follow `next_cursor` until `complete=true`; only then consider `ready`. Content changes invalidate the cursor. It covers catalog/content, platform messages and the selected storefront's live theme and gate text; missing translations never block publication. Theme freshness can require review because author dictionaries do not carry source hashes. A missing active theme requires review. Counts do not certify linguistic quality.
 
 Reset/removal preserves translated slug identities before cleanup. Old links redirect with 301 to the same resource's current canonical address, preserving query strings and a still-served country. Unknown routes, deleted resources and ambiguous owners return 404. History cannot restore translations deleted before installation. On a shared host Brazilian Portuguese in the US uses `/pt-BR-us`; `/pt-br` remains Portuguese in Brazil. Catalog/gate fields use exact → parent → source; slugs remain exact-locale only.
 
@@ -868,9 +871,15 @@ Read tools need `store:gift_cards:read`; write tools need `store:gift_cards:writ
 
 Gift Cards are also a CSV type for the [CSV import and export tools](#csv-imports-and-exports): import type `gift_cards` issues one new card per row (codes are generated by Tringify, a preview with no errors is required, there is no undo), export type `gift_cards` lists the store's cards without their codes.
 
+## Gift Card delivery edits
+
+Read `get_gift_card` before editing or resending. Use `can_edit_delivery` and `edit_delivery_reason_display` for recipient details, message, language and delivery schedule; use `can_edit_expiry` for expiry. Sent, in-flight or used cards lock delivery details. Expired, depleted, cancelled and disabled cards cannot be edited or resent. Use `can_resend` and `resend_reason_display` for Resend, which always uses the saved recipient and language.
+
+`update_gift_card` with a future `delivery_scheduled_at` before expiry creates or moves the waiting send, preferring recipient email, otherwise phone through the store’s configured route. `clear_delivery_schedule` cancels the waiting send and never sends now. `resend_gift_card` takes `id`, `delivery_method` and `idempotency_key`; recipient and language overrides are not accepted. See the [Gift Cards Store API contract](https://dev-docs.tringify.com/store-api/orders/gift-cards) for response flags and refusal codes.
+
 ## CSV imports and exports
 
-Translation CSV uses `type: "translations"` and `options: {resource: "message_template" | "email" | "order_status" | "file" | "product_media", locale: "fr"}` for these resources, alongside the other types returned by the backend. List the current import/export types and use their permissions and limits. Upload-intent creation keeps `resource` at its existing top level.
+Translation CSV uses `type: "translations"` and `options: {resource: "message_template" | "email" | "order_status" | "file" | "product_media", locale: "fr"}` for these resources, alongside the other types Tringify returns. List the current import/export types and use their permissions and limits. Upload-intent creation keeps `resource` at its existing top level.
 
 - Message Templates: one SMS/WhatsApp message type and channel per row, field `content`.
 - Emails: one editor text per row, field `content`; `text_id` is `<template UUID>:<exact text_key>`. Subject, preview line, preheader, reachable visual block texts and code-mode text runs have the same granularity as the editor. Keep the exported keys, source columns and template syntax; edit translated text. Layout stays with the source template.
@@ -982,40 +991,13 @@ Value translations require both owner and Languages access: read for get, write 
 | `get_store_metafield_translation` | `GET /api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}` | store:settings.metafield_definitions:read, store:settings.languages:read |
 | `set_store_metafield_translation` | `PUT /api/2025-01/store/metafields/{namespace}/{key}/translations/{locale}` | store:settings.metafield_definitions:write, store:settings.languages:write |
 
-## Gift Card operations
-
-| Tool | Store API operation | Required access |
-| --- | --- | --- |
-| `list_gift_card_products` | `GET /api/2025-01/gift-cards/products` | store:gift_cards:read, store:products:read |
-| `create_gift_card_product` | `POST /api/2025-01/gift-cards/products` | store:gift_cards:write, store:products:write |
-| `get_gift_card_limits` | `GET /api/2025-01/gift-cards/limits` | store:gift_cards:read |
-| `list_gift_card_languages` | `GET /api/2025-01/gift-cards/languages` | store:gift_cards:read |
-| `get_gift_card_settings` | `GET /api/2025-01/gift-cards/settings` | store:gift_cards:read |
-| `update_gift_card_settings` | `PUT /api/2025-01/gift-cards/settings` | store:gift_cards:write |
-| `list_gift_cards` | `GET /api/2025-01/gift-cards` | store:gift_cards:read |
-| `issue_gift_card` | `POST /api/2025-01/gift-cards` | store:gift_cards:write |
-| `get_gift_card` | `GET /api/2025-01/gift-cards/{id}` | store:gift_cards:read |
-| `list_gift_card_history` | `GET /api/2025-01/gift-cards/{id}/history` | store:gift_cards:read |
-| `update_gift_card` | `PUT /api/2025-01/gift-cards/{id}` | store:gift_cards:write |
-| `resend_gift_card` | `POST /api/2025-01/gift-cards/{id}/resend` | store:gift_cards:write |
-| `reveal_gift_card_code` | `POST /api/2025-01/gift-cards/{id}/reveal-code` | store:gift_cards:write |
-| `set_gift_card_status` | `POST /api/2025-01/gift-cards/{id}/status` | store:gift_cards:write |
-| `adjust_gift_card_balance` | `POST /api/2025-01/gift-cards/{id}/adjustments` | store:gift_cards:write |
-| `bulk_set_gift_card_status` | `POST /api/2025-01/gift-cards/bulk-status` | store:gift_cards:write |
-
-## Gift Card delivery edits
-
-Read `get_gift_card` before editing or resending. Use `can_edit_delivery` and `edit_delivery_reason_display` for recipient details, message, language and delivery schedule; use `can_edit_expiry` for expiry. Sent, in-flight or used cards lock delivery details. Expired, depleted, cancelled and disabled cards cannot be edited or resent. Use `can_resend` and `resend_reason_display` for Resend, which always uses the saved recipient and language.
-
-`update_gift_card` with a future `delivery_scheduled_at` before expiry creates or moves the waiting send, preferring recipient email, otherwise phone through the store’s configured route. `clear_delivery_schedule` cancels the waiting send and never sends now. `resend_gift_card` takes `id`, `delivery_method` and `idempotency_key`; recipient and language overrides are not accepted. See the [Gift Cards Store API contract](https://dev-docs.tringify.com/store-api/orders/gift-cards) for response flags and refusal codes.
-
-Fake Pay is a simulator and moves no real money. Use `get_order` and the ordinary refund tools to show the platform’s recorded results. The platform reads the app’s live status endpoints; browser returns and provider notifications never establish payment. There are no separate merchant tools for the app’s signed provider operations.
-
 ## Orders: lists, fulfilment, refunds and settings
 
 Use `get_order_refund_options` before `refund_order`: it returns what the order can still give back and the destinations it can use. `retry_order_refunds` retries a refund whose provider payout failed and `redirect_order_refunds` sends it to another destination the order allows. `cancel_order` cancels with or without a refund. Fulfilments are created with `create_order_fulfillment`; `update_fulfillment_tracking`, `update_fulfillment_status` and `record_fulfillment_event` move a shipment forward, and `cancel_order_fulfillment` cancels one that has not shipped.
 
-| Tool | Store API operation | OAuth scopes |
+Fake Pay is a simulator and moves no real money. Use `get_order` and the ordinary refund tools to show the platform’s recorded results. The platform reads the app’s live status endpoints; browser returns and provider notifications never establish payment. There are no separate merchant tools for the app’s signed provider operations.
+
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `list_orders` | `GET /api/2025-01/orders` | store:orders:read |
 | `cancel_order` | `POST /api/2025-01/orders/{id}/cancel` | store:orders:write |
@@ -1038,7 +1020,7 @@ Use `get_order_refund_options` before `refund_order`: it returns what the order 
 
 Order tags label orders for the store's own use. Read `get_order_tag_limits` before creating tags in bulk.
 
-| Tool | Store API operation | OAuth scopes |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_order_tag_limits` | `GET /api/2025-01/order-tags/limits` | store:orders:read |
 | `list_order_tags` | `GET /api/2025-01/order-tags` | store:orders:read |
@@ -1055,7 +1037,7 @@ Order tags label orders for the store's own use. Read `get_order_tag_limits` bef
 
 The cancellation settings decide when customers can cancel their own orders, for the store and for any market with its own rules (`delete_order_cancellation_market_rules` returns a market to the store's rules). With `mode` `request`, or for a customer over the store's cancellation limit, the customer asks instead: the request waits as `requested` until `approve_order_cancellation_request` cancels the order and returns what was paid, or `decline_order_cancellation_request` declines it with an optional reason the customer is emailed. Show the merchant the request, including its `limit_flag` when present, before approving or declining.
 
-| Tool | Store API operation | OAuth scopes |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_order_cancellation_settings` | `GET /api/2025-01/orders/cancellation-settings` | store:orders:read |
 | `update_order_cancellation_settings` | `PUT /api/2025-01/orders/cancellation-settings` | store:orders:write |
@@ -1069,7 +1051,7 @@ The cancellation settings decide when customers can cancel their own orders, for
 
 A return covers delivered items a customer sends back. Read `get_return_options` for what an order can still return before `create_return`. A requested return is answered with `approve_return` or `decline_return`; an approved one is received with `receive_return` and completed with `refund_return` or `exchange_return`. `get_return_settings` and `update_return_settings` hold the Returns portal rules, return window, reasons, instructions and return limits.
 
-| Tool | Store API operation | OAuth scopes |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_return_settings` | `GET /api/2025-01/returns/settings` | store:orders:read |
 | `update_return_settings` | `PUT /api/2025-01/returns/settings` | store:orders:write |
@@ -1089,7 +1071,7 @@ A return covers delivered items a customer sends back. Read `get_return_options`
 
 A returned shipment (RTO) is a shipment that came back to the store undelivered. Each one waits for a decision: `refund_rto`, `reship_rto`, `close_rto_undelivered` (cash on delivery orders) or `close_rto`; `customer_choice_rtos` records the customer's own choice. `get_rto_report` summarises returned shipments, and the settings hold the Delivery portal options. A failed delivery attempt opens a delivery issue on the order, read with `list_order_delivery_issues` and answered with `answer_order_delivery_issues`.
 
-| Tool | Store API operation | OAuth scopes |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_rto_settings` | `GET /api/2025-01/rtos/settings` | store:orders:read |
 | `update_rto_settings` | `PUT /api/2025-01/rtos/settings` | store:orders:write |
@@ -1108,7 +1090,7 @@ A returned shipment (RTO) is a shipment that came back to the store undelivered.
 
 Customer settings are read together with `get_customer_settings` and saved one area at a time. `merge_customers` cannot be undone: show the merchant which customer is kept before calling it.
 
-| Tool | Store API operation | OAuth scopes |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_customer_settings` | `GET /api/2025-01/customers/settings` | store:customers:read |
 | `get_customer_settings_limits` | `GET /api/2025-01/customers/settings/limits` | store:customers:read |
@@ -1126,7 +1108,7 @@ Customer settings are read together with `get_customer_settings` and saved one a
 
 Translations of a market's discounts, payment providers and payment adjustments also need Languages access. `check_market_cod_address` says whether an address can pay by cash on delivery under the market's rules, zones and blocked postcodes.
 
-| Tool | Store API operation | OAuth scopes |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `get_market_discount_translation` | `GET /api/2025-01/markets/{marketId}/discounts/{discountId}/translations/{locale}` | store:markets:read, store:settings.languages:read |
 | `set_market_discount_translation` | `PUT /api/2025-01/markets/{marketId}/discounts/{discountId}/translations/{locale}` | store:markets:write, store:settings.languages:write |
@@ -1142,7 +1124,7 @@ Translations of a market's discounts, payment providers and payment adjustments 
 
 Verification tags prove ownership of the store's domains to services such as search consoles and ad platforms.
 
-| Tool | Store API operation | OAuth scopes |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `list_site_verification_tagss` | `GET /api/2025-01/site-verification-tags` | store:online_store.site_verification:read |
 | `create_site_verification_tags` | `POST /api/2025-01/site-verification-tags` | store:online_store.site_verification:write |
@@ -1152,7 +1134,7 @@ Verification tags prove ownership of the store's domains to services such as sea
 
 `list_product_deleteds` and `list_variant_deleteds` list recently deleted products and variants so an integration can remove them on its side.
 
-| Tool | Store API operation | OAuth scopes |
+| Tool | Store API operation | Required access |
 | --- | --- | --- |
 | `list_product_deleteds` | `GET /api/2025-01/products/deleted` | store:products:read |
 | `list_variant_deleteds` | `GET /api/2025-01/variants/deleted` | store:products:read |
@@ -1162,13 +1144,3 @@ Verification tags prove ownership of the store's domains to services such as sea
 | `get_blog_author_lifecycle_job` | `GET /api/2025-01/blog/authors/lifecycle-jobs/{job_id}` | store:blog:read |
 | `get_blog_list_seo_limits` | `GET /api/2025-01/blog/list-seo/limits` | store:blog:read |
 | `get_list_page_seo_limits` | `GET /api/2025-01/list-page-seo/limits` | store:products:read |
-
-## Other tools
-
-Tools added to the connector since this page was last edited by hand.
-
-| Tool | Store API operation | OAuth scopes |
-| --- | --- | --- |
-| `create_market_discount_code` | `POST /api/2025-01/markets/{marketId}/discounts/{discountId}/codes` | store:markets:write |
-| `list_market_discount_codes` | `GET /api/2025-01/markets/{marketId}/discounts/{discountId}/codes` | store:markets:read, store:customers:read |
-| `delete_market_discount_code` | `DELETE /api/2025-01/markets/{marketId}/discounts/{discountId}/codes/{codeId}` | store:markets:write |

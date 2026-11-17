@@ -25,5 +25,5 @@
     "Installed and third-party apps cannot hold domain or email-settings scopes. Public contact email is a separate storefront field; it is not the owner login, a sender or the Reply-To address."
   ],
   "catalog": "tool-catalog.json",
-  "schema_parity": "Run scripts/check-email-catalog.py with an export of the hosted connector's tool catalog and --docs-catalog pointing to the connector docs catalog."
+  "schema_parity": "Run scripts/check-email-catalog.py with an export of the hosted connector's tool catalog; it compares the email tools with docs/tool-catalog.json. Pass --docs-catalog with another export of the hosted connector's tool catalog to compare that one too."
 }

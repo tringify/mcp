@@ -4,11 +4,11 @@ of the hosted connector's tool catalog.
 
     scripts/sync-catalog.py export.json
 
-The JSON file becomes the export. In the inventory, each tool's rows get the
-export's operation (the access column is written by hand and kept), rows of
-tools the connector no longer has are dropped, and tools without a row are
-added under "Other tools" (move them to the section they belong to when you
-next edit the page). Prints what changed.
+The JSON file becomes the export. In the inventory, each tool's row gets the
+export's operation (the access column is written by hand and kept) and rows of
+tools missing from the export are dropped. Tools without a row are printed as
+table rows to add to the section each belongs to, and the script then exits
+with status 1. Prints what changed.
 """
 import json
 import re
@@ -18,8 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "docs/tool-catalog.json"
 INVENTORY = ROOT / "docs/catalog-tools.md"
-OTHER = "## Other tools"
-HEADER = "| Tool | Store API operation | OAuth scopes |\n| --- | --- | --- |\n"
+HEADER = "| Tool | Store API operation | Required access |\n| --- | --- | --- |\n"
 ROW = re.compile(r"^\| `([^`]+)` \| `[^`]*` \| (.*) \|$")
 
 
@@ -55,26 +54,19 @@ def main():
         updated += new != line
         out.append(new)
     added = [t["name"] for t in tools if t["name"] not in seen]
-    if added:
-        if OTHER not in out:
-            out += ["", OTHER, "", "Tools added to the connector since this page was last edited by hand.", ""] + HEADER.rstrip("\n").split("\n")
-        at = len(out)
-        for i in range(out.index(OTHER) + 1, len(out)):
-            if out[i].startswith("## "):
-                at = i
-                break
-        while at > 0 and out[at - 1] == "":
-            at -= 1
-        out[at:at] = [row(by_name[n]) for n in added]
     INVENTORY.write_text("\n".join(out) + "\n")
     changed_json = CATALOG.read_text() != export_text
     CATALOG.write_text(export_text)
-    print("tools %d; catalog json %s; inventory rows updated %d, added %d, dropped %d" % (
+    print("tools %d; catalog json %s; inventory rows updated %d, missing %d, dropped %d" % (
         len(tools), "changed" if changed_json else "unchanged", updated, len(added), len(dropped)))
-    for n in added:
-        print("added", n)
     for n in dropped:
         print("dropped", n)
+    if added:
+        print("\nadd these rows to the section each tool belongs to in %s:\n" % INVENTORY.relative_to(ROOT))
+        print(HEADER, end="")
+        for n in added:
+            print(row(by_name[n]))
+        sys.exit(1)
 
 
 if __name__ == "__main__":

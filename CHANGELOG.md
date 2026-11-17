@@ -128,7 +128,7 @@ The tool catalog is re-exported from the hosted server and now includes every sh
 
 ## Plainer tool descriptions — 29 October 2026
 
-- `list_currencies`, `update_market`, `assign_all_market_country_currencies` and `verify_domain` describe what happens without describing how the platform is built. Inputs, outputs and behaviour are unchanged.
+- `list_currencies`, `update_market`, `assign_all_market_country_currencies` and `verify_domain` have shorter descriptions that say what each tool does. Inputs, outputs and behaviour are unchanged.
 
 ## Order statuses and their triggers — 29 October 2026
 
@@ -230,11 +230,11 @@ The tool catalog is re-exported from the hosted server and now includes every sh
 - Removed `get_email_domain_records`: the records are `setup.records` on the domain.
 - `verify_email_domain` returns the sending domain (code `EMAIL_LIFE_CHECKED`) and never fails while DNS is still updating. Don't call it in a loop; look again after `next_action.after`.
 - Added `check_email_domain_removal` and `check_email_sender_removal`: `confirm`, `impacts`, `verification` and `next_action` (`request_verification_code`). Removing the default sender, or a sending domain that holds it, is allowed; the Tringify address takes over. `EMAIL_ADDRESS_DELETE_DEFAULT` and `EMAIL_DOMAIN_DELETE_WITH_DEFAULT` are gone.
-- Removed the sending provider from every email result: `provider`, `sending_provider`, `ses`, `ses_is_verified`, `can_delete`, `permanent`, `dns_records`, `status` and the other raw fields, and the `provider` argument.
+- Removed the sending provider details and other raw fields from every email result (including `provider`, `sending_provider`, `can_delete`, `permanent`, `dns_records` and `status`), and the `provider` argument.
 
 ## Email times and send history — 27 October 2026
 
-- `verify_email_domain` returns `next_check_at` as RFC 3339 in the store's timezone with its offset, and `next_check`, the same time as text to show. Sending domains no longer return the raw UTC `ses.last_check_at` and `ses.verified_at`; read the domain's `last_check_at` and `verified_at`.
+- `verify_email_domain` returns `next_check_at` as RFC 3339 in the store's timezone with its offset, and `next_check`, the same time as text to show. Sending domains return `last_check_at` and `verified_at` in the same form; the earlier raw UTC copies of these times were removed.
 - Each send in `list_email_history` carries `submission_label`, the text to show for its `submission_state`. Emails sent before submission states were recorded now carry a derived state; `no_provider_record` means no record of the email provider's answer remains.
 
 ## Domain lifecycle — 27 October 2026
