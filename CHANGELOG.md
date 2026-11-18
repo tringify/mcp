@@ -1,5 +1,11 @@
 # Changelog
 
+## Edit and crop images — 18 November 2026
+
+- `estimate_image_edit` and `edit_image` (`store:ai.image_generation:write` plus the file's library permission) change an existing image from an instruction in your own words, such as "remove the background" or "put it on a marble table", and save the result as a new file in the same library; the original is never changed. An edit costs the same as generating an image of that mode and quality. Estimate first, show the cost and get the user's approval, then pass it as `max_credits` with an `idempotency_key`.
+- `crop_image` (the library's write permission, no AI credits) cuts a rectangle out of an image at its full resolution, after an optional quarter turn (`rotate` 0, 90, 180 or 270), and saves it as a new file. `x`, `y`, `width` and `height` are pixels of the rotated image.
+- The [tool inventory](docs/catalog-tools.md) and `docs/tool-catalog.json` list all 894 tools.
+
 ## Ad assets — 18 November 2026
 
 - File tools take `library: "ad_assets"` for Ad assets, the Marketing library for images and videos made for ads. It needs `store:marketing:read` or `store:marketing:write`; AI image and video generation can save into it.
