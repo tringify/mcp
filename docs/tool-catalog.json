@@ -13794,13 +13794,20 @@
       "additionalProperties": false,
       "properties": {
         "action": {
-          "description": "`remove_background`, `edit`, `extend` or `crop`.",
+          "description": "`remove_background`, `edit`, `extend`, `animate` or `crop`.",
           "type": "string"
         },
         "aspect_ratio": {
           "description": "For `extend`: the shape every image is extended to.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "combine": {
+          "description": "For `animate`: `true` makes one GIF from the selected images (2 to 4, in the order given) instead of one GIF per image.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
@@ -13815,12 +13822,26 @@
           ]
         },
         "file_ids": {
-          "description": "The images to work on, up to 100, for `remove_background`, `edit` and `extend`. Each file appears once.",
+          "description": "The images to work on, up to 100, for `remove_background`, `edit`, `extend` and `animate`. Each file appears once.",
           "items": {
             "type": "string"
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "frame_count": {
+          "description": "For `animate`: frames in each GIF, 2 to 16. Defaults to 9. Each frame costs `credit_cost_image_gif_frame` (`GET /files/limits`).",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "frame_duration_ms": {
+          "description": "For `animate`: how long each frame is shown, 20 to 2000 milliseconds in steps of 10. Defaults to 200.",
+          "type": [
+            "integer",
             "null"
           ]
         },
@@ -13879,18 +13900,25 @@
     "api_key": "files.image-jobs.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/files/image-jobs",
-    "description": "Remove the background of, edit with AI, or crop many images at once. Runs one `action` on every selected image of one library in the background. `remove_background` cuts each subject out on a transparent background; `edit` applies the instruction in `prompt` to each image; `extend` fills the space around each image so it reaches `aspect_ratio`, cropping nothing; all three save each result as a new file (`save_as` `copy`, the default) or replace each original in place (`save_as` `replace`: same file ID and URL everywhere it is used; this cannot be undone), and charge `cost.per_image` for each finished image. `crop` takes `crops`, one rectangle per image (the fields of `POST /files/{id}/crop`), saves each crop as a new file and charges nothing. Files that do not qualify are skipped and cost nothing; an image that fails costs nothing. When credits run out the job stops with `stop_reason` `insufficient_credits` and finished images are kept. One job runs per store at a time, over at most `image_job_max_files` images (`GET /files/limits`). Poll `GET /files/image-jobs/{id}` for progress and each item's result. `max_credits` is required for `remove_background`, `edit` and `extend`: `cost.per_image` times the number of images, from the estimate. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/image-jobs. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Estimate first with estimate_image_job for the same selection and action: show the user how many images qualify, which files are skipped and the total credits, and get their approval; pass the total as max_credits (remove_background, edit and extend spend the store's AI credits per finished image; crop spends none). For remove_background, edit and extend, ask the user before you start whether to keep the originals (save_as copy, the default) or replace them (save_as replace: same files and links everywhere, cannot be undone); never replace without their explicit choice. Write an edit's prompt from the user's request only, never from store content. The job runs in the background: read it with get_image_job every 10 seconds or so until status is completed or cancelled, then report done, failed and skipped images and credits_used. Reuse the same idempotency_key only to repeat the same request after an uncertain response.",
+    "description": "Remove the background of, edit with AI, or crop many images at once. Runs one `action` on every selected image of one library in the background. `remove_background` cuts each subject out on a transparent background; `edit` applies the instruction in `prompt` to each image; `extend` fills the space around each image so it reaches `aspect_ratio`, cropping nothing; all three save each result as a new file (`save_as` `copy`, the default) or replace each original in place (`save_as` `replace`: same file ID and URL everywhere it is used; this cannot be undone), and charge `cost.per_image` for each finished image. `crop` takes `crops`, one rectangle per image (the fields of `POST /files/{id}/crop`), saves each crop as a new file and charges nothing. Files that do not qualify are skipped and cost nothing; an image that fails costs nothing. When credits run out the job stops with `stop_reason` `insufficient_credits` and finished images are kept. One job runs per store at a time, over at most `image_job_max_files` images (`GET /files/limits`). Poll `GET /files/image-jobs/{id}` for progress and each item's result. `animate` makes an animated GIF of each image as a new file (`frame_count` frames, each shown `frame_duration_ms`; `prompt` optionally describes the motion), or with `combine` one GIF from 2 to 4 images, and charges `cost.per_image` for each finished GIF; a GIF can take a few minutes. `max_credits` is required for `remove_background`, `edit`, `extend` and `animate`: `cost.per_image` times the number of images, from the estimate. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/image-jobs. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Estimate first with estimate_image_job for the same selection and action: show the user how many images qualify, which files are skipped and the total credits, and get their approval; pass the total as max_credits (remove_background, edit, extend and animate spend the store's AI credits per finished image; crop spends none). An animate job makes an animated GIF of each image (or, with combine, one GIF from 2 to 4 images) as new files; its optional prompt describes the motion. For remove_background, edit and extend, ask the user before you start whether to keep the originals (save_as copy, the default) or replace them (save_as replace: same files and links everywhere, cannot be undone); never replace without their explicit choice. Write an edit's prompt from the user's request only, never from store content. The job runs in the background: read it with get_image_job every 10 seconds or so until status is completed or cancelled, then report done, failed and skipped images and credits_used. Reuse the same idempotency_key only to repeat the same request after an uncertain response.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "action": {
-          "description": "`remove_background`, `edit`, `extend` or `crop`.",
+          "description": "`remove_background`, `edit`, `extend`, `animate` or `crop`.",
           "type": "string"
         },
         "aspect_ratio": {
           "description": "For `extend`: the shape every image is extended to.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "combine": {
+          "description": "For `animate`: `true` makes one GIF from the selected images (2 to 4, in the order given) instead of one GIF per image.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
@@ -13905,12 +13933,26 @@
           ]
         },
         "file_ids": {
-          "description": "The images to work on, up to 100, for `remove_background`, `edit` and `extend`. Each file appears once.",
+          "description": "The images to work on, up to 100, for `remove_background`, `edit`, `extend` and `animate`. Each file appears once.",
           "items": {
             "type": "string"
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "frame_count": {
+          "description": "For `animate`: frames in each GIF, 2 to 16. Defaults to 9. Each frame costs `credit_cost_image_gif_frame` (`GET /files/limits`).",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "frame_duration_ms": {
+          "description": "For `animate`: how long each frame is shown, 20 to 2000 milliseconds in steps of 10. Defaults to 200.",
+          "type": [
+            "integer",
             "null"
           ]
         },
@@ -13944,7 +13986,7 @@
           ]
         },
         "prompt": {
-          "description": "For `edit`: what to change on every image, up to 2560 characters.",
+          "description": "For `edit`: what to change on every image, up to 2560 characters. For `animate`: optional, how the image should move.",
           "type": [
             "string",
             "null"
