@@ -1,5 +1,11 @@
 # Changelog
 
+## Remove background, and keep or replace the original — 18 November 2026
+
+- `estimate_background_removal` and `remove_background` cut out an image's subject on a transparent background (a PNG), priced like a transparent generated image.
+- `edit_image` and `remove_background` take `save_as`: `copy` (default) saves the result as a new file; `replace` puts it in place of the original's image, with the same file and link everywhere, and cannot be undone. Ask the user which before you start.
+- The catalog lists 896 tools.
+
 ## Edit and crop images — 18 November 2026
 
 - `estimate_image_edit` and `edit_image` (`store:ai.image_generation:write` plus the file's library permission) change an existing image from an instruction in your own words, such as "remove the background" or "put it on a marble table", and save the result as a new file in the same library; the original is never changed. An edit costs the same as generating an image of that mode and quality. Estimate first, show the cost and get the user's approval, then pass it as `max_credits` with an `idempotency_key`.
