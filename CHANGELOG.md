@@ -1,5 +1,10 @@
 # Changelog
 
+## Turn images into animated GIFs — 19 November 2026
+
+- `create_image_job` takes the action `animate`: an animated GIF of each selected image, saved as a new file. `frame_count` (2 to 16) and `frame_duration_ms` set its length and speed, and an optional `prompt` describes the motion. With `combine`, 2 to 4 images become one GIF that moves through them.
+- A GIF costs AI credits per frame; `estimate_image_job` gives the total. A GIF can take a few minutes, so read the job with `get_image_job` until it finishes.
+
 ## Extend an image, and make one from references — 18 November 2026
 
 - `estimate_image_extension` and `extend_image` extend an image to a new `aspect_ratio`: the image model keeps what is in the picture and continues the scene into the added space, so nothing is cropped. Priced like a generated image; `save_as` chooses a new file (`copy`, the default) or the original's place (`replace`).
