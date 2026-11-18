@@ -12722,7 +12722,7 @@
     "api_key": "files.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/files/{id}",
-    "description": "Read one file and its delivery URLs. Returns file metadata, preview state and delivery URLs. `original_filename` is the editable display name; `filename` is the file name assigned when the file was created. Use `display_url` for the current source, `download_url` for download and `thumbnail_display_url` for a generated thumbnail when present; `thumbnail_url` is the thumbnail's stored location and is present with it. `preview_url` falls back to the source URL when no current thumbnail is available, so it is not always an image. `preview_status` is `none`, `pending`, `ready` or `failed`. An ordinary image can have `preview_status=none` and still display normally. A failed preview has `preview_error_code` `STORAGE_PREVIEW_FAILED` and a `preview_error` message; `preview_requested_at` and `preview_completed_at` are present once preview work was requested or completed. `revision` identifies the source revision; `preview_revision` identifies the source used by the thumbnail. `has_original` indicates a retained earlier source, not whether the current original exists. Optional fields are omitted when absent. Delivery URLs are opaque: use them as returned. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/{id}. Only the connected store is accessible.",
+    "description": "Read one file and its delivery URLs. Returns file metadata, preview state and delivery URLs. `original_filename` is the editable display name; `filename` is the file name assigned when the file was created. Use `display_url` for the current source, `download_url` for download and `thumbnail_display_url` for a generated thumbnail when present; `thumbnail_url` is the thumbnail's stored location and is present with it. `preview_url` falls back to the source URL when no current thumbnail is available, so it is not always an image. `preview_status` is `none`, `pending`, `ready` or `failed`. An ordinary image can have `preview_status=none` and still display normally. A failed preview has `preview_error_code` `STORAGE_PREVIEW_FAILED` and a `preview_error` message; `preview_requested_at` and `preview_completed_at` are present once preview work was requested or completed. `revision` identifies the source revision; `preview_revision` identifies the source used by the thumbnail. `has_original` indicates a retained earlier source, not whether the current original exists. An image (JPEG, PNG, WebP or GIF) also has `animated` and `image_actions`: the image actions it can take, from `remove_background`, `edit`, `extend`, `crop`, `animate` (Turn into GIF), `reference` (an image a generated image is made from) and `slideshow` (Make a GIF). A still image takes all of them, except that a GIF cannot be turned into a GIF; an animated image takes only `slideshow` (its first frame is shown). Every image action refuses an image whose `image_actions` lacks it. `animated` is absent for an older GIF or WebP whose frames are still being read; until then it takes only `slideshow`. Optional fields are omitted when absent. Delivery URLs are opaque: use them as returned. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/files/{id}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13149,7 +13149,7 @@
           ]
         },
         "reference_file_ids": {
-          "description": "Optional. Up to 4 image files of the store (JPEG, PNG, WebP or GIF, from any library the token may read) the model is shown beside the prompt, for example a product photo, a logo and a style to follow. The result is a new image; the references are never changed. The price is the same.",
+          "description": "Optional. Up to 4 still image files of the store (JPEG, PNG, WebP or GIF whose `image_actions` has `reference`, from any library the token may read) the model is shown beside the prompt, for example a product photo, a logo and a style to follow. The result is a new image; the references are never changed. The price is the same.",
           "items": {
             "type": "string"
           },
@@ -13223,7 +13223,7 @@
           ]
         },
         "reference_file_ids": {
-          "description": "Optional. Up to 4 image files of the store (JPEG, PNG, WebP or GIF, from any library the token may read) the model is shown beside the prompt, for example a product photo, a logo and a style to follow. The result is a new image; the references are never changed. The price is the same.",
+          "description": "Optional. Up to 4 still image files of the store (JPEG, PNG, WebP or GIF whose `image_actions` has `reference`, from any library the token may read) the model is shown beside the prompt, for example a product photo, a logo and a style to follow. The result is a new image; the references are never changed. The price is the same.",
           "items": {
             "type": "string"
           },
@@ -13789,7 +13789,7 @@
     "api_key": "files.image-jobs.estimate",
     "api_method": "POST",
     "api_path": "/api/2025-01/files/image-jobs/estimate",
-    "description": "Count the selected images a bulk action can work on and price it. Checks `file_ids` for one library and one `action` without starting anything: `image_count` images qualify, `skipped` lists the rest with a `reason` (`not_found`, `other_library` or `not_an_image`), and `cost.credits` is `cost.per_image` times `image_count`. A crop job costs nothing; to learn which images can be cropped before framing them, send `action` `crop` with `file_ids` alone. Nothing is held or charged. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/image-jobs/estimate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits.",
+    "description": "Count the selected images a bulk action can work on and price it. Checks `file_ids` for one library and one `action` without starting anything: `image_count` images qualify, `skipped` lists the rest with a `reason`: `not_found`, `other_library`, `not_an_image`, `animated` (an animated image; only `slideshow` takes one), `already_gif` (Turn into GIF on a GIF) or `frames_unknown` (an older GIF or WebP still being checked). A file is skipped when its `image_actions` (`GET /files/{id}`) lacks the action, and `cost.credits` is `cost.per_image` times `image_count`. A crop job costs nothing; to learn which images can be cropped before framing them, send `action` `crop` with `file_ids` alone. Nothing is held or charged. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/image-jobs/estimate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -16929,6 +16929,505 @@
       "type": "object"
     },
     "name": "decline_order_cancellation_request",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/checkout-protection/limits",
+    "description": "Caps, block kinds, effects, rule actions and condition fields. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/checkout-protection/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_checkout_protection_limits",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.blocks.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/checkout-protection/blocks",
+    "description": "The store's block list, newest first. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/checkout-protection/blocks. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "next_cursor of the previous page.",
+          "type": "string"
+        },
+        "kind": {
+          "description": "email, phone, address or ip. Omit for every kind.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size, 1 to limits.list_max_limit (default limits.list_default_limit).",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Part of the value or note.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_checkout_blocks",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.blocks.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/checkout-protection/blocks",
+    "description": "Add one entry to the block list. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/checkout-protection/blocks. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "description": "Country used to read a phone number without a calling code.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "effect": {
+          "description": "refuse (default) or prepaid_only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expires_at": {
+          "description": "RFC 3339 time the block stops applying; omit for no end.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kind": {
+          "description": "email, phone, address or ip.",
+          "type": "string"
+        },
+        "note": {
+          "description": "For staff, up to limits.note_max_chars characters. Never shown to the shopper.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "description": "The email, phone number, `postcode|line 1` address, or IP address or CIDR range.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "type": "object"
+    },
+    "name": "block_shopper",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.blocks.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/checkout-protection/blocks/{blockId}",
+    "description": "Change an entry's effect, note or end. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/checkout-protection/blocks/{blockId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "block_id": {
+          "description": "Block list entry id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "clear_expires_at": {
+          "description": "true removes the end.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "effect": {
+          "description": "refuse or prepaid_only.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expires_at": {
+          "description": "RFC 3339 end.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "note": {
+          "description": "For staff.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "block_id"
+      ],
+      "type": "object"
+    },
+    "name": "update_checkout_block",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.blocks.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/checkout-protection/blocks/{blockId}",
+    "description": "Remove one entry from the block list. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/checkout-protection/blocks/{blockId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "block_id": {
+          "description": "Block list entry id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "block_id"
+      ],
+      "type": "object"
+    },
+    "name": "unblock_shopper",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.blocks.bulk_add",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/checkout-protection/blocks/bulk",
+    "description": "Add many entries in one background job. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/checkout-protection/blocks/bulk. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "entries": {
+          "description": "Entries with kind, value and optionally effect, note, expires_at and country_code, as for one block.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "entries"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_block_shoppers",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.blocks.bulk_remove",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/checkout-protection/blocks/bulk-delete",
+    "description": "Remove many entries in one background job. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/checkout-protection/blocks/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "all": {
+          "description": "Remove every entry (of kind, when given).",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "ids": {
+          "description": "Entries to remove.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "kind": {
+          "description": "With all: only this kind.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "bulk_unblock_shoppers",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.jobs.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/checkout-protection/jobs/{jobId}",
+    "description": "Progress and errors of a bulk add or remove. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/checkout-protection/jobs/{jobId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "Bulk job id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_checkout_block_job",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.settings.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/checkout-protection/settings",
+    "description": "How long a held order waits for review. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/checkout-protection/settings. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_checkout_protection_settings",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.settings.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/checkout-protection/settings",
+    "description": "Change how long a held order waits for review. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/checkout-protection/settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "hold_auto_cancel_days": {
+          "description": "Days, 1 to limits.hold_auto_cancel_days_max.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "hold_auto_cancel_days"
+      ],
+      "type": "object"
+    },
+    "name": "update_checkout_protection_settings",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.rules.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/markets/{marketId}/order-rules",
+    "description": "A market's order rules, in the order they run. Rules run by ascending priority (oldest first on ties) when an order is placed; the first rule whose conditions all match decides, and allow stops checking. Every count is this store's own: placed, uncancelled orders and returned-to-sender orders by the shopper's email or phone, and orders already placed in the last hour or day by phone, email or IP. order_total is compared in the store's base currency. When a velocity count can't be read, a condition on it doesn't match. `reason` is the one-line reason stored on orders the rule decides. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/order-rules. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "market_id": {
+          "description": "Market id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "market_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_order_rules",
+    "scopes": [
+      "store:markets:read"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.rules.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/markets/{marketId}/order-rules",
+    "description": "Allow, require online payment, hold or refuse orders that match. Send the complete rule. A held order is created and its stock committed as usual, but it isn't released to fulfilment until approved; it fires `orders/held`. A refused order is never created, and the shopper sees the store's CHECKOUT_PROTECTION_REFUSED storefront message; require_prepaid takes cash on delivery and other pay-later methods away at checkout (CHECKOUT_PROTECTION_PREPAID_REQUIRED if the shopper still tries to pay that way). Reword both under storefront messages; neither ever says why. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/order-rules. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "allow (stop checking), require_prepaid (no cash on delivery or other pay-later method), hold (create the order but keep it from fulfilment until approved) or refuse.",
+          "type": "string"
+        },
+        "conditions": {
+          "description": "1 to limits.conditions_max_per_rule conditions, all of which must match. Each has field, operator and value; orders_last_hour and orders_last_day also take by (phone, email or ip); postcode with in_list takes values (up to limits.postcode_list_max postcodes). Fields: order_total (the order's total in the store's base currency), payment_method (cod or prepaid), customer_order_count and customer_rto_count (this store's orders by the shopper's email or phone), orders_last_hour, orders_last_day, postcode, is_guest (true or false), item_quantity, customer_group (is_member / is_not_member) and the product fields tag, category, vendor, brand and title as COD rules use them.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "market_id": {
+          "description": "Market id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "priority": {
+          "description": "1 to limits.rules_max_per_market; lower runs first. Equal priorities run from oldest to newest.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "market_id",
+        "priority",
+        "action",
+        "conditions"
+      ],
+      "type": "object"
+    },
+    "name": "create_order_rule",
+    "scopes": [
+      "store:markets:write"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.rules.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/markets/{marketId}/order-rules/{ruleId}",
+    "description": "Replace a rule's conditions, action and priority. Send the complete rule. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/order-rules/{ruleId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "allow (stop checking), require_prepaid (no cash on delivery or other pay-later method), hold (create the order but keep it from fulfilment until approved) or refuse.",
+          "type": "string"
+        },
+        "conditions": {
+          "description": "1 to limits.conditions_max_per_rule conditions, all of which must match. Each has field, operator and value; orders_last_hour and orders_last_day also take by (phone, email or ip); postcode with in_list takes values (up to limits.postcode_list_max postcodes). Fields: order_total (the order's total in the store's base currency), payment_method (cod or prepaid), customer_order_count and customer_rto_count (this store's orders by the shopper's email or phone), orders_last_hour, orders_last_day, postcode, is_guest (true or false), item_quantity, customer_group (is_member / is_not_member) and the product fields tag, category, vendor, brand and title as COD rules use them.",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "market_id": {
+          "description": "Market id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "priority": {
+          "description": "1 to limits.rules_max_per_market; lower runs first. Equal priorities run from oldest to newest.",
+          "type": "integer"
+        },
+        "rule_id": {
+          "description": "Order rule id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "market_id",
+        "rule_id",
+        "priority",
+        "action",
+        "conditions"
+      ],
+      "type": "object"
+    },
+    "name": "update_order_rule",
+    "scopes": [
+      "store:markets:write"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.rules.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/markets/{marketId}/order-rules/{ruleId}",
+    "description": "Remove one order rule. Orders it already decided keep their reason. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/order-rules/{ruleId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "market_id": {
+          "description": "Market id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "rule_id": {
+          "description": "Order rule id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "market_id",
+        "rule_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_order_rule",
+    "scopes": [
+      "store:markets:write"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.holds.approve",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/orders/{id}/protection/approve",
+    "description": "Release an order held for review to fulfilment. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{id}/protection/approve. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "approve_held_order",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "checkout_protection.holds.cancel",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/orders/{id}/protection/cancel",
+    "description": "Cancel an order held for review and refund it. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{id}/protection/cancel. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Order id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "cancel_held_order",
     "scopes": [
       "store:orders:write"
     ]
