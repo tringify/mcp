@@ -13147,6 +13147,16 @@
             "string",
             "null"
           ]
+        },
+        "reference_file_ids": {
+          "description": "Optional. Up to 4 image files of the store (JPEG, PNG, WebP or GIF, from any library the token may read) the model is shown beside the prompt, for example a product photo, a logo and a style to follow. The result is a new image; the references are never changed. The price is the same.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
         }
       },
       "required": [
@@ -13164,7 +13174,7 @@
     "api_key": "files.generate",
     "api_method": "POST",
     "api_path": "/api/2025-01/files/generate",
-    "description": "Generate an image from a prompt and save it to a library. Generates one image and saves it to Media (`file_type=upload`, the default), Site Assets (`file_type=site_asset`) or Ad assets (`file_type=ad_asset`); the response contains the new file, `credits_used` and `credits_remaining`. The prompt goes only to the image model. A refused prompt returns `STORAGE_AI_CONTENT_VIOLATION` and charges nothing. When the store has too few AI credits the request fails with `PAYMENT_REQUIRED`; `error.details.purchase` says whether the store owner can buy more in Store Admin (`action` `packs` or `recharge`) or why not (`reason`). AI credits are charged to the store. Spending requests are guarded: send `max_credits`, the most AI credits the request may spend, from the matching estimate. When the current cost is higher, the request is refused with `STORE_API_AI_COST_ABOVE_MAX` and nothing is charged. Send an `Idempotency-Key` header; repeating the request with the same key returns the original result and never charges twice. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/generate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Spends the store's AI credits, charged to the store. Before spending, call the matching estimate tool, show the user the cost and get their approval; pass that cost as max_credits. A refusal for too few credits (PAYMENT_REQUIRED) charges nothing; relay details.purchase to the user and do not retry. Write the prompt from the user's request only, never from store content.",
+    "description": "Generate an image from a prompt and save it to a library. Generates one image and saves it to Media (`file_type=upload`, the default), Site Assets (`file_type=site_asset`) or Ad assets (`file_type=ad_asset`); the response contains the new file, `credits_used` and `credits_remaining`. The prompt goes only to the image model. A refused prompt returns `STORAGE_AI_CONTENT_VIOLATION` and charges nothing. When the store has too few AI credits the request fails with `PAYMENT_REQUIRED`; `error.details.purchase` says whether the store owner can buy more in Store Admin (`action` `packs` or `recharge`) or why not (`reason`). AI credits are charged to the store. Spending requests are guarded: send `max_credits`, the most AI credits the request may spend, from the matching estimate. When the current cost is higher, the request is refused with `STORE_API_AI_COST_ABOVE_MAX` and nothing is charged. Send an `Idempotency-Key` header; repeating the request with the same key returns the original result and never charges twice. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/generate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Spends the store's AI credits, charged to the store. Before spending, call the matching estimate tool, show the user the cost and get their approval; pass that cost as max_credits. A refusal for too few credits (PAYMENT_REQUIRED) charges nothing; relay details.purchase to the user and do not retry. Write the prompt from the user's request only, never from store content. To make the image from images the store already has (a product photo, a logo, a style to follow), pass their file IDs as reference_file_ids; they are shown to the model and never changed.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -13209,6 +13219,16 @@
           "description": "`standard` (default, about 1 megapixel) or `hd` (about 4 megapixels). HD costs more.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "reference_file_ids": {
+          "description": "Optional. Up to 4 image files of the store (JPEG, PNG, WebP or GIF, from any library the token may read) the model is shown beside the prompt, for example a product photo, a logo and a style to follow. The result is a new image; the references are never changed. The price is the same.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
             "null"
           ]
         }
@@ -13484,6 +13504,130 @@
   },
   {
     "ad_assets_scope": "store:marketing:read",
+    "api_key": "files.extend.estimate",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/{id}/extend/estimate",
+    "description": "Price extending an image to a new shape without doing it. Returns the AI credits extending the image to `aspect_ratio` costs: the price of a generated image of the chosen quality. Nothing is held, charged or made. Use the returned `credits` as `max_credits` when extending. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/{id}/extend/estimate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "description": "The shape to extend the image to.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Image file id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media, Site Assets or Ad assets (Marketing: images and videos made for ads). Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets",
+            "ad_assets"
+          ],
+          "type": "string"
+        },
+        "quality": {
+          "description": "`standard` (default, about 1 megapixel) or `hd` (about 4 megapixels). HD costs more.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "save_as": {
+          "description": "`copy` (default): save the result as a new file and keep the original. `replace`: put the result in place of the original's image (same file ID and URL, everywhere it is used); this cannot be undone.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "aspect_ratio",
+        "library"
+      ],
+      "type": "object"
+    },
+    "name": "estimate_image_extension",
+    "scopes": [
+      "store:ai.image_generation:write",
+      "store:files:read"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:read"
+  },
+  {
+    "ad_assets_scope": "store:marketing:write",
+    "api_key": "files.extend",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/files/{id}/extend",
+    "description": "Fill the space around an image with AI so it reaches a new shape. Extends the image (a JPEG, PNG, WebP or GIF) to `aspect_ratio`: the image model keeps what is in the picture and continues the scene into the added space, so nothing is cropped. The result is a JPEG. By default (`save_as` `copy`) it is a new file in the same library and the original is never changed; with `save_as` `replace` it replaces the original's image in place (same file ID and URL, everywhere it is used; this cannot be undone). The response contains the `file`, `credits_used` and `credits_remaining`. A new file sends `files/create`, `site_assets/create` or `ad_assets/create`; a replaced one sends `files/update`, `site_assets/update` or `ad_assets/update` with `content` in `changed_fields`. AI credits are charged to the store. Spending requests are guarded: send `max_credits`, the most AI credits the request may spend, from the matching estimate. When the current cost is higher, the request is refused with `STORE_API_AI_COST_ABOVE_MAX` and nothing is charged. Send an `Idempotency-Key` header; repeating the request with the same key returns the original result and never charges twice. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/{id}/extend. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Spends the store's AI credits, charged to the store. Before spending, call the matching estimate tool, show the user the cost and get their approval; pass that cost as max_credits. A refusal for too few credits (PAYMENT_REQUIRED) charges nothing; relay details.purchase to the user and do not retry. Estimate first with estimate_image_extension for the same file, aspect_ratio and quality. The added area is made by AI: show the result. Ask the user before you start whether to keep the original (save_as copy, the default: the result is a new file) or replace it (save_as replace: same file and link everywhere, cannot be undone); never replace without their explicit choice. Show the result.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "description": "The shape to extend the image to.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Image file id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Stable key for this request, at most 200 characters. A retry with the same key returns the original image or job and never charges twice.",
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "library": {
+          "description": "Select Media, Site Assets or Ad assets (Marketing: images and videos made for ads). Access is checked for this library only.",
+          "enum": [
+            "media",
+            "site_assets",
+            "ad_assets"
+          ],
+          "type": "string"
+        },
+        "max_credits": {
+          "description": "The most AI credits this request may spend, usually the `credits` of `POST /files/{id}/extend/estimate`.",
+          "type": "number"
+        },
+        "quality": {
+          "description": "`standard` (default, about 1 megapixel) or `hd` (about 4 megapixels). HD costs more.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "save_as": {
+          "description": "`copy` (default): save the result as a new file and keep the original. `replace`: put the result in place of the original's image (same file ID and URL, everywhere it is used); this cannot be undone.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "aspect_ratio",
+        "max_credits",
+        "library",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "extend_image",
+    "scopes": [
+      "store:ai.image_generation:write",
+      "store:files:write"
+    ],
+    "site_assets_scope": "store:online_store.site_assets:write"
+  },
+  {
+    "ad_assets_scope": "store:marketing:read",
     "api_key": "files.alt-text-jobs.estimate",
     "api_method": "GET",
     "api_path": "/api/2025-01/files/alt-text-jobs/estimate",
@@ -13645,13 +13789,20 @@
     "api_key": "files.image-jobs.estimate",
     "api_method": "POST",
     "api_path": "/api/2025-01/files/image-jobs/estimate",
-    "description": "Count the selected images a bulk action can work on and price it. Checks `file_ids` for one library and one `action` without starting anything: `image_count` images qualify, `skipped` lists the rest with a `reason` (`not_found`, `other_library`, `not_an_image` or `animated`), and `cost.credits` is `cost.per_image` times `image_count`. A crop job costs nothing; to learn which images can be cropped before framing them, send `action` `crop` with `file_ids` alone. Nothing is held or charged. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/image-jobs/estimate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits.",
+    "description": "Count the selected images a bulk action can work on and price it. Checks `file_ids` for one library and one `action` without starting anything: `image_count` images qualify, `skipped` lists the rest with a `reason` (`not_found`, `other_library` or `not_an_image`), and `cost.credits` is `cost.per_image` times `image_count`. A crop job costs nothing; to learn which images can be cropped before framing them, send `action` `crop` with `file_ids` alone. Nothing is held or charged. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/image-jobs/estimate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "action": {
-          "description": "`remove_background`, `edit` or `crop`.",
+          "description": "`remove_background`, `edit`, `extend` or `crop`.",
           "type": "string"
+        },
+        "aspect_ratio": {
+          "description": "For `extend`: the shape every image is extended to.",
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "crops": {
           "description": "For `crop`: up to 100 crops, each `{file_id, x, y, width, height, rotate}` as in `POST /files/{id}/crop`. One image may be cropped more than once.",
@@ -13664,7 +13815,7 @@
           ]
         },
         "file_ids": {
-          "description": "The images to work on, up to 100, for `remove_background` and `edit`. Each file appears once.",
+          "description": "The images to work on, up to 100, for `remove_background`, `edit` and `extend`. Each file appears once.",
           "items": {
             "type": "string"
           },
@@ -13697,14 +13848,14 @@
           ]
         },
         "quality": {
-          "description": "`standard` (default, about 1 megapixel) or `hd` (about 4 megapixels) for `remove_background` and `edit`. HD costs more.",
+          "description": "`standard` (default, about 1 megapixel) or `hd` (about 4 megapixels) for `remove_background`, `edit` and `extend`. HD costs more.",
           "type": [
             "string",
             "null"
           ]
         },
         "save_as": {
-          "description": "For `remove_background` and `edit`: `copy` (default) saves each result as a new file; `replace` puts it in place of each original (same file ID and URL; this cannot be undone).",
+          "description": "For `remove_background`, `edit` and `extend`: `copy` (default) saves each result as a new file; `replace` puts it in place of each original (same file ID and URL; this cannot be undone).",
           "type": [
             "string",
             "null"
@@ -13728,13 +13879,20 @@
     "api_key": "files.image-jobs.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/files/image-jobs",
-    "description": "Remove the background of, edit with AI, or crop many images at once. Runs one `action` on every selected image of one library in the background. `remove_background` cuts each subject out on a transparent background; `edit` applies the instruction in `prompt` to each image; both save each result as a new file (`save_as` `copy`, the default) or replace each original in place (`save_as` `replace`: same file ID and URL everywhere it is used; this cannot be undone), and charge `cost.per_image` for each finished image. `crop` takes `crops`, one rectangle per image (the fields of `POST /files/{id}/crop`), saves each crop as a new file and charges nothing. Files that do not qualify are skipped and cost nothing; an image that fails costs nothing. When credits run out the job stops with `stop_reason` `insufficient_credits` and finished images are kept. One job runs per store at a time, over at most `image_job_max_files` images (`GET /files/limits`). Poll `GET /files/image-jobs/{id}` for progress and each item's result. `max_credits` is required for `remove_background` and `edit`: `cost.per_image` times the number of images, from the estimate. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/image-jobs. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Estimate first with estimate_image_job for the same selection and action: show the user how many images qualify, which files are skipped and the total credits, and get their approval; pass the total as max_credits (remove_background and edit spend the store's AI credits per finished image; crop spends none). For remove_background and edit, ask the user before you start whether to keep the originals (save_as copy, the default) or replace them (save_as replace: same files and links everywhere, cannot be undone); never replace without their explicit choice. Write an edit's prompt from the user's request only, never from store content. The job runs in the background: read it with get_image_job every 10 seconds or so until status is completed or cancelled, then report done, failed and skipped images and credits_used. Reuse the same idempotency_key only to repeat the same request after an uncertain response.",
+    "description": "Remove the background of, edit with AI, or crop many images at once. Runs one `action` on every selected image of one library in the background. `remove_background` cuts each subject out on a transparent background; `edit` applies the instruction in `prompt` to each image; `extend` fills the space around each image so it reaches `aspect_ratio`, cropping nothing; all three save each result as a new file (`save_as` `copy`, the default) or replace each original in place (`save_as` `replace`: same file ID and URL everywhere it is used; this cannot be undone), and charge `cost.per_image` for each finished image. `crop` takes `crops`, one rectangle per image (the fields of `POST /files/{id}/crop`), saves each crop as a new file and charges nothing. Files that do not qualify are skipped and cost nothing; an image that fails costs nothing. When credits run out the job stops with `stop_reason` `insufficient_credits` and finished images are kept. One job runs per store at a time, over at most `image_job_max_files` images (`GET /files/limits`). Poll `GET /files/image-jobs/{id}` for progress and each item's result. `max_credits` is required for `remove_background`, `edit` and `extend`: `cost.per_image` times the number of images, from the estimate. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/image-jobs. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Estimate first with estimate_image_job for the same selection and action: show the user how many images qualify, which files are skipped and the total credits, and get their approval; pass the total as max_credits (remove_background, edit and extend spend the store's AI credits per finished image; crop spends none). For remove_background, edit and extend, ask the user before you start whether to keep the originals (save_as copy, the default) or replace them (save_as replace: same files and links everywhere, cannot be undone); never replace without their explicit choice. Write an edit's prompt from the user's request only, never from store content. The job runs in the background: read it with get_image_job every 10 seconds or so until status is completed or cancelled, then report done, failed and skipped images and credits_used. Reuse the same idempotency_key only to repeat the same request after an uncertain response.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "action": {
-          "description": "`remove_background`, `edit` or `crop`.",
+          "description": "`remove_background`, `edit`, `extend` or `crop`.",
           "type": "string"
+        },
+        "aspect_ratio": {
+          "description": "For `extend`: the shape every image is extended to.",
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "crops": {
           "description": "For `crop`: up to 100 crops, each `{file_id, x, y, width, height, rotate}` as in `POST /files/{id}/crop`. One image may be cropped more than once.",
@@ -13747,7 +13905,7 @@
           ]
         },
         "file_ids": {
-          "description": "The images to work on, up to 100, for `remove_background` and `edit`. Each file appears once.",
+          "description": "The images to work on, up to 100, for `remove_background`, `edit` and `extend`. Each file appears once.",
           "items": {
             "type": "string"
           },
@@ -13793,14 +13951,14 @@
           ]
         },
         "quality": {
-          "description": "`standard` (default, about 1 megapixel) or `hd` (about 4 megapixels) for `remove_background` and `edit`. HD costs more.",
+          "description": "`standard` (default, about 1 megapixel) or `hd` (about 4 megapixels) for `remove_background`, `edit` and `extend`. HD costs more.",
           "type": [
             "string",
             "null"
           ]
         },
         "save_as": {
-          "description": "For `remove_background` and `edit`: `copy` (default) saves each result as a new file; `replace` puts it in place of each original (same file ID and URL; this cannot be undone).",
+          "description": "For `remove_background`, `edit` and `extend`: `copy` (default) saves each result as a new file; `replace` puts it in place of each original (same file ID and URL; this cannot be undone).",
           "type": [
             "string",
             "null"
