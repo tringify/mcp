@@ -1,5 +1,13 @@
 # Changelog
 
+## Work on many images at once — 18 November 2026
+
+- `create_image_job` runs one action on up to 100 selected images of one library in the background: `remove_background`, `edit` (one instruction in `prompt` for every image) or `crop` (one rectangle per image in `crops`). A store runs one job at a time.
+- `estimate_image_job` says, without starting anything, how many of the selected files are images the action can work on, which are skipped and why, and the credit cost. Show the user the cost and ask where results go (`save_as` `copy` or `replace`) before you start; pass the cost as `max_credits` with an `idempotency_key`. A crop job costs no credits and always saves new files.
+- `get_image_job` reads progress, credits used and each image's result (`current` reads the store's latest job); `cancel_image_job` stops a job, keeping the images already finished.
+- Credits are charged per finished image, never for one that fails or is skipped. A job that runs out of credits stops and keeps what it finished.
+- The catalog lists 900 tools.
+
 ## Remove background, and keep or replace the original — 18 November 2026
 
 - `estimate_background_removal` and `remove_background` cut out an image's subject on a transparent background (a PNG), priced like a transparent generated image.
