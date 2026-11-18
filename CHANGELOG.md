@@ -1,5 +1,9 @@
 # Changelog
 
+## GIFs filter for files — 18 November 2026
+
+- `list_files` takes `media_type: "gif"` to list only GIF images. A GIF is still reported with `media_type` `image`.
+
 ## AI video — 15 November 2026
 
 - New tools (`store:ai.image_generation:write` plus the library's permission): `estimate_video_generation`, `generate_video` and `get_video_generation`. Videos are 5, 8 or 15 seconds, 16:9 or 9:16, 720p (7 credits/s) or 1080p (10 credits/s), with sound, from a prompt and an optional starting image. Estimate first, show the cost and get the user's approval; `generate_video` answers a job at once and `get_video_generation` reads it until it ends. Credits are charged only for a saved video.

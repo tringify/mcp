@@ -12437,12 +12437,13 @@
           "type": "integer"
         },
         "media_type": {
-          "description": "Filter by media type: `image`, `video`, `document`, or `3d`.",
+          "description": "Filter by media type: `image`, `video`, `document`, or `3d`. `gif` lists only GIF images; GIFs are still reported with `media_type` `image`.",
           "enum": [
             "image",
             "video",
             "document",
-            "3d"
+            "3d",
+            "gif"
           ],
           "type": "string"
         },
