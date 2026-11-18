@@ -255,26 +255,26 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `set_vendor_translation` | `PUT /api/2025-01/vendors/{id}/translations/{locale}` | store:products:write, store:settings.languages:write |
 | `get_vendor_translations` | `GET /api/2025-01/vendors/translations/{locale}` | store:products:read, store:settings.languages:read |
 | `set_vendor_translations` | `PUT /api/2025-01/vendors/translations` | store:products:write, store:settings.languages:write |
-| `get_file_limits` | `GET /api/2025-01/files/limits` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
-| `get_storage_quota` | `GET /api/2025-01/files/quota` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
-| `list_files` | `GET /api/2025-01/files` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
-| `create_file_uploads` | `POST /api/2025-01/files/upload-intents` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
-| `finalize_file_uploads` | `POST /api/2025-01/files/upload-intents/finalize` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
-| `get_file_upload_status` | `POST /api/2025-01/files/upload-intents/status` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
-| `create_file_remote_uploads` | `POST /api/2025-01/files/remote-uploads` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
-| `get_file` | `GET /api/2025-01/files/{id}` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
-| `request_file_preview` | `POST /api/2025-01/files/{id}/preview` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
-| `update_file` | `PUT /api/2025-01/files/{id}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
-| `delete_file` | `DELETE /api/2025-01/files/{id}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `get_file_limits` | `GET /api/2025-01/files/limits` | store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
+| `get_storage_quota` | `GET /api/2025-01/files/quota` | store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
+| `list_files` | `GET /api/2025-01/files` | store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
+| `create_file_uploads` | `POST /api/2025-01/files/upload-intents` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `finalize_file_uploads` | `POST /api/2025-01/files/upload-intents/finalize` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `get_file_upload_status` | `POST /api/2025-01/files/upload-intents/status` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `create_file_remote_uploads` | `POST /api/2025-01/files/remote-uploads` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `get_file` | `GET /api/2025-01/files/{id}` | store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
+| `request_file_preview` | `POST /api/2025-01/files/{id}/preview` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `update_file` | `PUT /api/2025-01/files/{id}` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `delete_file` | `DELETE /api/2025-01/files/{id}` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `estimate_image_generation` | `POST /api/2025-01/files/generate/estimate` | store:ai.image_generation:write |
-| `generate_image` | `POST /api/2025-01/files/generate` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
-| `estimate_alt_text_job` | `GET /api/2025-01/files/alt-text-jobs/estimate` | store:ai.image_generation:write, and store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
-| `create_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
-| `get_alt_text_job` | `GET /api/2025-01/files/alt-text-jobs/{id}` | store:ai.image_generation:write, and store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
-| `cancel_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs/{id}/cancel` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `generate_image` | `POST /api/2025-01/files/generate` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `estimate_alt_text_job` | `GET /api/2025-01/files/alt-text-jobs/estimate` | store:ai.image_generation:write, and store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
+| `create_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `get_alt_text_job` | `GET /api/2025-01/files/alt-text-jobs/{id}` | store:ai.image_generation:write, and store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
+| `cancel_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs/{id}/cancel` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `estimate_video_generation` | `POST /api/2025-01/files/videos/estimate` | store:ai.image_generation:write |
-| `generate_video` | `POST /api/2025-01/files/videos` | store:ai.image_generation:write, and store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
-| `get_video_generation` | `GET /api/2025-01/files/videos/{id}` | store:ai.image_generation:write, and store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
+| `generate_video` | `POST /api/2025-01/files/videos` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `get_video_generation` | `GET /api/2025-01/files/videos/{id}` | store:ai.image_generation:write, and store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
 | `list_order_statuses` | `GET /api/2025-01/orders/statuses` | store:orders:read |
 | `get_order` | `GET /api/2025-01/orders/{id}` | store:orders:read |
 | `list_order_edits` | `GET /api/2025-01/orders/{id}/edits` | store:orders:read |
@@ -920,10 +920,10 @@ Each tool needs the access of the import or export `type` it works on: read for 
 | `bulk_delete_brands` | `POST /api/2025-01/brands/bulk-delete` | store:products:write |
 | `bulk_create_vendors` | `POST /api/2025-01/vendors/bulk-create` | store:products:write |
 | `bulk_delete_vendors` | `POST /api/2025-01/vendors/bulk-delete` | store:products:write |
-| `bulk_info_file` | `POST /api/2025-01/files/bulk-info` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
-| `get_file_translation` | `GET /api/2025-01/files/{id}/translations/{locale}` | store:files:read (Media) or store:online_store.site_assets:read (Site Assets) |
-| `set_file_translation` | `PUT /api/2025-01/files/{id}/translations/{locale}` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
-| `bulk_delete_files` | `POST /api/2025-01/files/bulk-delete` | store:files:write (Media) or store:online_store.site_assets:write (Site Assets) |
+| `bulk_info_file` | `POST /api/2025-01/files/bulk-info` | store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
+| `get_file_translation` | `GET /api/2025-01/files/{id}/translations/{locale}` | store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
+| `set_file_translation` | `PUT /api/2025-01/files/{id}/translations/{locale}` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `bulk_delete_files` | `POST /api/2025-01/files/bulk-delete` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `health_market_duty_country_rule` | `GET /api/2025-01/markets/duty-health` | store:markets:read, store:products:read |
 
 ## Customer emails

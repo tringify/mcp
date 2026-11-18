@@ -1,5 +1,9 @@
 # Changelog
 
+## Ad assets — 18 November 2026
+
+- File tools take `library: "ad_assets"` for Ad assets, the Marketing library for images and videos made for ads. It needs `store:marketing:read` or `store:marketing:write`; AI image and video generation can save into it.
+
 ## GIFs filter for files — 18 November 2026
 
 - `list_files` takes `media_type: "gif"` to list only GIF images. A GIF is still reported with `media_type` `image`.
