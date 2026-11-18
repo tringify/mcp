@@ -268,6 +268,9 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `delete_file` | `DELETE /api/2025-01/files/{id}` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `estimate_image_generation` | `POST /api/2025-01/files/generate/estimate` | store:ai.image_generation:write |
 | `generate_image` | `POST /api/2025-01/files/generate` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `estimate_image_edit` | `POST /api/2025-01/files/{id}/edit/estimate` | store:ai.image_generation:write, and store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
+| `edit_image` | `POST /api/2025-01/files/{id}/edit` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `crop_image` | `POST /api/2025-01/files/{id}/crop` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `estimate_alt_text_job` | `GET /api/2025-01/files/alt-text-jobs/estimate` | store:ai.image_generation:write, and store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
 | `create_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `get_alt_text_job` | `GET /api/2025-01/files/alt-text-jobs/{id}` | store:ai.image_generation:write, and store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
