@@ -1,5 +1,10 @@
 # Changelog
 
+## One GIF from several images — 19 November 2026
+
+- `create_image_job` takes the action `slideshow`: one looping GIF that steps through 2 to 20 selected images in the order of `file_ids`, saved as a new file. It uses no AI and costs no credits. `frame_duration_ms` is how long each image shows.
+- Every image is shown whole on a canvas the first image shapes, at most 640 pixels on its longer edge.
+
 ## Turn images into animated GIFs — 19 November 2026
 
 - `create_image_job` takes the action `animate`: an animated GIF of each selected image, saved as a new file. `frame_count` (2 to 16) and `frame_duration_ms` set its length and speed, and an optional `prompt` describes the motion. With `combine`, 2 to 4 images become one GIF that moves through them.
