@@ -1,5 +1,12 @@
 # Changelog
 
+## Extend an image, and make one from references — 18 November 2026
+
+- `estimate_image_extension` and `extend_image` extend an image to a new `aspect_ratio`: the image model keeps what is in the picture and continues the scene into the added space, so nothing is cropped. Priced like a generated image; `save_as` chooses a new file (`copy`, the default) or the original's place (`replace`).
+- `generate_image` and `estimate_image_generation` take `reference_file_ids`: up to 4 images of the store the model is shown beside the prompt, such as a product photo, a logo and a style to follow. The references are never changed and the price is the same.
+- `create_image_job` takes the action `extend` with `aspect_ratio`, to extend every selected image to one shape.
+- The catalog lists 902 tools.
+
 ## Work on many images at once — 18 November 2026
 
 - `create_image_job` runs one action on up to 100 selected images of one library in the background: `remove_background`, `edit` (one instruction in `prompt` for every image) or `crop` (one rectangle per image in `crops`). A store runs one job at a time.
