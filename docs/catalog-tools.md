@@ -277,6 +277,10 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `create_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `get_alt_text_job` | `GET /api/2025-01/files/alt-text-jobs/{id}` | store:ai.image_generation:write, and store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
 | `cancel_alt_text_job` | `POST /api/2025-01/files/alt-text-jobs/{id}/cancel` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `estimate_image_job` | `POST /api/2025-01/files/image-jobs/estimate` | store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
+| `create_image_job` | `POST /api/2025-01/files/image-jobs` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets); `remove_background` and `edit` also need store:ai.image_generation:write |
+| `get_image_job` | `GET /api/2025-01/files/image-jobs/{id}` | store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
+| `cancel_image_job` | `POST /api/2025-01/files/image-jobs/{id}/cancel` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `estimate_video_generation` | `POST /api/2025-01/files/videos/estimate` | store:ai.image_generation:write |
 | `generate_video` | `POST /api/2025-01/files/videos` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `get_video_generation` | `GET /api/2025-01/files/videos/{id}` | store:ai.image_generation:write, and store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
