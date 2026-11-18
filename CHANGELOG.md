@@ -1,5 +1,11 @@
 # Changelog
 
+## Which images each image tool works on — 19 November 2026
+
+- `get_file` and `list_files` return `animated` and `image_actions` for every image: the image tools it can take (`remove_background`, `edit`, `extend`, `crop`, `animate`, `reference`, `slideshow`). Offer the user only those.
+- Animated images take only `slideshow` (Make a GIF shows their first frame). A GIF is never turned into a GIF. Edits, crops, extensions, references and Turn into GIF refuse other images with `STORAGE_IMAGE_ANIMATED` or `STORAGE_IMAGE_ALREADY_GIF`.
+- `estimate_image_job` and `create_image_job` skip such images with the reason `animated`, `already_gif` or `frames_unknown` (an older GIF or WebP still being checked, for a few minutes after this release).
+
 ## One GIF from several images — 19 November 2026
 
 - `create_image_job` takes the action `slideshow`: one looping GIF that steps through 2 to 20 selected images in the order of `file_ids`, saved as a new file. It uses no AI and costs no credits. `frame_duration_ms` is how long each image shows.
