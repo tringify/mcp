@@ -336,6 +336,8 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `delete_currency` | `DELETE /api/2025-01/currencies/{id}` | store:settings.currencies:write |
 | `bulk_remove_currency_data` | `POST /api/2025-01/currencies/bulk-remove-data` | store:settings.currencies:write |
 | `remove_currency_data` | `POST /api/2025-01/currencies/{id}/remove-data` | store:settings.currencies:write |
+| `get_currency_data_bulk_remove` | `GET /api/2025-01/currencies/bulk-remove-data/{operationId}` | store:settings.currencies:write |
+| `cancel_currency_data_bulk_remove` | `POST /api/2025-01/currencies/bulk-remove-data/{operationId}/cancel` | store:settings.currencies:write |
 | `set_currency_rounding` | `PUT /api/2025-01/currencies/{id}/rounding` | store:settings.currencies:write |
 | `set_multi_currency` | `PUT /api/2025-01/currencies/multi-currency` | store:settings.currencies:write |
 | `set_auto_exchange_rates` | `PUT /api/2025-01/currencies/auto-rates` | store:settings.currencies:write |
@@ -428,6 +430,8 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `get_market_shipping_method` | `GET /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}` | store:markets:read |
 | `update_market_shipping_method` | `PUT /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}` | store:markets:write |
 | `delete_market_shipping_method` | `DELETE /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}` | store:markets:write |
+| `get_market_shipping_method_translation` | `GET /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}/translations/{locale}` | store:markets:read, store:settings.languages:read |
+| `set_market_shipping_method_translation` | `PUT /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}/translations/{locale}` | store:markets:write, store:settings.languages:write |
 | `get_market_duty_country_rule_limits` | `GET /api/2025-01/markets/{marketId}/duty-country-rules/limits` | store:markets:read |
 | `list_market_duty_available_countries` | `GET /api/2025-01/markets/{marketId}/duty-country-rules/available-countries` | store:markets:read |
 | `list_market_duty_country_rules` | `GET /api/2025-01/markets/{marketId}/duty-country-rules` | store:markets:read |
@@ -457,6 +461,8 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `update_market_checkout_fee` | `PUT /api/2025-01/markets/{marketId}/checkout-fees/{feeId}` | store:markets:write |
 | `delete_market_checkout_fee` | `DELETE /api/2025-01/markets/{marketId}/checkout-fees/{feeId}` | store:markets:write |
 | `reorder_market_checkout_fees` | `POST /api/2025-01/markets/{marketId}/checkout-fees/reorder` | store:markets:write |
+| `get_market_checkout_fee_translation` | `GET /api/2025-01/markets/{marketId}/checkout-fees/{feeId}/translations/{locale}` | store:markets:read, store:settings.languages:read |
+| `set_market_checkout_fee_translation` | `PUT /api/2025-01/markets/{marketId}/checkout-fees/{feeId}/translations/{locale}` | store:markets:write, store:settings.languages:write |
 | `list_domains` | `GET /api/2025-01/domains` | store:settings.domains:read |
 | `get_domain` | `GET /api/2025-01/domains/{domainId}` | store:settings.domains:read |
 | `list_dns_zones` | `GET /api/2025-01/dns-zones` | store:settings.domains:read |
