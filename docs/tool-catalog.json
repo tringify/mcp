@@ -629,7 +629,7 @@
           "type": "string"
         },
         "status": {
-          "description": "pending, approved, rejected, or hidden.",
+          "description": "pending, approved, rejected, hidden, or spam. A review is saved as spam when its writer is on the store's block list, or when the store marks it as spam.",
           "type": "string"
         }
       },
@@ -668,7 +668,7 @@
     "api_key": "reviews.moderate",
     "api_method": "PUT",
     "api_path": "/api/2025-01/reviews/{id}",
-    "description": "Approve, reject, or hide one review. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/reviews/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Approve, reject, hide or mark one review as spam. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/reviews/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -685,7 +685,7 @@
           ]
         },
         "status": {
-          "description": "approved, rejected, or hidden.",
+          "description": "approved, rejected, hidden, or spam. Spam puts the reviewer's email and IP address on the store's block list for reviews, blog comments and the contact form for 90 days; moving the review out of spam to approved or pending takes them off.",
           "type": "string"
         }
       },
@@ -811,12 +811,12 @@
     "api_key": "reviews.bulk-moderate",
     "api_method": "POST",
     "api_path": "/api/2025-01/reviews/bulk-moderate",
-    "description": "Queue approval, rejection, or hiding of selected reviews, or of every review matching a filter. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/reviews/bulk-moderate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Queue approval, rejection, hiding or marking as spam of selected reviews, or of every review matching a filter. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/reviews/bulk-moderate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "filter": {
-          "description": "Select every matching review instead of review_ids. Fields, all optional and combined with AND: status (pending, approved, rejected, hidden), ratings (array of 1-5), product_id (integer), search (text in title or content), has_store_response (boolean). An empty object selects every review. For example, {\"status\":\"pending\",\"ratings\":[1,2]} selects pending one- and two-star reviews.",
+          "description": "Select every matching review instead of review_ids. Fields, all optional and combined with AND: status (pending, approved, rejected, hidden, spam), ratings (array of 1-5), product_id (integer), search (text in title or content), has_store_response (boolean). An empty object selects every review. For example, {\"status\":\"pending\",\"ratings\":[1,2]} selects pending one- and two-star reviews.",
           "type": [
             "object",
             "null"
@@ -844,7 +844,7 @@
           ]
         },
         "status": {
-          "description": "approved, rejected, or hidden.",
+          "description": "approved, rejected, hidden, or spam. Spam puts the reviewer's email and IP address on the store's block list for reviews, blog comments and the contact form for 90 days; moving the review out of spam to approved or pending takes them off.",
           "type": "string"
         }
       },
@@ -868,7 +868,7 @@
       "additionalProperties": false,
       "properties": {
         "filter": {
-          "description": "Select every matching review instead of review_ids. Fields, all optional and combined with AND: status (pending, approved, rejected, hidden), ratings (array of 1-5), product_id (integer), search (text in title or content), has_store_response (boolean). An empty object selects every review. For example, {\"status\":\"pending\",\"ratings\":[1,2]} selects pending one- and two-star reviews.",
+          "description": "Select every matching review instead of review_ids. Fields, all optional and combined with AND: status (pending, approved, rejected, hidden, spam), ratings (array of 1-5), product_id (integer), search (text in title or content), has_store_response (boolean). An empty object selects every review. For example, {\"status\":\"pending\",\"ratings\":[1,2]} selects pending one- and two-star reviews.",
           "type": [
             "object",
             "null"
@@ -17480,7 +17480,7 @@
       "additionalProperties": false,
       "properties": {
         "applies_to": {
-          "description": "Where the entry applies: checkout, comments, reviews. Omit for everywhere its kind allows. Email and IP entries may apply to any of them; phone and address entries to checkout only.",
+          "description": "Where the entry applies: checkout, comments, reviews, contact, newsletter, restock, accounts, portals, votes. Omit for everywhere its kind allows (limits.surfaces). Email and IP entries may apply to any of them; phone entries to checkout, contact, restock and accounts (the forms that take a phone number); address entries to checkout only.",
           "items": {
             "type": "string"
           },
@@ -17546,7 +17546,7 @@
       "additionalProperties": false,
       "properties": {
         "applies_to": {
-          "description": "Replaces where the entry applies (checkout, comments, reviews); at least one. Phone and address entries apply to checkout only. Editing an entry learned from spam makes it the merchant's own.",
+          "description": "Replaces where the entry applies (checkout, comments, reviews, contact, newsletter, restock, accounts, portals, votes); at least one. Phone entries apply to checkout, contact, restock and accounts only, address entries to checkout only. Editing an entry learned from spam makes it the merchant's own.",
           "items": {
             "type": "string"
           },
@@ -23419,7 +23419,7 @@
     "api_key": "languages.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/languages",
-    "description": "List the store's enabled languages with the default flagged. Returns every enabled language with `locale`, `label` (English), `native_name`, `selector_label`, `rtl`, `is_default`, and `created_at` (RFC 3339 in the store time zone). Selector labels use the native name followed by the English name in parentheses when they differ. This read returns `success` and `data`, without success `code` or `message`. The response also includes the store's language limit, `max_languages`, which counts distinct enabled languages, including the default language, and is never below 1. Once a downgrade is scheduled, it is the lower plan's limit. Locale codes use their canonical spelling, for example `pt-BR`. Content is authored in the default language and translated into the others. This list is the catalog a storefront can publish. Use Set storefront languages, then Set storefront country languages to finish shopper publication through this API. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/languages. Only the connected store is accessible.",
+    "description": "List the store's enabled languages with the default flagged. Returns every enabled language with `locale`, `label` (English), `native_name`, `selector_label`, `rtl`, `is_default`, and `created_at` (RFC 3339 in the store time zone). Selector labels use the native name followed by the English name in parentheses when they differ (`Deutsch (German)`); when the English name already has parentheses, as regional and script variants do, an em dash joins them instead (`Português (Brasil) — Portuguese (Brazil)`), so parentheses never nest. This read returns `success` and `data`, without success `code` or `message`. The response also includes the store's language limit, `max_languages`, which counts distinct enabled languages, including the default language, and is never below 1. Once a downgrade is scheduled, it is the lower plan's limit. Locale codes use their canonical spelling, for example `pt-BR`. Content is authored in the default language and translated into the others. This list is the catalog a storefront can publish. Use Set storefront languages, then Set storefront country languages to finish shopper publication through this API. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/languages. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -23434,7 +23434,7 @@
     "api_key": "languages.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/languages",
-    "description": "Update the store's enabled language set. When `locales` is supplied, it is the complete set of locale codes the store should publish in. Repeated codes count once, and an identical set is a no-op that does not claim an update. Omitting `locales` or sending `null` returns the current list without changes. An unchanged set returns HTTP 200 with `success` and `data`, without `code` or `message`. Whitespace is trimmed, blank entries are ignored, and an empty resulting set is rejected. The default language must always be included in a supplied set — it cannot be removed here. Disabling a language permanently deletes its translations and requires confirmation: the first call that would remove locales returns `CONFIRMATION_REQUIRED` with warnings and a token bound to those locales; repeat with `confirmed: true` and that token. Adding languages does not require confirmation. Locale codes are matched without regard to letter case and stored in their canonical spelling, for example `pt-BR`. A language that is assigned to a storefront is protected (remove it from those storefronts first). The set size is capped by `max_languages`; once a downgrade is scheduled, the lower plan's limit applies. A store above the limit can keep or shrink its set. A replacement that adds any language must finish at or below the limit, even if it removes other languages at the same time. Disabling a language cancels its active translation work and publishes `store/locales/deleted` for each removed language, in addition to `store/locales/update`. Merchant connections also need the settings.languages:write staff permission. The confirmation impact includes urls.translated_slugs. Translated slugs are recorded before the reset; old links redirect to the same resource's current address. A slug later taken by another resource belongs to that resource, and links to deleted resources return 404. Source-fallback pages may need search-engine recrawling. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update the store's enabled language set. When `locales` is supplied, it is the complete set of locale codes the store should publish in. Repeated codes count once, and an identical set is a no-op that does not claim an update. Omitting `locales` or sending `null` returns the current list without changes. An unchanged set returns HTTP 200 with `success` and `data`, without `code` or `message`. Whitespace is trimmed, blank entries are ignored, and an empty resulting set is rejected. The default language must always be included in a supplied set — it cannot be removed here. Disabling a language permanently deletes its translations (including email, theme text, theme message and order status translations, and its SEO and market note texts) and requires confirmation: the first call that would remove locales returns `CONFIRMATION_REQUIRED` with warnings and a token bound to those locales; repeat with `confirmed: true` and that token. Adding languages does not require confirmation. Locale codes are matched without regard to letter case and stored in their canonical spelling, for example `pt-BR`. A language that is assigned to a storefront is protected (remove it from those storefronts first). The set size is capped by `max_languages`; once a downgrade is scheduled, the lower plan's limit applies. A store above the limit can keep or shrink its set. A replacement that adds any language must finish at or below the limit, even if it removes other languages at the same time. Disabling a language cancels its active translation work and publishes `store/locales/deleted` for each removed language, in addition to `store/locales/update`. Merchant connections also need the settings.languages:write staff permission. The confirmation impact includes urls.translated_slugs. Translated slugs are recorded before the reset; old links redirect to the same resource's current address. A slug later taken by another resource belongs to that resource, and links to deleted resources return 404. Source-fallback pages may need search-engine recrawling. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -23474,7 +23474,7 @@
     "api_key": "languages.default.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/languages/default",
-    "description": "Change the store's default (source) language — a confirmed two-step. The selected language becomes the source language for store content. This does not translate existing source content into the new language. Any translations stored for the selected language are permanently removed because that language will now contain source content. The first call returns impact warnings and a confirmation token without making changes; repeat the request with `confirmed: true` and that token to continue. Tokens expire five minutes after issue and are single-use on a committed change. Selecting the current default returns HTTP 200 with `success` and `data.default_locale`, without confirmation, `code`, `message`, or events. The previous default remains enabled. The primary storefront switches its primary language to the new default and adds that language to its served set; other storefront assignments and country-language mappings stay unchanged. A successful change publishes `store/locales/update`. `store/translations/deleted` is published only when current content translations or translated storefront messages existed, or active translation CSV jobs were cancelled. Merchant connections also need the settings.languages:write staff permission. The resulting primary storefront also publishes storefront/locales/update, including country assignments and primary-language inheritance. At cap one use Replace only language instead. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages/default. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change the store's default (source) language — a confirmed two-step. The selected language becomes the source language for store content. This does not translate existing source content into the new language. Any translations stored for the selected language (email, theme text, theme message and order status translations included) are permanently removed because that language will now contain source content. The first call returns impact warnings and a confirmation token without making changes; repeat the request with `confirmed: true` and that token to continue. Tokens expire five minutes after issue and are single-use on a committed change. Selecting the current default returns HTTP 200 with `success` and `data.default_locale`, without confirmation, `code`, `message`, or events. The previous default remains enabled. The primary storefront switches its primary language to the new default and adds that language to its served set; other storefront assignments and country-language mappings stay unchanged. A successful change publishes `store/locales/update`. `store/translations/deleted` is published only when current content translations or translated storefront messages existed, or active translation CSV jobs were cancelled. Merchant connections also need the settings.languages:write staff permission. The resulting primary storefront also publishes storefront/locales/update, including country assignments and primary-language inheritance. At cap one use Replace only language instead. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages/default. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -23511,7 +23511,7 @@
     "api_key": "languages.translations.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/languages/{locale}/translations",
-    "description": "Delete all translation data for one enabled language without disabling it. The first call returns warnings and a confirmation token without deleting anything. Repeat the request within five minutes with `confirmed: true` and that single-use token to permanently remove every stored content translation, translated storefront message, localized search document, pending AI suggestion, and translation CSV preview for the selected language. Active AI and CSV translation work is cancelled and cannot restore removed content. Completed import and export history remains available. The language remains enabled and its storefront assignments do not change. `store/translations/deleted` is published only when current content translations exist, storefront messages or search documents are deleted, or active translation CSV jobs are cancelled. Removing only AI staging or CSV previews does not emit this event. Translations become unavailable when the reset commits; physical catalog and staging cleanup continues asynchronously. A successful reset returns `success`, `code`, and `message`, with no `data` field, even when nothing needed removal. The default language cannot be selected because it contains source content rather than translations. Merchant connections also need the settings.languages:write staff permission. The confirmation impact includes urls.translated_slugs. Translated slugs are recorded before the reset; old links redirect to the same resource's current address. A slug later taken by another resource belongs to that resource, and links to deleted resources return 404. Source-fallback pages may need search-engine recrawling. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/languages/{locale}/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete all translation data for one enabled language without disabling it. The first call returns warnings and a confirmation token without deleting anything. Repeat the request within five minutes with `confirmed: true` and that single-use token to permanently remove every stored content translation, translated storefront message, localized search document, email translation, theme text and theme message translation, order status translation, pending AI suggestion, and translation CSV preview for the selected language. Active AI and CSV translation work is cancelled and cannot restore removed content. Completed import and export history remains available. The language remains enabled and its storefront assignments do not change. `store/translations/deleted` is published only when current content translations exist, storefront messages or search documents are deleted, or active translation CSV jobs are cancelled. Removing only AI staging or CSV previews does not emit this event. Translations become unavailable when the reset commits; physical catalog and staging cleanup, and the removal of email, theme text, theme message and order status translations saved before the reset, continue asynchronously. A successful reset returns `success`, `code`, and `message`, with no `data` field, even when nothing needed removal. The default language cannot be selected because it contains source content rather than translations. Merchant connections also need the settings.languages:write staff permission. The confirmation impact includes urls.translated_slugs. Translated slugs are recorded before the reset; old links redirect to the same resource's current address. A slug later taken by another resource belongs to that resource, and links to deleted resources return 404. Source-fallback pages may need search-engine recrawling. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/languages/{locale}/translations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -23562,7 +23562,7 @@
     "api_key": "languages.replace_only",
     "api_method": "PUT",
     "api_path": "/api/2025-01/languages/replace-only",
-    "description": "Atomically replace the store's sole enabled source language, including on one-language plans. Requires exactly one enabled language and a different supported target. Replaces it across every storefront primary/served language and country assignment in one transaction, with never two enabled languages at once. Source text is not translated. Old-language translations, message overrides and search content are removed, translation jobs cancelled, and old slug identities retained for durable redirects. Review all affected storefronts and countries before confirming. Publishes store/locales/update, store/locales/deleted, store/translations/deleted and storefront/locales/update for each storefront. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Merchant connections also need the settings.languages:write staff permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages/replace-only. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Atomically replace the store's sole enabled source language, including on one-language plans. Requires exactly one enabled language and a different supported target. Replaces it across every storefront primary/served language and country assignment in one transaction, with never two enabled languages at once. Source text is not translated. Old-language translations, message overrides and search content are removed, translation jobs cancelled, and old slug identities retained for durable redirects. Review all affected storefronts and countries before confirming. Publishes store/locales/update, store/locales/deleted, store/translations/deleted and storefront/locales/update for each storefront. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact. impact.countries lists only the countries whose languages or default language change, each with previous/resulting language codes, previous_default, default_locale and inherits_primary; country_count is every country the storefront serves and unchanged_countries how many of them keep their languages. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Merchant connections also need the settings.languages:write staff permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/languages/replace-only. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -23599,7 +23599,7 @@
     "api_key": "languages.readiness",
     "api_method": "GET",
     "api_path": "/api/2025-01/languages/{locale}/readiness",
-    "description": "Review aggregate catalog, content, platform and theme translation coverage before publishing. Read-only and never blocks publication. Requires read_translations and read_storefront; merchant connections also need settings.languages:read and online_store.storefronts:read. Scans at most 500 source identities per call. When complete=false, pass next_cursor unchanged with the same locale and storefront_id until complete=true. Responses contain backend cumulative resources and total counts, not deltas. Cursors expire after five minutes; an expired cursor or a content revision change returns LANGUAGE_READINESS_RESTART: restart without a cursor. Only complete=true and ready=true is a clean report. Counts are fields, exact, parent, source, missing, outdated and review_required. Exact locale then parent then source applies per field; slugs use exact locale only. Catalog outdated uses source hashes. Theme dictionaries lack source hashes, so newer source timestamps require review rather than claiming semantic freshness. Messages separately cover platform_messages, theme_messages and gate_messages for the selected live storefront theme. Source counts include fallback content. Catalog/content coverage is store-wide, not filtered to channel publication; storefront_id selects the theme, gates and platform messages (defaults to primary storefront). Labels and notices are backend-localized. A missing active theme requires review. Platform overrides apply only to their exact locale, matching the runtime; platform registry messages may use the parent. Counts contain no source/translated text. This report cannot certify linguistic quality. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/languages/{locale}/readiness. Only the connected store is accessible.",
+    "description": "Review aggregate catalog, content, platform and theme translation coverage before publishing. Read-only and never blocks publication. Requires read_translations and read_storefront; merchant connections also need settings.languages:read and online_store.storefronts:read. Scans at most 500 source identities per call. When complete=false, pass next_cursor unchanged with the same locale and storefront_id until complete=true. Responses contain backend cumulative resources and total counts, not deltas. Cursors expire after five minutes. A cursor that is malformed, expired, altered, or sent with a different locale or storefront_id returns LANGUAGE_READINESS_CURSOR_INVALID (400); content that changed while the report ran returns LANGUAGE_READINESS_RESTART (409). In both cases restart without a cursor. Only complete=true and ready=true is a clean report. Counts are fields, exact, parent, source, missing, outdated and review_required. Exact locale then parent then source applies per field; slugs use exact locale only. Catalog outdated uses source hashes. Theme dictionaries lack source hashes, so newer source timestamps require review rather than claiming semantic freshness. Messages separately cover platform_messages, theme_messages and gate_messages for the selected live storefront theme. Source counts include fallback content. Catalog/content coverage is store-wide, not filtered to channel publication; storefront_id selects the theme, gates and platform messages (defaults to primary storefront). Labels and notices are backend-localized. A missing active theme requires review. Platform overrides apply only to their exact locale, matching the runtime; platform registry messages may use the parent. Counts contain no source/translated text. This report cannot certify linguistic quality. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/languages/{locale}/readiness. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -23692,7 +23692,7 @@
     "api_key": "currencies.exchange_rates.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/currencies/exchange-rates/{code}",
-    "description": "Current market rate for one currency code. Returns the market rate for a single case-sensitive uppercase ISO currency code relative to the store's base. `rate` converts currency to base; `rate_inverse` converts base to currency, the same direction as `conversion_rate`. Requesting the base code returns both rates as `1`, but still requires a current snapshot. `updated_at` is the complete snapshot's RFC 3339 timestamp in the store's timezone, with its offset. The request fails with HTTP 503 when no complete, unexpired snapshot is available. Useful when suggesting a rate while a merchant sets a manual one. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/exchange-rates/{code}. Only the connected store is accessible.",
+    "description": "Current market rate for one currency code. Returns the market rate for a single ISO currency code relative to the store's base. The code is case-insensitive (`eur` and `EUR` are the same) and the response carries it in uppercase. `rate` converts currency to base; `rate_inverse` converts base to currency, the same direction as `conversion_rate`. Requesting the base code returns both rates as `1`, but still requires a current snapshot. `updated_at` is the complete snapshot's RFC 3339 timestamp in the store's timezone, with its offset. The request fails with HTTP 503 when no complete, unexpired snapshot is available. Useful when suggesting a rate while a merchant sets a manual one. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/exchange-rates/{code}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -23837,7 +23837,7 @@
     "api_key": "currencies.data.bulk-remove",
     "api_method": "POST",
     "api_path": "/api/2025-01/currencies/bulk-remove-data",
-    "description": "Preview and atomically clear live data for selected non-base currencies. Send a non-empty list of unique currency UUIDs in `ids`, capped by `bulk_max` from List currencies. Every ID must belong to this store. The base currency and automatic exchange-rate mode are rejected. The entire selection is checked together: a market must retain at least one currency after removal. First call without confirmation. `CONFIRMATION_REQUIRED` returns `details.preview` with total and per-currency `removed`/`counts`, warnings, and a five-minute single-use confirmation token. Repeat the same IDs with `confirmed: true` and `confirmation_token`. The token is bound to the store, actor, sorted selection and all previewed counts. Changed counts, selection, expiry or replay require a fresh preview. All 17 reference types are cleared for the whole batch at once: either every currency in the batch is cleaned up or nothing changes. No currency configuration records or historical carts, orders, payments or financial records are deleted. An all-empty unconfirmed batch returns zero counts without mutation events. Successful cleanup records per-currency and batch audit entries, queues one `currencies/update` with changed currency IDs/codes and one `currencies/data_removed` per currency whose data changed. Storefront product filters are refreshed once for the whole batch. Any failure rolls back the entire batch. The confirmed response is compact: `totals` (`currencies`, `removed`), only the non-zero per-table `counts`, and each currency's `currency_id`, `currency_code` and `removed`. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-remove-data. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Preview, then remove live data for selected non-base currencies in a background operation, each currency all or nothing. Send a non-empty list of unique currency UUIDs in `ids`, capped by `bulk_max` from List currencies. Every ID must belong to this store. The base currency and automatic exchange-rate mode are rejected, and a selection that would leave a market without a currency is rejected before anything is queued. First call without confirmation. `CONFIRMATION_REQUIRED` returns `details.preview` with total and per-currency `removed`/`counts`, warnings, and a five-minute single-use confirmation token. Repeat the same IDs with `confirmed: true` and `confirmation_token`; the token is bound to the store, actor, sorted selection and all previewed counts. The confirmed call removes nothing itself: it queues an operation and returns `CURRENCY_DATA_REMOVAL_QUEUED` with `data.operation`. The operation removes the currencies one at a time, each in its own transaction: all 17 reference types for that currency are cleared or none are. Before removing a currency it checks again that its counts still match the reviewed preview and that every market keeps another currency; a currency that fails (for example `CURRENCY_DATA_COUNTS_CHANGED`) keeps all its data and the others continue. Read progress and each currency's result with Get a currency data removal; stop it with Cancel a currency data removal. Each removed currency queues `currencies/update` and `currencies/data_removed` and records an audit entry; storefront product filters refresh for each. No currency configuration records or historical carts, orders, payments or financial records are deleted. An all-empty unconfirmed batch returns zero counts without queuing anything. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-remove-data. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -23869,6 +23869,54 @@
       "type": "object"
     },
     "name": "bulk_remove_currency_data",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.data.bulk-remove.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/currencies/bulk-remove-data/{operationId}",
+    "description": "Progress and per-currency results of a Remove data for multiple currencies operation. Returns the operation queued by the same actor. `operationId` is its id, or `current` for the actor's oldest operation still running (`data.operation` is null when there is none). `status` is queued, completed, cancelled or failed; `total`, `processed`, `succeeded`, `failed` and `removed` summarize it. `currencies` lists every selected currency in order with `status` removed (with `removed` and the 17 `counts` actually cleared), failed (with `code` and a backend-localized `message`, its data untouched) or not_processed (not reached yet, or skipped by a cancel). A finished operation with any failed or not_processed currency returns `CURRENCY_DATA_REMOVAL_PARTIAL`, one where all were removed `CURRENCY_DATA_REMOVED`, a running one `CURRENCY_DATA_REMOVAL_QUEUED`. Operations are kept 30 days after they finish. Poll every few seconds while queued. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/currencies/bulk-remove-data/{operationId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation id, or current.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_currency_data_bulk_remove",
+    "scopes": [
+      "store:settings.currencies:write"
+    ]
+  },
+  {
+    "api_key": "currencies.data.bulk-remove.cancel",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/currencies/bulk-remove-data/{operationId}/cancel",
+    "description": "Stop a running Remove data for multiple currencies operation. Stops the operation. Currencies already removed stay removed and a currency being removed when the cancel arrives finishes; the rest are not processed and keep their data. Returns `CURRENCY_DATA_REMOVAL_CANCELLED` with the operation, now `cancelled`. An operation that already finished returns `CURRENCY_DATA_REMOVAL_NOT_RUNNING`. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-remove-data/{operationId}/cancel. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "cancel_currency_data_bulk_remove",
     "scopes": [
       "store:settings.currencies:write"
     ]
@@ -23990,7 +24038,7 @@
     "api_key": "currencies.enable",
     "api_method": "POST",
     "api_path": "/api/2025-01/currencies/enable",
-    "description": "Select one currency in automatic-rate mode. Requires automatic rates and multi-currency. Enabling creates a missing supported currency with rounding_mode none, or enables an existing one. Its rate is supplied by the current complete unexpired snapshot; never use a stored placeholder for prices. Disabling requires an existing non-base currency and is blocked by market assignments or active Gift Card balances. Assign the enabled currency to a market, then select it for countries in Pricing. This operation does not remap countries. The response returns the effective rate, rate_source and localized display fields; an unavailable rate does not become a manual rate. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/enable. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Select one currency in automatic-rate mode. Requires automatic rates and multi-currency. The code is case-insensitive. Enabling creates a missing supported currency with rounding_mode none, or enables an existing one. Its rate is supplied by the current complete unexpired snapshot; never use a stored placeholder for prices. Disabling requires an existing non-base currency and is blocked by market assignments or active Gift Card balances. Assign the enabled currency to a market, then select it for countries in Pricing. This operation does not remap countries. The response returns the effective rate, rate_source and localized display fields; an unavailable rate does not become a manual rate. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/enable. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -24090,7 +24138,7 @@
     "api_key": "currencies.bulk-delete",
     "api_method": "POST",
     "api_path": "/api/2025-01/currencies/bulk-delete",
-    "description": "Remove selected unused non-base currencies atomically. Manual mode only. Every ID must belong to the connected store and none may be the base currency. Live data and active Gift Card balances block removal. Use the separate confirmation-based data-cleanup operation first when needed. Historical orders and financial records are retained. Returns the number deleted; any failure rolls back the whole batch. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Remove selected unused non-base currencies atomically. Manual mode only. Every ID must belong to the connected store and none may be the base currency. Live data and active Gift Card balances block removal: `CURRENCY_CURRENCIES_IN_USE` lists the blocked codes in `details.codes` and, in `details.currencies`, each blocked currency's summary groups, its 17 exact reference counts and `active_gift_cards`, the same breakdown Remove a currency returns. Use Remove data for multiple currencies first when needed. Historical orders and financial records are retained. Returns the number deleted; any failure rolls back the whole batch. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -24152,7 +24200,7 @@
     "api_key": "currencies.bulk-update",
     "api_method": "POST",
     "api_path": "/api/2025-01/currencies/bulk-update",
-    "description": "Change rounding, availability or manual rates atomically. Supply at least one change. rate_operation and rate_value must be supplied together and require manual mode; set replaces rates and multiply scales them. Derived rates are rounded once to storage precision. enabled changes existing availability; disabling is blocked by market assignments and active Gift Card balances. rounding_mode must be supported by every selected currency. Unknown IDs, the base currency, invalid rounding or unavailable rates reject the whole batch. Returns updated; requesting existing values makes no mutation event. This does not add currencies or change country selections. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-update. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change rounding, availability or manual rates atomically. Supply at least one change. rate_operation and rate_value must be supplied together; set replaces rates and multiply scales them. In automatic-rate mode rates and availability are market-managed, exactly as in Update a currency: changing a rate or enabled is rejected with `CURRENCY_AUTO_MODE_RATE_FORBIDDEN`, while rounding changes and values equal to the current ones are accepted. Derived rates are rounded once to storage precision. enabled changes existing availability; disabling is blocked by market assignments and active Gift Card balances. rounding_mode must be supported by every selected currency. Unknown IDs, the base currency, invalid rounding or unavailable rates reject the whole batch. Returns updated; requesting existing values makes no mutation event. This does not add currencies or change country selections. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/currencies/bulk-update. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -25128,11 +25176,8 @@
           ]
         },
         "offer_label": {
-          "description": "Optional headline for the offer on product pages, up to offer_label_max_length characters from the catalog (OFFER_LABEL_TOO_LONG). Empty shows the saving, for example \"5% off\". Translate it per language with the payment adjustment translation endpoints.",
-          "type": [
-            "string",
-            "null"
-          ]
+          "description": "Required (catalog offer_label_required). The name shoppers see for this discount: on product pages, as the discount line at checkout, on the order status page, in order emails and on invoices. Up to offer_label_max_length characters from the catalog (OFFER_LABEL_TOO_LONG); empty after trimming is refused (OFFER_LABEL_REQUIRED). Translate it per language with the payment adjustment translation endpoints.",
+          "type": "string"
         },
         "offer_note": {
           "description": "Optional note shoppers see under the offer on product pages, up to offer_text_max_length from the catalog characters (OFFER_NOTE_TOO_LONG). Empty shows Tringify's, for example \"Applied automatically at checkout\" or \"Use this code at checkout\". Translate it per language with the translation endpoints.",
@@ -25165,7 +25210,8 @@
         "binding_id",
         "adjustment_kind",
         "value_type",
-        "is_enabled"
+        "is_enabled",
+        "offer_label"
       ],
       "type": "object"
     },
@@ -25215,11 +25261,8 @@
           ]
         },
         "offer_label": {
-          "description": "Optional headline for the offer on product pages, up to offer_label_max_length characters from the catalog (OFFER_LABEL_TOO_LONG). Empty shows the saving, for example \"5% off\". Translate it per language with the payment adjustment translation endpoints.",
-          "type": [
-            "string",
-            "null"
-          ]
+          "description": "Required (catalog offer_label_required). The name shoppers see for this discount: on product pages, as the discount line at checkout, on the order status page, in order emails and on invoices. Up to offer_label_max_length characters from the catalog (OFFER_LABEL_TOO_LONG); empty after trimming is refused (OFFER_LABEL_REQUIRED). Translate it per language with the payment adjustment translation endpoints.",
+          "type": "string"
         },
         "offer_note": {
           "description": "Optional note shoppers see under the offer on product pages, up to offer_text_max_length from the catalog characters (OFFER_NOTE_TOO_LONG). Empty shows Tringify's, for example \"Applied automatically at checkout\" or \"Use this code at checkout\". Translate it per language with the translation endpoints.",
@@ -25258,7 +25301,8 @@
         "rule_id",
         "adjustment_kind",
         "value_type",
-        "is_enabled"
+        "is_enabled",
+        "offer_label"
       ],
       "type": "object"
     },
@@ -27016,11 +27060,8 @@
           ]
         },
         "offer_label": {
-          "description": "Optional headline shoppers see for this discount on product pages and in the cart and checkout available discounts, up to offer_label_max_length characters (OFFER_LABEL_TOO_LONG). Empty shows the saving on product pages, for example \"15% off\", and the discount name in the cart and checkout. Leading and trailing spaces are removed. Translate it per language with the discount translation endpoints.",
-          "type": [
-            "string",
-            "null"
-          ]
+          "description": "Required. The name shoppers see for this discount everywhere: product page offers, the cart and checkout (available and applied discounts, free gifts), the order status page, order emails, invoices and packing slips. `name` is only ever shown to the merchant. Up to offer_label_max_length characters (OFFER_LABEL_TOO_LONG); empty after trimming is refused (OFFER_LABEL_REQUIRED). Leading and trailing spaces are removed. Translate it per language with the discount translation endpoints; shoppers read it in their language (the exact locale, then its language, then the store's default language). An order keeps the label its shopper saw when it was placed.",
+          "type": "string"
         },
         "offer_note": {
           "description": "Optional note shoppers see under the offer on product pages, up to offer_text_max_length characters (OFFER_NOTE_TOO_LONG). Empty shows Tringify's, for example \"Applied automatically at checkout\" or \"Use this code at checkout\". Translate it per language with the translation endpoints.",
@@ -27162,7 +27203,8 @@
         "type",
         "activation",
         "applies_to",
-        "customer_eligibility"
+        "customer_eligibility",
+        "offer_label"
       ],
       "type": "object"
     },
@@ -27205,7 +27247,7 @@
     "api_key": "discounts.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}/translations/{locale}",
-    "description": "Read the offer text translations of one discount. Returns the stored translations of `offer_label`, `offer_conditions` and `offer_note` in the selected locale, each with `is_outdated` (the text changed since it was translated). Shoppers browsing in that language see the translated label on product pages and in the cart and checkout available discounts, and the translated conditions and note on product pages; without one they see the original text. Only a discount with at least one offer text has translations: otherwise TRANSLATION_RESOURCE_ID_NOT_IN_STORE. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}/translations/{locale}. Only the connected store is accessible.",
+    "description": "Read the offer text translations of one discount. Returns the stored translations of `offer_label`, `offer_conditions` and `offer_note` in the selected locale, each with `is_outdated` (the text changed since it was translated). Shoppers browsing in that language see the translated label wherever the discount is shown to them (product pages, cart, checkout, and orders placed in that language), and the translated conditions and note on product pages; without one they see the original text. Only a discount with at least one offer text has translations: otherwise TRANSLATION_RESOURCE_ID_NOT_IN_STORE. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}/translations/{locale}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -27611,11 +27653,8 @@
           ]
         },
         "offer_label": {
-          "description": "Optional headline shoppers see for this discount on product pages and in the cart and checkout available discounts, up to offer_label_max_length characters (OFFER_LABEL_TOO_LONG). Empty shows the saving on product pages, for example \"15% off\", and the discount name in the cart and checkout. Leading and trailing spaces are removed. Translate it per language with the discount translation endpoints.",
-          "type": [
-            "string",
-            "null"
-          ]
+          "description": "Required. The name shoppers see for this discount everywhere: product page offers, the cart and checkout (available and applied discounts, free gifts), the order status page, order emails, invoices and packing slips. `name` is only ever shown to the merchant. Up to offer_label_max_length characters (OFFER_LABEL_TOO_LONG); empty after trimming is refused (OFFER_LABEL_REQUIRED). Leading and trailing spaces are removed. Translate it per language with the discount translation endpoints; shoppers read it in their language (the exact locale, then its language, then the store's default language). An order keeps the label its shopper saw when it was placed.",
+          "type": "string"
         },
         "offer_note": {
           "description": "Optional note shoppers see under the offer on product pages, up to offer_text_max_length characters (OFFER_NOTE_TOO_LONG). Empty shows Tringify's, for example \"Applied automatically at checkout\" or \"Use this code at checkout\". Translate it per language with the translation endpoints.",
@@ -27758,7 +27797,8 @@
         "type",
         "activation",
         "applies_to",
-        "customer_eligibility"
+        "customer_eligibility",
+        "offer_label"
       ],
       "type": "object"
     },
@@ -28802,6 +28842,101 @@
     ]
   },
   {
+    "api_key": "shipping.methods.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}/translations/{locale}",
+    "description": "Read the translations of a shipping method's name and description. Returns the stored translations of `name` and `description` in the selected locale, each with `is_outdated` (the text changed since it was translated). Shoppers in that language see them in cart estimates, checkout shipping options and their order, its emails and invoices; without one they see the original text. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "market_id": {
+          "description": "Market id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "method_id": {
+          "description": "Shipping method ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "zone_id": {
+          "description": "Shipping zone ID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "market_id",
+        "zone_id",
+        "method_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_market_shipping_method_translation",
+    "scopes": [
+      "store:markets:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "shipping.methods.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}/translations/{locale}",
+    "description": "Translate a shipping method's name and description. Translatable fields are `name` (up to name_max_length characters) and `description` (up to description_max_length), the shipping method limits. Send an empty string to remove a translation. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}/translations/{locale}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "market_id": {
+          "description": "Market id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "method_id": {
+          "description": "Shipping method ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values: `name`, `description`.",
+          "type": "object"
+        },
+        "zone_id": {
+          "description": "Shipping zone ID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "market_id",
+        "zone_id",
+        "method_id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_market_shipping_method_translation",
+    "scopes": [
+      "store:markets:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
     "api_key": "duties.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/duty-country-rules/limits",
@@ -29176,7 +29311,7 @@
     "api_key": "cod.settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/cod-settings",
-    "description": "Read the cash-on-delivery configuration for a market. The response includes `unavailable_display`, `unavailable_message` and `unavailable_message_translations` (what checkout does when an order can't use COD), and `waiver_notice_enabled`, `waiver_notice_waived` and `waiver_notice_remaining` (the fee waiver message); keep all six when editing other settings. `waiver_notice_defaults` is read-only: Tringify's default fee waiver texts for each language enabled for the store (`remaining` shows the literal `{{.amount}}`), for use as placeholders where you have no text of your own. It also tells you whether cash on delivery is enabled, whether the market uses one simple rule or destination-based zones, and how its fee and order-value conditions are configured. Amount maps are keyed by the market's currency codes. Threshold fields remain present when their corresponding toggle is off, but they do not affect checkout. Supplied inactive amounts still need valid currency codes, nonnegative values, supported precision and valid ranges. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-settings. Only the connected store is accessible.",
+    "description": "Read the cash-on-delivery configuration for a market. The response includes `unavailable_display` (what checkout does when an order can't use COD), and `waiver_notice_enabled`, `waiver_notice_waived` and `waiver_notice_remaining` (the fee waiver message); keep all four when editing other settings. `waiver_notice_defaults` is read-only: Tringify's default fee waiver texts for each language enabled for the store (`remaining` shows the literal `{{.amount}}`), for use as placeholders where you have no text of your own. It also tells you whether cash on delivery is enabled, whether the market uses one simple rule or destination-based zones, and how its fee and order-value conditions are configured. Amount maps are keyed by the market's currency codes. Threshold fields remain present when their corresponding toggle is off, but they do not affect checkout. Supplied inactive amounts still need valid currency codes, nonnegative values, supported precision and valid ranges. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -29342,23 +29477,9 @@
           ]
         },
         "unavailable_display": {
-          "description": "What checkout does with cash on delivery when an order can't use it: `hide` leaves it out of the payment methods; `show_reason` lists it disabled with a reason. Checkout uses the market's setting in `simple` mode, and in `advanced` mode when no zone matched the shipping address (no zone covers it and there is no default zone). In `advanced` mode a matched zone's own setting applies instead. Omission is `hide`.",
+          "description": "What checkout does with cash on delivery when an order can't use it: `hide` leaves it out of the payment methods; `show_reason` lists it disabled with a reason: the built-in storefront message CHECKOUT_COD_UNAVAILABLE_BELOW_MIN or CHECKOUT_COD_UNAVAILABLE_ABOVE_MAX with the order-amount limit when that limit was missed, otherwise CHECKOUT_COD_UNAVAILABLE, in the shopper's language (reword them in Storefront Messages). Checkout uses the market's setting in `simple` mode, and in `advanced` mode when no zone matched the shipping address (no zone covers it and there is no default zone). In `advanced` mode a matched zone's own setting applies instead. Omission is `hide`.",
           "type": [
             "string",
-            "null"
-          ]
-        },
-        "unavailable_message": {
-          "description": "The reason checkout shows under disabled cash on delivery when `unavailable_display` is `show_reason`, in the store's default language. Empty shows Tringify's standard reason in the shopper's language. `{{.amount}}` prints the minimum or maximum order amount for COD in the shopper's currency; when COD is unavailable for another reason (a product rule or a destination no zone covers), a reason using `{{.amount}}` is not shown and the standard reason is shown instead. No other placeholder is accepted. Leading and trailing whitespace is trimmed; at most 200 characters are accepted. Omission clears the saved message.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "unavailable_message_translations": {
-          "description": "The reason in the store's other languages, keyed by store language code. Checkout uses the shopper's language when it has a text, otherwise `unavailable_message`. Each text follows the `unavailable_message` rules; empty texts are dropped. Keys must be languages enabled for the store other than its default language. Reads list only languages enabled for the store. Omission clears every translation.",
-          "type": [
-            "object",
             "null"
           ]
         },
@@ -29632,23 +29753,9 @@
           ]
         },
         "unavailable_display": {
-          "description": "What checkout does with cash on delivery when an order can't use it: `hide` leaves it out of the payment methods; `show_reason` lists it disabled with a reason. In `advanced` mode, when this zone matched the shipping address (as the default zone too, and also while the zone's `is_enabled` is false), checkout uses this zone's setting for every reason COD is unavailable: the zone is off, the minimum or maximum order amount, or a product rule. The market's setting applies in `simple` mode and when no zone matched. Omission is `hide`.",
+          "description": "What checkout does with cash on delivery when an order can't use it: `hide` leaves it out of the payment methods; `show_reason` lists it disabled with a reason: the built-in storefront message CHECKOUT_COD_UNAVAILABLE_BELOW_MIN or CHECKOUT_COD_UNAVAILABLE_ABOVE_MAX with the order-amount limit when that limit was missed, otherwise CHECKOUT_COD_UNAVAILABLE, in the shopper's language (reword them in Storefront Messages). In `advanced` mode, when this zone matched the shipping address (as the default zone too, and also while the zone's `is_enabled` is false), checkout uses this zone's setting for every reason COD is unavailable: the zone is off, the minimum or maximum order amount, or a product rule. The market's setting applies in `simple` mode and when no zone matched. Omission is `hide`.",
           "type": [
             "string",
-            "null"
-          ]
-        },
-        "unavailable_message": {
-          "description": "The reason checkout shows under disabled cash on delivery when `unavailable_display` is `show_reason`, in the store's default language. Empty shows Tringify's standard reason in the shopper's language. `{{.amount}}` prints the minimum or maximum order amount for COD in the shopper's currency; when COD is unavailable for another reason (the zone is off or a product rule), a reason using `{{.amount}}` is not shown and the standard reason is shown instead. No other placeholder is accepted. Leading and trailing whitespace is trimmed; at most 200 characters are accepted. Omission clears the saved message.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "unavailable_message_translations": {
-          "description": "The reason in the store's other languages, keyed by store language code. Checkout uses the shopper's language when it has a text, otherwise `unavailable_message`. Each text follows the `unavailable_message` rules; empty texts are dropped. Keys must be languages enabled for the store other than its default language. Reads list only languages enabled for the store. Omission clears every translation.",
-          "type": [
-            "object",
             "null"
           ]
         },
@@ -29706,7 +29813,7 @@
     "api_key": "cod.zones.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/cod-zones/{zoneId}",
-    "description": "Read one destination rule and its complete fee configuration. Use the returned values to populate an edit form or inspect the exact rule checkout will consider for this zone. `unavailable_message_translations`, `waiver_notice_waived` and `waiver_notice_remaining` list only languages enabled for the store; `waiver_notice_defaults` gives Tringify's default fee waiver texts in each of them, to show where the zone has no text of its own. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-zones/{zoneId}. Only the connected store is accessible.",
+    "description": "Read one destination rule and its complete fee configuration. Use the returned values to populate an edit form or inspect the exact rule checkout will consider for this zone. `waiver_notice_waived` and `waiver_notice_remaining` list only languages enabled for the store; `waiver_notice_defaults` gives Tringify's default fee waiver texts in each of them, to show where the zone has no text of its own. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-zones/{zoneId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -29736,7 +29843,7 @@
     "api_key": "cod.zones.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/cod-zones/{zoneId}",
-    "description": "Replace the editable definition of a COD zone. Send the complete zone definition you want to keep. The same geographic, currency, threshold, tax-class and message rules used during creation apply here; omitting `unavailable_message`, its translations or the fee waiver texts clears them. To make a zone the default, send `is_default: true` with empty `countries` and `subdivisions` arrays. This clears the previous default. An unchanged request publishes no webhook; a successful change publishes `cod_zones/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/cod-zones/{zoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace the editable definition of a COD zone. Send the complete zone definition you want to keep. The same geographic, currency, threshold, tax-class and message rules used during creation apply here; omitting the fee waiver texts clears them. To make a zone the default, send `is_default: true` with empty `countries` and `subdivisions` arrays. This clears the previous default. An unchanged request publishes no webhook; a successful change publishes `cod_zones/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/cod-zones/{zoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -29905,23 +30012,9 @@
           ]
         },
         "unavailable_display": {
-          "description": "What checkout does with cash on delivery when an order can't use it: `hide` leaves it out of the payment methods; `show_reason` lists it disabled with a reason. In `advanced` mode, when this zone matched the shipping address (as the default zone too, and also while the zone's `is_enabled` is false), checkout uses this zone's setting for every reason COD is unavailable: the zone is off, the minimum or maximum order amount, or a product rule. The market's setting applies in `simple` mode and when no zone matched. Omission is `hide`.",
+          "description": "What checkout does with cash on delivery when an order can't use it: `hide` leaves it out of the payment methods; `show_reason` lists it disabled with a reason: the built-in storefront message CHECKOUT_COD_UNAVAILABLE_BELOW_MIN or CHECKOUT_COD_UNAVAILABLE_ABOVE_MAX with the order-amount limit when that limit was missed, otherwise CHECKOUT_COD_UNAVAILABLE, in the shopper's language (reword them in Storefront Messages). In `advanced` mode, when this zone matched the shipping address (as the default zone too, and also while the zone's `is_enabled` is false), checkout uses this zone's setting for every reason COD is unavailable: the zone is off, the minimum or maximum order amount, or a product rule. The market's setting applies in `simple` mode and when no zone matched. Omission is `hide`.",
           "type": [
             "string",
-            "null"
-          ]
-        },
-        "unavailable_message": {
-          "description": "The reason checkout shows under disabled cash on delivery when `unavailable_display` is `show_reason`, in the store's default language. Empty shows Tringify's standard reason in the shopper's language. `{{.amount}}` prints the minimum or maximum order amount for COD in the shopper's currency; when COD is unavailable for another reason (the zone is off or a product rule), a reason using `{{.amount}}` is not shown and the standard reason is shown instead. No other placeholder is accepted. Leading and trailing whitespace is trimmed; at most 200 characters are accepted. Omission clears the saved message.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "unavailable_message_translations": {
-          "description": "The reason in the store's other languages, keyed by store language code. Checkout uses the shopper's language when it has a text, otherwise `unavailable_message`. Each text follows the `unavailable_message` rules; empty texts are dropped. Keys must be languages enabled for the store other than its default language. Reads list only languages enabled for the store. Omission clears every translation.",
-          "type": [
-            "object",
             "null"
           ]
         },
@@ -30148,7 +30241,7 @@
     "api_key": "cod.rules.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/cod-rules",
-    "description": "Add an allow or block condition for cash on delivery. Send the complete rule definition using a field and operator from the list response. For `customer_group`, use `is_member` or `is_not_member` with a customer group ID from this store: the rule matches the shopper, not a product, and a guest is never a member. A block rule may carry `unavailable_message` and its translations, which checkout shows when that rule stops cash on delivery. Title conditions use contains or not_contains. For category, vendor and brand comparisons, value is the resource ID as a string and must belong to this store. For tag comparisons, value is the tag ID or its slug; a slug is resolved to the tag ID when the rule is saved, a value that is the ID of a tag in this store is read as that ID, and an ID or slug that matches no tag in this store is rejected with COLLECTION_RULE_TAG_NOT_FOUND. Presence checks do not require a value. include_subcategories applies to category conditions. The response returns the saved rule, including its ID and timestamps. Store and market ownership come from the token and URL. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/cod-rules. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add an allow or block condition for cash on delivery. Send the complete rule definition using a field and operator from the list response. For `customer_group`, use `is_member` or `is_not_member` with a customer group ID from this store: the rule matches the shopper, not a product, and a guest is never a member. Title conditions use contains or not_contains. For category, vendor and brand comparisons, value is the resource ID as a string and must belong to this store. For tag comparisons, value is the tag ID or its slug; a slug is resolved to the tag ID when the rule is saved, a value that is the ID of a tag in this store is read as that ID, and an ID or slug that matches no tag in this store is rejected with COLLECTION_RULE_TAG_NOT_FOUND. Presence checks do not require a value. include_subcategories applies to category conditions. The response returns the saved rule, including its ID and timestamps. Store and market ownership come from the token and URL. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/cod-rules. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -30180,20 +30273,6 @@
           "description": "Priority from 1 through 10; lower is evaluated first. Equal priorities are evaluated from oldest to newest.",
           "type": "integer"
         },
-        "unavailable_message": {
-          "description": "Block rules only: what checkout tells the shopper when this rule stops cash on delivery and the market or zone shows the reason. Up to 500 characters. Empty uses the market's or zone's unavailable message.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "unavailable_message_translations": {
-          "description": "Block rules only: the message in other store languages, keyed by language code. A language without one shows unavailable_message.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
         "value": {
           "description": "Condition value required by the selected operator.",
           "type": [
@@ -30220,7 +30299,7 @@
     "api_key": "cod.rules.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/cod-rules/{ruleId}",
-    "description": "Replace a saved condition and its priority. Send the complete rule definition using a field and operator from the list response. For `customer_group`, use `is_member` or `is_not_member` with a customer group ID from this store: the rule matches the shopper, not a product, and a guest is never a member. A block rule may carry `unavailable_message` and its translations, which checkout shows when that rule stops cash on delivery. Title conditions use contains or not_contains. For category, vendor and brand comparisons, value is the resource ID as a string and must belong to this store. For tag comparisons, value is the tag ID or its slug; a slug is resolved to the tag ID when the rule is saved, a value that is the ID of a tag in this store is read as that ID, and an ID or slug that matches no tag in this store is rejected with COLLECTION_RULE_TAG_NOT_FOUND. Presence checks do not require a value. include_subcategories applies to category conditions. The response returns the saved rule, including its ID and timestamps. Store and market ownership come from the token and URL. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/cod-rules/{ruleId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace a saved condition and its priority. Send the complete rule definition using a field and operator from the list response. For `customer_group`, use `is_member` or `is_not_member` with a customer group ID from this store: the rule matches the shopper, not a product, and a guest is never a member. Title conditions use contains or not_contains. For category, vendor and brand comparisons, value is the resource ID as a string and must belong to this store. For tag comparisons, value is the tag ID or its slug; a slug is resolved to the tag ID when the rule is saved, a value that is the ID of a tag in this store is read as that ID, and an ID or slug that matches no tag in this store is rejected with COLLECTION_RULE_TAG_NOT_FOUND. Presence checks do not require a value. include_subcategories applies to category conditions. The response returns the saved rule, including its ID and timestamps. Store and market ownership come from the token and URL. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/cod-rules/{ruleId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -30256,20 +30335,6 @@
           "description": "COD rule id.",
           "minLength": 1,
           "type": "string"
-        },
-        "unavailable_message": {
-          "description": "Block rules only: what checkout tells the shopper when this rule stops cash on delivery and the market or zone shows the reason. Up to 500 characters. Empty uses the market's or zone's unavailable message.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "unavailable_message_translations": {
-          "description": "Block rules only: the message in other store languages, keyed by language code. A language without one shows unavailable_message.",
-          "type": [
-            "object",
-            "null"
-          ]
         },
         "value": {
           "description": "Condition value required by the selected operator.",
@@ -30670,10 +30735,10 @@
             "null"
           ]
         },
-        "text_prompts": {
-          "description": "The text field's label keyed by storefront language (an enabled store language), at most `text_prompt_max_length` characters each. An empty value removes the language; a language left out uses the platform label. Replaces the saved prompts. Only with `collect_text`.",
+        "text_prompt": {
+          "description": "The text field's label in the store's default language, at most `text_prompt_max_length` characters; empty uses the platform label. Translate it with the translation endpoints. Only with `collect_text`.",
           "type": [
-            "object",
+            "string",
             "null"
           ]
         },
@@ -30877,10 +30942,10 @@
             "null"
           ]
         },
-        "text_prompts": {
-          "description": "The text field's label keyed by storefront language (an enabled store language), at most `text_prompt_max_length` characters each. An empty value removes the language; a language left out uses the platform label. Replaces the saved prompts. Only with `collect_text`.",
+        "text_prompt": {
+          "description": "The text field's label in the store's default language, at most `text_prompt_max_length` characters; empty uses the platform label. Translate it with the translation endpoints. Only with `collect_text`.",
           "type": [
-            "object",
+            "string",
             "null"
           ]
         },
@@ -30968,6 +31033,89 @@
     "name": "reorder_market_checkout_fees",
     "scopes": [
       "store:markets:write"
+    ]
+  },
+  {
+    "api_key": "checkout.fees.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/markets/{marketId}/checkout-fees/{feeId}/translations/{locale}",
+    "description": "Read the translations of a checkout fee's texts. Returns the stored translations of `name`, `description` and `text_prompt` in the selected locale, each with `is_outdated` (the text changed since it was translated). Shoppers in that language see them in the cart, at checkout, and in their order, its emails and invoices; without one they see the original text. Fields without a translation in this locale are omitted from the response. An omitted field is not empty: shoppers see the store's base-language value, which the resource's own GET endpoint returns. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/checkout-fees/{feeId}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "fee_id": {
+          "description": "Checkout fee ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "market_id": {
+          "description": "Market id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "market_id",
+        "fee_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_market_checkout_fee_translation",
+    "scopes": [
+      "store:markets:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "checkout.fees.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/markets/{marketId}/checkout-fees/{feeId}/translations/{locale}",
+    "description": "Translate a checkout fee's texts. Translatable fields are `name` (up to name_max_length characters), `description` (up to description_max_length) and `text_prompt` (up to text_prompt_max_length), the checkout fee catalog's limits. Send an empty string to remove a translation. A write waits at most 2 seconds for other translation writes of the same item or of a clashing name or slug (for example a translation CSV import writing the same language); writes of other items, types and languages never wait. A row or call that fails with `TRANSLATION_WRITE_BUSY` (HTTP 503) saved nothing: send it again after `error.details.retry_after_seconds` (the call's `Retry-After` header says the same). Every row or call either saved or reports an error; none is left in an unknown state. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/checkout-fees/{feeId}/translations/{locale}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "fee_id": {
+          "description": "Checkout fee ID.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Enabled non-default store locale.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "market_id": {
+          "description": "Market id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "translations": {
+          "description": "Field-keyed translation values: `name`, `description`, `text_prompt`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "market_id",
+        "fee_id",
+        "locale",
+        "translations"
+      ],
+      "type": "object"
+    },
+    "name": "set_market_checkout_fee_translation",
+    "scopes": [
+      "store:markets:write",
+      "store:settings.languages:write"
     ]
   },
   {
@@ -33095,7 +33243,7 @@
     "api_key": "storefronts.languages.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/languages",
-    "description": "Replace the languages a storefront publishes. Send the complete list. It must include the storefront's primary language, and every code must be a language enabled for the store (enable it first with Set languages). Codes are matched without regard to case; blanks and repeats are ignored. An unchanged list changes nothing. A change publishes storefront/locales/update. Adding a language to this set does not make it selectable by shoppers: use Set storefront country languages to assign it to active-market countries and choose each default. Without an explicit country assignment only storefront primary is served. Merchant connections also need the online_store.storefronts:write staff permission. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace the languages a storefront publishes. Send the complete list. It must include the storefront's primary language, and every code must be a language enabled for the store (enable it first with Set languages). Codes are matched without regard to case; blanks and repeats are ignored. An unchanged list changes nothing. A change publishes storefront/locales/update. Adding a language to this set does not make it selectable by shoppers: use Set storefront country languages to assign it to active-market countries and choose each default. Without an explicit country assignment only storefront primary is served. Merchant connections also need the online_store.storefronts:write staff permission. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact. impact.countries lists only the countries whose languages or default language change, each with previous/resulting language codes, previous_default, default_locale and inherits_primary; country_count is every country the storefront serves and unchanged_countries how many of them keep their languages. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -33141,7 +33289,7 @@
     "api_key": "storefronts.languages.primary.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/primary",
-    "description": "Change a secondary storefront's primary language. The primary storefront's language always follows the store's default language; change that with Set default language. The language must be enabled for the store. Selecting the current primary language changes nothing. Merchant connections also need the online_store.storefronts:write staff permission. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages/primary. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Change a secondary storefront's primary language. The primary storefront's language always follows the store's default language; change that with Set default language. The language must be enabled for the store. Selecting the current primary language changes nothing. Merchant connections also need the online_store.storefronts:write staff permission. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact. impact.countries lists only the countries whose languages or default language change, each with previous/resulting language codes, previous_default, default_locale and inherits_primary; country_count is every country the storefront serves and unchanged_countries how many of them keep their languages. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages/primary. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -33279,7 +33427,7 @@
     "api_key": "storefronts.languages.countries.set",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/countries",
-    "description": "Replace selected countries' allowed languages and defaults. mappings maps uppercase country codes to {locales:[...],default_locale:...}. Send null for a country to remove its override and serve only storefront primary. Countries omitted from mappings are unchanged. Languages must already belong to this storefront. Writes are set-wise and atomic; a change publishes storefront/locales/update. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Merchant connections also need the online_store.storefronts:write staff permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages/countries. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace selected countries' allowed languages and defaults. mappings maps uppercase country codes to {locales:[...],default_locale:...}. Send null for a country to remove its override and serve only storefront primary. Countries omitted from mappings are unchanged. Languages must already belong to this storefront. Writes are set-wise and atomic; a change publishes storefront/locales/update. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact. impact.countries lists only the countries whose languages or default language change, each with previous/resulting language codes, previous_default, default_locale and inherits_primary; country_count is every country the storefront serves and unchanged_countries how many of them keep their languages. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Merchant connections also need the online_store.storefronts:write staff permission. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/languages/countries. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -33322,7 +33470,7 @@
     "api_key": "storefronts.languages.countries.bulk",
     "api_method": "POST",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/countries/bulk",
-    "description": "Add a served language and make it default in selected countries. Other allowed languages remain available; country_codes must belong to active Markets. Returns updated country count. Publishes storefront/locales/update. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Merchant connections also need the online_store.storefronts:write staff permission. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/languages/countries/bulk. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a served language and make it default in selected countries. Other allowed languages remain available; country_codes must belong to active Markets. Returns updated country count. Publishes storefront/locales/update. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact. impact.countries lists only the countries whose languages or default language change, each with previous/resulting language codes, previous_default, default_locale and inherits_primary; country_count is every country the storefront serves and unchanged_countries how many of them keep their languages. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Merchant connections also need the online_store.storefronts:write staff permission. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/languages/countries/bulk. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -33373,7 +33521,7 @@
     "api_key": "storefronts.languages.countries.all",
     "api_method": "POST",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/languages/countries/all",
-    "description": "Add a served language and make it default in every active-market country. The backend resolves current coverage and shows it for approval. Other allowed languages remain available. Returns updated country count. Publishes storefront/locales/update. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact, including every country's previous/resulting language codes, default_locale and inherits_primary. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Merchant connections also need the online_store.storefronts:write staff permission. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/languages/countries/all. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a served language and make it default in every active-market country. The backend resolves current coverage and shows it for approval. Other allowed languages remain available. Returns updated country count. Publishes storefront/locales/update. Changes return HTTP 409 CONFIRMATION_REQUIRED before committing. Show error.details.warnings and impact. impact.countries lists only the countries whose languages or default language change, each with previous/resulting language codes, previous_default, default_locale and inherits_primary; country_count is every country the storefront serves and unchanged_countries how many of them keep their languages. language_labels supplies localized display names once per storefront; retired_address_units counts removed country/language pairs and urls.translated_slugs counts affected translated resource slugs. Repeat the identical request only after merchant approval with confirmed=true and confirmation_token. The five-minute single-use token is bound to the reviewed outcome; changed state requires a fresh preview. Success code/message and country/language labels are backend-owned and English on the Store API and localized to the merchant interface language on Admin and MCP. Unpublishing retains translations. Removed-language links resolve the original resource before redirecting to its current exact-language slug in the same served country; invalid countries and deleted resources return 404. A translated slug later taken by another resource belongs to that resource. Query strings are preserved. Merchant connections also need the online_store.storefronts:write staff permission. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/storefronts/{storefrontId}/languages/countries/all. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
