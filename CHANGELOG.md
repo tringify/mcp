@@ -1,5 +1,12 @@
 # Changelog
 
+## Reframe, and undoable Replace original — 20 November 2026
+
+- `estimate_image_reframe` and `reframe_image` replace `estimate_image_extension` and `extend_image`. Reframe places an image in a frame of `aspect_ratio` and fills the empty space with AI. Place it with `direction` (`down` keeps the photo at the top and extends the bottom; `up`, `left`, `right`, `center`) or with `zoom` (1 fits the photo; smaller pulls the camera back, larger moves it closer and is redrawn with real detail) and `offset_x`/`offset_y`. The estimate returns `cuts_subject` and the product's `subject` box; `get_image_subject` returns the box on its own. `image_actions` lists `reframe` instead of `extend`.
+- `create_image_job` takes the action `reframe` with `aspect_ratio` and `direction` instead of `extend`.
+- Replacing an image (`save_as` `replace` on edits, background removal, reframe and now `crop_image`) keeps the replaced image as an earlier version. `list_file_versions`, `restore_file_version` and `delete_file_version` manage them; `get_file_usage` lists where a file is used, to show before a replace.
+- The catalog lists 946 tools.
+
 ## Support cases — 20 November 2026
 
 - Merchants can ask the developer of an app or theme on their store, or Tringify Support, through the store connection: `list_support_subjects`, `preview_support_case`, `create_support_case`, `list_support_cases`, `get_support_case`, `reply_support_case`, `solve_support_case`, `escalate_support_case` and `rate_support_case`. Preview first and show the merchant what is shared with the developer; `create_support_case` takes the preview's `snapshot_hash`, and is refused when the developer has turned off cases from AI assistants.
