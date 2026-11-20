@@ -1,5 +1,12 @@
 # Changelog
 
+## Support cases — 20 November 2026
+
+- Merchants can ask the developer of an app or theme on their store, or Tringify Support, through the store connection: `list_support_subjects`, `preview_support_case`, `create_support_case`, `list_support_cases`, `get_support_case`, `reply_support_case`, `solve_support_case`, `escalate_support_case` and `rate_support_case`. Preview first and show the merchant what is shared with the developer; `create_support_case` takes the preview's `snapshot_hash`, and is refused when the developer has turned off cases from AI assistants.
+- Developers answer them through the developer connection: `list_dev_support_cases`, `get_dev_support_case`, `reply_dev_support_case`, `add_dev_support_note`, `set_dev_support_case_status`, `assign_dev_support_case` and `draft_dev_support_reply`, with the `organization:support:read` and `organization:support:write` access.
+- The inventory also lists the checkout protection, order rule and cart insight tools, `preview_blog_post` and `product_shot_scenes_file`, which were missing from it.
+- The catalog lists 941 tools.
+
 ## Which images each image tool works on — 19 November 2026
 
 - `get_file` and `list_files` return `animated` and `image_actions` for every image: the image tools it can take (`remove_background`, `edit`, `extend`, `crop`, `animate`, `reference`, `slideshow`). Offer the user only those.
