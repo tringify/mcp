@@ -136,6 +136,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `set_blog_post_metafield_translation` | `PUT /api/2025-01/blog/posts/{id}/metafields/{namespace}/{key}/translations/{locale}` | store:blog:write, store:settings.languages:write |
 | `create_blog_post` | `POST /api/2025-01/blog/posts` | store:blog:write |
 | `update_blog_post` | `PUT /api/2025-01/blog/posts/{id}` | store:blog:write |
+| `preview_blog_post` | `POST /api/2025-01/blog/posts/{id}/preview` | store:blog:read |
 | `delete_blog_post` | `DELETE /api/2025-01/blog/posts/{id}` | store:blog:write |
 | `bulk_delete_blog_posts` | `POST /api/2025-01/blog/posts/bulk-delete` | store:blog:write |
 | `bulk_update_blog_post_status` | `POST /api/2025-01/blog/posts/bulk-update-status` | store:blog:write |
@@ -272,6 +273,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `edit_image` | `POST /api/2025-01/files/{id}/edit` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `estimate_background_removal` | `POST /api/2025-01/files/{id}/remove-background/estimate` | store:ai.image_generation:write, and store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
 | `remove_background` | `POST /api/2025-01/files/{id}/remove-background` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
+| `product_shot_scenes_file` | `POST /api/2025-01/files/{id}/product-shot-scenes` | store:ai.image_generation:write, store:files:read |
 | `crop_image` | `POST /api/2025-01/files/{id}/crop` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `estimate_image_extension` | `POST /api/2025-01/files/{id}/extend/estimate` | store:ai.image_generation:write, and store:files:read (Media), store:online_store.site_assets:read (Site Assets) or store:marketing:read (Ad assets) |
 | `extend_image` | `POST /api/2025-01/files/{id}/extend` | store:ai.image_generation:write, and store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
@@ -1058,6 +1060,34 @@ The cancellation settings decide when customers can cancel their own orders, for
 | `approve_order_cancellation_request` | `POST /api/2025-01/orders/{id}/cancellation-request/approve` | store:orders:write |
 | `decline_order_cancellation_request` | `POST /api/2025-01/orders/{id}/cancellation-request/decline` | store:orders:write |
 
+## Checkout protection and cart insights
+
+The block list stops chosen shoppers from checking out or limits them to online payment; per-market order rules allow, require online payment for, hold or refuse new orders. A held order waits for `approve_held_order` or `cancel_held_order`. Bulk block changes run as jobs: poll `get_checkout_block_job`. Cart insights count the store's open carts and their value; `remind_expiring_carts` messages known shoppers whose carts expire within 24 hours, on channels they agreed to marketing on.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_checkout_protection_limits` | `GET /api/2025-01/checkout-protection/limits` | store:orders:read |
+| `list_checkout_blocks` | `GET /api/2025-01/checkout-protection/blocks` | store:orders:read |
+| `block_shopper` | `POST /api/2025-01/checkout-protection/blocks` | store:orders:write |
+| `update_checkout_block` | `PUT /api/2025-01/checkout-protection/blocks/{blockId}` | store:orders:write |
+| `unblock_shopper` | `DELETE /api/2025-01/checkout-protection/blocks/{blockId}` | store:orders:write |
+| `bulk_block_shoppers` | `POST /api/2025-01/checkout-protection/blocks/bulk` | store:orders:write |
+| `bulk_unblock_shoppers` | `POST /api/2025-01/checkout-protection/blocks/bulk-delete` | store:orders:write |
+| `get_checkout_block_job` | `GET /api/2025-01/checkout-protection/jobs/{jobId}` | store:orders:read |
+| `cancel_checkout_block_job` | `POST /api/2025-01/checkout-protection/jobs/{jobId}/cancel` | store:orders:write |
+| `get_checkout_protection_settings` | `GET /api/2025-01/checkout-protection/settings` | store:orders:read |
+| `update_checkout_protection_settings` | `PUT /api/2025-01/checkout-protection/settings` | store:orders:write |
+| `list_order_rules` | `GET /api/2025-01/markets/{marketId}/order-rules` | store:markets:read |
+| `create_order_rule` | `POST /api/2025-01/markets/{marketId}/order-rules` | store:markets:write |
+| `update_order_rule` | `PUT /api/2025-01/markets/{marketId}/order-rules/{ruleId}` | store:markets:write |
+| `delete_order_rule` | `DELETE /api/2025-01/markets/{marketId}/order-rules/{ruleId}` | store:markets:write |
+| `approve_held_order` | `POST /api/2025-01/orders/{id}/protection/approve` | store:orders:write |
+| `cancel_held_order` | `POST /api/2025-01/orders/{id}/protection/cancel` | store:orders:write |
+| `get_open_carts` | `GET /api/2025-01/cart-insights` | store:orders:read |
+| `remind_expiring_carts` | `POST /api/2025-01/cart-insights/reminders` | store:orders:write |
+| `get_cart_reminder` | `GET /api/2025-01/cart-insights/reminders/{reminderId}` | store:orders:read |
+| `cancel_cart_reminder` | `POST /api/2025-01/cart-insights/reminders/{reminderId}/cancel` | store:orders:write |
+
 ## Returns
 
 A return covers delivered items a customer sends back. Read `get_return_options` for what an order can still return before `create_return`. A requested return is answered with `approve_return` or `decline_return`; an approved one is received with `receive_return` and completed with `refund_return` or `exchange_return`. `get_return_settings` and `update_return_settings` hold the Returns portal rules, return window, reasons, instructions and return limits.
@@ -1155,3 +1185,33 @@ Verification tags prove ownership of the store's domains to services such as sea
 | `get_blog_author_lifecycle_job` | `GET /api/2025-01/blog/authors/lifecycle-jobs/{job_id}` | store:blog:read |
 | `get_blog_list_seo_limits` | `GET /api/2025-01/blog/list-seo/limits` | store:blog:read |
 | `get_list_page_seo_limits` | `GET /api/2025-01/list-page-seo/limits` | store:products:read |
+
+## Support cases
+
+Ask the developer of an app or theme installed on the store, or Tringify Support, on the merchant's behalf. `list_support_subjects` lists the store's apps or themes that take cases (and the in-general choice for Tringify); `preview_support_case` shows exactly what a case shares with the developer, and `create_support_case` files it with the preview's `snapshot_hash`. Show the merchant the preview and send only text they approved. Developers can turn off cases from AI assistants, and then `create_support_case` is refused. `escalate_support_case` asks Tringify Support to step in once a developer has not replied for 3 business days; `rate_support_case` rates a solved case. These tools use the support routes of the platform API rather than the Store API.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_support_subjects` | `GET /api/v1/support/subjects` | store:support:read |
+| `preview_support_case` | `POST /api/v1/support/preview` | store:support:read |
+| `create_support_case` | `POST /api/v1/support/tickets` | store:support:write |
+| `list_support_cases` | `GET /api/v1/support/tickets` | store:support:read |
+| `get_support_case` | `GET /api/v1/support/tickets/{ticketId}` | store:support:read |
+| `reply_support_case` | `POST /api/v1/support/tickets/{ticketId}/messages` | store:support:write |
+| `solve_support_case` | `POST /api/v1/support/tickets/{ticketId}/solve` | store:support:write |
+| `escalate_support_case` | `POST /api/v1/support/tickets/{ticketId}/escalate` | store:support:write |
+| `rate_support_case` | `POST /api/v1/support/tickets/{ticketId}/rate` | store:support:write |
+
+## Developer MCP: support cases
+
+On the developer MCP endpoint, with an organization connection: read and answer the support cases merchants open about the organization's apps and themes. Replies are signed with the member's and the organization's name; notes stay inside the organization. `draft_dev_support_reply` only suggests a reply, which is never sent by itself. These need the member's Support permission and the `organization:support:read` / `organization:support:write` access granted at connection.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `list_dev_support_cases` | `GET /api/v1/support/cases` | organization:support:read |
+| `get_dev_support_case` | `GET /api/v1/support/cases/{caseId}` | organization:support:read |
+| `reply_dev_support_case` | `POST /api/v1/support/cases/{caseId}/messages` | organization:support:write |
+| `add_dev_support_note` | `POST /api/v1/support/cases/{caseId}/notes` | organization:support:write |
+| `set_dev_support_case_status` | `POST /api/v1/support/cases/{caseId}/status` | organization:support:write |
+| `assign_dev_support_case` | `POST /api/v1/support/cases/{caseId}/assign` | organization:support:write |
+| `draft_dev_support_reply` | `POST /api/v1/support/cases/{caseId}/ai-draft` | organization:support:write |
