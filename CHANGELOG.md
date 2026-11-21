@@ -1,5 +1,10 @@
 # Changelog
 
+## Email changes wait for the merchant's review — 21 November 2026
+
+- `update_email` no longer changes what customers receive. It saves your pending change of the email and returns `review` (`id`, `status` `awaiting_review`, `url`, `message`). `review.url` opens the change in Store Admin's Canvas view next to the live email, where the merchant publishes or discards it, the same way theme changes wait for review. Give the merchant that link.
+- `get_email` and `list_emails` read your pending change while it waits; saving again replaces it. `send_test_email` without code tests it.
+
 ## Reframe, and undoable Replace original — 20 November 2026
 
 - `estimate_image_reframe` and `reframe_image` replace `estimate_image_extension` and `extend_image`. Reframe places an image in a frame of `aspect_ratio` and fills the empty space with AI. Place it with `direction` (`down` keeps the photo at the top and extends the bottom; `up`, `left`, `right`, `center`) or with `zoom` (1 fits the photo; smaller pulls the camera back, larger moves it closer and is redrawn with real detail) and `offset_x`/`offset_y`. The estimate returns `cuts_subject` and the product's `subject` box; `get_image_subject` returns the box on its own. `image_actions` lists `reframe` instead of `extend`.
