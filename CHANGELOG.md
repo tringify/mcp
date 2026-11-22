@@ -1,5 +1,16 @@
 # Changelog
 
+## Inbox, Content Studio posts and price history — 22 November 2026
+
+- Inbox tools read and answer the store's customer messages from email, contact forms, Instagram, Messenger and live chat: `get_inbox_limits`, `list_inbox_messages`, `get_inbox_counts`, `get_inbox_message`, `update_inbox_message`, `bulk_update_inbox_messages`, `reply_to_inbox_message`, `create_inbox`, `create_inbox_attachments`, `get_inbox_email`, `update_inbox_email`, `delete_inbox_message` and `bulk_delete_inbox_messages`. Replies and new messages reach the customer: show the merchant the exact text first, and check `can_reply` and `reply_window_ends_at` before replying.
+- Content Studio post tools plan and publish posts to Instagram and a Facebook Page: `get_social_posts_limits`, `channels_social_posts`, `list_social_postss`, `get_social_posts`, `validate_social_posts`, `create_social_posts` (draft, schedule or publish now), `update_social_posts`, `publish_social_posts`, `cancel_social_posts`, `delete_social_posts`, `bulk_cancel_social_posts` and `bulk_delete_social_postss`.
+- The file tools take the Content Studio library (`library: "content_assets"`). Its files are private: no `cdn_url`, and their links are signed and stop working at `url_expires_at`.
+- `update_email_reply_to_modes` chooses where replies to transactional and marketing emails go (`support`, `inbox` or `none`); `get_email_reply_to` returns `transactional_reply` and `marketing_reply`.
+- `get_product_price_history` reads a product's price history; `bulk_delete_search_synonyms` deletes up to `bulk_delete_max` synonym groups in one transaction.
+- `list_products` sorts by `in_carts`, `units_sold_30` and `views_30`. Collection `price` and `regular_price` rules take a `currency`, title rules also match translated titles, and best-seller and most-viewed rules rank only products shoppers can browse on the Online Store.
+- Message templates return WhatsApp `buttons`, and `get_message_template` takes `locale`. `list_store_fonts` returns `preview_url` and `used_in`. A refused DNS change leaves its verification code valid.
+- The catalog lists 982 tools.
+
 ## Bulk recommendation exclusions — 22 November 2026
 
 - `bulk_add_recommendation_exclusions` and `bulk_remove_recommendation_exclusions` exclude, or allow again, up to `exclusions_max_per_store` products in one call. The change is one transaction and is safe to repeat: the result lists `succeeded` ids, how many it `changed`, each `failed` product with its error code, and the store's exclusion `total` afterwards.
