@@ -35391,7 +35391,7 @@
     "api_key": "recommendations.pins.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/recommendations/pins",
-    "description": "List products that have pinned recommendation lists. Compact product references are included so clients do not need one product request per row. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/pins. Only the connected store is accessible.",
+    "description": "List products that have pinned recommendation lists. Compact product references are included so clients do not need one product request per row: each carries `pin_count` (how many products it pins) and `image_url` (its main image, null without one). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/pins. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -35415,7 +35415,7 @@
     "api_key": "recommendations.pins.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/recommendations/pins/{productId}",
-    "description": "Get one product's ordered pinned recommendations. The products array follows pin order and contains display identity. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/pins/{productId}. Only the connected store is accessible.",
+    "description": "Get one product's ordered pinned recommendations. The products array follows pin order and contains display identity, including `image_url` (the main image, null without one). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/pins/{productId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -35471,7 +35471,7 @@
     "api_key": "recommendations.exclusions.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/recommendations/exclusions",
-    "description": "List products excluded from all recommendations. Compact product references are returned with the ID list. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/exclusions. Only the connected store is accessible.",
+    "description": "List products excluded from all recommendations. Compact product references are returned with the ID list, each with `image_url` (the main image, null without one). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/recommendations/exclusions. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -35534,6 +35534,58 @@
       "type": "object"
     },
     "name": "remove_recommendation_exclusion",
+    "scopes": [
+      "store:online_store.recommendations:write"
+    ]
+  },
+  {
+    "api_key": "recommendations.exclusions.bulk-add",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/recommendations/exclusions/bulk-add",
+    "description": "Exclude several products from all recommendations in one request. Send at most `exclusions_max_per_store` product ids. The change runs as one transaction: products already excluded count as succeeded without a change, unknown products fail with `RECOMMENDATION_PRODUCT_NOT_FOUND`, and products past the store's `exclusions_max_per_store` ceiling fail with `RECOMMENDATION_EXCLUSIONS_TOO_MANY`, in request order. `succeeded` lists the ids now excluded, `changed` counts the ones this request added, `failed` gives each failure's code and `total` is the store's exclusion count afterwards. Repeating the request changes nothing more. Each added product publishes `recommendations/exclusions/update`. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/recommendations/exclusions/bulk-add. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "product_ids": {
+          "description": "Product ids to exclude, at most exclusions_max_per_store.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "product_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_add_recommendation_exclusions",
+    "scopes": [
+      "store:online_store.recommendations:write"
+    ]
+  },
+  {
+    "api_key": "recommendations.exclusions.bulk-remove",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/recommendations/exclusions/bulk-remove",
+    "description": "Allow several products to be recommended automatically again in one request. Send at most `exclusions_max_per_store` product ids. The change runs as one transaction: products that are not excluded count as succeeded without a change and unknown products fail with `RECOMMENDATION_PRODUCT_NOT_FOUND`. `succeeded` lists the ids no longer excluded, `changed` counts the ones this request removed, `failed` gives each failure's code and `total` is the store's exclusion count afterwards. Each removed product publishes `recommendations/exclusions/update`. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/recommendations/exclusions/bulk-remove. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "product_ids": {
+          "description": "Product ids to allow again, at most exclusions_max_per_store.",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "product_ids"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_remove_recommendation_exclusions",
     "scopes": [
       "store:online_store.recommendations:write"
     ]
