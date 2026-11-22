@@ -1,5 +1,9 @@
 # Changelog
 
+## Online payment discounts on product cards — 23 November 2026
+
+- `create_market_payment_adjustment` and `update_market_payment_adjustment` take `show_on_product_cards`: the online payment discount appears on every product card (collections, search, product rails) after the card's discounts, at most two offers per card, worded as on product pages (for example "5% off with UPI"). It shows while the discount is enabled and the payment method is offered in the shopper's market and currency, independently of `show_on_product_page`.
+
 ## Offers on product cards — 22 November 2026
 
 - `create_market_discount` and `update_market_discount` take `show_on_product_cards`: the discount appears on the product cards of the products it applies to (collections, search, product rails), at most two per card, worded in the shopper's language. Only discounts for everyone (`DISCOUNT_PRODUCT_CARDS_AUDIENCE`), up to `product_cards_max_per_market` per market (`DISCOUNT_PRODUCT_CARDS_LIMIT`, read `get_market_discount_limits`). It works independently of `show_on_product_page`.

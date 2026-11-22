@@ -26115,6 +26115,13 @@
             "null"
           ]
         },
+        "show_on_product_cards": {
+          "description": "List this discount on product cards in grids, rails and search results, worded as on product pages (themes read card.offers, at most 2 offers per card, discounts first). It applies to every product alike, so every card shows it while the discount is enabled and the provider is offered in the shopper's market and currency. Independent of show_on_product_page.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "value_type": {
           "description": "Use fixed or percent according to the returned adjustment catalog.",
           "type": "string"
@@ -26200,6 +26207,13 @@
         },
         "show_on_product_page": {
           "description": "List this discount among the available offers on product pages, naming the payment method as checkout does (themes read product.offers). Shown while the discount is enabled and the provider is offered in the shopper's market and currency.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show_on_product_cards": {
+          "description": "List this discount on product cards in grids, rails and search results, worded as on product pages (themes read card.offers, at most 2 offers per card, discounts first). It applies to every product alike, so every card shows it while the discount is enabled and the provider is offered in the shopper's market and currency. Independent of show_on_product_page.",
           "type": [
             "boolean",
             "null"
