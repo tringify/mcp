@@ -8,6 +8,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `list_products` | `GET /api/2025-01/products` | store:products:read |
 | `get_product` | `GET /api/2025-01/products/{id}` | store:products:read |
 | `get_product_quantity_pricing` | `GET /api/2025-01/products/{id}/quantity-pricing` | store:products:read |
+| `get_product_price_history` | `GET /api/2025-01/products/{id}/price-history` | store:products:read |
 | `list_product_variants` | `GET /api/2025-01/products/{id}/variants` | store:products:read |
 | `list_variants` | `GET /api/2025-01/variants` | store:products:read |
 | `get_product_variant` | `GET /api/2025-01/products/{id}/variants/{variantId}` | store:products:read |
@@ -501,6 +502,7 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `list_email_domain_candidates` | `GET /api/2025-01/email/domains/candidates` | store:settings.email:read |
 | `get_email_reply_to` | `GET /api/2025-01/email/reply-to` | store:settings.email:read |
 | `update_email_reply_to` | `PUT /api/2025-01/email/reply-to` | store:settings.email:write |
+| `update_email_reply_to_modes` | `PUT /api/2025-01/email/reply-to/modes` | store:settings.email:write |
 | `get_email_suppression` | `GET /api/2025-01/email/suppressions` | store:settings.email:read |
 | `create_email_sender` | `POST /api/2025-01/email/senders` | store:settings.email:write |
 | `delete_email_sender` | `DELETE /api/2025-01/email/senders/{addressId}` | store:settings.email:write |
@@ -843,6 +845,7 @@ Pixel tools manage a storefront's custom pixels and the merchant's switch for ea
 | `create_search_synonym` | `POST /api/2025-01/search-synonyms` | store:online_store.search:write |
 | `update_search_synonym` | `PUT /api/2025-01/search-synonyms/{synonymId}` | store:online_store.search:write |
 | `delete_search_synonym` | `DELETE /api/2025-01/search-synonyms/{synonymId}` | store:online_store.search:write |
+| `bulk_delete_search_synonyms` | `POST /api/2025-01/search-synonyms/bulk-delete` | store:online_store.search:write |
 | `get_recommendation_limits` | `GET /api/2025-01/recommendations/limits` | store:online_store.recommendations:read |
 | `get_recommendation_settings` | `GET /api/2025-01/recommendations/settings` | store:online_store.recommendations:read |
 | `update_recommendation_settings` | `PUT /api/2025-01/recommendations/settings` | store:online_store.recommendations:write |
@@ -1198,6 +1201,45 @@ Verification tags prove ownership of the store's domains to services such as sea
 | `get_blog_author_lifecycle_job` | `GET /api/2025-01/blog/authors/lifecycle-jobs/{job_id}` | store:blog:read |
 | `get_blog_list_seo_limits` | `GET /api/2025-01/blog/list-seo/limits` | store:blog:read |
 | `get_list_page_seo_limits` | `GET /api/2025-01/list-page-seo/limits` | store:products:read |
+
+## Inbox
+
+Read and answer the store's customer messages: email (including contact-form messages), Instagram, Messenger and live chat. `list_inbox_messages` filters by channel, status (`open`, `archived`, `spam`), sender and unread; `get_inbox_message` returns the full text with `can_reply` and `reply_window_ends_at`. `reply_to_inbox_message` and `create_inbox` send a real message to the customer: show the merchant the exact text and get approval first, and never retry an uncertain send without reading the message again. `create_inbox_attachments` returns an upload link for a file to attach. `get_inbox_email` and `update_inbox_email` read and change the store's Inbox address and where customers' replies go; `update_email_reply_to_modes` chooses where replies to transactional and marketing emails go (`support`, `inbox` or `none`). `delete_inbox_message` and `bulk_delete_inbox_messages` delete permanently.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_inbox_limits` | `GET /api/2025-01/inbox/conversations/limits` | store:customers:read |
+| `list_inbox_messages` | `GET /api/2025-01/inbox/conversations` | store:customers:read |
+| `get_inbox_counts` | `GET /api/2025-01/inbox/conversations/counts` | store:customers:read |
+| `get_inbox_message` | `GET /api/2025-01/inbox/conversations/{id}` | store:customers:read |
+| `update_inbox_message` | `PUT /api/2025-01/inbox/conversations/{id}` | store:customers:write |
+| `bulk_update_inbox_messages` | `POST /api/2025-01/inbox/conversations/bulk-update` | store:customers:write |
+| `reply_to_inbox_message` | `POST /api/2025-01/inbox/conversations/{id}/reply` | store:customers:write |
+| `create_inbox` | `POST /api/2025-01/inbox/conversations` | store:customers:write |
+| `create_inbox_attachments` | `POST /api/2025-01/inbox/attachments` | store:customers:write |
+| `get_inbox_email` | `GET /api/2025-01/inbox/email` | store:customers:read |
+| `update_inbox_email` | `PUT /api/2025-01/inbox/email` | store:customers:write |
+| `delete_inbox_message` | `DELETE /api/2025-01/inbox/conversations/{id}` | store:customers:write |
+| `bulk_delete_inbox_messages` | `POST /api/2025-01/inbox/conversations/bulk-delete` | store:customers:write |
+
+## Content Studio posts
+
+Plan and publish posts to the store's Instagram account and Facebook Page (`instagram`, `facebook_page`). A post takes a caption and up to 20 photos and videos from the Content Studio file library (`library: "content_assets"`); several make a carousel on Instagram and a multi-photo post on Facebook. `get_social_posts_limits` and `channels_social_posts` return each channel's rules and the channels a post can go to; `validate_social_posts` checks a post against them without saving it. `create_social_posts` saves a draft, schedules a post (`scheduled_at`) or publishes it now; `publish_social_posts` publishes a draft, scheduled or failed post straight away, and `cancel_social_posts` stops a scheduled one. Publishing posts publicly on the merchant's accounts: confirm the caption, media, channels and time with the merchant first.
+
+| Tool | Store API operation | Required access |
+| --- | --- | --- |
+| `get_social_posts_limits` | `GET /api/2025-01/social-posts/limits` | store:marketing:read |
+| `channels_social_posts` | `GET /api/2025-01/social-posts/channels` | store:marketing:read |
+| `list_social_postss` | `GET /api/2025-01/social-posts` | store:marketing:read |
+| `get_social_posts` | `GET /api/2025-01/social-posts/{id}` | store:marketing:read |
+| `validate_social_posts` | `POST /api/2025-01/social-posts/validate` | store:marketing:read |
+| `create_social_posts` | `POST /api/2025-01/social-posts` | store:marketing:write |
+| `update_social_posts` | `PUT /api/2025-01/social-posts/{id}` | store:marketing:write |
+| `publish_social_posts` | `POST /api/2025-01/social-posts/{id}/publish` | store:marketing:write |
+| `cancel_social_posts` | `POST /api/2025-01/social-posts/{id}/cancel` | store:marketing:write |
+| `delete_social_posts` | `DELETE /api/2025-01/social-posts/{id}` | store:marketing:write |
+| `bulk_cancel_social_posts` | `POST /api/2025-01/social-posts/bulk-cancel` | store:marketing:write |
+| `bulk_delete_social_postss` | `POST /api/2025-01/social-posts/bulk-delete` | store:marketing:write |
 
 ## Support cases
 
