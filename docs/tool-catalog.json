@@ -6813,12 +6813,12 @@
     "api_key": "policies.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/policies/{type}",
-    "description": "Fetch one policy by type. Returns the Policy for the given type (privacy, terms, refund, shipping, or cookie). `status_display` is its `status` as shown in Tringify, in English. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/{type}. Only the connected store is accessible.",
+    "description": "Fetch one policy by type. Returns the Policy for the given type (privacy, terms, refund, shipping, cookie, legal_notice, contact_information, or terms_of_sale). `status_display` is its `status` as shown in Tringify, in English. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/policies/{type}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "type": {
-          "description": "Policy type: privacy, terms, refund, shipping, or cookie.",
+          "description": "Policy type: privacy, terms, refund, shipping, cookie, legal_notice, contact_information, or terms_of_sale.",
           "minLength": 1,
           "type": "string"
         }
@@ -6895,7 +6895,7 @@
           ]
         },
         "type": {
-          "description": "Policy type: privacy, terms, refund, shipping, or cookie.",
+          "description": "Policy type: privacy, terms, refund, shipping, cookie, legal_notice, contact_information, or terms_of_sale.",
           "minLength": 1,
           "type": "string"
         }
