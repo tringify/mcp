@@ -1,5 +1,9 @@
 # Changelog
 
+## Offers on product cards — 22 November 2026
+
+- `create_market_discount` and `update_market_discount` take `show_on_product_cards`: the discount appears on the product cards of the products it applies to (collections, search, product rails), at most two per card, worded in the shopper's language. Only discounts for everyone (`DISCOUNT_PRODUCT_CARDS_AUDIENCE`), up to `product_cards_max_per_market` per market (`DISCOUNT_PRODUCT_CARDS_LIMIT`, read `get_market_discount_limits`). It works independently of `show_on_product_page`.
+
 ## Inbox, Content Studio posts and price history — 22 November 2026
 
 - Inbox tools read and answer the store's customer messages from email, contact forms, Instagram, Messenger and live chat: `get_inbox_limits`, `list_inbox_messages`, `get_inbox_counts`, `get_inbox_message`, `update_inbox_message`, `bulk_update_inbox_messages`, `reply_to_inbox_message`, `create_inbox`, `create_inbox_attachments`, `get_inbox_email`, `update_inbox_email`, `delete_inbox_message` and `bulk_delete_inbox_messages`. Replies and new messages reach the customer: show the merchant the exact text first, and check `can_reply` and `reply_window_ends_at` before replying.
