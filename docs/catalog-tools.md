@@ -854,6 +854,8 @@ Pixel tools manage a storefront's custom pixels and the merchant's switch for ea
 | `list_recommendation_exclusions` | `GET /api/2025-01/recommendations/exclusions` | store:online_store.recommendations:read |
 | `add_recommendation_exclusion` | `POST /api/2025-01/recommendations/exclusions` | store:online_store.recommendations:write |
 | `remove_recommendation_exclusion` | `DELETE /api/2025-01/recommendations/exclusions/{productId}` | store:online_store.recommendations:write |
+| `bulk_add_recommendation_exclusions` | `POST /api/2025-01/recommendations/exclusions/bulk-add` | store:online_store.recommendations:write |
+| `bulk_remove_recommendation_exclusions` | `POST /api/2025-01/recommendations/exclusions/bulk-remove` | store:online_store.recommendations:write |
 | `list_storefront_messages` | `GET /api/2025-01/storefront-messages` | store:online_store.storefront_messages:read |
 | `save_storefront_message` | `PUT /api/2025-01/storefront-messages/overrides` | store:online_store.storefront_messages:write |
 | `reset_storefront_message` | `DELETE /api/2025-01/storefront-messages/overrides/{code}` | store:online_store.storefront_messages:write |

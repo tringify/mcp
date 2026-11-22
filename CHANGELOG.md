@@ -1,5 +1,11 @@
 # Changelog
 
+## Bulk recommendation exclusions — 22 November 2026
+
+- `bulk_add_recommendation_exclusions` and `bulk_remove_recommendation_exclusions` exclude, or allow again, up to `exclusions_max_per_store` products in one call. The change is one transaction and is safe to repeat: the result lists `succeeded` ids, how many it `changed`, each `failed` product with its error code, and the store's exclusion `total` afterwards.
+- `list_recommendation_exclusions`, `list_recommendation_pins` and `get_recommendation_pins` return each product's `image_url` (its main image, null without one); `list_recommendation_pins` also returns `pin_count`.
+- The catalog lists 954 tools.
+
 ## Email changes wait for the merchant's review — 21 November 2026
 
 - `update_email` no longer changes what customers receive. It saves your pending change of the email and returns `review` (`id`, `status` `awaiting_review`, `url`, `message`). `review.url` opens the change in Store Admin's Canvas view next to the live email, where the merchant publishes or discards it, the same way theme changes wait for review. Give the merchant that link.
