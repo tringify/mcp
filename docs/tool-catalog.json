@@ -28030,6 +28030,13 @@
             "null"
           ]
         },
+        "show_on_product_cards": {
+          "description": "List this discount on the product cards it applies to in grids, rails and search results (themes read card.offers, at most product_cards_max_shown per card), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_CARDS_AUDIENCE. At most product_cards_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_CARDS_LIMIT. Independent of show_on_product_page.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "starts_at": {
           "description": "Start the discount at this local store time, formatted as `YYYY-MM-DDTHH:mm:ss`.",
           "type": [
@@ -28618,6 +28625,13 @@
         },
         "show_on_product_page": {
           "description": "List this discount among the available offers on the product pages it applies to (themes read product.offers), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_PAGE_AUDIENCE. At most product_page_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_PAGE_LIMIT.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show_on_product_cards": {
+          "description": "List this discount on the product cards it applies to in grids, rails and search results (themes read card.offers, at most product_cards_max_shown per card), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_CARDS_AUDIENCE. At most product_cards_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_CARDS_LIMIT. Independent of show_on_product_page.",
           "type": [
             "boolean",
             "null"
