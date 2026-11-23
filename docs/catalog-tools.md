@@ -212,6 +212,43 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `set_menu_item_translation` | `PUT /api/2025-01/menus/items/{itemId}/translations/{locale}` | store:menus:write, store:settings.languages:write |
 | `get_menu_item_translations` | `GET /api/2025-01/menus/items/translations/{locale}` | store:menus:read, store:settings.languages:read |
 | `set_menu_item_translations` | `PUT /api/2025-01/menus/items/translations` | store:menus:write, store:settings.languages:write |
+| `create_page_bulk_operation` | `POST /api/2025-01/pages/bulk-operations` | store:pages:write |
+| `get_page_bulk_operation` | `GET /api/2025-01/pages/bulk-operations/{operationId}` | store:pages:write |
+| `cancel_page_bulk_operation` | `POST /api/2025-01/pages/bulk-operations/{operationId}/cancel` | store:pages:write |
+| `acknowledge_page_bulk_operation` | `POST /api/2025-01/pages/bulk-operations/{operationId}/acknowledge` | store:pages:write |
+| `create_blog_post_bulk_operation` | `POST /api/2025-01/blog/posts/bulk-operations` | store:blog:write |
+| `get_blog_post_bulk_operation` | `GET /api/2025-01/blog/posts/bulk-operations/{operationId}` | store:blog:write |
+| `cancel_blog_post_bulk_operation` | `POST /api/2025-01/blog/posts/bulk-operations/{operationId}/cancel` | store:blog:write |
+| `acknowledge_blog_post_bulk_operation` | `POST /api/2025-01/blog/posts/bulk-operations/{operationId}/acknowledge` | store:blog:write |
+| `get_blog_category_lifecycle_job` | `GET /api/2025-01/blog/categories/lifecycle-jobs/{job_id}` | store:blog:read |
+| `get_blog_tag_lifecycle_job` | `GET /api/2025-01/blog/tags/lifecycle-jobs/{job_id}` | store:blog:read |
+| `create_blog_tag_bulk_operation` | `POST /api/2025-01/blog/tags/bulk-operations` | store:blog:write |
+| `get_blog_tag_bulk_operation` | `GET /api/2025-01/blog/tags/bulk-operations/{operationId}` | store:blog:write |
+| `cancel_blog_tag_bulk_operation` | `POST /api/2025-01/blog/tags/bulk-operations/{operationId}/cancel` | store:blog:write |
+| `acknowledge_blog_tag_bulk_operation` | `POST /api/2025-01/blog/tags/bulk-operations/{operationId}/acknowledge` | store:blog:write |
+| `create_blog_comment_bulk_operation` | `POST /api/2025-01/blog/comments/bulk-operations` | store:blog:write |
+| `get_blog_comment_bulk_operation` | `GET /api/2025-01/blog/comments/bulk-operations/{operationId}` | store:blog:write |
+| `cancel_blog_comment_bulk_operation` | `POST /api/2025-01/blog/comments/bulk-operations/{operationId}/cancel` | store:blog:write |
+| `acknowledge_blog_comment_bulk_operation` | `POST /api/2025-01/blog/comments/bulk-operations/{operationId}/acknowledge` | store:blog:write |
+| `get_metaobject_limits` | `GET /api/2025-01/metaobject_definitions/limits` | store:metaobjects:read |
+| `list_metaobject_definitions` | `GET /api/2025-01/metaobject_definitions` | store:metaobjects:read |
+| `get_metaobject_definition` | `GET /api/2025-01/metaobject_definitions/{definitionId}` | store:metaobjects:read |
+| `create_metaobject_definition` | `POST /api/2025-01/metaobject_definitions` | store:metaobjects:write |
+| `update_metaobject_definition` | `PUT /api/2025-01/metaobject_definitions/{definitionId}` | store:metaobjects:write |
+| `delete_metaobject_definition` | `DELETE /api/2025-01/metaobject_definitions/{definitionId}` | store:metaobjects:write |
+| `list_metaobjects` | `GET /api/2025-01/metaobjects` | store:metaobjects:read |
+| `get_metaobject` | `GET /api/2025-01/metaobjects/{metaobjectId}` | store:metaobjects:read |
+| `get_metaobject_usage` | `GET /api/2025-01/metaobjects/{metaobjectId}/used-on` | store:metaobjects:read |
+| `create_metaobject` | `POST /api/2025-01/metaobjects` | store:metaobjects:write |
+| `update_metaobject` | `PUT /api/2025-01/metaobjects/{metaobjectId}` | store:metaobjects:write |
+| `bulk_upsert_metaobjects` | `POST /api/2025-01/metaobjects/bulk-upsert` | store:metaobjects:write |
+| `delete_metaobject` | `DELETE /api/2025-01/metaobjects/{metaobjectId}` | store:metaobjects:write |
+| `get_metaobject_translation` | `GET /api/2025-01/metaobjects/{metaobjectId}/translations/{locale}` | store:metaobjects:read, store:settings.languages:read |
+| `set_metaobject_translation` | `PUT /api/2025-01/metaobjects/{metaobjectId}/translations/{locale}` | store:metaobjects:write, store:settings.languages:write |
+| `create_metaobject_bulk_operation` | `POST /api/2025-01/metaobjects/bulk-operations` | store:metaobjects:write |
+| `get_metaobject_bulk_operation` | `GET /api/2025-01/metaobjects/bulk-operations/{operationId}` | store:metaobjects:write |
+| `cancel_metaobject_bulk_operation` | `POST /api/2025-01/metaobjects/bulk-operations/{operationId}/cancel` | store:metaobjects:write |
+| `acknowledge_metaobject_bulk_operation` | `POST /api/2025-01/metaobjects/bulk-operations/{operationId}/acknowledge` | store:metaobjects:write |
 | `get_tag_limits` | `GET /api/2025-01/tags/limits` | store:products:read |
 | `list_tags` | `GET /api/2025-01/tags` | store:products:read |
 | `search_tags` | `GET /api/2025-01/tags/search` | store:products:read |
@@ -624,6 +661,7 @@ Email subscriber lifecycle webhooks are `subscribers/create`, `subscribers/updat
 | `list_customer_group_membership_changes` | `GET /api/2025-01/customer-groups/{id}/membership-changes` | store:customers:read |
 | `add_customer_group_members` | `POST /api/2025-01/customer-groups/{id}/members` | store:customers:write |
 | `remove_customer_group_members` | `POST /api/2025-01/customer-groups/{id}/members/remove` | store:customers:write |
+| `impact_customer_group` | `GET /api/2025-01/customer-groups/{id}/impact` | store:customers:read |
 
 ## Inventory, inventory groups and locations
 
@@ -1221,6 +1259,7 @@ Read and answer the store's customer messages: email (including contact-form mes
 | `update_inbox_email` | `PUT /api/2025-01/inbox/email` | store:customers:write |
 | `delete_inbox_message` | `DELETE /api/2025-01/inbox/conversations/{id}` | store:customers:write |
 | `bulk_delete_inbox_messages` | `POST /api/2025-01/inbox/conversations/bulk-delete` | store:customers:write |
+| `context_inbox` | `GET /api/2025-01/inbox/conversations/{id}/context` | store:customers:read |
 
 ## Content Studio posts
 
