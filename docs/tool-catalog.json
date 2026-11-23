@@ -1554,7 +1554,7 @@
           ]
         },
         "gift_only": {
-          "description": "Defaults to false. When true, direct cart additions are rejected with CART_GIFT_ONLY; the product can be added only as an eligible free gift. This flag does not hide the product from listings.",
+          "description": "Defaults to false. When true, direct cart additions are rejected with CART_GIFT_ONLY; the product can be added only as an eligible free gift. A gift-only product is also left out of storefront listings and search (shop, category, collection, vendor and brand pages, search and recommendations), like hide_from_listings; its product page still opens by direct link.",
           "type": [
             "boolean",
             "null"
@@ -1916,7 +1916,7 @@
           "type": "string"
         },
         "gift_only": {
-          "description": "Defaults to false. When true, direct cart additions are rejected with CART_GIFT_ONLY; the product can be added only as an eligible free gift. This flag does not hide the product from listings.",
+          "description": "Defaults to false. When true, direct cart additions are rejected with CART_GIFT_ONLY; the product can be added only as an eligible free gift. A gift-only product is also left out of storefront listings and search (shop, category, collection, vendor and brand pages, search and recommendations), like hide_from_listings; its product page still opens by direct link.",
           "type": [
             "boolean",
             "null"
@@ -3786,10 +3786,17 @@
           ]
         },
         "rules": {
-          "description": "Automatic collection rules. Each rule has field, operator, optional value, and include_subcategories (see the Add rule endpoint for the value of each field). A tag rule value may be the tag's ID or its slug; the slug is resolved to the ID when the rule is saved.",
+          "description": "Automatic collection rules; at least one. Each rule has field, operator, optional value, include_subcategories, window_days and currency (see the Add rule endpoint for each field). Under `match_type` `all`, rules no product can meet together are rejected with `COLLECTION_RULES_CONTRADICTORY`. A tag rule value may be the tag's ID or its slug; the slug is resolved to the ID when the rule is saved.",
           "items": {
             "additionalProperties": false,
             "properties": {
+              "currency": {
+                "description": "A price or regular price rule's currency (ISO 4217, one of the store's); omit for the base currency.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "field": {
                 "description": "The rule field.",
                 "type": "string"
@@ -3806,6 +3813,13 @@
                 "description": "The value to match (see the Add rule endpoint for each field).",
                 "type": [
                   "string",
+                  "null"
+                ]
+              },
+              "window_days": {
+                "description": "A product-number rule's period: 7, 30 or 90 days (required on those rules, not accepted on others).",
+                "type": [
+                  "integer",
                   "null"
                 ]
               }
@@ -3933,10 +3947,17 @@
           ]
         },
         "rules": {
-          "description": "Automatic collection rules. Each rule has field, operator, optional value, and include_subcategories (see the Add rule endpoint for the value of each field). A tag rule value may be the tag's ID or its slug; the slug is resolved to the ID when the rule is saved.",
+          "description": "Automatic collection rules; at least one. Each rule has field, operator, optional value, include_subcategories, window_days and currency (see the Add rule endpoint for each field). Under `match_type` `all`, rules no product can meet together are rejected with `COLLECTION_RULES_CONTRADICTORY`. A tag rule value may be the tag's ID or its slug; the slug is resolved to the ID when the rule is saved.",
           "items": {
             "additionalProperties": false,
             "properties": {
+              "currency": {
+                "description": "A price or regular price rule's currency (ISO 4217, one of the store's); omit for the base currency.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "field": {
                 "description": "The rule field.",
                 "type": "string"
@@ -3953,6 +3974,13 @@
                 "description": "The value to match (see the Add rule endpoint for each field).",
                 "type": [
                   "string",
+                  "null"
+                ]
+              },
+              "window_days": {
+                "description": "A product-number rule's period: 7, 30 or 90 days (required on those rules, not accepted on others).",
+                "type": [
+                  "integer",
                   "null"
                 ]
               }
@@ -6592,6 +6620,127 @@
     ]
   },
   {
+    "api_key": "pages.bulk-operation.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/pages/bulk-operations",
+    "description": "Queue a change to every page that matches a filter. Selects every page matching `filter` when the request is made (at most 100000) and applies `action` to them in the background, in steps of at most `bulk_max`. Actions: `delete` deletes each page exactly as Bulk delete pages does (translations, custom-data values, the redirects Tringify created, menu links and webhooks). Returns HTTP 202 with the operation; poll Get page bulk operation until its status is no longer queued. If menus link to any selected page or theme sections use one, the first request returns `CONFIRMATION_REQUIRED` listing the menu links and the storefront places that go empty; repeat it with `confirmed: true` and the returned token. The token covers exactly the pages selected at that moment: if the selection changes before you repeat, the request asks again. Pages created or changed to match after the request are not included. A store runs one page bulk operation at a time. Reusing `operation_id` with the same `action`, `filter` and `params` returns the existing operation; a different request returns 409. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/pages/bulk-operations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "One of `delete`.",
+          "type": "string"
+        },
+        "confirmation_token": {
+          "description": "Token returned by the first request.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true when repeating a request that returned `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "filter": {
+          "description": "The pages to change, as the list filters them: `status` (draft or published) and `search` (text in the title or slug). All optional and combined with AND. An empty or omitted filter selects every page in the store. An unknown field is refused.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "operation_id": {
+          "description": "A new UUID for this operation. Reuse it only to repeat the same request after an interrupted one.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id",
+        "action"
+      ],
+      "type": "object"
+    },
+    "name": "create_page_bulk_operation",
+    "scopes": [
+      "store:pages:write"
+    ]
+  },
+  {
+    "api_key": "pages.bulk-operation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/pages/bulk-operations/{operationId}",
+    "description": "Read a bulk operation's progress and results. Use the operation UUID returned when queueing it, or `current` for the store's running operation (or, when none runs, its newest finished one not yet acknowledged). `status` is queued (running), completed, cancelled or failed. `processed` rises from 0 to `total` as the operation works through the pages it selected; `succeeded` and `failed` split it (a page the action leaves as it was counts as succeeded). `failures` lists each page the action could not change with its `code` and `reason` (NOT_FOUND when it was already gone); the first 500 are kept, `failed` counts them all. `summary` is the operation's state in the caller's language. A failed operation keeps what it had already done; `error` says why it stopped. Operations remain available for 30 days after they finish. `current` returns `operation: null` when there is nothing to show. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/pages/bulk-operations/{operationId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID, or `current`.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_page_bulk_operation",
+    "scopes": [
+      "store:pages:write"
+    ]
+  },
+  {
+    "api_key": "pages.bulk-operation.cancel",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/pages/bulk-operations/{operationId}/cancel",
+    "description": "Stop a running bulk operation. Stops the operation; the step in progress is rolled back. Pages already changed stay changed; the others are left as they were. Returns the operation with status cancelled. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/pages/bulk-operations/{operationId}/cancel. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "cancel_page_bulk_operation",
+    "scopes": [
+      "store:pages:write"
+    ]
+  },
+  {
+    "api_key": "pages.bulk-operation.acknowledge",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/pages/bulk-operations/{operationId}/acknowledge",
+    "description": "Mark a finished bulk operation as seen. After presenting a finished result, acknowledge its UUID so `current` no longer returns it. It stays readable by UUID for 30 days. Repeating it is safe. A running operation cannot be acknowledged. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/pages/bulk-operations/{operationId}/acknowledge. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "acknowledge_page_bulk_operation",
+    "scopes": [
+      "store:pages:write"
+    ]
+  },
+  {
     "api_key": "pages.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/pages/{id}/translations/{locale}",
@@ -7927,6 +8076,134 @@
     ]
   },
   {
+    "api_key": "blog_posts.bulk-operation.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/posts/bulk-operations",
+    "description": "Queue a change to every blog post that matches a filter. Selects every blog post matching `filter` when the request is made (at most 100000) and applies `action` to them in the background, in steps of at most `bulk_max` from the limits, each step exactly as the matching bulk endpoint does (webhooks included); a blog post the action would push past the per-post category or tag limit is reported in `failures` while the others go ahead. Actions: `delete` deletes each blog post as Bulk delete blog posts does; a step whose posts hold more than 100 comments archives them and deletes them with a background lifecycle job, one per post; `update_status` sets the status as Bulk update blog post status does; `assign_categories` adds categories, keeping the others; `remove_categories` removes categories, keeping the others; `assign_tags` adds tags, keeping the others; `remove_tags` removes tags, keeping the others. Returns HTTP 202 with the operation; poll Get blog post bulk operation until its status is no longer queued. For `delete`, if menus link to any selected blog post, the first request returns `CONFIRMATION_REQUIRED` listing the menu links that will be removed; repeat it with `confirmed: true` and the returned token. The token covers exactly the blog posts selected at that moment: if the selection changes before you repeat, the request asks again. Blog Posts created or changed to match after the request are not included. A store runs one blog post bulk operation at a time. Reusing `operation_id` with the same `action`, `filter` and `params` returns the existing operation; a different request returns 409. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts/bulk-operations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "One of `delete`, `update_status`, `assign_categories`, `remove_categories`, `assign_tags`, `remove_tags`.",
+          "type": "string"
+        },
+        "confirmation_token": {
+          "description": "Token returned by the first request.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true when repeating a request that returned `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "filter": {
+          "description": "The blog posts to change, as the list filters them: `status`, `search` (text in the title or slug), `author_ref`, `category_id`, `tag_id`, `publication_date_from` and `publication_date_to` (store-local dates, YYYY-MM-DD). All optional and combined with AND. An empty or omitted filter selects every blog post in the store. An unknown field is refused.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "operation_id": {
+          "description": "A new UUID for this operation. Reuse it only to repeat the same request after an interrupted one.",
+          "type": "string"
+        },
+        "params": {
+          "description": "What the action sets. `update_status`: `status` (published, draft or archived); `assign_categories`: `category_ids` (categories to add); `remove_categories`: `category_ids` (categories to remove); `assign_tags`: `tag_ids` (tags to add); `remove_tags`: `tag_ids` (tags to remove). Actions without parameters take none.",
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "operation_id",
+        "action"
+      ],
+      "type": "object"
+    },
+    "name": "create_blog_post_bulk_operation",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.bulk-operation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/posts/bulk-operations/{operationId}",
+    "description": "Read a bulk operation's progress and results. Use the operation UUID returned when queueing it, or `current` for the store's running operation (or, when none runs, its newest finished one not yet acknowledged). `status` is queued (running), completed, cancelled or failed. `processed` rises from 0 to `total` as the operation works through the blog posts it selected; `succeeded` and `failed` split it (a blog post the action leaves as it was counts as succeeded). `failures` lists each blog post the action could not change with its `code` and `reason` (NOT_FOUND when it was already gone); the first 500 are kept, `failed` counts them all. `summary` is the operation's state in the caller's language. A failed operation keeps what it had already done; `error` says why it stopped. Operations remain available for 30 days after they finish. `current` returns `operation: null` when there is nothing to show. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/posts/bulk-operations/{operationId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID, or `current`.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_post_bulk_operation",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.bulk-operation.cancel",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/posts/bulk-operations/{operationId}/cancel",
+    "description": "Stop a running bulk operation. Stops the operation; the step in progress is rolled back. Blog Posts already changed stay changed; the others are left as they were. Returns the operation with status cancelled. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts/bulk-operations/{operationId}/cancel. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "cancel_blog_post_bulk_operation",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_posts.bulk-operation.acknowledge",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/posts/bulk-operations/{operationId}/acknowledge",
+    "description": "Mark a finished bulk operation as seen. After presenting a finished result, acknowledge its UUID so `current` no longer returns it. It stays readable by UUID for 30 days. Repeating it is safe. A running operation cannot be acknowledged. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/posts/bulk-operations/{operationId}/acknowledge. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "acknowledge_blog_post_bulk_operation",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
     "api_key": "blog_posts.translation.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/posts/{id}/translations/{locale}",
@@ -8534,7 +8811,7 @@
     "api_key": "blog_categories.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/blog/categories/{id}",
-    "description": "Delete a blog category. Deletes a Blog Category only when no blog posts (in any status) are assigned to it; assigned posts block deletion. The delete also removes its translations, custom-data values and the redirects Tringify created when its URL changed (in every language); each removed redirect sends `redirects/delete`. Redirects you created yourself are kept. If menus link to the blog category or storefront theme settings use it, the first request returns `CONFIRMATION_REQUIRED` listing the menu links that will be removed and the storefront places that go empty; repeat it with `confirmed: true` and the returned token to delete. Unknown or wrongly typed body properties are refused. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/categories/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete a blog category. Deletes a Blog Category with its translations, custom-data values and the redirects Tringify created when its URL changed (in every language); each removed redirect sends `redirects/delete`. Redirects you created yourself are kept. When blog posts (in any status) are assigned to it, say what happens to them: `reassign_to_category_id` moves them to another category (a post already in that category just loses this one), or `remove_from_posts: true` takes this category off them; without either the delete returns `BLOG_CATEGORY_HAS_POSTS`. Every changed post sends `blog_posts/update` with `changed_fields: [\"categories\"]`. Up to 100 posts change in this request and the category is deleted: the response is `{deleted: true, lifecycle: null}` with code `BLOG_CATEGORY_DELETED`. With more, the posts change in a background lifecycle job, 100 at a time, and the category is deleted when every post is done: the response is `{deleted: false, lifecycle: {id, kind, status, processed, total, message}}` with code `BLOG_CATEGORY_DELETION_QUEUED`; poll `GET /blog/categories/lifecycle-jobs/{job_id}`. While such a job runs, deleting the category or its replacement returns `BLOG_CATEGORY_MOVE_IN_PROGRESS`. If menus link to the blog category or storefront theme settings use it, the first request returns `CONFIRMATION_REQUIRED` listing the menu links that will be removed and the storefront places that go empty; repeat it with `confirmed: true` and the returned token to delete. Unknown or wrongly typed body properties are refused. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/categories/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8556,6 +8833,20 @@
           "description": "Blog Category id.",
           "minLength": 1,
           "type": "string"
+        },
+        "reassign_to_category_id": {
+          "description": "Move the assigned blog posts to this category. It must be another existing category.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "remove_from_posts": {
+          "description": "Take this category off the assigned blog posts instead of moving them. Do not combine with `reassign_to_category_id`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       },
       "required": [
@@ -8566,6 +8857,30 @@
     "name": "delete_blog_category",
     "scopes": [
       "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_categories.lifecycle_job.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/categories/lifecycle-jobs/{job_id}",
+    "description": "Fetch the progress of a blog category deletion job. Returns the lifecycle job a blog category delete started: `kind` is `category_reassign`, `status` is `running`, `completed` (every post changed and the category deleted) or `failed`, `processed` and `total` count posts, and `message` is the localized progress or result. A failed job names its cause in `failure_code` (otherwise null): the posts it changed keep their new categories and the category is kept; delete it again to retry. A job that hits a temporary error retries with a growing delay and stays `running`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/categories/lifecycle-jobs/{job_id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "`lifecycle.id` from a delete.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_category_lifecycle_job",
+    "scopes": [
+      "store:blog:read"
     ]
   },
   {
@@ -8954,7 +9269,7 @@
     "api_key": "blog_tags.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/blog/tags/{id}",
-    "description": "Delete a blog tag. Deletes a Blog Tag and its translations. If the tag is assigned to blog posts (in any status), the first request returns `CONFIRMATION_REQUIRED` with a warning that counts those posts; repeat it with `confirmed: true` and the returned token, and the delete removes the tag from those posts. Unknown or wrongly typed body properties are refused. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/tags/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete a blog tag. Deletes a Blog Tag and its translations. If the tag is assigned to blog posts (in any status), the first request returns `CONFIRMATION_REQUIRED` with a warning that counts those posts; repeat it with `confirmed: true` and the returned token, and the delete takes the tag off those posts: each one sends `blog_posts/update` with `changed_fields: [\"tags\"]`. A tag on up to 100 posts is deleted in this request: the response is `{deleted: true, lifecycle: null}` with code `BLOG_TAG_DELETED`. A tag on more posts is taken off them in a background lifecycle job, 100 at a time, and deleted when every post is done: the response is `{deleted: false, lifecycle: {id, kind, status, processed, total, message}}` with code `BLOG_TAG_DELETION_QUEUED`; poll `GET /blog/tags/lifecycle-jobs/{job_id}`. Unknown or wrongly typed body properties are refused. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/blog/tags/{id}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -8992,7 +9307,7 @@
     "api_key": "blog_tags.bulk-delete",
     "api_method": "POST",
     "api_path": "/api/2025-01/blog/tags/bulk-delete",
-    "description": "Delete multiple blog tags. Deletes multiple Blog Tags and their translations in one request, up to `bulk_delete_max_items` from the limits; a repeated id counts once. When any selected tag is assigned to blog posts, the first request returns `CONFIRMATION_REQUIRED` with a warning that counts the posts that use any selected tag (a post with two selected tags counts once) and makes no changes; repeat it with `confirmed: true` and the returned token to remove the tags from those posts and delete them. Deleted ids are listed in `deleted`. Each id that was not deleted is listed in `failed` as `{id, name, code, reason}` (`name` only when the tag was found): `code` is `NOT_FOUND` when no such tag exists in this store, or `CONFLICT` when its post assignments changed while it was being deleted (send it again); `reason` is the message. Unknown or wrongly typed body properties are refused. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/tags/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete multiple blog tags. Deletes multiple Blog Tags and their translations in one request, up to `bulk_delete_max_items` from the limits; a repeated id counts once. When any selected tag is assigned to blog posts, the first request returns `CONFIRMATION_REQUIRED` with a warning that counts the posts that use any selected tag (a post with two selected tags counts once) and makes no changes; repeat it with `confirmed: true` and the returned token to take the tags off those posts (each changed post sends `blog_posts/update` with `changed_fields: [\"tags\"]`) and delete them. When the selected tags are on 100 posts or fewer in total, every tag is deleted now. With more, tags without posts are deleted now and each tag that has posts is listed in `queued`, with one lifecycle job per tag in `jobs` that takes it off its posts and deletes it; poll it with `GET /blog/tags/lifecycle-jobs/{job_id}`. Deleted ids are listed in `deleted`. Each id that was not deleted is listed in `failed` as `{id, name, code, reason}` (`name` only when the tag was found): `code` is `NOT_FOUND` when no such tag exists in this store, or `CONFLICT` when its post assignments changed while it was being deleted (send it again); `reason` is the message. The response code is `BLOG_TAGS_DELETED`, or `BLOG_TAGS_BULK_DELETE_DEFERRED` when tags are queued. Unknown or wrongly typed body properties are refused. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/tags/bulk-delete. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -9024,6 +9339,151 @@
       "type": "object"
     },
     "name": "bulk_delete_blog_tags",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_tags.lifecycle_job.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/tags/lifecycle-jobs/{job_id}",
+    "description": "Fetch the progress of a blog tag deletion job. Returns the lifecycle job a blog tag delete or bulk delete started: `kind` is `tag_delete`, `status` is `running`, `completed` (the tag is off every post and deleted) or `failed`, `processed` and `total` count posts, and `message` is the localized progress or result. A failed job names its cause in `failure_code` (otherwise null): the posts it changed stay without the tag and the tag is kept; delete it again to retry. A job that hits a temporary error retries with a growing delay and stays `running`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/lifecycle-jobs/{job_id}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "`lifecycle.id` from a delete, or a `jobs[].id` from a bulk delete.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_tag_lifecycle_job",
+    "scopes": [
+      "store:blog:read"
+    ]
+  },
+  {
+    "api_key": "blog_tags.bulk-operation.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/tags/bulk-operations",
+    "description": "Queue a change to every blog tag that matches a filter. Selects every blog tag matching `filter` when the request is made (at most 100000) and applies `action` to them in the background, in steps of at most `bulk_delete_max_items` from the limits. Actions: `delete` deletes each blog tag as Bulk delete blog tags does, taking it off its blog posts (each changed post sends `blog_posts/update`); a step whose tags are on more than 100 posts deletes those tags with background lifecycle jobs. Returns HTTP 202 with the operation; poll Get blog tag bulk operation until its status is no longer queued. If any selected blog tag is assigned to blog posts, the first request returns `CONFIRMATION_REQUIRED` with a warning that counts those posts; repeat it with `confirmed: true` and the returned token. The token covers exactly the blog tags selected at that moment: if the selection changes before you repeat, the request asks again. Blog Tags created or changed to match after the request are not included. A store runs one blog tag bulk operation at a time. Reusing `operation_id` with the same `action`, `filter` and `params` returns the existing operation; a different request returns 409. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/tags/bulk-operations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "One of `delete`.",
+          "type": "string"
+        },
+        "confirmation_token": {
+          "description": "Token returned by the first request.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true when repeating a request that returned `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "filter": {
+          "description": "The blog tags to change, as the list filters them: `search` (text in the name or slug). All optional and combined with AND. An empty or omitted filter selects every blog tag in the store. An unknown field is refused.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "operation_id": {
+          "description": "A new UUID for this operation. Reuse it only to repeat the same request after an interrupted one.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id",
+        "action"
+      ],
+      "type": "object"
+    },
+    "name": "create_blog_tag_bulk_operation",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_tags.bulk-operation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/tags/bulk-operations/{operationId}",
+    "description": "Read a bulk operation's progress and results. Use the operation UUID returned when queueing it, or `current` for the store's running operation (or, when none runs, its newest finished one not yet acknowledged). `status` is queued (running), completed, cancelled or failed. `processed` rises from 0 to `total` as the operation works through the blog tags it selected; `succeeded` and `failed` split it (a blog tag the action leaves as it was counts as succeeded). `failures` lists each blog tag the action could not change with its `code` and `reason` (NOT_FOUND when it was already gone); the first 500 are kept, `failed` counts them all. `summary` is the operation's state in the caller's language. A failed operation keeps what it had already done; `error` says why it stopped. Operations remain available for 30 days after they finish. `current` returns `operation: null` when there is nothing to show. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/tags/bulk-operations/{operationId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID, or `current`.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_tag_bulk_operation",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_tags.bulk-operation.cancel",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/tags/bulk-operations/{operationId}/cancel",
+    "description": "Stop a running bulk operation. Stops the operation; the step in progress is rolled back. Blog Tags already changed stay changed; the others are left as they were. Returns the operation with status cancelled. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/tags/bulk-operations/{operationId}/cancel. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "cancel_blog_tag_bulk_operation",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_tags.bulk-operation.acknowledge",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/tags/bulk-operations/{operationId}/acknowledge",
+    "description": "Mark a finished bulk operation as seen. After presenting a finished result, acknowledge its UUID so `current` no longer returns it. It stays readable by UUID for 30 days. Repeating it is safe. A running operation cannot be acknowledged. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/tags/bulk-operations/{operationId}/acknowledge. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "acknowledge_blog_tag_bulk_operation",
     "scopes": [
       "store:blog:write"
     ]
@@ -9836,6 +10296,120 @@
       "type": "object"
     },
     "name": "bulk_delete_blog_comments",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_comments.bulk-operation.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/comments/bulk-operations",
+    "description": "Queue a change to every blog comment that matches a filter. Selects every blog comment matching `filter` when the request is made (at most 100000) and applies `action` to them in the background, in steps of at most the bulk limits (`bulk_update_max_items`, `bulk_delete_max_items`). Actions: `update_status` moderates each blog comment as Bulk moderate blog comments does; `delete` permanently deletes each blog comment as Bulk delete blog comments does. Returns HTTP 202 with the operation; poll Get blog comment bulk operation until its status is no longer queued. Blog Comments created or changed to match after the request are not included. A store runs one blog comment bulk operation at a time. Reusing `operation_id` with the same `action`, `filter` and `params` returns the existing operation; a different request returns 409. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/comments/bulk-operations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "One of `update_status`, `delete`.",
+          "type": "string"
+        },
+        "filter": {
+          "description": "The blog comments to change, as the list filters them: `status`, `search` (author name, author email or content) and `post_id`. All optional and combined with AND. An empty or omitted filter selects every blog comment in the store. An unknown field is refused.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "operation_id": {
+          "description": "A new UUID for this operation. Reuse it only to repeat the same request after an interrupted one.",
+          "type": "string"
+        },
+        "params": {
+          "description": "What the action sets. `update_status`: `status` (pending, approved, spam, trash). Actions without parameters take none.",
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "operation_id",
+        "action"
+      ],
+      "type": "object"
+    },
+    "name": "create_blog_comment_bulk_operation",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_comments.bulk-operation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/blog/comments/bulk-operations/{operationId}",
+    "description": "Read a bulk operation's progress and results. Use the operation UUID returned when queueing it, or `current` for the store's running operation (or, when none runs, its newest finished one not yet acknowledged). `status` is queued (running), completed, cancelled or failed. `processed` rises from 0 to `total` as the operation works through the blog comments it selected; `succeeded` and `failed` split it (a blog comment the action leaves as it was counts as succeeded). `failures` lists each blog comment the action could not change with its `code` and `reason` (NOT_FOUND when it was already gone); the first 500 are kept, `failed` counts them all. `summary` is the operation's state in the caller's language. A failed operation keeps what it had already done; `error` says why it stopped. Operations remain available for 30 days after they finish. `current` returns `operation: null` when there is nothing to show. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/comments/bulk-operations/{operationId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID, or `current`.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_blog_comment_bulk_operation",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_comments.bulk-operation.cancel",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/comments/bulk-operations/{operationId}/cancel",
+    "description": "Stop a running bulk operation. Stops the operation; the step in progress is rolled back. Blog Comments already changed stay changed; the others are left as they were. Returns the operation with status cancelled. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/comments/bulk-operations/{operationId}/cancel. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "cancel_blog_comment_bulk_operation",
+    "scopes": [
+      "store:blog:write"
+    ]
+  },
+  {
+    "api_key": "blog_comments.bulk-operation.acknowledge",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/blog/comments/bulk-operations/{operationId}/acknowledge",
+    "description": "Mark a finished bulk operation as seen. After presenting a finished result, acknowledge its UUID so `current` no longer returns it. It stays readable by UUID for 30 days. Repeating it is safe. A running operation cannot be acknowledged. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/blog/comments/bulk-operations/{operationId}/acknowledge. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "acknowledge_blog_comment_bulk_operation",
     "scopes": [
       "store:blog:write"
     ]
@@ -14870,7 +15444,7 @@
     "api_key": "orders.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders",
-    "description": "List store orders. Returns active orders by default; archived=true returns archived orders. return_status is the order's return state, the most pressing of its returns: requested, exchange_waiting, approved, returned or declined, named in the request language as return_status_display (absent without a return); is_exchange marks an order an exchange created. hold_status is where an order rule's hold stands: held, approved or cancelled, named in the request language as hold_status_display (absent when no rule held the order). Cursors are bound to the store, filters, search and sort. Restart without a cursor after changing that query. Each order names financial_status, payment_status and channel_type in the request language as financial_status_display, payment_status_display and channel_type_display (null without a channel). status_name is the order's status for status_slug in the request language (a system status in Tringify's wording, one of the store's own statuses by its translation in that language, else by its own name) and status_color its colour from Order Settings. Raw grand_total is a canonical decimal string in currency_code; formatted_grand_total follows the request language and currency rules, independently of merchant General preferences. Use raw amounts for calculations. is_archived identifies archive state. tags lists the order's Order Tags (id, name, slug), sorted by name; `tag` filters by a tag name, ignoring capitalization. Fetch an order for fulfillment plans and line details. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders. Only the connected store is accessible.",
+    "description": "List store orders. Returns active orders by default; archived=true returns archived orders. return_status is the order's return state, the most pressing of its returns: requested, exchange_waiting, approved, returned or declined, named in the request language as return_status_display (absent without a return); is_exchange marks an order an exchange created. pickup_location_name names the location a pickup order is collected from (absent for a delivery order). hold_status is where an order rule's hold stands: held, approved or cancelled, named in the request language as hold_status_display (absent when no rule held the order). Cursors are bound to the store, filters, search and sort. Restart without a cursor after changing that query. Each order names financial_status, payment_status and channel_type in the request language as financial_status_display, payment_status_display and channel_type_display (null without a channel). status_name is the order's status for status_slug in the request language (a system status in Tringify's wording, one of the store's own statuses by its translation in that language, else by its own name) and status_color its colour from Order Settings. Raw grand_total is a canonical decimal string in currency_code; formatted_grand_total follows the request language and currency rules, independently of merchant General preferences. Use raw amounts for calculations. is_archived identifies archive state. tags lists the order's Order Tags (id, name, slug), sorted by name; `tag` filters by a tag name, ignoring capitalization. Fetch an order for fulfillment plans and line details. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -20475,7 +21049,7 @@
           ]
         },
         "gift_only": {
-          "description": "Defaults to false. When true, direct cart additions are rejected with CART_GIFT_ONLY; the product can be added only as an eligible free gift. This flag does not hide the product from listings.",
+          "description": "Defaults to false. When true, direct cart additions are rejected with CART_GIFT_ONLY; the product can be added only as an eligible free gift. A gift-only product is also left out of storefront listings and search (shop, category, collection, vendor and brand pages, search and recommendations), like hide_from_listings; its product page still opens by direct link.",
           "type": [
             "boolean",
             "null"
@@ -22614,6 +23188,30 @@
     ]
   },
   {
+    "api_key": "customer-groups.impact",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/customer-groups/{id}/impact",
+    "description": "Get what deleting a Customer Group removes from storefronts. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/customer-groups/{id}/impact. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Customer Group UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "impact_customer_group",
+    "scopes": [
+      "store:customers:read"
+    ]
+  },
+  {
     "api_key": "customer-groups.preview",
     "api_method": "POST",
     "api_path": "/api/2025-01/customer-groups/preview-rules",
@@ -23005,6 +23603,30 @@
     ]
   },
   {
+    "api_key": "inbox.context",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/inbox/conversations/{id}/context",
+    "description": "Fetch who wrote a message and the orders it is about. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/inbox/conversations/{id}/context. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Inbox Message id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "context_inbox",
+    "scopes": [
+      "store:customers:read"
+    ]
+  },
+  {
     "api_key": "inbox.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/inbox/conversations/{id}",
@@ -23321,7 +23943,7 @@
     "api_key": "blog-settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/blog/settings",
-    "description": "Get blog comment settings. Returns the supported modes, the store's current mode and moderation choice, and its blocked words: a comment holding one of `comment_blocked_words` (or, while `comment_starter_words` is true, of the built-in `comment_starter_words_list`) waits for approval even with moderation off. Words match whole and case-insensitively; a phrase matches its words in order. `comment_blocked_words_max` and `comment_blocked_word_max_length` are the most words, and the longest one, the list accepts. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/settings. Only the connected store is accessible.",
+    "description": "Get blog comment settings. Returns the supported modes, the store's current mode and moderation choice, and its blocked words: a comment holding one of `comment_blocked_words` (or, while `comment_starter_words` is true, of the built-in `comment_starter_words_list`) waits for approval even with moderation off. Words match whole and case-insensitively; a phrase matches its words in order. `comment_blocked_words_max` and `comment_blocked_word_max_length` are the most words, and the longest one, the list accepts. `feed_urls` are the blog's RSS and Atom feeds on the primary domain (the 50 newest published posts with full content); null while the store has no primary domain. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/blog/settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -26108,15 +26730,15 @@
             "null"
           ]
         },
-        "show_on_product_page": {
-          "description": "List this discount among the available offers on product pages, naming the payment method as checkout does (themes read product.offers). Shown while the discount is enabled and the provider is offered in the shopper's market and currency.",
+        "show_on_product_cards": {
+          "description": "List this discount on product cards in grids, rails and search results, worded as on product pages (themes read card.offers, at most 2 offers per card, discounts first). It applies to every product alike, so every card shows it while the discount is enabled and the provider is offered in the shopper's market and currency. Independent of show_on_product_page.",
           "type": [
             "boolean",
             "null"
           ]
         },
-        "show_on_product_cards": {
-          "description": "List this discount on product cards in grids, rails and search results, worded as on product pages (themes read card.offers, at most 2 offers per card, discounts first). It applies to every product alike, so every card shows it while the discount is enabled and the provider is offered in the shopper's market and currency. Independent of show_on_product_page.",
+        "show_on_product_page": {
+          "description": "List this discount among the available offers on product pages, naming the payment method as checkout does (themes read product.offers). Shown while the discount is enabled and the provider is offered in the shopper's market and currency.",
           "type": [
             "boolean",
             "null"
@@ -26205,15 +26827,15 @@
           "minLength": 1,
           "type": "string"
         },
-        "show_on_product_page": {
-          "description": "List this discount among the available offers on product pages, naming the payment method as checkout does (themes read product.offers). Shown while the discount is enabled and the provider is offered in the shopper's market and currency.",
+        "show_on_product_cards": {
+          "description": "List this discount on product cards in grids, rails and search results, worded as on product pages (themes read card.offers, at most 2 offers per card, discounts first). It applies to every product alike, so every card shows it while the discount is enabled and the provider is offered in the shopper's market and currency. Independent of show_on_product_page.",
           "type": [
             "boolean",
             "null"
           ]
         },
-        "show_on_product_cards": {
-          "description": "List this discount on product cards in grids, rails and search results, worded as on product pages (themes read card.offers, at most 2 offers per card, discounts first). It applies to every product alike, so every card shows it while the discount is enabled and the provider is offered in the shopper's market and currency. Independent of show_on_product_page.",
+        "show_on_product_page": {
+          "description": "List this discount among the available offers on product pages, naming the payment method as checkout does (themes read product.offers). Shown while the discount is enabled and the provider is offered in the shopper's market and currency.",
           "type": [
             "boolean",
             "null"
@@ -28037,15 +28659,15 @@
             "null"
           ]
         },
-        "show_on_product_page": {
-          "description": "List this discount among the available offers on the product pages it applies to (themes read product.offers), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_PAGE_AUDIENCE. At most product_page_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_PAGE_LIMIT.",
+        "show_on_product_cards": {
+          "description": "List this discount on the product cards it applies to in grids, rails and search results (themes read card.offers, at most product_cards_max_shown per card), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_CARDS_AUDIENCE. At most product_cards_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_CARDS_LIMIT. Independent of show_on_product_page.",
           "type": [
             "boolean",
             "null"
           ]
         },
-        "show_on_product_cards": {
-          "description": "List this discount on the product cards it applies to in grids, rails and search results (themes read card.offers, at most product_cards_max_shown per card), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_CARDS_AUDIENCE. At most product_cards_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_CARDS_LIMIT. Independent of show_on_product_page.",
+        "show_on_product_page": {
+          "description": "List this discount among the available offers on the product pages it applies to (themes read product.offers), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_PAGE_AUDIENCE. At most product_page_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_PAGE_LIMIT.",
           "type": [
             "boolean",
             "null"
@@ -28637,15 +29259,15 @@
             "null"
           ]
         },
-        "show_on_product_page": {
-          "description": "List this discount among the available offers on the product pages it applies to (themes read product.offers), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_PAGE_AUDIENCE. At most product_page_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_PAGE_LIMIT.",
+        "show_on_product_cards": {
+          "description": "List this discount on the product cards it applies to in grids, rails and search results (themes read card.offers, at most product_cards_max_shown per card), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_CARDS_AUDIENCE. At most product_cards_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_CARDS_LIMIT. Independent of show_on_product_page.",
           "type": [
             "boolean",
             "null"
           ]
         },
-        "show_on_product_cards": {
-          "description": "List this discount on the product cards it applies to in grids, rails and search results (themes read card.offers, at most product_cards_max_shown per card), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_CARDS_AUDIENCE. At most product_cards_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_CARDS_LIMIT. Independent of show_on_product_page.",
+        "show_on_product_page": {
+          "description": "List this discount among the available offers on the product pages it applies to (themes read product.offers), worded by Tringify in the shopper's language and currency. Automatic discounts and codes (the code is then shown publicly). Only discounts for everyone (customer_eligibility everyone): otherwise DISCOUNT_PRODUCT_PAGE_AUDIENCE. At most product_page_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_PRODUCT_PAGE_LIMIT.",
           "type": [
             "boolean",
             "null"
@@ -34074,7 +34696,7 @@
     "api_key": "storefronts.mode.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/storefronts/{storefrontId}/mode",
-    "description": "Set a storefront live, in maintenance or coming soon. `mode` is `live`, `maintenance` or `coming_soon`; the current one is `mode` in Get a storefront. Maintenance and coming soon take the storefront offline at once: shoppers see the maintenance or coming-soon page instead of the store. Taking a live storefront offline needs confirmation. The first request returns HTTP 409 `CONFIRMATION_REQUIRED` with `error.details`: `warnings` (English), `confirmation_token`, `action`, `current_mode` and `target_mode`. Show the change to the merchant and, after approval, repeat the same `mode` with `confirmed: true` and that `confirmation_token`. The token is single use, valid for five minutes and good only for this storefront and this target mode; a request that fails does not use it up. Switching to `live`, or between maintenance and coming soon, needs no confirmation. Going live is refused with `STOREFRONT_NOT_READY_TO_GO_LIVE` until the store is ready: `error.details.blockers` lists what to fix, the same list as `go_live` in Get a storefront. Sending the current mode changes nothing. If the status changed after you read it, the request returns `STOREFRONT_MODE_CONFLICT`: read the storefront again and decide anew. Password protection is separate and stays as it is. The response has the same shape as Get a storefront (`storefront`, `go_live`, `cache`, `mode_options`). A change sends storefronts/update. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/mode. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Set a storefront live, in maintenance or coming soon, and its launch date or expected reopening time. `mode` is `live`, `maintenance` or `coming_soon`; the current one is `mode` in Get a storefront. The same request sets the times shoppers see on those pages: `launch_at`, the Coming Soon launch date the page counts down to; `launch_auto_open`, whether the storefront goes live on its own at `launch_at` (off unless you turn it on); and `maintenance_until`, when the merchant expects to be back from maintenance (shown as \"Back around …\"; the storefront never reopens on its own). Send each as RFC 3339 with an offset, such as `2026-12-01T10:00:00+05:30`, at most two years ahead and not in the past; null clears it; omit a field to keep it. Omit `mode` to change only these times. They are kept when the storefront changes mode, except that leaving Coming Soon clears `launch_at` and `launch_auto_open`, and leaving maintenance clears `maintenance_until`. With `launch_auto_open` on, the storefront goes live within about a minute of `launch_at` if it is still in Coming Soon and the store is ready to go live (the same check as below); if it is not ready it stays in Coming Soon, `launch_auto_open` turns off and the store's activity log says why. Get a storefront returns the three fields, with times in the store's timezone. Maintenance and coming soon take the storefront offline at once: shoppers see the maintenance or coming-soon page instead of the store. Taking a live storefront offline needs confirmation. The first request returns HTTP 409 `CONFIRMATION_REQUIRED` with `error.details`: `warnings` (English), `confirmation_token`, `action`, `current_mode` and `target_mode`. Show the change to the merchant and, after approval, repeat the same `mode` with `confirmed: true` and that `confirmation_token`. The token is single use, valid for five minutes and good only for this storefront and this target mode; a request that fails does not use it up. Switching to `live`, or between maintenance and coming soon, needs no confirmation. Going live is refused with `STOREFRONT_NOT_READY_TO_GO_LIVE` until the store is ready: `error.details.blockers` lists what to fix, the same list as `go_live` in Get a storefront. Sending the current mode changes nothing. If the status changed after you read it, the request returns `STOREFRONT_MODE_CONFLICT`: read the storefront again and decide anew. Password protection is separate and stays as it is. The response has the same shape as Get a storefront (`storefront`, `go_live`, `cache`, `mode_options`). A change sends storefronts/update. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/storefronts/{storefrontId}/mode. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -34092,9 +34714,33 @@
             "null"
           ]
         },
+        "launch_at": {
+          "description": "Coming Soon launch date, RFC 3339 with an offset; null clears it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "launch_auto_open": {
+          "description": "Go live on its own at `launch_at`. Off unless set.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "maintenance_until": {
+          "description": "When the merchant expects to be back from maintenance, RFC 3339 with an offset; null clears it. The storefront never reopens on its own.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "mode": {
-          "description": "New status: `live`, `maintenance` or `coming_soon`.",
-          "type": "string"
+          "description": "New status: `live`, `maintenance` or `coming_soon`. Required unless the request sets only `launch_at`, `launch_auto_open` or `maintenance_until`.",
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "storefront_id": {
           "description": "Storefront id from List storefronts.",
@@ -34103,8 +34749,7 @@
         }
       },
       "required": [
-        "storefront_id",
-        "mode"
+        "storefront_id"
       ],
       "type": "object"
     },
@@ -35886,6 +36531,873 @@
     "name": "bulk_delete_redirects",
     "scopes": [
       "store:online_store.redirects:write"
+    ]
+  },
+  {
+    "api_key": "metaobjects.limits",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/metaobject_definitions/limits",
+    "description": "Read custom content limits and usage. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/metaobject_definitions/limits. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_metaobject_limits",
+    "scopes": [
+      "store:metaobjects:read"
+    ]
+  },
+  {
+    "api_key": "metaobject_definitions.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/metaobject_definitions",
+    "description": "List the store's custom content types. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/metaobject_definitions. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "search": {
+          "description": "Matches name and handle.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_metaobject_definitions",
+    "scopes": [
+      "store:metaobjects:read"
+    ]
+  },
+  {
+    "api_key": "metaobject_definitions.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/metaobject_definitions/{definitionId}",
+    "description": "Read one type with its fields. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/metaobject_definitions/{definitionId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "definition_id": {
+          "description": "Type id, or its handle.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "definition_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_metaobject_definition",
+    "scopes": [
+      "store:metaobjects:read"
+    ]
+  },
+  {
+    "api_key": "metaobject_definitions.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/metaobject_definitions",
+    "description": "Create a type with its fields. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/metaobject_definitions. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "description": "At most 1000 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "display_field_key": {
+          "description": "Key of a single line text field used as each entry's name in lists and pickers.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fields": {
+          "description": "The complete ordered field list, 1 to 40 fields. On update a field left out is removed together with its values and translations.",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "description": {
+                "description": "At most 500 characters.",
+                "type": "string"
+              },
+              "key": {
+                "description": "Lowercase letters, numbers and underscores, starting with a letter, at most 64 characters. Unique in the type.",
+                "type": "string"
+              },
+              "max_list_items": {
+                "description": "Lowers the item limit of a list type.",
+                "type": "integer"
+              },
+              "max_value_length": {
+                "description": "Lowers the value length limit of the type.",
+                "type": "integer"
+              },
+              "name": {
+                "description": "At most 255 characters.",
+                "type": "string"
+              },
+              "required": {
+                "description": "Every saved entry must have a value.",
+                "type": "boolean"
+              },
+              "searchable": {
+                "description": "Text and select fields only.",
+                "type": "boolean"
+              },
+              "translatable": {
+                "description": "Single line, multi-line and rich text and list of text only.",
+                "type": "boolean"
+              },
+              "type": {
+                "description": "Any metafield type, metaobject_reference and its list included. Fixed while the type has entries.",
+                "type": "string"
+              },
+              "validation_rules": {
+                "description": "JSON object in the shape of a metafield definition's validation_rules (choices, pattern, min, max, min_length). A metaobject_reference field requires `metaobject_definition_id`, the type it points to.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "name",
+              "type"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "handle": {
+          "description": "Lowercase letters, numbers, hyphens and underscores, starting with a letter, at most 64 characters. Generated from the name when omitted on create.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "At most 255 characters.",
+          "type": "string"
+        },
+        "revision": {
+          "description": "The type's updated_at you edited from; a type changed since is refused with METAOBJECT_DEFINITION_CONFLICT.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "active (default) or draft.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "fields"
+      ],
+      "type": "object"
+    },
+    "name": "create_metaobject_definition",
+    "scopes": [
+      "store:metaobjects:write"
+    ]
+  },
+  {
+    "api_key": "metaobject_definitions.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/metaobject_definitions/{definitionId}",
+    "description": "Change a type's name, handle, description, status, display field or fields. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/metaobject_definitions/{definitionId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "definition_id": {
+          "description": "Type id, or its handle.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "description": {
+          "description": "At most 1000 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "display_field_key": {
+          "description": "Key of a single line text field used as each entry's name in lists and pickers.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fields": {
+          "description": "The complete ordered field list, 1 to 40 fields. On update a field left out is removed together with its values and translations.",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "description": {
+                "description": "At most 500 characters.",
+                "type": "string"
+              },
+              "key": {
+                "description": "Lowercase letters, numbers and underscores, starting with a letter, at most 64 characters. Unique in the type.",
+                "type": "string"
+              },
+              "max_list_items": {
+                "description": "Lowers the item limit of a list type.",
+                "type": "integer"
+              },
+              "max_value_length": {
+                "description": "Lowers the value length limit of the type.",
+                "type": "integer"
+              },
+              "name": {
+                "description": "At most 255 characters.",
+                "type": "string"
+              },
+              "required": {
+                "description": "Every saved entry must have a value.",
+                "type": "boolean"
+              },
+              "searchable": {
+                "description": "Text and select fields only.",
+                "type": "boolean"
+              },
+              "translatable": {
+                "description": "Single line, multi-line and rich text and list of text only.",
+                "type": "boolean"
+              },
+              "type": {
+                "description": "Any metafield type, metaobject_reference and its list included. Fixed while the type has entries.",
+                "type": "string"
+              },
+              "validation_rules": {
+                "description": "JSON object in the shape of a metafield definition's validation_rules (choices, pattern, min, max, min_length). A metaobject_reference field requires `metaobject_definition_id`, the type it points to.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "name",
+              "type"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "handle": {
+          "description": "Lowercase letters, numbers, hyphens and underscores, starting with a letter, at most 64 characters. Generated from the name when omitted on create.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "At most 255 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "description": "The type's updated_at you edited from; a type changed since is refused with METAOBJECT_DEFINITION_CONFLICT.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "active (default) or draft.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "definition_id"
+      ],
+      "type": "object"
+    },
+    "name": "update_metaobject_definition",
+    "scopes": [
+      "store:metaobjects:write"
+    ]
+  },
+  {
+    "api_key": "metaobject_definitions.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/metaobject_definitions/{definitionId}",
+    "description": "Delete a type that has no entries. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/metaobject_definitions/{definitionId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "definition_id": {
+          "description": "Type id, or its handle.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "definition_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_metaobject_definition",
+    "scopes": [
+      "store:metaobjects:write"
+    ]
+  },
+  {
+    "api_key": "metaobjects.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/metaobjects",
+    "description": "List one type's entries. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/metaobjects. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "next_cursor of the previous page.",
+          "type": "string"
+        },
+        "expand": {
+          "description": "`references` adds `references`: each metaobject reference field resolved to its entries, 3 levels deep.",
+          "enum": [
+            "references"
+          ],
+          "type": "string"
+        },
+        "limit": {
+          "description": "Page size, at most 100 (default 25).",
+          "type": "integer"
+        },
+        "search": {
+          "description": "Matches the display field and the handle, at most 255 characters.",
+          "type": "string"
+        },
+        "sort_by": {
+          "description": "updated_at (default), created_at, name (the display field) or handle.",
+          "enum": [
+            "updated_at",
+            "created_at",
+            "name",
+            "handle"
+          ],
+          "type": "string"
+        },
+        "sort_direction": {
+          "description": "asc or desc; desc for dates and asc for name and handle by default.",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "type": "string"
+        },
+        "status": {
+          "description": "active or draft.",
+          "enum": [
+            "active",
+            "draft"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "description": "Type id or handle.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "name": "list_metaobjects",
+    "scopes": [
+      "store:metaobjects:read"
+    ]
+  },
+  {
+    "api_key": "metaobjects.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/metaobjects/{metaobjectId}",
+    "description": "Read one entry. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/metaobjects/{metaobjectId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "expand": {
+          "description": "`references` resolves metaobject reference fields, 3 levels deep.",
+          "enum": [
+            "references"
+          ],
+          "type": "string"
+        },
+        "metaobject_id": {
+          "description": "Entry id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "metaobject_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_metaobject",
+    "scopes": [
+      "store:metaobjects:read"
+    ]
+  },
+  {
+    "api_key": "metaobjects.used-on",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/metaobjects/{metaobjectId}/used-on",
+    "description": "List custom data values and entries that reference an entry. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/metaobjects/{metaobjectId}/used-on. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "metaobject_id": {
+          "description": "Entry id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "metaobject_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_metaobject_usage",
+    "scopes": [
+      "store:metaobjects:read"
+    ]
+  },
+  {
+    "api_key": "metaobjects.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/metaobjects",
+    "description": "Create one entry of a type. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/metaobjects. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "description": "Field key → value, each in the form of the metafield value of the field's type (lists as JSON arrays in a string). An empty string or null removes a value; on update keys not sent are kept. The values of one entry take at most 64 KB; a list of entry references holds at most 50 entries.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "handle": {
+          "description": "Lowercase letters, numbers and hyphens, at most 255 characters, unique in the type. Generated from the display field (or the type handle) when omitted on create. A changed handle is kept as one of the entry's last 20 old handles.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "description": "The entry's updated_at you edited from; an entry changed since is refused with METAOBJECT_ENTRY_CONFLICT.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "At most 1000 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "At most 255 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "draft (default) or active. Draft entries never reach the storefront or feeds.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "description": "Type id or handle.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "name": "create_metaobject",
+    "scopes": [
+      "store:metaobjects:write"
+    ]
+  },
+  {
+    "api_key": "metaobjects.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/metaobjects/{metaobjectId}",
+    "description": "Change an entry's fields, handle, status or SEO. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/metaobjects/{metaobjectId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "description": "Field key → value, each in the form of the metafield value of the field's type (lists as JSON arrays in a string). An empty string or null removes a value; on update keys not sent are kept. The values of one entry take at most 64 KB; a list of entry references holds at most 50 entries.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "handle": {
+          "description": "Lowercase letters, numbers and hyphens, at most 255 characters, unique in the type. Generated from the display field (or the type handle) when omitted on create. A changed handle is kept as one of the entry's last 20 old handles.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "metaobject_id": {
+          "description": "Entry id.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "revision": {
+          "description": "The entry's updated_at you edited from; an entry changed since is refused with METAOBJECT_ENTRY_CONFLICT.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_description": {
+          "description": "At most 1000 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seo_title": {
+          "description": "At most 255 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "description": "draft (default) or active. Draft entries never reach the storefront or feeds.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "metaobject_id"
+      ],
+      "type": "object"
+    },
+    "name": "update_metaobject",
+    "scopes": [
+      "store:metaobjects:write"
+    ]
+  },
+  {
+    "api_key": "metaobjects.bulk-upsert",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/metaobjects/bulk-upsert",
+    "description": "Create or update up to 100 entries of one type. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/metaobjects/bulk-upsert. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "entries": {
+          "description": "At most 100 entries of the type, matched by handle: an entry with a handle the type has is updated, the others created.",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "description": "Field values as on create and update.",
+                "type": "object"
+              },
+              "handle": {
+                "description": "Matches an entry of the type; omitted creates one.",
+                "type": "string"
+              },
+              "seo_description": {
+                "description": "",
+                "type": "string"
+              },
+              "seo_title": {
+                "description": "",
+                "type": "string"
+              },
+              "status": {
+                "description": "active or draft.",
+                "type": "string"
+              }
+            },
+            "required": [],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "type": {
+          "description": "Type id or handle.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "entries"
+      ],
+      "type": "object"
+    },
+    "name": "bulk_upsert_metaobjects",
+    "scopes": [
+      "store:metaobjects:write"
+    ]
+  },
+  {
+    "api_key": "metaobjects.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/metaobjects/{metaobjectId}",
+    "description": "Delete one entry. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/metaobjects/{metaobjectId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_token": {
+          "description": "Token returned by the first request.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true when repeating a request that returned CONFIRMATION_REQUIRED.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "metaobject_id": {
+          "description": "Entry id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "metaobject_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_metaobject",
+    "scopes": [
+      "store:metaobjects:write"
+    ]
+  },
+  {
+    "api_key": "metaobjects.translation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/metaobjects/{metaobjectId}/translations/{locale}",
+    "description": "Read an entry's translations in one language. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/metaobjects/{metaobjectId}/translations/{locale}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "description": "An enabled store language other than the source language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "metaobject_id": {
+          "description": "Entry id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "metaobject_id",
+        "locale"
+      ],
+      "type": "object"
+    },
+    "name": "get_metaobject_translation",
+    "scopes": [
+      "store:metaobjects:read",
+      "store:settings.languages:read"
+    ]
+  },
+  {
+    "api_key": "metaobjects.translation.set",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/metaobjects/{metaobjectId}/translations/{locale}",
+    "description": "Save an entry's translations in one language. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/metaobjects/{metaobjectId}/translations/{locale}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "description": "Key → translation.",
+          "type": "object"
+        },
+        "idempotency_key": {
+          "description": "Optional stable key for this translation write. Reuse only for the exact same intended request.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "An enabled store language other than the source language.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "metaobject_id": {
+          "description": "Entry id.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "metaobject_id",
+        "locale",
+        "fields"
+      ],
+      "type": "object"
+    },
+    "name": "set_metaobject_translation",
+    "scopes": [
+      "store:metaobjects:write",
+      "store:settings.languages:write"
+    ]
+  },
+  {
+    "api_key": "metaobjects.bulk-operation.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/metaobjects/bulk-operations",
+    "description": "Queue a change to every entry that matches a filter. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/metaobjects/bulk-operations. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "description": "One of `update_status`, `delete`.",
+          "type": "string"
+        },
+        "confirmation_token": {
+          "description": "Token returned by the first request.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirmed": {
+          "description": "Set true when repeating a request that returned `CONFIRMATION_REQUIRED`.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "filter": {
+          "description": "The entries to change, as the list filters them: `type` (type id or handle, required), `status` (active or draft), `search` (display field and handle) and `ids` (at most 100 entry ids, to change exactly those). All optional and combined with AND. An empty or omitted filter selects every entry in the store. An unknown field is refused.",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "operation_id": {
+          "description": "A new UUID for this operation. Reuse it only to repeat the same request after an interrupted one.",
+          "type": "string"
+        },
+        "params": {
+          "description": "What the action sets. `update_status`: `status` (active or draft). Actions without parameters take none.",
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "operation_id",
+        "action"
+      ],
+      "type": "object"
+    },
+    "name": "create_metaobject_bulk_operation",
+    "scopes": [
+      "store:metaobjects:write"
+    ]
+  },
+  {
+    "api_key": "metaobjects.bulk-operation.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/metaobjects/bulk-operations/{operationId}",
+    "description": "Read a bulk operation's progress and results. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/metaobjects/bulk-operations/{operationId}. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID, or `current`.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "get_metaobject_bulk_operation",
+    "scopes": [
+      "store:metaobjects:write"
+    ]
+  },
+  {
+    "api_key": "metaobjects.bulk-operation.cancel",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/metaobjects/bulk-operations/{operationId}/cancel",
+    "description": "Stop a running bulk operation. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/metaobjects/bulk-operations/{operationId}/cancel. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "cancel_metaobject_bulk_operation",
+    "scopes": [
+      "store:metaobjects:write"
+    ]
+  },
+  {
+    "api_key": "metaobjects.bulk-operation.acknowledge",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/metaobjects/bulk-operations/{operationId}/acknowledge",
+    "description": "Mark a finished bulk operation as seen. For more items than one call takes, do not loop: when list_import_types offers an import for this resource, send one CSV import with only the columns being changed (create_import_upload, finalize_import_upload, create_import, then confirm_import after the merchant reviews the preview). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/metaobjects/bulk-operations/{operationId}/acknowledge. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "description": "Operation UUID.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_id"
+      ],
+      "type": "object"
+    },
+    "name": "acknowledge_metaobject_bulk_operation",
+    "scopes": [
+      "store:metaobjects:write"
     ]
   },
   {
@@ -39437,6 +40949,7 @@
       "store:locations:read",
       "store:markets:read",
       "store:menus:read",
+      "store:metaobjects:read",
       "store:orders:read",
       "store:pages:read",
       "store:products:read",
@@ -39510,6 +41023,7 @@
       "store:locations:write",
       "store:markets:write",
       "store:menus:write",
+      "store:metaobjects:write",
       "store:orders:write",
       "store:pages:write",
       "store:products:write",
@@ -39556,6 +41070,7 @@
       "store:locations:write",
       "store:markets:write",
       "store:menus:write",
+      "store:metaobjects:write",
       "store:orders:write",
       "store:pages:write",
       "store:products:write",
@@ -39602,6 +41117,7 @@
       "store:locations:write",
       "store:markets:write",
       "store:menus:write",
+      "store:metaobjects:write",
       "store:orders:write",
       "store:pages:write",
       "store:products:write",
@@ -39665,6 +41181,7 @@
       "store:locations:write",
       "store:markets:write",
       "store:menus:write",
+      "store:metaobjects:write",
       "store:orders:write",
       "store:pages:write",
       "store:products:write",
@@ -39708,6 +41225,7 @@
       "store:locations:read",
       "store:markets:read",
       "store:menus:read",
+      "store:metaobjects:read",
       "store:orders:read",
       "store:pages:read",
       "store:products:read",
@@ -39747,6 +41265,7 @@
       "store:locations:read",
       "store:markets:read",
       "store:menus:read",
+      "store:metaobjects:read",
       "store:orders:read",
       "store:pages:read",
       "store:products:read",
@@ -39794,6 +41313,7 @@
       "store:locations:read",
       "store:markets:read",
       "store:menus:read",
+      "store:metaobjects:read",
       "store:orders:read",
       "store:pages:read",
       "store:products:read",
@@ -39840,6 +41360,7 @@
       "store:locations:write",
       "store:markets:write",
       "store:menus:write",
+      "store:metaobjects:write",
       "store:orders:write",
       "store:pages:write",
       "store:products:write",
@@ -39879,6 +41400,7 @@
       "store:locations:write",
       "store:markets:write",
       "store:menus:write",
+      "store:metaobjects:write",
       "store:orders:write",
       "store:pages:write",
       "store:products:write",
@@ -39918,6 +41440,7 @@
       "store:locations:write",
       "store:markets:write",
       "store:menus:write",
+      "store:metaobjects:write",
       "store:orders:write",
       "store:pages:write",
       "store:products:write",
@@ -39971,6 +41494,7 @@
       "store:locations:write",
       "store:markets:write",
       "store:menus:write",
+      "store:metaobjects:write",
       "store:orders:write",
       "store:pages:write",
       "store:products:write",
@@ -40001,6 +41525,7 @@
       "store:locations:read",
       "store:markets:read",
       "store:menus:read",
+      "store:metaobjects:read",
       "store:orders:read",
       "store:pages:read",
       "store:products:read",
@@ -40052,6 +41577,7 @@
       "store:locations:read",
       "store:markets:read",
       "store:menus:read",
+      "store:metaobjects:read",
       "store:orders:read",
       "store:pages:read",
       "store:products:read",
@@ -40095,6 +41621,7 @@
       "store:locations:read",
       "store:markets:read",
       "store:menus:read",
+      "store:metaobjects:read",
       "store:orders:read",
       "store:pages:read",
       "store:products:read",
@@ -40134,6 +41661,7 @@
       "store:locations:read",
       "store:markets:read",
       "store:menus:read",
+      "store:metaobjects:read",
       "store:orders:read",
       "store:pages:read",
       "store:products:read",
@@ -40173,6 +41701,7 @@
       "store:locations:read",
       "store:markets:read",
       "store:menus:read",
+      "store:metaobjects:read",
       "store:orders:read",
       "store:pages:read",
       "store:products:read",
