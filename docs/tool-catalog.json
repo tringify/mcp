@@ -6986,7 +6986,7 @@
     "api_key": "policies.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/policies/{type}",
-    "description": "Update one policy by type. Updates provided fields on the existing fixed Policy row. Supply `expected_revision` from the latest Get response; a missing or stale revision returns `CONTENT_REVISION_CONFLICT` (409), even when the request would change nothing. Omitted fields are left unchanged. Send null or an empty string to clear `content`, `seo_title` or `seo_description`; `content` with no text and no image or other media (for example `\u003cp\u003e \u003c/p\u003e`) also clears it, and a cleared field is stored as null. A source field that has translations cannot be cleared (`TRANSLATION_SOURCE_FIELD_HAS_TRANSLATIONS`). `title`, `slug`, `status` and `create_redirect` cannot be null. An empty `slug` resets to the default slug for the policy type. When `slug` changes, `create_redirect` controls whether the old policy URL redirects to the new one and defaults to true; with `false`, redirects Tringify created earlier toward the old URL are moved to the new URL, so none ends on a missing page. A policy that the consent banner or the checkout footer shows must stay published with readable text; content that is only an image or other media is refused there (`POLICY_LOCKED_BY_CONSENT_BANNER`, `POLICY_LOCKED_BY_CHECKOUT`). A successful change increments `revision`. Unknown or wrongly typed body properties are refused. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/policies/{type}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update one policy by type. Updates provided fields on the existing fixed Policy row. Supply `expected_revision` from the latest Get response; a missing or stale revision returns `CONTENT_REVISION_CONFLICT` (409), even when the request would change nothing. Omitted fields are left unchanged. Send null or an empty string to clear `content`, `seo_title`, `seo_description` or `social_image_id`; `content` with no text and no image or other media (for example `\u003cp\u003e \u003c/p\u003e`) also clears it, and a cleared field is stored as null. A source field that has translations cannot be cleared (`TRANSLATION_SOURCE_FIELD_HAS_TRANSLATIONS`). `title`, `slug`, `status`, `robots` and `create_redirect` cannot be null. A non-empty `social_image_id` must reference an uploaded image in this store and also requires `read_files`. An empty `slug` resets to the default slug for the policy type. When `slug` changes, `create_redirect` controls whether the old policy URL redirects to the new one and defaults to true; with `false`, redirects Tringify created earlier toward the old URL are moved to the new URL, so none ends on a missing page. A policy that the consent banner or the checkout footer shows must stay published with readable text; content that is only an image or other media is refused there (`POLICY_LOCKED_BY_CONSENT_BANNER`, `POLICY_LOCKED_BY_CHECKOUT`). A successful change increments `revision`. Unknown or wrongly typed body properties are refused. `storefront_url` is the canonical absolute URL on the store's primary domain. `storefront_path` is the domain-independent baseline route; join it to the storefront address you are targeting. Hosted storefront responses apply translated slugs and locale/country prefixes. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/policies/{type}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -7008,6 +7008,13 @@
           "description": "Copy revision from Get policy. A missing or stale revision returns CONTENT_REVISION_CONFLICT (409), even when nothing would change; reload before retrying.",
           "type": "integer"
         },
+        "robots": {
+          "description": "Search visibility: index or noindex. Omit to leave it unchanged. noindex keeps the policy out of search results and the sitemap; it does not restrict who can open it.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "seo_description": {
           "description": "SEO description. Omit to leave it unchanged; send null or an empty string to clear it.",
           "type": [
@@ -7024,6 +7031,13 @@
         },
         "slug": {
           "description": "Slug. Omit to leave it unchanged; send an empty string to reset to the default slug for the policy type.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "social_image_id": {
+          "description": "Image shown when the policy is shared on social media: the id of an uploaded image in this store's Media library. Without one, the store's share image is used, then its logo. Omit to leave it unchanged; send null or an empty string to remove it. A non-empty value requires `read_files`. Deleting the image from the Media library removes it and sends policies/update.",
           "type": [
             "string",
             "null"
