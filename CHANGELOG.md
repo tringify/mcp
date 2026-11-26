@@ -1,5 +1,12 @@
 # Changelog
 
+## Fewer market settings — 26 November 2026
+
+- Part-paid cash on delivery is removed: COD settings and zones no longer take `advance_type`, `advance_amounts`, `advance_percent`, `advance_min_amounts`, `advance_max_amounts` or `advance_includes_fee`, and orders no longer carry `cod_advance_amount` or `cod_advance_paid`. Returned shipments are `cod` or `prepaid`, and closing one as undelivered refunds anything paid online (`keep_advance` is gone).
+- `update_market` no longer takes `tax_basis` or `use_default_tax_class`. An order that ships is taxed at its shipping address and one that does not at its billing address; a product without a tax class always uses the market's default class.
+- `get_market_customer_notes` and `update_market_customer_notes` are removed. The tax, shipping and duty sentences shoppers read are storefront messages, worded per language with the rest of the storefront.
+- Orders carry `duty_statement`: who pays import duties, as checkout said it in the order's language.
+
 ## One switch for showing offers — 26 November 2026
 
 - `create_market_discount`, `update_market_discount`, `create_market_payment_adjustment` and `update_market_payment_adjustment` take one `show_to_shoppers` in place of `show_in_cart`, `show_on_product_page` and `show_on_product_cards`. A shown discount appears on the product pages and product cards it applies to while it is for everyone; a shown code is also suggested in the cart and at checkout to shoppers it can apply to, at most `cart_max_shown` codes in priority order.

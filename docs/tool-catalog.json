@@ -19244,8 +19244,7 @@
           "description": "Only orders paid this way.",
           "enum": [
             "cod",
-            "prepaid",
-            "part_prepaid"
+            "prepaid"
           ],
           "type": "string"
         },
@@ -19363,13 +19362,6 @@
           "description": "RTO id.",
           "minLength": 1,
           "type": "string"
-        },
-        "keep_advance": {
-          "description": "Keep a part_prepaid order's online advance instead of refunding it.",
-          "type": [
-            "boolean",
-            "null"
-          ]
         },
         "restock": {
           "description": "Put the shipment's units back on hand. Omitted, the store's setting decides.",
@@ -26031,13 +26023,6 @@
             "null"
           ]
         },
-        "tax_basis": {
-          "description": "Address used to calculate tax: `shipping` or `billing`. Orders without shippable items use the billing address.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
         "tax_display_mode": {
           "description": "Whether storefront prices are displayed with tax included (`inclusive`) or excluded (`exclusive`).",
           "type": [
@@ -26054,13 +26039,6 @@
         },
         "tax_included": {
           "description": "Whether catalog prices already include tax. Changing it requires confirmation: prices keep their numbers, so each price changes what it charges.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "use_default_tax_class": {
-          "description": "Whether products without a tax class use the market's default tax class. When disabled, those products are not taxed.",
           "type": [
             "boolean",
             "null"
@@ -26949,122 +26927,6 @@
     ]
   },
   {
-    "api_key": "markets.customer-notes.get",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/markets/{marketId}/customer-notes",
-    "description": "Read a market's tax, shipping and duty notes to shoppers in one storefront language. A market tells shoppers three notes about its prices, with one text per variant and storefront language. Tax note variants: `included` (prices include tax as entered), `estimated` (prices add the tax estimated for the shopper's country), `excluded` (prices are before tax; checkout adds it) and `at_checkout` (tax is not known until checkout has the address). Shipping note variants: `at_checkout` (something in the cart ships, so shipping is still to come) and `free` (something in the cart ships and the market ships every order free: Simple mode set to free shipping, or every active Advanced method free). Duty note variants: `on_delivery` (the shopper may pay import duties to the carrier on delivery), `on_delivery_estimate` (the same, where checkout estimated the amount; this text may print it with `{{.amount}}`), `collected` (checkout charged any duties; nothing to pay on delivery) and `included` (the merchant pays and prices include duties). A variant the merchant never changed uses the platform default (`customized` false, `default_text` is that default). `text` null resets a variant to the platform default; an empty string shows nothing. A text has at most 300 characters, and only `on_delivery_estimate` may use a placeholder, `{{.amount}}`. Product and cart notes, checkout, order pages and order emails print these texts. Duty notes show only on orders shipped from a location in another country. The response lists every text in display order: what shoppers read (`text`, empty when hidden), the platform default (`default_text`), whether the merchant changed it (`customized`) and whether it may print the duty estimate (`amount_placeholder`). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/customer-notes. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "locale": {
-          "description": "Storefront language of the texts, one of the store's languages (for example `en` or `de`).",
-          "type": "string"
-        },
-        "market_id": {
-          "description": "Market id.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "market_id",
-        "locale"
-      ],
-      "type": "object"
-    },
-    "name": "get_market_customer_notes",
-    "scopes": [
-      "store:markets:read"
-    ]
-  },
-  {
-    "api_key": "markets.customer-notes.update",
-    "api_method": "PUT",
-    "api_path": "/api/2025-01/markets/{marketId}/customer-notes",
-    "description": "Change, hide or reset a market's tax, shipping and duty notes in one or more storefront languages. A market tells shoppers three notes about its prices, with one text per variant and storefront language. Tax note variants: `included` (prices include tax as entered), `estimated` (prices add the tax estimated for the shopper's country), `excluded` (prices are before tax; checkout adds it) and `at_checkout` (tax is not known until checkout has the address). Shipping note variants: `at_checkout` (something in the cart ships, so shipping is still to come) and `free` (something in the cart ships and the market ships every order free: Simple mode set to free shipping, or every active Advanced method free). Duty note variants: `on_delivery` (the shopper may pay import duties to the carrier on delivery), `on_delivery_estimate` (the same, where checkout estimated the amount; this text may print it with `{{.amount}}`), `collected` (checkout charged any duties; nothing to pay on delivery) and `included` (the merchant pays and prices include duties). A variant the merchant never changed uses the platform default (`customized` false, `default_text` is that default). `text` null resets a variant to the platform default; an empty string shows nothing. A text has at most 300 characters, and only `on_delivery_estimate` may use a placeholder, `{{.amount}}`. Product and cart notes, checkout, order pages and order emails print these texts. Duty notes show only on orders shipped from a location in another country. Send only the texts to change; every language is saved together or none is. The response lists every text of each saved language, in request order, as Get market customer notes does. The message names what was saved: `MARKET_TAX_NOTE_UPDATED`, `MARKET_SHIPPING_NOTE_UPDATED` or `MARKET_DUTY_NOTE_UPDATED`, or `MARKET_CUSTOMER_NOTES_UPDATED` when the save changed more than one of them. A change publishes `market_customer_notes/update`; saving texts that are already saved publishes nothing. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/customer-notes. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "locales": {
-          "description": "The languages to change, each once: `locale` (one of the store's languages) and `notes`, the texts to change in it (at most 10 entries, each note and variant once). Texts you leave out stay as they are. `text` null resets the variant to the platform default; an empty string shows nothing.",
-          "items": {
-            "additionalProperties": false,
-            "properties": {
-              "locale": {
-                "description": "Storefront language of the texts, one of the store's languages (for example `en` or `de`).",
-                "type": "string"
-              },
-              "notes": {
-                "description": "The texts to change in this language.",
-                "items": {
-                  "additionalProperties": false,
-                  "properties": {
-                    "note": {
-                      "description": "tax, shipping or duty.",
-                      "enum": [
-                        "tax",
-                        "shipping",
-                        "duty"
-                      ],
-                      "type": "string"
-                    },
-                    "text": {
-                      "description": "What shoppers read, at most 300 characters. null resets to the platform default; an empty string shows nothing. Only duty on_delivery_estimate may use {{.amount}}.",
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "variant": {
-                      "description": "Tax: included, estimated, excluded or at_checkout. Shipping: at_checkout or free. Duty: on_delivery, on_delivery_estimate, collected or included.",
-                      "enum": [
-                        "included",
-                        "estimated",
-                        "excluded",
-                        "at_checkout",
-                        "on_delivery",
-                        "on_delivery_estimate",
-                        "collected"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "note",
-                    "variant",
-                    "text"
-                  ],
-                  "type": "object"
-                },
-                "type": "array"
-              }
-            },
-            "required": [
-              "locale",
-              "notes"
-            ],
-            "type": "object"
-          },
-          "type": "array"
-        },
-        "market_id": {
-          "description": "Market id.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "market_id",
-        "locales"
-      ],
-      "type": "object"
-    },
-    "name": "update_market_customer_notes",
-    "scopes": [
-      "store:markets:write"
-    ]
-  },
-  {
     "api_key": "tax-classes.limits",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/tax-classes/limits",
@@ -27301,7 +27163,7 @@
     "api_key": "tax-classes.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/markets/{marketId}/tax-classes/{taxClassId}",
-    "description": "Delete one tax class. Use the bulk-delete endpoint for a selection. Each successful deletion records the class and market names in its audit entry. Deletes the tax class together with its rates, product and variant assignments, and price rules. The default class can't be deleted — promote another class first. Shipping settings and shipping methods must be reassigned before deleting their tax class (`TAX_CLASS_SHIPPING_ASSIGNED`), and so must checkout fees, cash-on-delivery settings and payment adjustments (`TAX_CLASS_CHARGES_ASSIGNED`). When the class still has dependents, the first call returns a confirmation response listing what will be removed; retry with `confirmed` and the returned `confirmation_token` to proceed. Products left without a class are taxed by the market's default class while `use_default_tax_class` is on, and sold untaxed when it is off. Fires `tax_classes/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/tax-classes/{taxClassId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete one tax class. Use the bulk-delete endpoint for a selection. Each successful deletion records the class and market names in its audit entry. Deletes the tax class together with its rates, product and variant assignments, and price rules. The default class can't be deleted — promote another class first. Shipping settings and shipping methods must be reassigned before deleting their tax class (`TAX_CLASS_SHIPPING_ASSIGNED`), and so must checkout fees, cash-on-delivery settings and payment adjustments (`TAX_CLASS_CHARGES_ASSIGNED`). When the class still has dependents, the first call returns a confirmation response listing what will be removed; retry with `confirmed` and the returned `confirmation_token` to proceed. Products left without a class are taxed by the market's default class. Fires `tax_classes/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/tax-classes/{taxClassId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -30697,48 +30559,6 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
-        "advance_amounts": {
-          "description": "With `advance_type` `fixed`: a positive advance for every market currency, at the currency's amount precision. An advance of at least the order total makes the whole order payable online.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "advance_includes_fee": {
-          "description": "Whether the COD fee is paid online with the advance (`true`) or on delivery with the rest (`false`, the default).",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "advance_max_amounts": {
-          "description": "With `advance_type` `percent`: optional largest advance per currency; a minimum cannot exceed it.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "advance_min_amounts": {
-          "description": "With `advance_type` `percent`: optional smallest advance per currency.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "advance_percent": {
-          "description": "With `advance_type` `percent`: the share of the order total before the COD fee, above 0 and below 100, with at most six fractional digits. Null otherwise.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "advance_type": {
-          "description": "Part-paid cash on delivery: `none` (the default), `fixed` or `percent`. With an advance, the shopper pays it online at checkout through one of the market's payment apps before the order is placed, and the rest is collected on delivery. The order is one order with two payments; shipping apps read `amount_due_on_delivery`. Checkout shows cash on delivery as unavailable when the market offers no online payment. In `simple` mode the market's advance applies; in `advanced` mode the matched zone's does.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
         "confirmation_token": {
           "description": "Token returned by `CONFIRMATION_REQUIRED` for the same settings change.",
           "type": [
@@ -30946,48 +30766,6 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
-        "advance_amounts": {
-          "description": "With `advance_type` `fixed`: a positive advance for every market currency, at the currency's amount precision. An advance of at least the order total makes the whole order payable online.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "advance_includes_fee": {
-          "description": "Whether the COD fee is paid online with the advance (`true`) or on delivery with the rest (`false`, the default).",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "advance_max_amounts": {
-          "description": "With `advance_type` `percent`: optional largest advance per currency; a minimum cannot exceed it.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "advance_min_amounts": {
-          "description": "With `advance_type` `percent`: optional smallest advance per currency.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "advance_percent": {
-          "description": "With `advance_type` `percent`: the share of the order total before the COD fee, above 0 and below 100, with at most six fractional digits. Null otherwise.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "advance_type": {
-          "description": "Part-paid cash on delivery: `none` (the default), `fixed` or `percent`. With an advance, the shopper pays it online at checkout through one of the market's payment apps before the order is placed, and the rest is collected on delivery. The order is one order with two payments; shipping apps read `amount_due_on_delivery`. Checkout shows cash on delivery as unavailable when the market offers no online payment. In `advanced` mode this zone's advance applies when it matched the shipping address.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
         "countries": {
           "description": "Country codes from this market covered by the zone. Leave empty for the default zone.",
           "items": {
@@ -31205,48 +30983,6 @@
     "input_schema": {
       "additionalProperties": false,
       "properties": {
-        "advance_amounts": {
-          "description": "With `advance_type` `fixed`: a positive advance for every market currency, at the currency's amount precision. An advance of at least the order total makes the whole order payable online.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "advance_includes_fee": {
-          "description": "Whether the COD fee is paid online with the advance (`true`) or on delivery with the rest (`false`, the default).",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "advance_max_amounts": {
-          "description": "With `advance_type` `percent`: optional largest advance per currency; a minimum cannot exceed it.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "advance_min_amounts": {
-          "description": "With `advance_type` `percent`: optional smallest advance per currency.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "advance_percent": {
-          "description": "With `advance_type` `percent`: the share of the order total before the COD fee, above 0 and below 100, with at most six fractional digits. Null otherwise.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "advance_type": {
-          "description": "Part-paid cash on delivery: `none` (the default), `fixed` or `percent`. With an advance, the shopper pays it online at checkout through one of the market's payment apps before the order is placed, and the rest is collected on delivery. The order is one order with two payments; shipping apps read `amount_due_on_delivery`. Checkout shows cash on delivery as unavailable when the market offers no online payment. In `advanced` mode this zone's advance applies when it matched the shipping address.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
         "countries": {
           "description": "Country codes from this market covered by the zone. Leave empty for the default zone.",
           "items": {

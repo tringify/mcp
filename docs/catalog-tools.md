@@ -409,8 +409,6 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `create_market_payment_adjustment` | `POST /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments` | store:markets:write |
 | `update_market_payment_adjustment` | `PUT /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}` | store:markets:write |
 | `delete_market_payment_adjustment` | `DELETE /api/2025-01/markets/{marketId}/payment-providers/{bindingId}/adjustments/{ruleId}` | store:markets:write |
-| `get_market_customer_notes` | `GET /api/2025-01/markets/{marketId}/customer-notes` | store:markets:read |
-| `update_market_customer_notes` | `PUT /api/2025-01/markets/{marketId}/customer-notes` | store:markets:write |
 | `get_market_tax_class_limits` | `GET /api/2025-01/markets/tax-classes/limits` | store:markets:read |
 | `list_market_tax_classes` | `GET /api/2025-01/markets/{marketId}/tax-classes` | store:markets:read |
 | `create_market_tax_class` | `POST /api/2025-01/markets/{marketId}/tax-classes` | store:markets:write |
