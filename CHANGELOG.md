@@ -1,5 +1,11 @@
 # Changelog
 
+## Trim transparent edges — 27 November 2026
+
+- `crop_image` takes `trim` `true` without a rectangle: the image is cropped to the smallest rectangle that holds every visible pixel, cutting away transparent edges (a logo, a cut-out). It costs no AI credits and keeps the transparency. `image_actions` lists `trim` for PNG, WebP and GIF images; a JPEG has none.
+- An image with no transparent edge is refused with `STORAGE_TRIM_NO_TRANSPARENT_EDGE`, a fully transparent one with `STORAGE_TRIM_EMPTY`.
+- Crop jobs (`create_image_job` with `action` `crop`) take `{file_id, trim: true}` items; an image with no transparent edge is skipped.
+
 ## Orderable countries — 27 November 2026
 
 - New `list_orderable_countries` (`GET /markets/orderable-countries`): every country an active market serves, with its `market_id`, `market_name` and the `currency_code` an order there is placed in. It needs `markets:read` or `orders:write`, so an agent that creates orders can read it without market access.
