@@ -28230,7 +28230,7 @@
           "type": "string"
         },
         "type": {
-          "description": "Filter by type: `percentage`, `fixed_amount`, `buy_x_get_y`, `bundle`, `free_gift`, or `tiered`.",
+          "description": "Filter by type: `percentage`, `fixed_amount`, `buy_x_get_y`, `bundle`, or `free_gift`.",
           "type": "string"
         }
       },
@@ -28248,7 +28248,7 @@
     "api_key": "discounts.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/discounts",
-    "description": "Add a merchandise discount to a market. Choose one discount type and provide the fields for that type. `value`, `amounts`, Buy X Get Y, bundle and gift fields sent for another type are rejected; `tier_value_kind` and `tiers` sent for a type other than tiered are ignored. A property the request does not accept is refused with `STORE_API_BODY_PROPERTY_UNKNOWN`. Empty money maps (`{}`) are treated as not set, so money maps from a GET can be sent back unchanged for any type. Percentage discounts use `value`; fixed-amount discounts use `amounts`; Buy X Get Y offers define qualifying and reward sets; bundles define every required component and either a set price or percentage reduction. Free gifts specify gift-only products and how they enter the cart; tiered discounts specify ascending base-currency subtotal thresholds and apply only the highest reached tier. Coupon discounts with code_mode single need a code that is unique within the market; with code_mode unique they have none and mint a code per email through the codes endpoint. Automatic discounts apply without a code. Product, collection, category, customer, and group ids must belong to the same store. Free delivery is configured with the market's shipping methods. The response is the saved discount, with `usage_count` and `usage_held_count` at 0 and a matching `usage_summary`. A successful create publishes `discounts/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a merchandise discount to a market. Choose one discount type and provide the fields for that type. `value`, `amounts`, Buy X Get Y, bundle and gift fields sent for another type are rejected; A property the request does not accept is refused with `STORE_API_BODY_PROPERTY_UNKNOWN`. Empty money maps (`{}`) are treated as not set, so money maps from a GET can be sent back unchanged for any type. Percentage discounts use `value`; fixed-amount discounts use `amounts`; Buy X Get Y offers define qualifying and reward sets; bundles define every required component and either a set price or percentage reduction. Free gifts specify gift-only products and how they enter the cart. Coupon discounts with code_mode single need a code that is unique within the market; with code_mode unique they have none and mint a code per email through the codes endpoint. Automatic discounts apply without a code. Product, collection, category, customer, and group ids must belong to the same store. Free delivery is configured with the market's shipping methods. The response is the saved discount, with `usage_count` and `usage_held_count` at 0 and a matching `usage_summary`. A successful create publishes `discounts/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -28534,21 +28534,21 @@
           "type": "string"
         },
         "max_discount": {
-          "description": "Cap the amount saved, keyed by currency code. Percentage, bundle and tiered discounts accept it; fixed-amount, Buy X Get Y and free gift discounts reject it with DISCOUNT_MAX_DISCOUNT_FORBIDDEN.",
+          "description": "Cap the amount saved, keyed by currency code. Percentage and bundle discounts accept it; fixed-amount, Buy X Get Y and free gift discounts reject it with DISCOUNT_MAX_DISCOUNT_FORBIDDEN.",
           "type": [
             "object",
             "null"
           ]
         },
         "min_quantity": {
-          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage, fixed-amount and free gift discounts accept this condition; Buy X Get Y, bundle and tiered discounts reject it with DISCOUNT_MIN_QUANTITY_FORBIDDEN.",
+          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage, fixed-amount and free gift discounts accept this condition; Buy X Get Y and bundle discounts reject it with DISCOUNT_MIN_QUANTITY_FORBIDDEN.",
           "type": [
             "integer",
             "null"
           ]
         },
         "min_subtotal": {
-          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y, bundle and tiered discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Gift-only items and items left out by the market's quantity-pricing setting never count. Every type accepts it.",
+          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y and bundle discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Gift-only items and items left out by the market's quantity-pricing setting never count. Every type accepts it.",
           "type": [
             "object",
             "null"
@@ -28607,40 +28607,8 @@
             "null"
           ]
         },
-        "tier_value_kind": {
-          "description": "For tiered: percentage or fixed_amount.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "tiers": {
-          "description": "For tiered: 1–10 tiers with strictly ascending min_subtotal thresholds from 0 to money_amount_max, and positive values, in the base currency and its precision. Only the highest reached tier applies, chosen from the merchandise subtotal before any discount. Percentage values cannot exceed 100. Fixed savings can exceed the threshold but are capped at remaining eligible merchandise at checkout; merchandise never becomes negative. Other markets use the base amounts converted at the market's rate.",
-          "items": {
-            "additionalProperties": false,
-            "properties": {
-              "min_subtotal": {
-                "description": "Merchandise subtotal that reaches the tier, in the base currency.",
-                "type": "string"
-              },
-              "value": {
-                "description": "The tier's percentage or fixed saving.",
-                "type": "string"
-              }
-            },
-            "required": [
-              "min_subtotal",
-              "value"
-            ],
-            "type": "object"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        },
         "type": {
-          "description": "Choose `percentage`, `fixed_amount`, `buy_x_get_y`, `bundle`, `free_gift`, or `tiered`.",
+          "description": "Choose `percentage`, `fixed_amount`, `buy_x_get_y`, `bundle`, or `free_gift`.",
           "type": "string"
         },
         "unique_code_prefix": {
@@ -29106,21 +29074,21 @@
           "type": "string"
         },
         "max_discount": {
-          "description": "Cap the amount saved, keyed by currency code. Percentage, bundle and tiered discounts accept it; fixed-amount, Buy X Get Y and free gift discounts reject it with DISCOUNT_MAX_DISCOUNT_FORBIDDEN.",
+          "description": "Cap the amount saved, keyed by currency code. Percentage and bundle discounts accept it; fixed-amount, Buy X Get Y and free gift discounts reject it with DISCOUNT_MAX_DISCOUNT_FORBIDDEN.",
           "type": [
             "object",
             "null"
           ]
         },
         "min_quantity": {
-          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage, fixed-amount and free gift discounts accept this condition; Buy X Get Y, bundle and tiered discounts reject it with DISCOUNT_MIN_QUANTITY_FORBIDDEN.",
+          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage, fixed-amount and free gift discounts accept this condition; Buy X Get Y and bundle discounts reject it with DISCOUNT_MIN_QUANTITY_FORBIDDEN.",
           "type": [
             "integer",
             "null"
           ]
         },
         "min_subtotal": {
-          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y, bundle and tiered discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Gift-only items and items left out by the market's quantity-pricing setting never count. Every type accepts it.",
+          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y and bundle discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Gift-only items and items left out by the market's quantity-pricing setting never count. Every type accepts it.",
           "type": [
             "object",
             "null"
@@ -29179,40 +29147,8 @@
             "null"
           ]
         },
-        "tier_value_kind": {
-          "description": "For tiered: percentage or fixed_amount.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "tiers": {
-          "description": "For tiered: 1–10 tiers with strictly ascending min_subtotal thresholds from 0 to money_amount_max, and positive values, in the base currency and its precision. Only the highest reached tier applies, chosen from the merchandise subtotal before any discount. Percentage values cannot exceed 100. Fixed savings can exceed the threshold but are capped at remaining eligible merchandise at checkout; merchandise never becomes negative. Other markets use the base amounts converted at the market's rate.",
-          "items": {
-            "additionalProperties": false,
-            "properties": {
-              "min_subtotal": {
-                "description": "Merchandise subtotal that reaches the tier, in the base currency.",
-                "type": "string"
-              },
-              "value": {
-                "description": "The tier's percentage or fixed saving.",
-                "type": "string"
-              }
-            },
-            "required": [
-              "min_subtotal",
-              "value"
-            ],
-            "type": "object"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        },
         "type": {
-          "description": "Choose `percentage`, `fixed_amount`, `buy_x_get_y`, `bundle`, `free_gift`, or `tiered`.",
+          "description": "Choose `percentage`, `fixed_amount`, `buy_x_get_y`, `bundle`, or `free_gift`.",
           "type": "string"
         },
         "unique_code_prefix": {
@@ -29523,7 +29459,7 @@
     "api_key": "discounts.settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discount-settings",
-    "description": "Read how discounts are allowed to combine in this market. In `single` mode, one discount applies: every eligible automatic discount and every entered code are ranked together by `priority_mode`, and the first one wins. In `stack` mode, every eligible automatic discount applies, plus entered codes in ranked order up to `coupon_limit`; with `auto_coupon_combine` false, codes apply only when no automatic discount does. `best_for_customer` ranks by each discount's own saving; `manual` ranks by priority number, lowest first. Buy X Get Y, bundle and claimed gift offers use specific cart units, and two of them cannot use the same units: the higher-ranked keeps them and the other does not apply at all. Offers apply in three steps (Buy X Get Y, bundle and gift; then product, collection and category discounts; then order-wide discounts), and each uses the amount left after the earlier ones. With `apply_to_quantity_priced` false, quantity-priced items get no discount and do not count toward minimum spend, minimum quantity or tiers. Settings take effect the next time a cart or checkout is priced; placed orders keep their discounts. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discount-settings. Only the connected store is accessible.",
+    "description": "Read how discounts are allowed to combine in this market. In `single` mode, one discount applies: every eligible automatic discount and every entered code are ranked together by `priority_mode`, and the first one wins. In `stack` mode, every eligible automatic discount applies, plus entered codes in ranked order up to `coupon_limit`; with `auto_coupon_combine` false, codes apply only when no automatic discount does. `best_for_customer` ranks by each discount's own saving; `manual` ranks by priority number, lowest first. Buy X Get Y, bundle and claimed gift offers use specific cart units, and two of them cannot use the same units: the higher-ranked keeps them and the other does not apply at all. Offers apply in three steps (Buy X Get Y, bundle and gift; then product, collection and category discounts; then order-wide discounts), and each uses the amount left after the earlier ones. With `apply_to_quantity_priced` false, quantity-priced items get no discount and do not count toward minimum spend or minimum quantity. Settings take effect the next time a cart or checkout is priced; placed orders keep their discounts. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discount-settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -29552,7 +29488,7 @@
       "additionalProperties": false,
       "properties": {
         "apply_to_quantity_priced": {
-          "description": "When false, items with quantity pricing get no discount and do not count toward minimum spend, minimum quantity or tiers. When true, they are discounted like any other item, on top of their quantity price.",
+          "description": "When false, items with quantity pricing get no discount and do not count toward minimum spend or minimum quantity. When true, they are discounted like any other item, on top of their quantity price.",
           "type": [
             "boolean",
             "null"

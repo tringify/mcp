@@ -5,6 +5,7 @@
 - `create_market_discount`, `update_market_discount`, `create_market_payment_adjustment` and `update_market_payment_adjustment` take one `show_to_shoppers` in place of `show_in_cart`, `show_on_product_page` and `show_on_product_cards`. A shown discount appears on the product pages and product cards it applies to while it is for everyone; a shown code is also suggested in the cart and at checkout to shoppers it can apply to, at most `cart_max_shown` codes in priority order.
 - `offer_conditions` and `offer_note` are removed: Tringify words every offer's conditions and how it applies. `offer_label` stays the only translatable offer text.
 - `DISCOUNT_SHOWN_LIMIT` replaces the product page and product card limit errors; the audience errors are gone. The discount limits carry `shown_max_per_market`, `product_page_max_shown`, `product_cards_max_shown` and `cart_max_shown`.
+- The `tiered` discount type is removed, with `tier_value_kind`, `tiers` and the tier limits and errors. For bigger savings on bigger orders, create one discount per level with its own `min_subtotal` and set the market's discount stacking to `single`.
 - `list_order_channel_prefixes` and `set_order_channel_prefix` are removed, and order settings keep only a prefix, a suffix and the next order number.
 
 ## Online payment discounts on product cards — 23 November 2026
