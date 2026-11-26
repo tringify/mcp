@@ -13632,12 +13632,12 @@
     "api_key": "files.crop",
     "api_method": "POST",
     "api_path": "/api/2025-01/files/{id}/crop",
-    "description": "Crop and rotate an image and save it as a new file or over the original. Cuts a rectangle out of a still image (JPEG, PNG, WebP or GIF) at its full resolution and saves it as a new file in the same library (`save_as` `copy`, the default; the original is never changed) or, with `save_as` `replace`, in place of the original's image (same file ID and URL everywhere it is used; the image it replaces is kept as an earlier version you can restore with `POST /files/{id}/versions/{version_id}/restore`, and a replace sends `files/update` with `content` in `changed_fields` instead of a create webhook). `rotate` turns the image clockwise by 0, 90, 180 or 270 degrees first, after its camera orientation is applied; `x`, `y`, `width` and `height` are pixels of the upright, rotated image (`GET /files/{id}` gives its `width` and `height`; swap them for 90 and 270). A JPEG or an opaque WebP is saved as a JPEG; a PNG, a GIF or a WebP with transparency as a PNG, keeping transparency. The new file is checked against the store's storage quota, file limit and image limits like any upload, keeps the original's alt text and sends `files/create`, `site_assets/create`, `ad_assets/create` or `content_assets/create`. Animated images cannot be cropped. Send an `Idempotency-Key` header so a retry returns the same new file instead of making another. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset; library=content_assets maps to API content_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/{id}/crop. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits. Read the image with get_file first: x, y, width and height are pixels of the image after rotate, so with rotate 90 or 270 its width and height swap. The crop is a new file unless save_as is replace; before a replace call get_file_usage, tell the user where the image is used and get their explicit choice (the old image is kept as an earlier version).",
+    "description": "Crop, rotate or trim the transparent edges of an image and save it as a new file or over the original. Cuts a rectangle out of a still image (JPEG, PNG, WebP or GIF) at its full resolution and saves it as a new file in the same library (`save_as` `copy`, the default; the original is never changed) or, with `save_as` `replace`, in place of the original's image (same file ID and URL everywhere it is used; the image it replaces is kept as an earlier version you can restore with `POST /files/{id}/versions/{version_id}/restore`, and a replace sends `files/update` with `content` in `changed_fields` instead of a create webhook). `rotate` turns the image clockwise by 0, 90, 180 or 270 degrees first, after its camera orientation is applied; `x`, `y`, `width` and `height` are pixels of the upright, rotated image (`GET /files/{id}` gives its `width` and `height`; swap them for 90 and 270). A JPEG or an opaque WebP is saved as a JPEG; a PNG, a GIF or a WebP with transparency as a PNG, keeping transparency. The new file is checked against the store's storage quota, file limit and image limits like any upload, keeps the original's alt text and sends `files/create`, `site_assets/create`, `ad_assets/create` or `content_assets/create`. Animated images cannot be cropped. With `trim` `true`, send no rectangle: Tringify crops the smallest rectangle that holds every visible pixel (at least 8/255 opaque), cutting away transparent edges, as for a logo or a cut-out with empty space around it; `image_actions` lists `trim` for PNG, WebP and GIF images (a JPEG has no transparency), and an image with no transparent edge is refused with `STORAGE_TRIM_NO_TRANSPARENT_EDGE`. Send an `Idempotency-Key` header so a retry returns the same new file instead of making another. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset; library=content_assets maps to API content_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/{id}/crop. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits. Read the image with get_file first: x, y, width and height are pixels of the image after rotate, so with rotate 90 or 270 its width and height swap. The crop is a new file unless save_as is replace; before a replace call get_file_usage, tell the user where the image is used and get their explicit choice (the old image is kept as an earlier version).",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "height": {
-          "description": "Height of the rectangle in pixels, at least 1.",
+          "description": "Height of the rectangle in pixels, at least 1. Required unless `trim` is `true`.",
           "type": "integer"
         },
         "id": {
@@ -13682,25 +13682,25 @@
             "null"
           ]
         },
+        "trim": {
+          "description": "`true`: send no rectangle; crop away the transparent edges (the smallest rectangle holding every visible pixel).",
+          "type": "boolean"
+        },
         "width": {
-          "description": "Width of the rectangle in pixels, at least 1.",
+          "description": "Width of the rectangle in pixels, at least 1. Required unless `trim` is `true`.",
           "type": "integer"
         },
         "x": {
-          "description": "Left edge of the rectangle, in pixels of the rotated image.",
+          "description": "Left edge of the rectangle, in pixels of the rotated image. Required unless `trim` is `true`.",
           "type": "integer"
         },
         "y": {
-          "description": "Top edge of the rectangle, in pixels of the rotated image.",
+          "description": "Top edge of the rectangle, in pixels of the rotated image. Required unless `trim` is `true`.",
           "type": "integer"
         }
       },
       "required": [
         "id",
-        "x",
-        "y",
-        "width",
-        "height",
         "library"
       ],
       "type": "object"
