@@ -6,6 +6,7 @@
 - `offer_conditions` and `offer_note` are removed: Tringify words every offer's conditions and how it applies. `offer_label` stays the only translatable offer text.
 - `DISCOUNT_SHOWN_LIMIT` replaces the product page and product card limit errors; the audience errors are gone. The discount limits carry `shown_max_per_market`, `product_page_max_shown`, `product_cards_max_shown` and `cart_max_shown`.
 - The `tiered` discount type is removed, with `tier_value_kind`, `tiers` and the tier limits and errors. For bigger savings on bigger orders, create one discount per level with its own `min_subtotal` and set the market's discount stacking to `single`.
+- The `bundle` discount type is removed, with `bundle_value_mode`, `bundle_percentage` and `bundle_prices`. A `percentage` or `fixed_amount` discount takes `together_items` and `together_max_sets` instead: it then applies only to complete sets of those items, the percentage or amount off each set. The limits carry `supports_together` per type and `together_items_min`, `together_items_max`, `together_item_quantity_max`, `together_max_sets_min`, `together_max_sets_max` and `together_item_types`.
 - `list_order_channel_prefixes` and `set_order_channel_prefix` are removed, and order settings keep only a prefix, a suffix and the next order number.
 
 ## Online payment discounts on product cards — 23 November 2026

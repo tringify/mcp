@@ -63,7 +63,7 @@ Markets manage already-connected payment-provider availability and provider-spec
 
 ## Discounts and checkout
 
-Discount types have different required fields and targeting rules. Read discount limits and complete definitions, including related products/variants, gift products and bundle components. Whole-product and exact-variant targets are distinct. Buy X Get Y/bundles reserve their claimed units; stacked savings use remaining values and cannot make merchandise negative.
+Discount types have different required fields and targeting rules. Read discount limits and complete definitions, including related products/variants, gift products and items bought together. Whole-product and exact-variant targets are distinct. Buy X Get Y offers and discounts on items bought together reserve their claimed units; stacked savings use remaining values and cannot make merchandise negative.
 
 To show a discount or an online-payment discount to shoppers, set `show_to_shoppers`. A discount then appears on the product pages and product cards it applies to while it is for everyone, and a code is also suggested in the cart and at checkout to shoppers it can apply to (a shown code is public; unique codes can't be shown). An online-payment discount appears on product pages and every product card. Read `shown_max_per_market`, `product_page_max_shown`, `product_cards_max_shown`, `cart_max_shown` and `offer_label_max_length` from the discount limits (the payment adjustment catalog carries the label limit). Tringify words every offer in each shopper's language and currency; themes show it from `product.offers` and `card.offers`.
 

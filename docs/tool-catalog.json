@@ -28192,7 +28192,7 @@
     "api_key": "discounts.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discounts",
-    "description": "Browse the discounts configured for a market. Use this endpoint for a paginated discount list. You can filter by current status, discount type, or activation method, and search by name or coupon code. Search matches any part of the name or code, ignoring case. List records carry the discount definition plus worded labels (`status_label`, `type_label`, `value_label`, `usage_summary` and others); their targeting, eligibility, Buy X Get Y, bundle and gift arrays are always empty and `can_view_products`/`can_view_customers` are false. Read one discount to get those. Scheduled and expired statuses are calculated from the discount's dates when you read it. A `per_page` above list_max_limit is rejected with `VALIDATION_LIST_INVALID_LIMIT`, and sorting by `ends_at` lists discounts without an end date last. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible.",
+    "description": "Browse the discounts configured for a market. Use this endpoint for a paginated discount list. You can filter by current status, discount type, or activation method, and search by name or coupon code. Search matches any part of the name or code, ignoring case. List records carry the discount definition plus worded labels (`status_label`, `type_label`, `value_label`, `usage_summary` and others); their targeting, eligibility, Buy X Get Y, together and gift arrays are always empty and `can_view_products`/`can_view_customers` are false. Read one discount to get those. Scheduled and expired statuses are calculated from the discount's dates when you read it. A `per_page` above list_max_limit is rejected with `VALIDATION_LIST_INVALID_LIMIT`, and sorting by `ends_at` lists discounts without an end date last. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -28230,7 +28230,7 @@
           "type": "string"
         },
         "type": {
-          "description": "Filter by type: `percentage`, `fixed_amount`, `buy_x_get_y`, `bundle`, or `free_gift`.",
+          "description": "Filter by type: `percentage`, `fixed_amount`, `buy_x_get_y`, or `free_gift`.",
           "type": "string"
         }
       },
@@ -28248,7 +28248,7 @@
     "api_key": "discounts.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/discounts",
-    "description": "Add a merchandise discount to a market. Choose one discount type and provide the fields for that type. `value`, `amounts`, Buy X Get Y, bundle and gift fields sent for another type are rejected; A property the request does not accept is refused with `STORE_API_BODY_PROPERTY_UNKNOWN`. Empty money maps (`{}`) are treated as not set, so money maps from a GET can be sent back unchanged for any type. Percentage discounts use `value`; fixed-amount discounts use `amounts`; Buy X Get Y offers define qualifying and reward sets; bundles define every required component and either a set price or percentage reduction. Free gifts specify gift-only products and how they enter the cart. Coupon discounts with code_mode single need a code that is unique within the market; with code_mode unique they have none and mint a code per email through the codes endpoint. Automatic discounts apply without a code. Product, collection, category, customer, and group ids must belong to the same store. Free delivery is configured with the market's shipping methods. The response is the saved discount, with `usage_count` and `usage_held_count` at 0 and a matching `usage_summary`. A successful create publishes `discounts/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a merchandise discount to a market. Choose one discount type and provide the fields for that type. `value`, `amounts`, Buy X Get Y, together and gift fields sent for another type are rejected. A property the request does not accept is refused with `STORE_API_BODY_PROPERTY_UNKNOWN`. Empty money maps (`{}`) are treated as not set, so money maps from a GET can be sent back unchanged for any type. Percentage discounts use `value`; fixed-amount discounts use `amounts`; Buy X Get Y offers define qualifying and reward sets. A percentage or fixed-amount discount with `together_items` applies only to complete sets of those items bought together: the percentage or the amount comes off each set. Free gifts specify gift-only products and how they enter the cart. Coupon discounts with code_mode single need a code that is unique within the market; with code_mode unique they have none and mint a code per email through the codes endpoint. Automatic discounts apply without a code. Product, collection, category, customer, and group ids must belong to the same store. Free delivery is configured with the market's shipping methods. The response is the saved discount, with `usage_count` and `usage_held_count` at 0 and a matching `usage_summary`. A successful create publishes `discounts/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -28264,66 +28264,8 @@
           ]
         },
         "applies_to": {
-          "description": "Apply the discount to the whole order or to selected products or variants, collections, or categories. Buy X Get Y and bundle offers define their items separately and use `entire_order` here.",
+          "description": "Apply the discount to the whole order or to selected products or variants, collections, or categories. Buy X Get Y offers and discounts with `together_items` define their items separately and use `entire_order` here.",
           "type": "string"
-        },
-        "bundle_items": {
-          "description": "The products or variants and quantities required for one complete bundle. Provide between bundle_components_min and bundle_components_max different components. A `product` component matches any variant of that product; a `variant` component matches only that variant.",
-          "items": {
-            "additionalProperties": false,
-            "properties": {
-              "item_id": {
-                "description": "The product's or variant's id, as a string.",
-                "type": "string"
-              },
-              "item_type": {
-                "description": "product (any of its variants) or variant (that variant only).",
-                "type": "string"
-              },
-              "quantity": {
-                "description": "Units of this component in one bundle.",
-                "type": "integer"
-              }
-            },
-            "required": [
-              "item_type",
-              "item_id",
-              "quantity"
-            ],
-            "type": "object"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        },
-        "bundle_max_sets": {
-          "description": "The maximum number of complete bundle sets discounted on one order. Send -1 or null for no limit; an unlimited bundle is returned as null.",
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "bundle_percentage": {
-          "description": "The percentage reduction for each complete bundle when the value mode is `percentage`.",
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "bundle_prices": {
-          "description": "The price of one complete bundle, keyed by currency code. Include the base currency for fixed-price bundles; other market currencies without an entry use the converted base price.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "bundle_value_mode": {
-          "description": "Use `fixed_price` for a set price or `percentage` for a percentage reduction on each complete bundle.",
-          "type": [
-            "string",
-            "null"
-          ]
         },
         "bxgy_buy_items": {
           "description": "Simple products, exact variants, collections, or categories that can satisfy Buy X. Each item contains `item_type` (product, variant, collection, category) and string `item_id`. An item qualifies when it matches any target in the list. Bought and reward items are always different units, even when the two lists overlap.",
@@ -28534,21 +28476,21 @@
           "type": "string"
         },
         "max_discount": {
-          "description": "Cap the amount saved, keyed by currency code. Percentage and bundle discounts accept it; fixed-amount, Buy X Get Y and free gift discounts reject it with DISCOUNT_MAX_DISCOUNT_FORBIDDEN.",
+          "description": "Cap the amount saved, keyed by currency code. Percentage discounts accept it; fixed-amount, Buy X Get Y and free gift discounts reject it with DISCOUNT_MAX_DISCOUNT_FORBIDDEN.",
           "type": [
             "object",
             "null"
           ]
         },
         "min_quantity": {
-          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage, fixed-amount and free gift discounts accept this condition; Buy X Get Y and bundle discounts reject it with DISCOUNT_MIN_QUANTITY_FORBIDDEN.",
+          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage, fixed-amount and free gift discounts accept this condition; Buy X Get Y and together discounts reject it with DISCOUNT_MIN_QUANTITY_FORBIDDEN.",
           "type": [
             "integer",
             "null"
           ]
         },
         "min_subtotal": {
-          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y and bundle discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Gift-only items and items left out by the market's quantity-pricing setting never count. Every type accepts it.",
+          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y and together discounts use `entire_order`, so it counts every item in the cart, not only their own items. Gift-only items and items left out by the market's quantity-pricing setting never count. Every type accepts it.",
           "type": [
             "object",
             "null"
@@ -28607,8 +28549,45 @@
             "null"
           ]
         },
+        "together_items": {
+          "description": "Percentage and fixed amount only: the products or variants, with quantities, that must be bought together. The discount then applies only to complete sets of them (the percentage or the amount off each set) and `applies_to` must be `entire_order`. Provide between together_items_min and together_items_max different items, or none. A `product` item matches any variant of that product; a `variant` item matches only that variant.",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "item_id": {
+                "description": "The product's or variant's id, as a string.",
+                "type": "string"
+              },
+              "item_type": {
+                "description": "product (any of its variants) or variant (that variant only).",
+                "type": "string"
+              },
+              "quantity": {
+                "description": "Units of this item in one complete set.",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "item_type",
+              "item_id",
+              "quantity"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "together_max_sets": {
+          "description": "With together_items: the maximum number of complete sets discounted on one order. Send -1 or null for no limit; unlimited is returned as null.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "type": {
-          "description": "Choose `percentage`, `fixed_amount`, `buy_x_get_y`, `bundle`, or `free_gift`.",
+          "description": "Choose `percentage`, `fixed_amount`, `buy_x_get_y`, or `free_gift`.",
           "type": "string"
         },
         "unique_code_prefix": {
@@ -28670,7 +28649,7 @@
     "api_key": "discounts.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}",
-    "description": "Read one discount and its targeting choices. The response includes the complete discount definition and the ids it targets. Product-facing labels (products, variants, collections, categories, Buy X Get Y, bundle and gift items) are included when your token has `read_products`; customer names and group labels are included with `read_customers`. The ids remain available without those additional scopes, and `can_view_products` and `can_view_customers` tell you whether labels were included. The returned status reflects the discount's current schedule. `usage_count` includes uses held by unpaid checkouts; `usage_held_count` says how many of them are held, and `usage_summary` words both. Every discount counts its uses, with or without a limit. Deleting an order does not lower `usage_count`; a fully refunded order gives its uses back only when `refund_restores_usage` is on, and a cancelled or expired checkout gives back the use it held. `starts_at`, `ends_at`, `created_at` and `updated_at` are RFC 3339 in the store's time zone, with its offset; `starts_at_iso` and `ends_at_iso` give the start and end as local store time in the `YYYY-MM-DDTHH:mm:ss` form that create and update accept. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible.",
+    "description": "Read one discount and its targeting choices. The response includes the complete discount definition and the ids it targets. Product-facing labels (products, variants, collections, categories, Buy X Get Y, together and gift items) are included when your token has `read_products`; customer names and group labels are included with `read_customers`. The ids remain available without those additional scopes, and `can_view_products` and `can_view_customers` tell you whether labels were included. The returned status reflects the discount's current schedule. `usage_count` includes uses held by unpaid checkouts; `usage_held_count` says how many of them are held, and `usage_summary` words both. Every discount counts its uses, with or without a limit. Deleting an order does not lower `usage_count`; a fully refunded order gives its uses back only when `refund_restores_usage` is on, and a cancelled or expired checkout gives back the use it held. `starts_at`, `ends_at`, `created_at` and `updated_at` are RFC 3339 in the store's time zone, with its offset; `starts_at_iso` and `ends_at_iso` give the start and end as local store time in the `YYYY-MM-DDTHH:mm:ss` form that create and update accept. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -28799,66 +28778,8 @@
           ]
         },
         "applies_to": {
-          "description": "Apply the discount to the whole order or to selected products or variants, collections, or categories. Buy X Get Y and bundle offers define their items separately and use `entire_order` here.",
+          "description": "Apply the discount to the whole order or to selected products or variants, collections, or categories. Buy X Get Y offers and discounts with `together_items` define their items separately and use `entire_order` here.",
           "type": "string"
-        },
-        "bundle_items": {
-          "description": "The products or variants and quantities required for one complete bundle. Provide between bundle_components_min and bundle_components_max different components. A `product` component matches any variant of that product; a `variant` component matches only that variant.",
-          "items": {
-            "additionalProperties": false,
-            "properties": {
-              "item_id": {
-                "description": "The product's or variant's id, as a string.",
-                "type": "string"
-              },
-              "item_type": {
-                "description": "product (any of its variants) or variant (that variant only).",
-                "type": "string"
-              },
-              "quantity": {
-                "description": "Units of this component in one bundle.",
-                "type": "integer"
-              }
-            },
-            "required": [
-              "item_type",
-              "item_id",
-              "quantity"
-            ],
-            "type": "object"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        },
-        "bundle_max_sets": {
-          "description": "The maximum number of complete bundle sets discounted on one order. Send -1 or null for no limit; an unlimited bundle is returned as null.",
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "bundle_percentage": {
-          "description": "The percentage reduction for each complete bundle when the value mode is `percentage`.",
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "bundle_prices": {
-          "description": "The price of one complete bundle, keyed by currency code. Include the base currency for fixed-price bundles; other market currencies without an entry use the converted base price.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "bundle_value_mode": {
-          "description": "Use `fixed_price` for a set price or `percentage` for a percentage reduction on each complete bundle.",
-          "type": [
-            "string",
-            "null"
-          ]
         },
         "bxgy_buy_items": {
           "description": "Simple products, exact variants, collections, or categories that can satisfy Buy X. Each item contains `item_type` (product, variant, collection, category) and string `item_id`. An item qualifies when it matches any target in the list. Bought and reward items are always different units, even when the two lists overlap.",
@@ -29074,21 +28995,21 @@
           "type": "string"
         },
         "max_discount": {
-          "description": "Cap the amount saved, keyed by currency code. Percentage and bundle discounts accept it; fixed-amount, Buy X Get Y and free gift discounts reject it with DISCOUNT_MAX_DISCOUNT_FORBIDDEN.",
+          "description": "Cap the amount saved, keyed by currency code. Percentage discounts accept it; fixed-amount, Buy X Get Y and free gift discounts reject it with DISCOUNT_MAX_DISCOUNT_FORBIDDEN.",
           "type": [
             "object",
             "null"
           ]
         },
         "min_quantity": {
-          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage, fixed-amount and free gift discounts accept this condition; Buy X Get Y and bundle discounts reject it with DISCOUNT_MIN_QUANTITY_FORBIDDEN.",
+          "description": "Require between quantity_min and min_quantity_max eligible items from the limits response. Percentage, fixed-amount and free gift discounts accept this condition; Buy X Get Y and together discounts reject it with DISCOUNT_MIN_QUANTITY_FORBIDDEN.",
           "type": [
             "integer",
             "null"
           ]
         },
         "min_subtotal": {
-          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y and bundle discounts use `entire_order`, so it counts every item in the cart, not only the Buy X, Get Y or bundle items. Gift-only items and items left out by the market's quantity-pricing setting never count. Every type accepts it.",
+          "description": "Require a minimum merchandise subtotal, keyed by currency code. Include the base currency when you set this condition; other market currencies without an entry use the converted base amount. It is checked before any discount. For percentage, fixed-amount and free gift discounts it counts only the items matched by `applies_to`, leaving out items excluded by exclude_sale_items and a free gift's own gift items. Buy X Get Y and together discounts use `entire_order`, so it counts every item in the cart, not only their own items. Gift-only items and items left out by the market's quantity-pricing setting never count. Every type accepts it.",
           "type": [
             "object",
             "null"
@@ -29147,8 +29068,45 @@
             "null"
           ]
         },
+        "together_items": {
+          "description": "Percentage and fixed amount only: the products or variants, with quantities, that must be bought together. The discount then applies only to complete sets of them (the percentage or the amount off each set) and `applies_to` must be `entire_order`. Provide between together_items_min and together_items_max different items, or none. A `product` item matches any variant of that product; a `variant` item matches only that variant.",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "item_id": {
+                "description": "The product's or variant's id, as a string.",
+                "type": "string"
+              },
+              "item_type": {
+                "description": "product (any of its variants) or variant (that variant only).",
+                "type": "string"
+              },
+              "quantity": {
+                "description": "Units of this item in one complete set.",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "item_type",
+              "item_id",
+              "quantity"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "together_max_sets": {
+          "description": "With together_items: the maximum number of complete sets discounted on one order. Send -1 or null for no limit; unlimited is returned as null.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "type": {
-          "description": "Choose `percentage`, `fixed_amount`, `buy_x_get_y`, `bundle`, or `free_gift`.",
+          "description": "Choose `percentage`, `fixed_amount`, `buy_x_get_y`, or `free_gift`.",
           "type": "string"
         },
         "unique_code_prefix": {
@@ -29459,7 +29417,7 @@
     "api_key": "discounts.settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discount-settings",
-    "description": "Read how discounts are allowed to combine in this market. In `single` mode, one discount applies: every eligible automatic discount and every entered code are ranked together by `priority_mode`, and the first one wins. In `stack` mode, every eligible automatic discount applies, plus entered codes in ranked order up to `coupon_limit`; with `auto_coupon_combine` false, codes apply only when no automatic discount does. `best_for_customer` ranks by each discount's own saving; `manual` ranks by priority number, lowest first. Buy X Get Y, bundle and claimed gift offers use specific cart units, and two of them cannot use the same units: the higher-ranked keeps them and the other does not apply at all. Offers apply in three steps (Buy X Get Y, bundle and gift; then product, collection and category discounts; then order-wide discounts), and each uses the amount left after the earlier ones. With `apply_to_quantity_priced` false, quantity-priced items get no discount and do not count toward minimum spend or minimum quantity. Settings take effect the next time a cart or checkout is priced; placed orders keep their discounts. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discount-settings. Only the connected store is accessible.",
+    "description": "Read how discounts are allowed to combine in this market. In `single` mode, one discount applies: every eligible automatic discount and every entered code are ranked together by `priority_mode`, and the first one wins. In `stack` mode, every eligible automatic discount applies, plus entered codes in ranked order up to `coupon_limit`; with `auto_coupon_combine` false, codes apply only when no automatic discount does. `best_for_customer` ranks by each discount's own saving; `manual` ranks by priority number, lowest first. Buy X Get Y, together and claimed gift offers use specific cart units, and two of them cannot use the same units: the higher-ranked keeps them and the other does not apply at all. Offers apply in three steps (Buy X Get Y, together and gift; then product, collection and category discounts; then order-wide discounts), and each uses the amount left after the earlier ones. With `apply_to_quantity_priced` false, quantity-priced items get no discount and do not count toward minimum spend or minimum quantity. Settings take effect the next time a cart or checkout is priced; placed orders keep their discounts. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discount-settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
