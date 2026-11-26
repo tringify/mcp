@@ -1,5 +1,9 @@
 # Changelog
 
+## Simpler checkout fees — 26 November 2026
+
+- Checkout fees no longer take `show_calculation`, `calculation_texts` or `counts_toward_customs_value`. A per-item or percentage fee always shows its calculation line, worded by the store's Storefront Messages; checkout fees never join the customs value duty is charged on. The `CHECKOUT_FEE_CALCULATION_*` text errors are gone.
+
 ## Duty rules apply when enabled — 26 November 2026
 
 - `update_market` no longer takes `duties_enabled`, and markets no longer return it. An enabled duty rule estimates duties for its country; `duty_collection_mode` alone says who pays, and `collect_at_checkout` can be chosen at any time (`MARKET_DUTY_COLLECT_NEEDS_ESTIMATES` and `MARKET_DUTY_ACTIVE_DESTINATION_REQUIRED` are gone).

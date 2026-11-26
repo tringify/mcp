@@ -30177,7 +30177,7 @@
     "api_key": "duties.available-countries",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/duty-country-rules/available-countries",
-    "description": "Find the market countries that can receive a duty rule. Returns a paginated list of the market's countries, whether duties are enabled for each country, and whether a rule already exists. The readiness counts identify shippable catalog items missing weight, HS code, or country of origin. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/duty-country-rules/available-countries. Only the connected store is accessible.",
+    "description": "Find the market countries that can receive a duty rule. Returns a paginated list of the market's countries, and whether each already has a rule. The readiness counts identify shippable catalog items missing weight, HS code, or country of origin. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/duty-country-rules/available-countries. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -30249,7 +30249,7 @@
     "api_key": "duties.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/duty-country-rules",
-    "description": "Add a duty rule for one country in the market. The country must belong to the market, have a serving currency, and not already have a rule. Create an inactive rule while configuring rates; enable it once the required catalog data is ready. Default and HS-code rates may vary by origin country; use `*` as the fallback origin. Duty is charged on each line's customs value: its value after discounts (including payment discounts), without the tax its price includes. When `duty_includes_shipping` is on, the shipping charge without its included tax joins the customs value, and so does every checkout fee marked `counts_toward_customs_value`; both are shared across the rated imported lines in proportion to their value. Cash on delivery fees never count. Example in a tax-inclusive market with 20% VAT and a 12% rate: two items at 10 each with a 20% discount are 16, a customs value of 13.33, duty 1.60 and tax on duty 0.32; with 5 shipping and `duty_includes_shipping` the customs value is 13.33 + 4.17 = 17.50, duty 2.10 and tax on duty 0.42. The tax on duty uses each item's own tax rates and is always on top of the duty, never included in a price. Only when the market's `duty_collection_mode` is `collect_at_checkout` are the duty and its tax added to the order total (the tax is then part of the tax total); with `pay_on_delivery` they are the customer's estimate and with `included_in_price` your estimated cost, recorded on the order as `duty_total` and `duty_tax_estimate` and never added to the total. Estimates come from your own rules; carriers and customs may charge a different amount, including their own handling fees. A successful create publishes `duty_rules/create` with the complete saved rule. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/duty-country-rules. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a duty rule for one country in the market. The country must belong to the market, have a serving currency, and not already have a rule. Create an inactive rule while configuring rates; enable it once the required catalog data is ready. Default and HS-code rates may vary by origin country; use `*` as the fallback origin. Duty is charged on each line's customs value: its value after discounts (including payment discounts), without the tax its price includes. When `duty_includes_shipping` is on, the shipping charge without its included tax joins the customs value, shared across the rated imported lines in proportion to their value. Checkout fees never count. Example in a tax-inclusive market with 20% VAT and a 12% rate: two items at 10 each with a 20% discount are 16, a customs value of 13.33, duty 1.60 and tax on duty 0.32; with 5 shipping and `duty_includes_shipping` the customs value is 13.33 + 4.17 = 17.50, duty 2.10 and tax on duty 0.42. The tax on duty uses each item's own tax rates and is always on top of the duty, never included in a price. Only when the market's `duty_collection_mode` is `collect_at_checkout` are the duty and its tax added to the order total (the tax is then part of the tax total); with `pay_on_delivery` they are the customer's estimate and with `included_in_price` your estimated cost, recorded on the order as `duty_total` and `duty_tax_estimate` and never added to the total. Estimates come from your own rules; carriers and customs may charge a different amount, including their own handling fees. A successful create publishes `duty_rules/create` with the complete saved rule. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/duty-country-rules. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31600,7 +31600,7 @@
     "api_key": "checkout.fees.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/checkout-fees",
-    "description": "List the required charges and optional services configured for a market. Fees are returned in checkout order together with the live authoring contract. Required fees are applied automatically. Optional fees are available for the customer or an admin to select. Percentage fees use merchandise after product and order discounts; fixed per-item fees multiply by the total merchandise quantity. Per-item and percentage fees show a calculation line under the fee name at checkout (for example `₹100.00 per item × 3` or `5% of ₹1,000.00`) unless `show_calculation` is false; `checkout_fee_catalog.calculation_kinds` says which fees have one and the placeholders its text may use, and `calculation_defaults` gives the platform wording in each of the store's storefront languages, with the language's name in English as `label` and the platform label of a fee's text field as `text_prompt`. A fee may apply only to carts holding chosen products or products of chosen collections (`applies_to_options`, at most `max_targets_per_fee` targets), only from or below a discounted merchandise subtotal, and a percentage fee may be capped (`condition_types`). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/checkout-fees. Only the connected store is accessible.",
+    "description": "List the required charges and optional services configured for a market. Fees are returned in checkout order together with the live authoring contract. Required fees are applied automatically. Optional fees are available for the customer or an admin to select. Percentage fees use merchandise after product and order discounts; fixed per-item fees multiply by the total merchandise quantity. Per-item and percentage fees show a calculation line under the fee name at checkout (for example `₹100.00 per item × 3` or `5% of ₹1,000.00`); its wording is the store's Storefront Messages text in the shopper's language. `checkout_fee_catalog.calculation_kinds` says which fees have one, and `calculation_defaults` gives that wording in each of the store's storefront languages, with the language's name in English as `label` and the platform label of a fee's text field as `text_prompt`. A fee may apply only to carts holding chosen products or products of chosen collections (`applies_to_options`, at most `max_targets_per_fee` targets), only from or below a discounted merchandise subtotal, and a percentage fee may be capped (`condition_types`). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/checkout-fees. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31669,22 +31669,8 @@
           "description": "Use `order` to charge once or `item` to multiply a fixed fee by total merchandise quantity. Percentage fees use `order`.",
           "type": "string"
         },
-        "calculation_texts": {
-          "description": "Your own wording of the calculation line, keyed by storefront language (an enabled store language). A language left out uses the platform default. A per-item fee's text may use `{{amount}}` (the amount per item) and `{{quantity}}` (the number of items); a percentage fee's `{{rate}}` (the percentage, without the % sign), `{{base}}` (the discounted merchandise amount) and `{{cap}}` (the most the fee can be, when `percent_cap_enabled` is true). At most `calculation_text_max_length` characters each. Not allowed on a fixed fee charged once per order. Replaces the saved texts; send `{}` to use the defaults everywhere.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
         "collect_text": {
           "description": "Whether the fee asks the customer for text, such as a gift message, when they select it. Only for optional fees. The text is kept on the order's fee line. Defaults to `false`.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "counts_toward_customs_value": {
-          "description": "Whether the fee, without the tax it includes, joins the customs value import duty is charged on, shared across the rated imported lines by value. Use it for services that become part of the goods, such as gift wrap or packing. Defaults to `false`. Cash on delivery fees never count.",
           "type": [
             "boolean",
             "null"
@@ -31771,13 +31757,6 @@
           "description": "Percentage of discounted merchandise when `fee_type` is `percent`.",
           "type": [
             "string",
-            "null"
-          ]
-        },
-        "show_calculation": {
-          "description": "Whether checkout shows how the fee was worked out, under its name, for a fixed fee charged per item (`₹100.00 per item × 3`) or a percentage fee (`5% of ₹1,000.00`). Defaults to `true`. A fixed fee charged once per order has no calculation line. Orders keep the line the shopper saw.",
-          "type": [
-            "boolean",
             "null"
           ]
         },
@@ -31871,22 +31850,8 @@
           "description": "Use `order` to charge once or `item` to multiply a fixed fee by total merchandise quantity. Percentage fees use `order`.",
           "type": "string"
         },
-        "calculation_texts": {
-          "description": "Your own wording of the calculation line, keyed by storefront language (an enabled store language). A language left out uses the platform default. A per-item fee's text may use `{{amount}}` (the amount per item) and `{{quantity}}` (the number of items); a percentage fee's `{{rate}}` (the percentage, without the % sign), `{{base}}` (the discounted merchandise amount) and `{{cap}}` (the most the fee can be, when `percent_cap_enabled` is true). At most `calculation_text_max_length` characters each. Not allowed on a fixed fee charged once per order. Replaces the saved texts; send `{}` to use the defaults everywhere.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
         "collect_text": {
           "description": "Whether the fee asks the customer for text, such as a gift message, when they select it. Only for optional fees. The text is kept on the order's fee line. Defaults to `false`.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "counts_toward_customs_value": {
-          "description": "Whether the fee, without the tax it includes, joins the customs value import duty is charged on, shared across the rated imported lines by value. Use it for services that become part of the goods, such as gift wrap or packing. Defaults to `false`. Cash on delivery fees never count.",
           "type": [
             "boolean",
             "null"
@@ -31978,13 +31943,6 @@
           "description": "Percentage of discounted merchandise when `fee_type` is `percent`.",
           "type": [
             "string",
-            "null"
-          ]
-        },
-        "show_calculation": {
-          "description": "Whether checkout shows how the fee was worked out, under its name, for a fixed fee charged per item (`₹100.00 per item × 3`) or a percentage fee (`5% of ₹1,000.00`). Defaults to `true`. A fixed fee charged once per order has no calculation line. Orders keep the line the shopper saw.",
-          "type": [
-            "boolean",
             "null"
           ]
         },
