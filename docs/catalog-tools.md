@@ -726,6 +726,12 @@ Email subscriber lifecycle webhooks are `subscribers/create`, `subscribers/updat
 | `get_location_translations` | `GET /api/2025-01/locations/translations/{locale}` | store:locations:read, store:settings.languages:read |
 | `set_location_translations` | `PUT /api/2025-01/locations/translations` | store:locations:write, store:settings.languages:write |
 | `reorder_locations` | `POST /api/2025-01/locations/reorder` | store:locations:write |
+| `get_location_fulfillment_settings` | `GET /api/2025-01/locations/fulfillment-settings` | store:locations:read |
+| `update_location_fulfillment_settings` | `PUT /api/2025-01/locations/fulfillment-settings` | store:locations:write |
+| `list_location_fulfillment_providerss` | `GET /api/2025-01/locations/fulfillment-providers` | store:locations:read |
+| `candidates_location_fulfillment_providers` | `GET /api/2025-01/locations/fulfillment-providers/candidates` | store:locations:read |
+| `set_location_fulfillment_providers` | `PUT /api/2025-01/locations/{id}/fulfillment-provider` | store:locations:write |
+| `clear_location_fulfillment_providers` | `DELETE /api/2025-01/locations/{id}/fulfillment-provider` | store:locations:write |
 
 ## Domains and DNS
 
@@ -900,6 +906,11 @@ Pixel tools manage a storefront's custom pixels and the merchant's switch for ea
 | `list_storefront_messages` | `GET /api/2025-01/storefront-messages` | store:online_store.storefront_messages:read |
 | `save_storefront_message` | `PUT /api/2025-01/storefront-messages/overrides` | store:online_store.storefront_messages:write |
 | `reset_storefront_message` | `DELETE /api/2025-01/storefront-messages/overrides/{code}` | store:online_store.storefront_messages:write |
+| `get_search_engines` | `GET /api/2025-01/storefronts/{storefrontId}/search-engines` | store:online_store.storefronts:read |
+| `update_search_engines` | `PUT /api/2025-01/storefronts/{storefrontId}/search-engines` | store:online_store.storefronts:write |
+| `list_crawler_visits` | `GET /api/2025-01/storefronts/{storefrontId}/crawler-visits` | store:online_store.storefronts:read |
+| `get_storefront_sorts` | `GET /api/2025-01/storefront-sorts` | store:products:read |
+| `update_storefront_sorts` | `PUT /api/2025-01/storefront-sorts` | store:products:write |
 
 ## Gift Cards
 
@@ -992,6 +1003,10 @@ Each tool needs the access of the import or export `type` it works on: read for 
 | `set_file_translation` | `PUT /api/2025-01/files/{id}/translations/{locale}` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `bulk_delete_files` | `POST /api/2025-01/files/bulk-delete` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `health_market_duty_country_rule` | `GET /api/2025-01/markets/duty-health` | store:markets:read, store:products:read |
+| `bulk_update_page_status` | `POST /api/2025-01/pages/bulk-update-status` | store:pages:write |
+| `preview_metaobject` | `POST /api/2025-01/metaobjects/{metaobjectId}/preview` | store:metaobjects:read |
+| `get_metaobject_theme_samples` | `GET /api/2025-01/metaobject_definitions/theme-samples/{themeId}` | store:metaobjects:read |
+| `add_metaobject_theme_samples` | `POST /api/2025-01/metaobject_definitions/theme-samples/{themeId}` | store:metaobjects:write |
 
 ## Customer emails
 
@@ -1080,8 +1095,6 @@ Fake Pay is a simulator and moves no real money. Use `get_order` and the ordinar
 | `get_order_settings` | `GET /api/2025-01/orders/settings` | store:orders:read |
 | `get_order_settings_limits` | `GET /api/2025-01/orders/settings/limits` | store:orders:read |
 | `update_order_settings` | `PUT /api/2025-01/orders/settings` | store:orders:write |
-| `list_order_channel_prefixes` | `GET /api/2025-01/orders/settings/channel-prefixes` | store:orders:read |
-| `set_order_channel_prefix` | `PUT /api/2025-01/orders/settings/channel-prefixes/{channel_id}` | store:orders:write |
 
 ## Order tags
 
@@ -1221,9 +1234,9 @@ Verification tags prove ownership of the store's domains to services such as sea
 
 | Tool | Store API operation | Required access |
 | --- | --- | --- |
-| `list_site_verification_tagss` | `GET /api/2025-01/site-verification-tags` | store:online_store.site_verification:read |
-| `create_site_verification_tags` | `POST /api/2025-01/site-verification-tags` | store:online_store.site_verification:write |
-| `delete_site_verification_tags` | `DELETE /api/2025-01/site-verification-tags/{tagId}` | store:online_store.site_verification:write |
+| `list_site_verification_tags` | `GET /api/2025-01/site-verification-tags` | store:online_store.site_verification:read |
+| `create_site_verification_tag` | `POST /api/2025-01/site-verification-tags` | store:online_store.site_verification:write |
+| `delete_site_verification_tag` | `DELETE /api/2025-01/site-verification-tags/{tagId}` | store:online_store.site_verification:write |
 
 ## Deleted products, bulk metafield values and other tools
 
