@@ -1,5 +1,9 @@
 # Changelog
 
+## Refunds give discount uses back — 26 November 2026
+
+- Discounts no longer take `refund_restores_usage`. A fully refunded order (every item a discount reduced, or the whole order) always gives that discount's use back, like a cancellation.
+
 ## Shipping is zones and methods — 26 November 2026
 
 - `get_market_shipping_settings` and `update_market_shipping_settings` are removed, with the `shipping_settings/update` webhook. Shipping has no simple or advanced mode: every market has an Everywhere zone (its default zone) and ships through zones and methods. A new market starts with Everywhere and one free method. Free shipping from an amount is a `price` method with a paid tier from zero and a free tier from the threshold.

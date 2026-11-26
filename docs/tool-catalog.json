@@ -28383,13 +28383,6 @@
             "null"
           ]
         },
-        "refund_restores_usage": {
-          "description": "Give a use back to usage_limit and per_customer_limit when every item this discount reduced on an order is refunded, or the whole order is refunded. The use is returned shortly after the refund, following the setting the discount has at that moment. The release is final for that order and discount: payment capture or retry cannot reclaim it.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
         "show_to_shoppers": {
           "description": "Show this discount to shoppers among the offers, worded by Tringify in the shopper's language and currency: on the product pages and product cards it applies to (themes read product.offers, at most product_page_max_shown per page, and card.offers, at most product_cards_max_shown per card) while it is for everyone (customer_eligibility everyone), and for a code, suggested in the cart and at checkout (at most cart_max_shown) to shoppers it can apply to. A shown code is public. Offers are listed by priority. Not for unique codes (DISCOUNT_TARGETS_FORBIDDEN). At most shown_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_SHOWN_LIMIT.",
           "type": [
@@ -28504,7 +28497,7 @@
     "api_key": "discounts.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}",
-    "description": "Read one discount and its targeting choices. The response includes the complete discount definition and the ids it targets. Product-facing labels (products, variants, collections, categories, Buy X Get Y, together and gift items) are included when your token has `read_products`; customer names and group labels are included with `read_customers`. The ids remain available without those additional scopes, and `can_view_products` and `can_view_customers` tell you whether labels were included. The returned status reflects the discount's current schedule. `usage_count` includes uses held by unpaid checkouts; `usage_held_count` says how many of them are held, and `usage_summary` words both. Every discount counts its uses, with or without a limit. Deleting an order does not lower `usage_count`; a fully refunded order gives its uses back only when `refund_restores_usage` is on, and a cancelled or expired checkout gives back the use it held. `starts_at`, `ends_at`, `created_at` and `updated_at` are RFC 3339 in the store's time zone, with its offset; `starts_at_iso` and `ends_at_iso` give the start and end as local store time in the `YYYY-MM-DDTHH:mm:ss` form that create and update accept. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible.",
+    "description": "Read one discount and its targeting choices. The response includes the complete discount definition and the ids it targets. Product-facing labels (products, variants, collections, categories, Buy X Get Y, together and gift items) are included when your token has `read_products`; customer names and group labels are included with `read_customers`. The ids remain available without those additional scopes, and `can_view_products` and `can_view_customers` tell you whether labels were included. The returned status reflects the discount's current schedule. `usage_count` includes uses held by unpaid checkouts; `usage_held_count` says how many of them are held, and `usage_summary` words both. Every discount counts its uses, with or without a limit. Deleting an order does not lower `usage_count`; a fully refunded order (every item the discount reduced, or the whole order) gives its use back, and so does a cancelled order or an expired checkout. `starts_at`, `ends_at`, `created_at` and `updated_at` are RFC 3339 in the store's time zone, with its offset; `starts_at_iso` and `ends_at_iso` give the start and end as local store time in the `YYYY-MM-DDTHH:mm:ss` form that create and update accept. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -28899,13 +28892,6 @@
           },
           "type": [
             "array",
-            "null"
-          ]
-        },
-        "refund_restores_usage": {
-          "description": "Give a use back to usage_limit and per_customer_limit when every item this discount reduced on an order is refunded, or the whole order is refunded. The use is returned shortly after the refund, following the setting the discount has at that moment. The release is final for that order and discount: payment capture or retry cannot reclaim it.",
-          "type": [
-            "boolean",
             "null"
           ]
         },
