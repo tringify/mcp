@@ -1,5 +1,10 @@
 # Changelog
 
+## Duty rules apply when enabled — 26 November 2026
+
+- `update_market` no longer takes `duties_enabled`, and markets no longer return it. An enabled duty rule estimates duties for its country; `duty_collection_mode` alone says who pays, and `collect_at_checkout` can be chosen at any time (`MARKET_DUTY_COLLECT_NEEDS_ESTIMATES` and `MARKET_DUTY_ACTIVE_DESTINATION_REQUIRED` are gone).
+- Orders carry `duty_incomplete`: true when a duty rule could not price every imported item. `duty_total` leaves those items out, and the customer was told import duties may be due on delivery.
+
 ## Fewer market settings — 26 November 2026
 
 - Part-paid cash on delivery is removed: COD settings and zones no longer take `advance_type`, `advance_amounts`, `advance_percent`, `advance_min_amounts`, `advance_max_amounts` or `advance_includes_fee`, and orders no longer carry `cod_advance_amount` or `cod_advance_paid`. Returned shipments are `cod` or `prepaid`, and closing one as undelivered refunds anything paid online (`keep_advance` is gone).

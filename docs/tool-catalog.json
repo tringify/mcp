@@ -25976,15 +25976,8 @@
             "null"
           ]
         },
-        "duties_enabled": {
-          "description": "Estimate duties with country rules: whether the market's enabled duty rules price an estimate for international shipments. Estimates come from your own rules; carriers and customs may charge a different amount, including their own handling fees. Turning this off with `duty_collection_mode` `collect_at_checkout` fails with `MARKET_DUTY_COLLECT_NEEDS_ESTIMATES`.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
         "duty_collection_mode": {
-          "description": "Who pays import duties on international shipments (an item ships from one of your locations in another country; its country of origin only rates the duty). `pay_on_delivery`: the customer pays on delivery; checkout, order pages and emails say import duties and taxes may be due on delivery, with the estimate, when a rule prices one, shown below the total and never added to it. `collect_at_checkout`: the customer pays at checkout; the estimated duty and the import tax on it (at each item's tax rates) are added to the total, and shoppers are told nothing is due on delivery. Requires `duties_enabled`. `included_in_price`: you pay, and your prices already cover it; nothing is added to the total, shoppers are told duties and taxes are included, and an estimate a rule prices is recorded on the order as your estimated duty cost. The statement shows whether or not estimates are on; domestic orders show none. You are responsible for this choice.",
+          "description": "Who pays import duties on international shipments (an item ships from one of your locations in another country; its country of origin only rates the duty). `pay_on_delivery`: the customer pays on delivery; checkout, order pages and emails say import duties and taxes may be due on delivery, with the estimate, when a rule prices one, shown below the total and never added to it. `collect_at_checkout`: the customer pays at checkout; the estimated duty and the import tax on it (at each item's tax rates) are added to the total, and shoppers are told nothing is due on delivery. `included_in_price`: you pay, and your prices already cover it; nothing is added to the total, shoppers are told duties and taxes are included, and an estimate a rule prices is recorded on the order as your estimated duty cost. Your enabled duty rules price the estimate for each destination; a destination without one gets the statement without an amount. Domestic orders show none. You are responsible for this choice.",
           "type": [
             "string",
             "null"
