@@ -451,8 +451,6 @@ This catalog lists the hosted connector’s supported tools and their native Sto
 | `create_market_discount_code` | `POST /api/2025-01/markets/{marketId}/discounts/{discountId}/codes` | store:markets:write |
 | `list_market_discount_codes` | `GET /api/2025-01/markets/{marketId}/discounts/{discountId}/codes` | store:markets:read, store:customers:read |
 | `delete_market_discount_code` | `DELETE /api/2025-01/markets/{marketId}/discounts/{discountId}/codes/{codeId}` | store:markets:write |
-| `get_market_shipping_settings` | `GET /api/2025-01/markets/{marketId}/shipping-settings` | store:markets:read |
-| `update_market_shipping_settings` | `PUT /api/2025-01/markets/{marketId}/shipping-settings` | store:markets:write |
 | `get_market_shipping_zone_limits` | `GET /api/2025-01/markets/{marketId}/shipping-zones/limits` | store:markets:read |
 | `list_market_shipping_available_countries` | `GET /api/2025-01/markets/{marketId}/shipping-zones/available-countries` | store:markets:read |
 | `list_market_shipping_zones` | `GET /api/2025-01/markets/{marketId}/shipping-zones` | store:markets:read |

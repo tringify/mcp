@@ -1,5 +1,10 @@
 # Changelog
 
+## Shipping is zones and methods — 26 November 2026
+
+- `get_market_shipping_settings` and `update_market_shipping_settings` are removed, with the `shipping_settings/update` webhook. Shipping has no simple or advanced mode: every market has an Everywhere zone (its default zone) and ships through zones and methods. A new market starts with Everywhere and one free method. Free shipping from an amount is a `price` method with a paid tier from zero and a free tier from the threshold.
+- Currency data removal no longer reports `shipping_settings_amounts`.
+
 ## One per-item shipping rate — 26 November 2026
 
 - The `per_item` shipping rate type is merged into `item`: each quantity tier's price is charged for every shippable item (one tier from 0 with no upper bound is a single price per item).
