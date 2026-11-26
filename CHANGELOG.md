@@ -1,5 +1,12 @@
 # Changelog
 
+## Cash on delivery is zones only — 26 November 2026
+
+- COD settings now hold `is_enabled`, `unavailable_display` and the fee waiver message only. `mode`, `fee_type`, `percent_value`, the amount maps, `tax_class_id`, `tax_code`, `confirmed` and `confirmation_token` are gone from them, with the `COD_MODE_*_WARNING` confirmations.
+- Every market has a default COD zone, Everywhere, created with the market. It holds the fee and limits for every address no other zone covers, and cannot be deleted or stop being the default (`COD_ZONE_DEFAULT_DELETE_LOCKED`, `COD_ZONE_DEFAULT_UNSET_LOCKED`; `COD_ZONE_ONLY_DELETE_LOCKED` is gone).
+- Zones no longer take `min_order_enabled`, `max_order_enabled`, `waive_fee_enabled`, `unavailable_display` or the fee waiver texts. An empty `min_order_amounts`, `max_order_amounts` or `waive_fee_over_amounts` is no such rule. The unavailable display and the waiver message on COD settings apply in every zone.
+- The postcode check no longer answers `simple`, and currency data removal no longer reports `cod_settings_amounts`.
+
 ## Price notes are tax and duty — 26 November 2026
 
 - Prices no longer carry a shipping note: the `PRICE_NOTE_SHIPPING` and `PRICE_NOTE_SHIPPING_FREE` Storefront Messages are gone, and a theme's `price_notes.shipping` is always null.

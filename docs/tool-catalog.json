@@ -26678,7 +26678,7 @@
           "type": "string"
         },
         "percent_value": {
-          "description": "Positive decimal-string percentage up to percent_max with at most percent_decimal_places fractional digits from the returned catalog. Current limits are 100 and six places. Omit for fixed discounts.",
+          "description": "Positive decimal-string percentage up to percent_max with at most percent_decimal_places fractional digits from the returned catalog. Current limits are 100 and two places. Omit for fixed discounts.",
           "type": [
             "string",
             "null"
@@ -26749,7 +26749,7 @@
           "type": "string"
         },
         "percent_value": {
-          "description": "Positive decimal-string percentage up to percent_max with at most percent_decimal_places fractional digits from the returned catalog. Current limits are 100 and six places. Omit for fixed discounts.",
+          "description": "Positive decimal-string percentage up to percent_max with at most percent_decimal_places fractional digits from the returned catalog. Current limits are 100 and two places. Omit for fixed discounts.",
           "type": [
             "string",
             "null"
@@ -30401,7 +30401,7 @@
     "api_key": "cod.settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/cod-settings",
-    "description": "Read the cash-on-delivery configuration for a market. The response includes `unavailable_display` (what checkout does when an order can't use COD), and `waiver_notice_enabled`, `waiver_notice_waived` and `waiver_notice_remaining` (the fee waiver message); keep all four when editing other settings. `waiver_notice_defaults` is read-only: Tringify's default fee waiver texts for each language enabled for the store (`remaining` shows the literal `{{.amount}}`), for use as placeholders where you have no text of your own. It also tells you whether cash on delivery is enabled, whether the market uses one simple rule or destination-based zones, and how its fee and order-value conditions are configured. Amount maps are keyed by the market's currency codes. Threshold fields remain present when their corresponding toggle is off, but they do not affect checkout. Supplied inactive amounts still need valid currency codes, nonnegative values, supported precision and valid ranges. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-settings. Only the connected store is accessible.",
+    "description": "Read the cash-on-delivery switch and shopper messages for a market. The response says whether cash on delivery is enabled in the market, `unavailable_display` (what checkout does when an order can't use COD), and `waiver_notice_enabled`, `waiver_notice_waived` and `waiver_notice_remaining` (the fee waiver message); keep all of them when editing one. `waiver_notice_defaults` is read-only: Tringify's default fee waiver texts for each language enabled for the store (`remaining` shows the literal `{{.amount}}`), for use as placeholders where you have no text of your own. The fee, order-amount limits and fee waiver amount are the market's COD zones': read them with `GET /markets/{marketId}/cod-zones`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -30425,51 +30425,12 @@
     "api_key": "cod.settings.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/cod-settings",
-    "description": "Choose the COD mode and save its market-wide rules. Send the complete settings object. `is_enabled` controls whether COD can be offered in either mode. In `simple` mode these rules apply throughout the market. In `advanced` mode checkout uses COD zones instead. Simple fee and threshold amounts may be incomplete while COD is disabled or Advanced mode is selected; supplied values still require valid currencies, precision and ranges. Enabling Simple COD requires complete valid amounts for every enabled rule. Zone writes always require their own complete fee and threshold configuration. Changing modes requires the confirmation token returned by the first request. The market's \"When COD is unavailable\" setting applies in `simple` mode, and in `advanced` mode when no zone matched the shipping address (no zone covers it and there is no default zone); a matched zone's own setting applies otherwise. The market's fee waiver message applies in `simple` mode; in `advanced` mode the matched zone's applies. An unchanged request leaves the settings untouched and publishes no webhook; a successful change publishes `cod_settings/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/cod-settings. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Switch cash on delivery on or off for a market and save its shopper messages. Send the complete settings object. `is_enabled` controls whether checkout may offer COD in the market at all; where it applies, what it costs and the order amounts it accepts are set on the market's COD zones. The \"When COD is unavailable\" setting and the fee waiver message apply to every zone. An unchanged request leaves the settings untouched and publishes no webhook; a successful change publishes `cod_settings/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/cod-settings. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
-        "confirmation_token": {
-          "description": "Token returned by `CONFIRMATION_REQUIRED` for the same settings change.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "confirmed": {
-          "description": "Set to `true` when retrying a mode change after confirmation.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "fee_amounts": {
-          "description": "Positive decimal-string COD fees for every market currency when `fee_type` is `fixed`. Missing values are not converted. Amounts must not exceed 9999999999999999.9999 and must fit currency amount precision: CAD and IDR allow two fractional digits, KWD three, and KRW none. Trailing zeros are accepted. Completeness is required when mode is simple and is_enabled is true. Otherwise this Simple-mode value may be omitted or incomplete; a missing percentage must be null, not an empty string. Supplied values must still satisfy the stated currency, precision and range rules.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "fee_max_amounts": {
-          "description": "Optional largest fee per currency when `fee_type` is `percent`: a percentage that works out higher is capped at it. A minimum cannot exceed the maximum for the same currency.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "fee_min_amounts": {
-          "description": "Optional smallest fee per currency when `fee_type` is `percent`: a percentage that works out lower is raised to it. Decimal strings with the same precision and maximum as fee_amounts; ignored for other fee types.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "fee_type": {
-          "description": "Use `free`, `fixed`, or `percent`.",
-          "type": "string"
-        },
         "is_enabled": {
-          "description": "Whether checkout may offer cash on delivery in this market.",
+          "description": "Whether checkout may offer cash on delivery in this market. The market's COD zones set where, at what fee and for which order amounts.",
           "type": "boolean"
         },
         "market_id": {
@@ -30477,73 +30438,15 @@
           "minLength": 1,
           "type": "string"
         },
-        "max_order_amounts": {
-          "description": "Inclusive maximum subtotal keyed by currency code. When enabled, provide a positive amount for every market currency using the same precision and maximum as fee_amounts. Equal minimum and maximum values are allowed. Completeness is required when mode is simple and is_enabled is true. Otherwise this Simple-mode value may be omitted or incomplete; a missing percentage must be null, not an empty string. Supplied values must still satisfy the stated currency, precision and range rules.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "max_order_enabled": {
-          "description": "Whether checkout enforces a maximum discounted merchandise subtotal.",
-          "type": "boolean"
-        },
-        "min_order_amounts": {
-          "description": "Inclusive minimum subtotal keyed by currency code. When enabled, provide a positive amount for every market currency using the same precision and maximum as fee_amounts. A saved nonzero minimum cannot exceed the corresponding nonzero maximum. Completeness is required when mode is simple and is_enabled is true. Otherwise this Simple-mode value may be omitted or incomplete; a missing percentage must be null, not an empty string. Supplied values must still satisfy the stated currency, precision and range rules.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "min_order_enabled": {
-          "description": "Whether checkout requires a minimum discounted merchandise subtotal.",
-          "type": "boolean"
-        },
-        "mode": {
-          "description": "Use `simple` for one market-wide rule or `advanced` for destination-based zones.",
-          "type": "string"
-        },
-        "percent_value": {
-          "description": "Percentage of discounted merchandise subtotal when `fee_type` is `percent`: greater than 0 and at most 100, with at most six fractional digits. Trailing zeros are accepted. Completeness is required when mode is simple and is_enabled is true. Otherwise this Simple-mode value may be omitted or incomplete; a missing percentage must be null, not an empty string. Supplied values must still satisfy the stated currency, precision and range rules.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "tax_class_id": {
-          "description": "A tax class assigned to this market. Its rate is applied to the resolved COD fee.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "tax_code": {
-          "description": "The COD fee's tax code on invoices and tax reports, such as its SAC code in India.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
         "unavailable_display": {
-          "description": "What checkout does with cash on delivery when an order can't use it: `hide` leaves it out of the payment methods; `show_reason` lists it disabled with a reason: the built-in storefront message CHECKOUT_COD_UNAVAILABLE_BELOW_MIN or CHECKOUT_COD_UNAVAILABLE_ABOVE_MAX with the order-amount limit when that limit was missed, otherwise CHECKOUT_COD_UNAVAILABLE, in the shopper's language (reword them in Storefront Messages). Checkout uses the market's setting in `simple` mode, and in `advanced` mode when no zone matched the shipping address (no zone covers it and there is no default zone). In `advanced` mode a matched zone's own setting applies instead. Omission is `hide`.",
+          "description": "What checkout does with cash on delivery when an order can't use it, for every zone and reason: `hide` leaves it out of the payment methods; `show_reason` lists it disabled with a reason: the built-in storefront message CHECKOUT_COD_UNAVAILABLE_BELOW_MIN or CHECKOUT_COD_UNAVAILABLE_ABOVE_MAX with the order-amount limit when that limit was missed, otherwise CHECKOUT_COD_UNAVAILABLE, in the shopper's language (reword them in Storefront Messages). Omission is `hide`.",
           "type": [
             "string",
-            "null"
-          ]
-        },
-        "waive_fee_enabled": {
-          "description": "Whether qualifying orders receive cash on delivery without its fee.",
-          "type": "boolean"
-        },
-        "waive_fee_over_amounts": {
-          "description": "Subtotal at or above which the fee is waived. When enabled, provide a positive amount for every market currency using the same precision and maximum as fee_amounts. A saved nonzero waiver cannot exceed the corresponding nonzero maximum. Completeness is required when mode is simple and is_enabled is true. Otherwise this Simple-mode value may be omitted or incomplete; a missing percentage must be null, not an empty string. Supplied values must still satisfy the stated currency, precision and range rules.",
-          "type": [
-            "object",
             "null"
           ]
         },
         "waiver_notice_enabled": {
-          "description": "Whether checkout shows a message about the fee waiver on the cash-on-delivery option while COD is available. Once the discounted merchandise subtotal reaches the `waive_fee_over_amounts` amount for the checkout currency, it says the fee is waived; below it, it says how much more the order needs. Nothing is shown when `waive_fee_enabled` is false or the checkout currency has no waiver amount, or when there is no fee to waive (`fee_type` `free` or a zero fee). Checkout uses the market's setting in `simple` mode; in `advanced` mode the matched zone's setting applies. Omission is `true`.",
+          "description": "Whether checkout shows a message about the fee waiver on the cash-on-delivery option while COD is available. Once the discounted merchandise subtotal reaches the matched zone's `waive_fee_over_amounts` amount for the checkout currency, it says the fee is waived; below it, it says how much more the order needs. Nothing is shown when the zone has no waiver amount for the checkout currency, or when there is no fee to waive (`fee_type` `free` or a zero fee). Omission is `true`.",
           "type": [
             "boolean",
             "null"
@@ -30566,12 +30469,7 @@
       },
       "required": [
         "market_id",
-        "mode",
-        "is_enabled",
-        "fee_type",
-        "min_order_enabled",
-        "max_order_enabled",
-        "waive_fee_enabled"
+        "is_enabled"
       ],
       "type": "object"
     },
@@ -30608,7 +30506,7 @@
     "api_key": "cod.zones.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/cod-zones",
-    "description": "List the destination rules configured for advanced mode. Zones are returned in matching priority order. A non-default zone covers its saved countries or subdivisions. The default zone catches market destinations that no more specific zone covers. A disabled matching zone blocks COD; it does not fall back to a broader zone. Each zone carries its own \"When COD is unavailable\" setting and fee waiver message, which checkout uses when that zone matched; `waiver_notice_defaults` is read-only (Tringify's default texts per enabled store language). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-zones. Only the connected store is accessible.",
+    "description": "List where cash on delivery applies in a market and what it costs there. Zones are returned in matching priority order. Every market has a default zone, created with it as Everywhere: it covers market destinations no other zone covers. A non-default zone covers its saved countries, subdivisions or postcodes. A disabled matching zone blocks COD; it does not fall back to a broader zone. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-zones. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -30632,7 +30530,7 @@
     "api_key": "cod.zones.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/cod-zones",
-    "description": "Add a destination-specific or default COD rule. Choose either a country or subdivision scope, or create a default zone with no regions. The first zone respects `is_default: false`; it is not automatically made the default. Without a matching zone or an explicit default, COD is unavailable for the destination. Every zone has its own availability, fee, minimum, maximum, waiver, and fee-tax configuration, its own \"When COD is unavailable\" setting (used for every reason COD is unavailable when this zone matched, including while the zone is off) and its own fee waiver message. `unavailable_display` defaults to `hide` and `waiver_notice_enabled` to `true` when omitted. Countries must belong to the market, subdivisions must belong to a selected country, and zone names must be unique within the market. A successful create publishes `cod_zones/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/cod-zones. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a zone with its own cash-on-delivery fee and limits. Choose a country, subdivision or postcode scope. Every zone has its own availability, fee, minimum, maximum, fee waiver amount and fee-tax configuration; an empty amount map means no such rule. Countries must belong to the market, subdivisions must belong to a selected country, and zone names must be unique within the market. A successful create publishes `cod_zones/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/cod-zones. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -30679,7 +30577,7 @@
           "type": "string"
         },
         "is_default": {
-          "description": "Whether this zone covers market destinations not matched by a more specific zone. Explicit opt-in, including for the first zone; when true, countries and subdivisions must be empty.",
+          "description": "Whether this zone covers market destinations not matched by a more specific zone; when true, countries, subdivisions and postal_codes must be empty. A market has exactly one default zone.",
           "type": "boolean"
         },
         "is_enabled": {
@@ -30692,33 +30590,25 @@
           "type": "string"
         },
         "max_order_amounts": {
-          "description": "Inclusive maximum subtotal keyed by currency code. When enabled, provide a positive amount for every market currency using the same precision and maximum as fee_amounts. Equal minimum and maximum values are allowed.",
+          "description": "Inclusive maximum discounted merchandise subtotal keyed by currency code; empty for no maximum. When set, provide a positive amount for every market currency. Equal minimum and maximum values are allowed.",
           "type": [
             "object",
             "null"
           ]
-        },
-        "max_order_enabled": {
-          "description": "Whether checkout enforces a maximum discounted merchandise subtotal.",
-          "type": "boolean"
         },
         "min_order_amounts": {
-          "description": "Inclusive minimum subtotal keyed by currency code. When enabled, provide a positive amount for every market currency using the same precision and maximum as fee_amounts. A saved nonzero minimum cannot exceed the corresponding nonzero maximum.",
+          "description": "Inclusive minimum discounted merchandise subtotal keyed by currency code; empty for no minimum. When set, provide a positive amount for every market currency using the same precision and maximum as fee_amounts. A minimum cannot exceed the corresponding maximum.",
           "type": [
             "object",
             "null"
           ]
-        },
-        "min_order_enabled": {
-          "description": "Whether checkout requires a minimum discounted merchandise subtotal.",
-          "type": "boolean"
         },
         "name": {
           "description": "A name merchants can recognize when managing the zone.",
           "type": "string"
         },
         "percent_value": {
-          "description": "Percentage of discounted merchandise subtotal when `fee_type` is `percent`: greater than 0 and at most 100, with at most six fractional digits. Trailing zeros are accepted.",
+          "description": "Percentage of discounted merchandise subtotal when `fee_type` is `percent`: greater than 0 and at most 100, with at most two decimal places. Trailing zeros are accepted.",
           "type": [
             "string",
             "null"
@@ -30758,40 +30648,8 @@
             "null"
           ]
         },
-        "unavailable_display": {
-          "description": "What checkout does with cash on delivery when an order can't use it: `hide` leaves it out of the payment methods; `show_reason` lists it disabled with a reason: the built-in storefront message CHECKOUT_COD_UNAVAILABLE_BELOW_MIN or CHECKOUT_COD_UNAVAILABLE_ABOVE_MAX with the order-amount limit when that limit was missed, otherwise CHECKOUT_COD_UNAVAILABLE, in the shopper's language (reword them in Storefront Messages). In `advanced` mode, when this zone matched the shipping address (as the default zone too, and also while the zone's `is_enabled` is false), checkout uses this zone's setting for every reason COD is unavailable: the zone is off, the minimum or maximum order amount, or a product rule. The market's setting applies in `simple` mode and when no zone matched. Omission is `hide`.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "waive_fee_enabled": {
-          "description": "Whether qualifying orders receive cash on delivery without its fee.",
-          "type": "boolean"
-        },
         "waive_fee_over_amounts": {
-          "description": "Subtotal at or above which the fee is waived. When enabled, provide a positive amount for every market currency using the same precision and maximum as fee_amounts. A saved nonzero waiver cannot exceed the corresponding nonzero maximum.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "waiver_notice_enabled": {
-          "description": "Whether checkout shows a message about the fee waiver on the cash-on-delivery option while COD is available. Once the discounted merchandise subtotal reaches the `waive_fee_over_amounts` amount for the checkout currency, it says the fee is waived; below it, it says how much more the order needs. Nothing is shown when `waive_fee_enabled` is false or the checkout currency has no waiver amount, or when there is no fee to waive (`fee_type` `free` or a zero fee). In `advanced` mode checkout uses the setting of the zone that matched the shipping address; in `simple` mode the market's setting applies. Omission is `true`.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "waiver_notice_remaining": {
-          "description": "Your text for the message shown while the order is below the waiver amount, keyed by store language code (the default language included). `{{.amount}}` prints how much more the order needs: the waiver amount minus the discounted merchandise subtotal, in the checkout currency. A language without a text shows Tringify's default in the shopper's language (`waiver_notice_defaults.remaining`). Same rules as `waiver_notice_waived`, except that `{{.amount}}` is accepted; no other placeholder is.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "waiver_notice_waived": {
-          "description": "Your text for the message shown when the fee is waived, keyed by store language code (the default language included). A language without a text shows Tringify's default in the shopper's language (`waiver_notice_defaults.waived`). At most 200 characters each; placeholders are not accepted. Leading and trailing whitespace is trimmed and empty texts are dropped. Keys must be languages enabled for the store. Reads list only languages enabled for the store. Omission clears every text.",
+          "description": "Subtotal at or above which the fee is waived, keyed by currency code; empty for no waiver. When set, provide a positive amount for every market currency. A waiver amount cannot exceed the corresponding maximum.",
           "type": [
             "object",
             "null"
@@ -30803,10 +30661,7 @@
         "name",
         "is_default",
         "is_enabled",
-        "fee_type",
-        "min_order_enabled",
-        "max_order_enabled",
-        "waive_fee_enabled"
+        "fee_type"
       ],
       "type": "object"
     },
@@ -30819,7 +30674,7 @@
     "api_key": "cod.zones.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/cod-zones/{zoneId}",
-    "description": "Read one destination rule and its complete fee configuration. Use the returned values to populate an edit form or inspect the exact rule checkout will consider for this zone. `waiver_notice_waived` and `waiver_notice_remaining` list only languages enabled for the store; `waiver_notice_defaults` gives Tringify's default fee waiver texts in each of them, to show where the zone has no text of its own. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-zones/{zoneId}. Only the connected store is accessible.",
+    "description": "Read one zone and its complete fee configuration. Use the returned values to populate an edit form or inspect the exact rule checkout will consider for this zone. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-zones/{zoneId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -30849,7 +30704,7 @@
     "api_key": "cod.zones.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/cod-zones/{zoneId}",
-    "description": "Replace the editable definition of a COD zone. Send the complete zone definition you want to keep. The same geographic, currency, threshold, tax-class and message rules used during creation apply here; omitting the fee waiver texts clears them. To make a zone the default, send `is_default: true` with empty `countries` and `subdivisions` arrays. This clears the previous default. An unchanged request publishes no webhook; a successful change publishes `cod_zones/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/cod-zones/{zoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace the editable definition of a COD zone. Send the complete zone definition you want to keep. The same geographic, currency, threshold and tax-class rules used during creation apply here. To make a zone the default, send `is_default: true` with empty `countries`, `subdivisions` and `postal_codes`; this clears the previous default. An unchanged request publishes no webhook; a successful change publishes `cod_zones/update`. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/cod-zones/{zoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -30896,7 +30751,7 @@
           "type": "string"
         },
         "is_default": {
-          "description": "Whether this zone covers market destinations not matched by a more specific zone. Explicit opt-in, including for the first zone; when true, countries and subdivisions must be empty.",
+          "description": "Whether this zone covers market destinations not matched by a more specific zone; when true, countries, subdivisions and postal_codes must be empty. A market has exactly one default zone.",
           "type": "boolean"
         },
         "is_enabled": {
@@ -30909,33 +30764,25 @@
           "type": "string"
         },
         "max_order_amounts": {
-          "description": "Inclusive maximum subtotal keyed by currency code. When enabled, provide a positive amount for every market currency using the same precision and maximum as fee_amounts. Equal minimum and maximum values are allowed.",
+          "description": "Inclusive maximum discounted merchandise subtotal keyed by currency code; empty for no maximum. When set, provide a positive amount for every market currency. Equal minimum and maximum values are allowed.",
           "type": [
             "object",
             "null"
           ]
-        },
-        "max_order_enabled": {
-          "description": "Whether checkout enforces a maximum discounted merchandise subtotal.",
-          "type": "boolean"
         },
         "min_order_amounts": {
-          "description": "Inclusive minimum subtotal keyed by currency code. When enabled, provide a positive amount for every market currency using the same precision and maximum as fee_amounts. A saved nonzero minimum cannot exceed the corresponding nonzero maximum.",
+          "description": "Inclusive minimum discounted merchandise subtotal keyed by currency code; empty for no minimum. When set, provide a positive amount for every market currency using the same precision and maximum as fee_amounts. A minimum cannot exceed the corresponding maximum.",
           "type": [
             "object",
             "null"
           ]
-        },
-        "min_order_enabled": {
-          "description": "Whether checkout requires a minimum discounted merchandise subtotal.",
-          "type": "boolean"
         },
         "name": {
           "description": "A name merchants can recognize when managing the zone.",
           "type": "string"
         },
         "percent_value": {
-          "description": "Percentage of discounted merchandise subtotal when `fee_type` is `percent`: greater than 0 and at most 100, with at most six fractional digits. Trailing zeros are accepted.",
+          "description": "Percentage of discounted merchandise subtotal when `fee_type` is `percent`: greater than 0 and at most 100, with at most two decimal places. Trailing zeros are accepted.",
           "type": [
             "string",
             "null"
@@ -30975,40 +30822,8 @@
             "null"
           ]
         },
-        "unavailable_display": {
-          "description": "What checkout does with cash on delivery when an order can't use it: `hide` leaves it out of the payment methods; `show_reason` lists it disabled with a reason: the built-in storefront message CHECKOUT_COD_UNAVAILABLE_BELOW_MIN or CHECKOUT_COD_UNAVAILABLE_ABOVE_MAX with the order-amount limit when that limit was missed, otherwise CHECKOUT_COD_UNAVAILABLE, in the shopper's language (reword them in Storefront Messages). In `advanced` mode, when this zone matched the shipping address (as the default zone too, and also while the zone's `is_enabled` is false), checkout uses this zone's setting for every reason COD is unavailable: the zone is off, the minimum or maximum order amount, or a product rule. The market's setting applies in `simple` mode and when no zone matched. Omission is `hide`.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "waive_fee_enabled": {
-          "description": "Whether qualifying orders receive cash on delivery without its fee.",
-          "type": "boolean"
-        },
         "waive_fee_over_amounts": {
-          "description": "Subtotal at or above which the fee is waived. When enabled, provide a positive amount for every market currency using the same precision and maximum as fee_amounts. A saved nonzero waiver cannot exceed the corresponding nonzero maximum.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "waiver_notice_enabled": {
-          "description": "Whether checkout shows a message about the fee waiver on the cash-on-delivery option while COD is available. Once the discounted merchandise subtotal reaches the `waive_fee_over_amounts` amount for the checkout currency, it says the fee is waived; below it, it says how much more the order needs. Nothing is shown when `waive_fee_enabled` is false or the checkout currency has no waiver amount, or when there is no fee to waive (`fee_type` `free` or a zero fee). In `advanced` mode checkout uses the setting of the zone that matched the shipping address; in `simple` mode the market's setting applies. Omission is `true`.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "waiver_notice_remaining": {
-          "description": "Your text for the message shown while the order is below the waiver amount, keyed by store language code (the default language included). `{{.amount}}` prints how much more the order needs: the waiver amount minus the discounted merchandise subtotal, in the checkout currency. A language without a text shows Tringify's default in the shopper's language (`waiver_notice_defaults.remaining`). Same rules as `waiver_notice_waived`, except that `{{.amount}}` is accepted; no other placeholder is.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "waiver_notice_waived": {
-          "description": "Your text for the message shown when the fee is waived, keyed by store language code (the default language included). A language without a text shows Tringify's default in the shopper's language (`waiver_notice_defaults.waived`). At most 200 characters each; placeholders are not accepted. Leading and trailing whitespace is trimmed and empty texts are dropped. Keys must be languages enabled for the store. Reads list only languages enabled for the store. Omission clears every text.",
+          "description": "Subtotal at or above which the fee is waived, keyed by currency code; empty for no waiver. When set, provide a positive amount for every market currency. A waiver amount cannot exceed the corresponding maximum.",
           "type": [
             "object",
             "null"
@@ -31026,10 +30841,7 @@
         "name",
         "is_default",
         "is_enabled",
-        "fee_type",
-        "min_order_enabled",
-        "max_order_enabled",
-        "waive_fee_enabled"
+        "fee_type"
       ],
       "type": "object"
     },
@@ -31042,7 +30854,7 @@
     "api_key": "cod.zones.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/markets/{marketId}/cod-zones/{zoneId}",
-    "description": "Remove a destination rule from the market. The only zone cannot be deleted. A default zone must be replaced as the default before it can be removed. Existing orders keep the COD fee and tax snapshots recorded when they were placed. A successful deletion publishes `cod_zones/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/cod-zones/{zoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Remove a zone from the market. The default zone cannot be deleted. Existing orders keep the COD fee and tax snapshots recorded when they were placed. A successful deletion publishes `cod_zones/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/cod-zones/{zoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31072,7 +30884,7 @@
     "api_key": "cod.blocked-postcodes.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/cod-settings/blocked-postcodes",
-    "description": "Read the postcodes where the market never offers cash on delivery. Returns one country's blocked postcodes and prefixes (`1100*` covers every postcode starting 1100) in their stored form: upper case, without spaces or hyphens. `count` is that country's entries, `total_count` the market's across its countries and `max_entries` the most a market can hold; `countries` lists each country that has entries. Blocked postcodes apply in Simple and Advanced mode, before COD zones: a blocked address never gets cash on delivery. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-settings/blocked-postcodes. Only the connected store is accessible.",
+    "description": "Read the postcodes where the market never offers cash on delivery. Returns one country's blocked postcodes and prefixes (`1100*` covers every postcode starting 1100) in their stored form: upper case, without spaces or hyphens. `count` is that country's entries, `total_count` the market's across its countries and `max_entries` the most a market can hold; `countries` lists each country that has entries. Blocked postcodes apply before COD zones: a blocked address never gets cash on delivery. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/cod-settings/blocked-postcodes. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31138,7 +30950,7 @@
     "api_key": "cod.check",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/cod-settings/check",
-    "description": "Find out whether cash on delivery is offered at an address, and why. Answers for the address alone: whether the market serves the country, COD is on, the postcode is blocked and, in Advanced mode, which zone covers it and whether that zone is on. `decided_by` is `not_served`, `cod_off`, `blocked_postcode`, `simple`, `zone`, `zone_off` or `no_zone`; `explanation` says the same in English, and `blocked_entry` is the matching blocked postcode or prefix. At checkout the order's amount limits and the COD rules for products and customer groups also apply; `note` says so. Nothing is saved. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/cod-settings/check. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Find out whether cash on delivery is offered at an address, and why. Answers for the address alone: whether the market serves the country, COD is on, the postcode is blocked, which zone covers it (another zone or the Everywhere zone) and whether that zone is on. `decided_by` is `not_served`, `cod_off`, `blocked_postcode`, `zone`, `zone_off` or `no_zone`; `explanation` says the same in English, and `blocked_entry` is the matching blocked postcode or prefix. At checkout the order's amount limits and the COD rules for products and customer groups also apply; `note` says so. Nothing is saved. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/cod-settings/check. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
