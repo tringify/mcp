@@ -2,8 +2,8 @@
 
 ## Orderable countries — 27 November 2026
 
-- New  (): every country an active market serves, with its ,  and the  an order there is placed in. It needs  or , so an agent that creates orders can read it without market access.
-- Creating an order for a country no active market serves is refused with ;  and  are now listed on order creation too.
+- New `list_orderable_countries` (`GET /markets/orderable-countries`): every country an active market serves, with its `market_id`, `market_name` and the `currency_code` an order there is placed in. It needs `markets:read` or `orders:write`, so an agent that creates orders can read it without market access.
+- Creating an order for a country no active market serves is refused with `MARKET_COUNTRY_NO_ACTIVE_MARKET`; `MARKET_COUNTRY_NO_CURRENCY_MAPPING` and `MARKET_COUNTRY_INVALID` are now listed on order creation too.
 
 ## Cash on delivery is zones only — 26 November 2026
 
