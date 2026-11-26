@@ -29790,7 +29790,7 @@
     "api_key": "shipping.methods.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods",
-    "description": "Create a shipping method. Creates free, flat, order-weight, order-value, item-count tiers (item), or per-item shipping (per_item). Per-item multiplies the unit charge by total shippable quantity before currency conversion and rounding. A matched weight, value, or quantity tier returns its configured shipping charge once. Every non-free rate requires a base-currency price. Other enabled currencies are optional exact overrides; absent overrides are converted from the base amount using the store currency conversion rate and rounding policy. Tier bounds are contiguous [min,max) ranges beginning at zero. Weight bounds use the saved weight_unit (g, kg, lb, or oz); create defaults to g. Value bounds are post-discount merchandise subtotals, and quantity bounds use the total shippable item quantity. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a shipping method. Creates free, flat, order-weight, order-value or per-item shipping (item). A matched weight or value tier returns its configured shipping charge once; a per-item tier, matched by total shippable quantity, charges its price for every item, multiplied before currency conversion and rounding (one tier from 0 with no upper bound is a single price per item). Every non-free rate requires a base-currency price. Other enabled currencies are optional exact overrides; absent overrides are converted from the base amount using the store currency conversion rate and rounding policy. Tier bounds are contiguous [min,max) ranges beginning at zero. Weight bounds use the saved weight_unit (g, kg, lb, or oz); create defaults to g. Value bounds are post-discount merchandise subtotals, and quantity bounds use the total shippable item quantity. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -29815,11 +29815,11 @@
           "type": "string"
         },
         "rate_type": {
-          "description": "free, flat, weight, price, item (item-count tiers), or per_item (unit charge multiplied by shippable quantity).",
+          "description": "free, flat, weight, price, or item (a price per item, tiered by shippable quantity).",
           "type": "string"
         },
         "rates": {
-          "description": "Exact-decimal tier rows. prices requires the base currency and may include exact overrides for other enabled currencies; absent overrides are converted. For tier methods, prices is the complete shipping charge. per_item instead requires exactly one price row with min_value=0 and max_value=null, no currency boundary maps; prices is a per-unit charge multiplied by total shippable quantity before FX rounding. Weight and item tiers use scalar min_value/max_value; weight bounds use the method's saved weight_unit and item bounds are quantities. Price tiers require base-currency min_values/max_values and may provide complete per-currency boundary overrides. All bounds use [min,max), begin at zero, and must be contiguous.",
+          "description": "Exact-decimal tier rows. prices requires the base currency and may include exact overrides for other enabled currencies; absent overrides are converted. For weight and price tiers, prices is the complete shipping charge; for item tiers it is the charge per item, multiplied by total shippable quantity before FX rounding. Weight and item tiers use scalar min_value/max_value; weight bounds use the method's saved weight_unit and item bounds are quantities. Price tiers require base-currency min_values/max_values and may provide complete per-currency boundary overrides. All bounds use [min,max), begin at zero, and must be contiguous.",
           "items": {},
           "type": [
             "array",
@@ -29944,11 +29944,11 @@
           "type": "string"
         },
         "rate_type": {
-          "description": "free, flat, weight, price, item (item-count tiers), or per_item (unit charge multiplied by shippable quantity).",
+          "description": "free, flat, weight, price, or item (a price per item, tiered by shippable quantity).",
           "type": "string"
         },
         "rates": {
-          "description": "Exact-decimal tier rows. prices requires the base currency and may include exact overrides for other enabled currencies; absent overrides are converted. For tier methods, prices is the complete shipping charge. per_item instead requires exactly one price row with min_value=0 and max_value=null, no currency boundary maps; prices is a per-unit charge multiplied by total shippable quantity before FX rounding. Weight and item tiers use scalar min_value/max_value; weight bounds use the method's saved weight_unit and item bounds are quantities. Price tiers require base-currency min_values/max_values and may provide complete per-currency boundary overrides. All bounds use [min,max), begin at zero, and must be contiguous.",
+          "description": "Exact-decimal tier rows. prices requires the base currency and may include exact overrides for other enabled currencies; absent overrides are converted. For weight and price tiers, prices is the complete shipping charge; for item tiers it is the charge per item, multiplied by total shippable quantity before FX rounding. Weight and item tiers use scalar min_value/max_value; weight bounds use the method's saved weight_unit and item bounds are quantities. Price tiers require base-currency min_values/max_values and may provide complete per-currency boundary overrides. All bounds use [min,max), begin at zero, and must be contiguous.",
           "items": {},
           "type": [
             "array",

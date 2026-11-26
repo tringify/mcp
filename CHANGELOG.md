@@ -1,5 +1,10 @@
 # Changelog
 
+## One per-item shipping rate — 26 November 2026
+
+- The `per_item` shipping rate type is merged into `item`: each quantity tier's price is charged for every shippable item (one tier from 0 with no upper bound is a single price per item).
+- A shipping method's `show_when` countries must be in its zone; otherwise `SHIPPING_METHOD_COUNTRY_OUTSIDE_ZONE`.
+
 ## Simpler checkout fees — 26 November 2026
 
 - Checkout fees no longer take `show_calculation`, `calculation_texts` or `counts_toward_customs_value`. A per-item or percentage fee always shows its calculation line, worded by the store's Storefront Messages; checkout fees never join the customs value duty is charged on. The `CHECKOUT_FEE_CALCULATION_*` text errors are gone.
