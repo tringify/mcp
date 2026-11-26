@@ -1,5 +1,10 @@
 # Changelog
 
+## Orderable countries — 27 November 2026
+
+- New  (): every country an active market serves, with its ,  and the  an order there is placed in. It needs  or , so an agent that creates orders can read it without market access.
+- Creating an order for a country no active market serves is refused with ;  and  are now listed on order creation too.
+
 ## Cash on delivery is zones only — 26 November 2026
 
 - COD settings now hold `is_enabled`, `unavailable_display` and the fee waiver message only. `mode`, `fee_type`, `percent_value`, the amount maps, `tax_class_id`, `tax_code`, `confirmed` and `confirmation_token` are gone from them, with the `COD_MODE_*_WARNING` confirmations.
