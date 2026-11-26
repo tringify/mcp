@@ -9,7 +9,7 @@
 
 ## Price notes are tax and duty — 26 November 2026
 
-- Prices no longer carry a shipping note: the `PRICE_NOTE_SHIPPING` and `PRICE_NOTE_SHIPPING_FREE` Storefront Messages are gone, and a theme's `price_notes.shipping` is always null.
+- Prices no longer carry a shipping note: the `PRICE_NOTE_SHIPPING` and `PRICE_NOTE_SHIPPING_FREE` Storefront Messages are gone, and `price_notes` has no `shipping` field: it holds `tax` and `duty` only.
 - With `duty_collection_mode` `collect_at_checkout`, duties are collected only for a destination with an enabled duty rule in the shopper's currency. Elsewhere checkout, the order and the duty note say import duties may be due on delivery, and the order has `duty_incomplete` true.
 
 ## Refunds give discount uses back — 26 November 2026
