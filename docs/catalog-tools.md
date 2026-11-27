@@ -1071,7 +1071,7 @@ Value translations require both owner and Languages access: read for get, write 
 
 ## Orders: lists, fulfilment, refunds and settings
 
-Use `get_order_refund_options` before `refund_order`: it returns what the order can still give back and the destinations it can use. `retry_order_refunds` retries a refund whose provider payout failed and `redirect_order_refunds` sends it to another destination the order allows. `cancel_order` cancels with or without a refund. Fulfilments are created with `create_order_fulfillment`; `update_fulfillment_tracking`, `update_fulfillment_status` and `record_fulfillment_event` move a shipment forward, and `cancel_order_fulfillment` cancels one that has not shipped.
+Use `get_order_refund_options` before `refund_order`: it returns what the order can still give back, the destinations it can use, and `can_cancel_order` (whether `refund_order` can also cancel the order with `cancel_order: true` when nothing has shipped and the refund covers every unshipped unit). `retry_order_refunds` retries a refund whose provider payout failed and `redirect_order_refunds` sends it to another destination the order allows. `cancel_order` cancels with or without a refund. Fulfilments are created with `create_order_fulfillment`; `update_fulfillment_tracking`, `update_fulfillment_status` and `record_fulfillment_event` move a shipment forward, and `cancel_order_fulfillment` cancels one that has not shipped.
 
 Fake Pay is a simulator and moves no real money. Use `get_order` and the ordinary refund tools to show the platform’s recorded results. The platform reads the app’s live status endpoints; browser returns and provider notifications never establish payment. There are no separate merchant tools for the app’s signed provider operations.
 
