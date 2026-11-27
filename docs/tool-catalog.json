@@ -20562,6 +20562,13 @@
             "null"
           ]
         },
+        "collect_text_marketing_consent": {
+          "description": "Ask for SMS and WhatsApp marketing consent on storefront registration and newsletter sign-ups.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "require_newsletter_double_opt_in": {
           "description": "Confirm newsletter sign-ups by email.",
           "type": [
