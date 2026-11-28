@@ -999,6 +999,7 @@ Each tool needs the access of the import or export `type` it works on: read for 
 | `set_file_translation` | `PUT /api/2025-01/files/{id}/translations/{locale}` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `bulk_delete_files` | `POST /api/2025-01/files/bulk-delete` | store:files:write (Media), store:online_store.site_assets:write (Site Assets) or store:marketing:write (Ad assets) |
 | `health_market_duty_country_rule` | `GET /api/2025-01/markets/duty-health` | store:markets:read, store:products:read |
+| `list_orderable_countries` | `GET /api/2025-01/markets/orderable-countries` | store:markets:read, store:orders:write |
 | `bulk_update_page_status` | `POST /api/2025-01/pages/bulk-update-status` | store:pages:write |
 | `preview_metaobject` | `POST /api/2025-01/metaobjects/{metaobjectId}/preview` | store:metaobjects:read |
 | `get_metaobject_theme_samples` | `GET /api/2025-01/metaobject_definitions/theme-samples/{themeId}` | store:metaobjects:read |
@@ -1091,6 +1092,10 @@ Fake Pay is a simulator and moves no real money. Use `get_order` and the ordinar
 | `get_order_settings` | `GET /api/2025-01/orders/settings` | store:orders:read |
 | `get_order_settings_limits` | `GET /api/2025-01/orders/settings/limits` | store:orders:read |
 | `update_order_settings` | `PUT /api/2025-01/orders/settings` | store:orders:write |
+| `list_order_notes` | `GET /api/2025-01/orders/{orderId}/notes` | store:orders:read |
+| `add_order_note` | `POST /api/2025-01/orders/{orderId}/notes` | store:orders:write |
+| `update_order_note` | `PATCH /api/2025-01/orders/{orderId}/notes/{noteId}` | store:orders:write |
+| `delete_order_note` | `DELETE /api/2025-01/orders/{orderId}/notes/{noteId}` | store:orders:write |
 
 ## Order tags
 
@@ -1151,29 +1156,9 @@ The block list stops chosen shoppers from checking out or limits them to online 
 | `get_cart_reminder` | `GET /api/2025-01/cart-insights/reminders/{reminderId}` | store:orders:read |
 | `cancel_cart_reminder` | `POST /api/2025-01/cart-insights/reminders/{reminderId}/cancel` | store:orders:write |
 
-## Returns
-
-A return covers delivered items a customer sends back. Read `get_return_options` for what an order can still return before `create_return`. A requested return is answered with `approve_return` or `decline_return`; an approved one is received with `receive_return` and completed with `refund_return` or `exchange_return`. `get_return_settings` and `update_return_settings` hold the Returns portal rules, return window, reasons, instructions and return limits.
-
-| Tool | Store API operation | Required access |
-| --- | --- | --- |
-| `get_return_settings` | `GET /api/2025-01/returns/settings` | store:orders:read |
-| `update_return_settings` | `PUT /api/2025-01/returns/settings` | store:orders:write |
-| `list_returns` | `GET /api/2025-01/returns` | store:orders:read |
-| `get_return` | `GET /api/2025-01/returns/{id}` | store:orders:read |
-| `get_return_options` | `GET /api/2025-01/orders/{id}/return-options` | store:orders:read |
-| `create_return` | `POST /api/2025-01/orders/{id}/returns` | store:orders:write |
-| `approve_return` | `POST /api/2025-01/returns/{id}/approve` | store:orders:write |
-| `decline_return` | `POST /api/2025-01/returns/{id}/decline` | store:orders:write |
-| `cancel_return` | `POST /api/2025-01/returns/{id}/cancel` | store:orders:write |
-| `set_return_shipment` | `PUT /api/2025-01/returns/{id}/shipment` | store:orders:write |
-| `receive_return` | `POST /api/2025-01/returns/{id}/receive` | store:orders:write |
-| `refund_return` | `POST /api/2025-01/returns/{id}/refund` | store:orders:write |
-| `exchange_return` | `POST /api/2025-01/returns/{id}/exchange` | store:orders:write |
-
 ## Returned shipments and delivery issues
 
-A returned shipment (RTO) is a shipment that came back to the store undelivered. Each one waits for a decision: `refund_rto`, `reship_rto`, `close_rto_undelivered` (cash on delivery orders) or `close_rto`; `customer_choice_rtos` records the customer's own choice. `get_rto_report` summarises returned shipments, and the settings hold the Delivery portal options. A failed delivery attempt opens a delivery issue on the order, read with `list_order_delivery_issues` and answered with `answer_order_delivery_issues`.
+A returned shipment (RTO) is a shipment that came back to the store undelivered. Each one waits for a decision: `refund_rto`, `reship_rto`, `close_rto_undelivered` (cash on delivery orders) or `close_rto`; `customer_choice_rtos` records the customer's own choice. `get_rto_report` summarises returned shipments, and the settings hold the Delivery portal options. A failed delivery attempt opens a delivery issue on the order, read with `list_order_delivery_issues` (or the whole store with `list_delivery_issues`) and answered with `answer_order_delivery_issues`. A customer is only offered what the shipment's courier takes (the issue's `actions`, declared by its fulfillment app); an issue whose courier takes nothing is `handle_with_courier`, and the merchant handles it with the courier. An answer is a request: `forwarding` says whether the courier accepted or rejected it.
 
 | Tool | Store API operation | Required access |
 | --- | --- | --- |
@@ -1193,6 +1178,7 @@ A returned shipment (RTO) is a shipment that came back to the store undelivered.
 | `customer_choice_rtos` | `POST /api/2025-01/rtos/{id}/customer-choice` | store:orders:write |
 | `list_order_delivery_issues` | `GET /api/2025-01/orders/{id}/delivery-issues` | store:orders:read |
 | `answer_order_delivery_issues` | `POST /api/2025-01/orders/{id}/delivery-issues/{issueId}/answer` | store:orders:write |
+| `list_delivery_issues` | `GET /api/2025-01/delivery-issues` | store:orders:read |
 
 ## Customer settings, tags on customers and merging
 

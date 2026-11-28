@@ -1,5 +1,14 @@
 # Changelog
 
+## Failed deliveries offer only what the courier takes — 28 November 2026
+
+- Delivery issues carry `actions`: what the shipment's courier takes after a failed delivery attempt, as its fulfillment app declares it (`reattempt` with `date.max_days_ahead`, `phone`, `address_lines` and `note`, and `return`). `answer_order_delivery_issues` accepts only those, within the store's Delivery issues settings; anything else is refused with `RTO_CHOICE_UNAVAILABLE` and `error.details.field`.
+- `choice` is `reattempt` or `return` (it was `cancel`). `reattempt_on` is sent only when the courier takes a day, up to `max_days_ahead` days ahead.
+- A shipment whose courier takes nothing (fulfilled by the merchant, or by an app that declares nothing) opens its issue as `handle_with_courier`, with `answer_by` null: the customer is offered nothing. `list_delivery_issues` filters by it and `counts.handle_with_courier` counts it.
+- An answer is a request: `forwarding` is `sending` until the shipment's app reports what the courier said, then `accepted` or `rejected` (with `forwarding_message`), or `unconfirmed` after an hour without a report.
+- `list_delivery_issues` lists the store's delivery issues with `total`, `has_previous`/`previous_cursor` and `limits`.
+- Order notes: `list_order_notes`, `add_order_note`, `update_order_note` and `delete_order_note`. `list_orderable_countries` lists the countries an order can ship to. The Returns tools are gone, as returns are.
+
 ## Three shipment settings — 28 November 2026
 
 - Returned shipment settings are now three settings, each with its own tools: `get_delivery_issue_settings` and `update_delivery_issue_settings` (`/delivery-issues/settings`: `customer_answers`, `answer_hours`, `allow_details`, `allow_cancel`), `get_returned_shipment_settings` and `update_returned_shipment_settings` (`/returned-shipments/settings`: `customer_answers`, `decision_hours`, `default_action`, `refund_method`, `reship_enabled`, `keep_shipping`, `restock`), and `get_undelivered_shipment_settings` and `update_undelivered_shipment_settings` (`/undelivered-shipments/settings`: `restock`). `get_rto_settings` and `update_rto_settings` are gone.
