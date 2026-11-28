@@ -4264,7 +4264,7 @@
           ]
         },
         "field": {
-          "description": "Rule field: tag, category, vendor, brand, title, price, regular_price, on_sale, in_stock, stock, created, option, units_sold, best_seller, views, most_viewed, sales_growth, viewed_not_bought, or return_rate. The limits endpoint lists each field's operators and `value_kind`.",
+          "description": "Rule field: tag, category, vendor, brand, title, price, regular_price, on_sale, in_stock, stock, created, option, units_sold, best_seller, views, most_viewed, sales_growth or viewed_not_bought. The limits endpoint lists each field's operators and `value_kind`.",
           "type": "string"
         },
         "id": {
@@ -4284,14 +4284,14 @@
           "type": "string"
         },
         "value": {
-          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag rules take the tag's ID as a string (for example `\"7\"`) or its slug (for example `\"summer-sale\"`): a slug is resolved to the tag ID when the rule is saved, and the rule stores and returns the ID with the tag's name in `value_label`. A value that is the ID of a tag in this store is read as that ID, even when another tag has it as its slug. An ID or slug that matches no tag in this store is rejected with `COLLECTION_RULE_TAG_NOT_FOUND`. Category, vendor and brand rules take the entity's numeric ID as a string, not its slug or name. Title rules take the text to match, case-insensitively, against the product's title and its translated titles in every store language (`equals`, `contains`, `starts_with` and `ends_with` match when any of them does; `not_equals` and `not_contains` only when none does; `is_empty` and `is_not_empty` read the source title). `price` and `regular_price` take an amount (up to 4 decimals) in the rule's `currency`, the store's base currency when it has none, for `greater_than` and `less_than`, or `from..to` for `between` (both included); they compare the lowest of the product's prices set in that currency, where `price` is the sale price while a sale runs, and a product with no price set in it matches no such rule. `stock` takes a whole number of available units across tracked stock. `created` takes a number of days (1 to 3650) for `within_last_days` and `not_within_last_days`. `option` takes an option value's numeric ID and matches products with a variant that has it. `on_sale` and `in_stock` take no value with `is_true` and `is_false`; a product with any untracked variant is in stock. Price, stock and option rules follow product changes within about a minute, and sales that start or end on a schedule within about ten minutes. Product-number fields cover the last `window_days` days and are recomputed once a day per store: `units_sold` (units sold less units refunded) and `views` (product page views) take a whole number for `greater_than` and `less_than`, or `from..to` for `between`; `best_seller` and `most_viewed` take N (1 to 1000) for `in_top` and match the store's N products with the most units sold or views among those shoppers can browse on the Online Store (active, not gift-only, not hidden from listings, available on the Online Store; ties share a rank); `sales_growth` takes a percentage for `greater_than` and matches products whose units sold rose by more than it over the same number of days before, where a product with sales now and none before always matches; `viewed_not_bought` takes a number of views for `greater_than` and matches products viewed more than that many times with no sales; `return_rate` takes a percentage (0 to 100, one decimal) for `greater_than` and `less_than`: units returned as a share of units sold, and a product with no sales matches neither.",
+          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag rules take the tag's ID as a string (for example `\"7\"`) or its slug (for example `\"summer-sale\"`): a slug is resolved to the tag ID when the rule is saved, and the rule stores and returns the ID with the tag's name in `value_label`. A value that is the ID of a tag in this store is read as that ID, even when another tag has it as its slug. An ID or slug that matches no tag in this store is rejected with `COLLECTION_RULE_TAG_NOT_FOUND`. Category, vendor and brand rules take the entity's numeric ID as a string, not its slug or name. Title rules take the text to match, case-insensitively, against the product's title and its translated titles in every store language (`equals`, `contains`, `starts_with` and `ends_with` match when any of them does; `not_equals` and `not_contains` only when none does; `is_empty` and `is_not_empty` read the source title). `price` and `regular_price` take an amount (up to 4 decimals) in the rule's `currency`, the store's base currency when it has none, for `greater_than` and `less_than`, or `from..to` for `between` (both included); they compare the lowest of the product's prices set in that currency, where `price` is the sale price while a sale runs, and a product with no price set in it matches no such rule. `stock` takes a whole number of available units across tracked stock. `created` takes a number of days (1 to 3650) for `within_last_days` and `not_within_last_days`. `option` takes an option value's numeric ID and matches products with a variant that has it. `on_sale` and `in_stock` take no value with `is_true` and `is_false`; a product with any untracked variant is in stock. Price, stock and option rules follow product changes within about a minute, and sales that start or end on a schedule within about ten minutes. Product-number fields cover the last `window_days` days and are recomputed once a day per store: `units_sold` (units sold less units refunded) and `views` (product page views) take a whole number for `greater_than` and `less_than`, or `from..to` for `between`; `best_seller` and `most_viewed` take N (1 to 1000) for `in_top` and match the store's N products with the most units sold or views among those shoppers can browse on the Online Store (active, not gift-only, not hidden from listings, available on the Online Store; ties share a rank); `sales_growth` takes a percentage for `greater_than` and matches products whose units sold rose by more than it over the same number of days before, where a product with sales now and none before always matches; `viewed_not_bought` takes a number of views for `greater_than` and matches products viewed more than that many times with no sales.",
           "type": [
             "string",
             "null"
           ]
         },
         "window_days": {
-          "description": "Required on a product-number rule (units_sold, best_seller, views, most_viewed, sales_growth, viewed_not_bought, return_rate) and not accepted on others: the period it covers, 7, 30 or 90 days.",
+          "description": "Required on a product-number rule (units_sold, best_seller, views, most_viewed, sales_growth, viewed_not_bought) and not accepted on others: the period it covers, 7, 30 or 90 days.",
           "type": [
             "integer",
             "null"
@@ -4326,7 +4326,7 @@
           ]
         },
         "field": {
-          "description": "Rule field: tag, category, vendor, brand, title, price, regular_price, on_sale, in_stock, stock, created, option, units_sold, best_seller, views, most_viewed, sales_growth, viewed_not_bought, or return_rate. The limits endpoint lists each field's operators and `value_kind`.",
+          "description": "Rule field: tag, category, vendor, brand, title, price, regular_price, on_sale, in_stock, stock, created, option, units_sold, best_seller, views, most_viewed, sales_growth or viewed_not_bought. The limits endpoint lists each field's operators and `value_kind`.",
           "type": "string"
         },
         "id": {
@@ -4351,14 +4351,14 @@
           "type": "string"
         },
         "value": {
-          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag rules take the tag's ID as a string (for example `\"7\"`) or its slug (for example `\"summer-sale\"`): a slug is resolved to the tag ID when the rule is saved, and the rule stores and returns the ID with the tag's name in `value_label`. A value that is the ID of a tag in this store is read as that ID, even when another tag has it as its slug. An ID or slug that matches no tag in this store is rejected with `COLLECTION_RULE_TAG_NOT_FOUND`. Category, vendor and brand rules take the entity's numeric ID as a string, not its slug or name. Title rules take the text to match, case-insensitively, against the product's title and its translated titles in every store language (`equals`, `contains`, `starts_with` and `ends_with` match when any of them does; `not_equals` and `not_contains` only when none does; `is_empty` and `is_not_empty` read the source title). `price` and `regular_price` take an amount (up to 4 decimals) in the rule's `currency`, the store's base currency when it has none, for `greater_than` and `less_than`, or `from..to` for `between` (both included); they compare the lowest of the product's prices set in that currency, where `price` is the sale price while a sale runs, and a product with no price set in it matches no such rule. `stock` takes a whole number of available units across tracked stock. `created` takes a number of days (1 to 3650) for `within_last_days` and `not_within_last_days`. `option` takes an option value's numeric ID and matches products with a variant that has it. `on_sale` and `in_stock` take no value with `is_true` and `is_false`; a product with any untracked variant is in stock. Price, stock and option rules follow product changes within about a minute, and sales that start or end on a schedule within about ten minutes. Product-number fields cover the last `window_days` days and are recomputed once a day per store: `units_sold` (units sold less units refunded) and `views` (product page views) take a whole number for `greater_than` and `less_than`, or `from..to` for `between`; `best_seller` and `most_viewed` take N (1 to 1000) for `in_top` and match the store's N products with the most units sold or views among those shoppers can browse on the Online Store (active, not gift-only, not hidden from listings, available on the Online Store; ties share a rank); `sales_growth` takes a percentage for `greater_than` and matches products whose units sold rose by more than it over the same number of days before, where a product with sales now and none before always matches; `viewed_not_bought` takes a number of views for `greater_than` and matches products viewed more than that many times with no sales; `return_rate` takes a percentage (0 to 100, one decimal) for `greater_than` and `less_than`: units returned as a share of units sold, and a product with no sales matches neither.",
+          "description": "Rule value, required for `equals`, `not_equals`, `contains` and `not_contains` and not accepted for `is_empty` and `is_not_empty`. Tag rules take the tag's ID as a string (for example `\"7\"`) or its slug (for example `\"summer-sale\"`): a slug is resolved to the tag ID when the rule is saved, and the rule stores and returns the ID with the tag's name in `value_label`. A value that is the ID of a tag in this store is read as that ID, even when another tag has it as its slug. An ID or slug that matches no tag in this store is rejected with `COLLECTION_RULE_TAG_NOT_FOUND`. Category, vendor and brand rules take the entity's numeric ID as a string, not its slug or name. Title rules take the text to match, case-insensitively, against the product's title and its translated titles in every store language (`equals`, `contains`, `starts_with` and `ends_with` match when any of them does; `not_equals` and `not_contains` only when none does; `is_empty` and `is_not_empty` read the source title). `price` and `regular_price` take an amount (up to 4 decimals) in the rule's `currency`, the store's base currency when it has none, for `greater_than` and `less_than`, or `from..to` for `between` (both included); they compare the lowest of the product's prices set in that currency, where `price` is the sale price while a sale runs, and a product with no price set in it matches no such rule. `stock` takes a whole number of available units across tracked stock. `created` takes a number of days (1 to 3650) for `within_last_days` and `not_within_last_days`. `option` takes an option value's numeric ID and matches products with a variant that has it. `on_sale` and `in_stock` take no value with `is_true` and `is_false`; a product with any untracked variant is in stock. Price, stock and option rules follow product changes within about a minute, and sales that start or end on a schedule within about ten minutes. Product-number fields cover the last `window_days` days and are recomputed once a day per store: `units_sold` (units sold less units refunded) and `views` (product page views) take a whole number for `greater_than` and `less_than`, or `from..to` for `between`; `best_seller` and `most_viewed` take N (1 to 1000) for `in_top` and match the store's N products with the most units sold or views among those shoppers can browse on the Online Store (active, not gift-only, not hidden from listings, available on the Online Store; ties share a rank); `sales_growth` takes a percentage for `greater_than` and matches products whose units sold rose by more than it over the same number of days before, where a product with sales now and none before always matches; `viewed_not_bought` takes a number of views for `greater_than` and matches products viewed more than that many times with no sales.",
           "type": [
             "string",
             "null"
           ]
         },
         "window_days": {
-          "description": "Required on a product-number rule (units_sold, best_seller, views, most_viewed, sales_growth, viewed_not_bought, return_rate) and not accepted on others: the period it covers, 7, 30 or 90 days.",
+          "description": "Required on a product-number rule (units_sold, best_seller, views, most_viewed, sales_growth, viewed_not_bought) and not accepted on others: the period it covers, 7, 30 or 90 days.",
           "type": [
             "integer",
             "null"
@@ -10938,7 +10938,7 @@
           ]
         },
         "link_type": {
-          "description": "Link type: `home`, `shop`, `product`, `category`, `category_list`, `collection`, `collection_list`, `blog_post`, `blog_list`, `vendor`, `vendor_list`, `brand`, `brand_list`, `page`, `policy`, `blog_category`, `wishlist`, `cart`, `account`, `search`, `track_order`, `returns`, `delivery`, `gift_card`, `label`, `custom_url`, `metaobject` or `metaobject_list`.",
+          "description": "Link type: `home`, `shop`, `product`, `category`, `category_list`, `collection`, `collection_list`, `blog_post`, `blog_list`, `vendor`, `vendor_list`, `brand`, `brand_list`, `page`, `policy`, `blog_category`, `wishlist`, `cart`, `account`, `search`, `track_order`, `delivery`, `gift_card`, `label`, `custom_url`, `metaobject` or `metaobject_list`.",
           "type": "string"
         },
         "link_value": {
@@ -11012,7 +11012,7 @@
           ]
         },
         "link_type": {
-          "description": "New link type: `home`, `shop`, `product`, `category`, `category_list`, `collection`, `collection_list`, `blog_post`, `blog_list`, `vendor`, `vendor_list`, `brand`, `brand_list`, `page`, `policy`, `blog_category`, `wishlist`, `cart`, `account`, `search`, `track_order`, `returns`, `delivery`, `gift_card`, `label`, `custom_url`, `metaobject` or `metaobject_list`. Switching to a type without a target clears `link_value`.",
+          "description": "New link type: `home`, `shop`, `product`, `category`, `category_list`, `collection`, `collection_list`, `blog_post`, `blog_list`, `vendor`, `vendor_list`, `brand`, `brand_list`, `page`, `policy`, `blog_category`, `wishlist`, `cart`, `account`, `search`, `track_order`, `delivery`, `gift_card`, `label`, `custom_url`, `metaobject` or `metaobject_list`. Switching to a type without a target clears `link_value`.",
           "type": [
             "string",
             "null"
@@ -13638,7 +13638,10 @@
       "properties": {
         "height": {
           "description": "Height of the rectangle in pixels, at least 1. Required unless `trim` is `true`.",
-          "type": "integer"
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "id": {
           "description": "Image file id.",
@@ -13684,19 +13687,31 @@
         },
         "trim": {
           "description": "`true`: send no rectangle; crop away the transparent edges (the smallest rectangle holding every visible pixel).",
-          "type": "boolean"
+          "type": [
+            "boolean",
+            "null"
+          ]
         },
         "width": {
           "description": "Width of the rectangle in pixels, at least 1. Required unless `trim` is `true`.",
-          "type": "integer"
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "x": {
           "description": "Left edge of the rectangle, in pixels of the rotated image. Required unless `trim` is `true`.",
-          "type": "integer"
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "y": {
           "description": "Top edge of the rectangle, in pixels of the rotated image. Required unless `trim` is `true`.",
-          "type": "integer"
+          "type": [
+            "integer",
+            "null"
+          ]
         }
       },
       "required": [
@@ -14954,7 +14969,7 @@
     "api_key": "files.image-jobs.estimate",
     "api_method": "POST",
     "api_path": "/api/2025-01/files/image-jobs/estimate",
-    "description": "Count the selected images a bulk action can work on and price it. Checks `file_ids` for one library and one `action` without starting anything: `image_count` images qualify, `skipped` lists the rest with a `reason`: `not_found`, `other_library`, `not_an_image`, `animated` (an animated image; only `slideshow` takes one), `already_gif` (Turn into GIF on a GIF) or `frames_unknown` (an older GIF or WebP still being checked). A file is skipped when its `image_actions` (`GET /files/{id}`) lacks the action, and `cost.credits` is `cost.per_image` times `image_count`. A crop job costs nothing; to learn which images can be cropped before framing them, send `action` `crop` with `file_ids` alone. Nothing is held or charged. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset; library=content_assets maps to API content_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/image-jobs/estimate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits.",
+    "description": "Count the selected images a bulk action can work on and price it. Checks `file_ids` for one library and one `action` without starting anything: `image_count` images qualify, `skipped` lists the rest with a `reason`: `not_found`, `other_library`, `not_an_image`, `animated` (an animated image; only `slideshow` takes one), `already_gif` (Turn into GIF on a GIF), `frames_unknown` (an older GIF or WebP still being checked) or `opaque` (a JPEG in a crop job's trims). A file is skipped when its `image_actions` (`GET /files/{id}`) lacks the action, and `cost.credits` is `cost.per_image` times `image_count`. A crop job costs nothing; to learn which images can be cropped before framing them, send `action` `crop` with `file_ids` alone. Nothing is held or charged. Admin tokens only: Store Admin API tokens and connected AI tools can call this endpoint; app tokens are refused with `STORE_API_ADMIN_TOKEN_REQUIRED`. MCP library=media maps to API upload; library=site_assets maps to API site_asset; library=ad_assets maps to API ad_asset; library=content_assets maps to API content_asset. media_type maps to the API media filter. Never send binary bytes or base64 in tool arguments. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/files/image-jobs/estimate. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Charges no AI credits.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -14977,7 +14992,7 @@
           ]
         },
         "crops": {
-          "description": "For `crop`: up to 100 crops, each `{file_id, x, y, width, height, rotate}` as in `POST /files/{id}/crop`. One image may be cropped more than once.",
+          "description": "For `crop`: up to 100 crops, each `{file_id, x, y, width, height, rotate}` or `{file_id, trim: true}` (cut away transparent edges) as in `POST /files/{id}/crop`. One image may be cropped more than once.",
           "items": {
             "type": "object"
           },
@@ -15113,7 +15128,7 @@
           ]
         },
         "crops": {
-          "description": "For `crop`: up to 100 crops, each `{file_id, x, y, width, height, rotate}` as in `POST /files/{id}/crop`. One image may be cropped more than once.",
+          "description": "For `crop`: up to 100 crops, each `{file_id, x, y, width, height, rotate}` or `{file_id, trim: true}` (cut away transparent edges) as in `POST /files/{id}/crop`. One image may be cropped more than once.",
           "items": {
             "type": "object"
           },
@@ -15538,7 +15553,7 @@
     "api_key": "orders.statuses.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders/statuses",
-    "description": "List the store's order statuses. Returns the store's order statuses in their display order. Statuses are labels: the four system statuses (is_system true) are pending (Pending payment), processing, completed and cancelled; every other status is a custom label the merchant created. `name` is the status in English: a system status in Tringify's wording, one of the store's own statuses in its English translation, else its own name. `source_name` is a custom status's own name in the store's default language (null for system statuses); translate it with the order status translation endpoints. Tringify sets only three of them: pending when an online-payment order is created unpaid, processing once when its payment completes (or at creation for cash on delivery, pay later, staff-created and fully covered orders) while the status is still pending, and cancelled when the order is cancelled. Everything else is set by staff, apps or this API. No status change notifies the customer; a change sends orders/update with changed_fields status. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/statuses. Only the connected store is accessible.",
+    "description": "List the store's order statuses. Returns the store's order statuses in their display order. Statuses are labels: the seven system statuses (is_system true) are pending (Pending payment), processing, partially_processed, processed, partially_completed, completed and cancelled; every other status is a custom label the merchant created. Tringify moves an order from processing to partially_processed, processed, partially_completed (part of it delivered or picked up) and completed as it is fulfilled (forward only, never for a cancelled order), until staff, an app or this API sets its status; a status someone set always stays. `name` is the status in English: a system status in Tringify's wording, one of the store's own statuses in its English translation, else its own name. `source_name` is a custom status's own name in the store's default language (null for system statuses); translate it with the order status translation endpoints. Tringify sets only three of them: pending when an online-payment order is created unpaid, processing once when its payment completes (or at creation for cash on delivery, pay later, staff-created and fully covered orders) while the status is still pending, and cancelled when the order is cancelled. Everything else is set by staff, apps or this API. No status change notifies the customer; a change sends orders/update with changed_fields status. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/statuses. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -15553,7 +15568,7 @@
     "api_key": "orders.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders",
-    "description": "List store orders. Returns active orders by default; archived=true returns archived orders. return_status is the order's return state, the most pressing of its returns: requested, exchange_waiting, approved, returned or declined, named in English as return_status_display (absent without a return); is_exchange marks an order an exchange created. pickup_location_name names the location a pickup order is collected from (absent for a delivery order). hold_status is where an order rule's hold stands: held, approved or cancelled, named in English as hold_status_display (absent when no rule held the order). Cursors are bound to the store, filters, search and sort. Restart without a cursor after changing that query. Each order names financial_status, payment_status and channel_type in English as financial_status_display, payment_status_display and channel_type_display (null without a channel). status_name is the order's status for status_slug in English (a system status in Tringify's wording, one of the store's own statuses by its translation in that language, else by its own name) and status_color its colour from Order Settings. Raw grand_total is a canonical decimal string in currency_code; formatted_grand_total is written in English with the currency's rules, independently of merchant General preferences. Use raw amounts for calculations. is_archived identifies archive state. tags lists the order's Order Tags (id, name, slug), sorted by name; `tag` filters by a tag name, ignoring capitalization. Fetch an order for fulfillment plans and line details. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders. Only the connected store is accessible.",
+    "description": "List store orders. Returns active orders by default; archived=true returns archived orders. pickup_location_name names the location a pickup order is collected from (absent for a delivery order). hold_status is where an order rule's hold stands: held, approved or cancelled, named in English as hold_status_display (absent when no rule held the order). Cursors are bound to the store, filters, search and sort. Restart without a cursor after changing that query. Each order names financial_status, payment_status and channel_type in English as financial_status_display, payment_status_display and channel_type_display (null without a channel). status_name is the order's status for status_slug in English (a system status in Tringify's wording, one of the store's own statuses by its translation in that language, else by its own name) and status_color its colour from Order Settings. Raw grand_total is a canonical decimal string in currency_code; formatted_grand_total is written in English with the currency's rules, independently of merchant General preferences. Use raw amounts for calculations. is_archived identifies archive state. tags lists the order's Order Tags (id, name, slug), sorted by name; `tag` filters by a tag name, ignoring capitalization. Fetch an order for fulfillment plans and line details. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -15607,10 +15622,6 @@
           "description": "Set true to return orders placed through hosted checkout without signing in, or false to return every other order.",
           "type": "boolean"
         },
-        "hold_status": {
-          "description": "Comma-separated held (an order rule holds it for review), approved (its hold was approved) or cancelled (its hold was not approved and the order cancelled). Returns orders whose hold stands in a chosen state.",
-          "type": "string"
-        },
         "limit": {
           "description": "Rows per page, 1 to 500; default 25.",
           "type": "integer"
@@ -15636,10 +15647,6 @@
         "product_id": {
           "description": "Positive product ID. Return orders containing this product, including any of its variants.",
           "type": "integer"
-        },
-        "return_state": {
-          "description": "Comma-separated requested, approved, exchange_waiting (an exchange whose item is out of stock), returned (a completed return), declined or exchange_order (the order an exchange created). An order matches when any of its returns is in a chosen state.",
-          "type": "string"
         },
         "search": {
           "description": "Search order ID, order number, external order ID, customer first/last name, full name, email or phone; at most 200 characters. Literal substring matching; SQL wildcard characters are treated literally.",
@@ -15711,7 +15718,7 @@
           ]
         },
         "coupon_codes": {
-          "description": "Coupon codes to evaluate through the pricing engine. A free-gift offer prices its gift at zero only when the gift is sent as an ordinary item line (product_id and, for a variant, variant_id), up to the offered quantity; extra units are charged.",
+          "description": "Coupon codes to evaluate through the pricing engine, with the same rules as checkout: usage limits, per-customer and first-order limits count the order's customer, email and phone, and a unique code applies only when the order's email is the one it was minted for. A free-gift offer prices its gift at zero only when the gift is sent as an ordinary item line (product_id and, for a variant, variant_id), up to the offered quantity; extra units are charged.",
           "items": {
             "type": "string"
           },
@@ -15887,7 +15894,7 @@
           ]
         },
         "note": {
-          "description": "Merchant-visible internal note.",
+          "description": "A staff note added to the new order, written by the calling app, at most `note_max_length` characters.",
           "type": [
             "string",
             "null"
@@ -15939,7 +15946,7 @@
           ]
         },
         "shipping_address": {
-          "description": "Shipping address snapshot (the platform address shape). Its country selects the market when present. Fields follow `GET /reference/address-format/{country_code}`: its `required` fields must be present, `province_code` is a code from `province.options` (`SUBDIVISION_INVALID` otherwise), `postal_code` must match `postal` and is stored in its standard form (`POSTAL_CODE_INVALID`), `district` only where the layout has it. Reads add `province_name` and `country_name` in English.",
+          "description": "Shipping address snapshot (the platform address shape). Its country selects the market when present and must be one an active market serves (`GET /markets/orderable-countries`). Fields follow `GET /reference/address-format/{country_code}`: its `required` fields must be present, `province_code` is a code from `province.options` (`SUBDIVISION_INVALID` otherwise), `postal_code` must match `postal` and is stored in its standard form (`POSTAL_CODE_INVALID`), `district` only where the layout has it. Reads add `province_name` and `country_name` in English.",
           "type": [
             "object",
             "null"
@@ -16015,7 +16022,7 @@
     "api_key": "orders.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders/{id}",
-    "description": "Fetch one order with fulfillment plans. `base_currency_rate` and each payment and refund `exchange_rate` are exact; `base_currency_rate_display` and `exchange_rate_display` are the same rates for showing to people, rounded to six significant digits like currency `conversion_rate_display`. Never calculate with the display values. Order numbers are assigned using the merchant\u2019s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Tax is split across `items[].tax_lines`, `shipping_tax_lines`, `cod_fee_tax_lines`, `duty_tax_lines` and `checkout_fee_lines[].tax_lines`; these amounts sum to `tax_total`. Each `checkout_fee_lines` entry carries `calculation` when checkout showed how the fee was worked out: `kind` (`per_item` or `percent`), `unit_amount` and `quantity` or `rate` and `base`, and `text`, the line the shopper read in the order's language; it is absent for a fixed per-order fee, a fee set to hide it, and a fee whose amount staff overrode. A percentage fee with a cap adds `cap`, the most it could be, and `capped`, true when the cap set the amount. A fee that asked the shopper for text, such as a gift message, carries `customer_text`, what the shopper wrote, and `text_prompt`, the prompt they answered in the order's language; show them under the fee name as `text_prompt: customer_text`. Both are absent when the fee asked for no text or the shopper left it empty, and an order edit keeps them with the unchanged fee. `status_name` is the order's status for `status_slug` in English (a system status in Tringify's wording, one of the store's own statuses by its translation in that language, else by its own name) and `status_color` its colour from Order Settings. The order names its codes in English beside them: `financial_status_display`, `payment_status_display` (empty while the order has no payment), `channel_type_display` (null without a channel), `tax_exemption_source_display`, and `attribution_status.status_display` with `reason_display`. Each payment carries `status_display`, and `provider_label` with the gateway name an app or import sent when it is not one of Tringify's own; each refund carries `method_display`, and where they apply `provider_status_display`, `gift_card_status_display` and `store_credit_status_display` (the Store Credit progress, with the reason when it failed). Refunds expose `goods_total`, `tax_total` and `components` (actual returned amount, goods_amount, tax_amount, original tax_lines and item or charge identity). Item refunds also expose goods_amount, tax_amount and tax_lines. Components include amount-only allocations; quantities of zero do not return stock. Tax is prorated from the saved tax lines over remaining units or charge amounts, with the final unit taking the remainder, capped at collected tax less active refund reservations. Smaller refund amounts reduce tax proportionally. Money above selected units and charges is allocated across the remaining order without returning additional units. A component key identifies its source and can repeat for selected-unit and additional monetary allocations. Surplus money that was never sale value has no tax. Only completed refunds reduce tax reports. Base refund goods and tax consume each item's or charge's saved base allocations cumulatively, including its final remainder. Fully refunded products have zero net goods revenue. The signed base_rounding_amount reconciles settled cash with base_goods_amount plus base_tax_amount without moving revenue or tax between products. Snapshot items carry an immutable allocation_key, preserved when imports replace database IDs; supplied sale allocations and original refund evidence are validated and retained. Historical order CSV exports preserve refunds (per-refund components and original tax_lines), line_id and base_refunded_total. Imports reject missing or inconsistent refund evidence with ORDER_IMPORT_REFUND_EVIDENCE_INVALID; they never estimate taxable refund history from refunded_total. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` and `customer_tax_id_type` record the normalized, offline-validated ID and never prove registration or exemption. `tax_exemption_source` is tax_id (a valid tax ID in a zone with effect exempt) or none, and `tax_id_state_mismatch` flags a GSTIN whose state differs from the Indian tax address. The ID is the one entered for this order; customers keep no saved tax ID. `tax_exempt` and `invoice_only` are server-computed outcomes. `is_tax_included` records whether the order's prices include tax, and `tax_basis_applied` which address taxed it (`shipping` or `billing`). Each item's `tax_lines` list its taxes with `name`, `rate`, `amount`, `base_amount` (the amount in the store's base currency), `jurisdiction` (the ISO 3166-2 subdivision of the matched state zone, such as `IN-UP`, otherwise the tax country, such as `IN`) and `jurisdiction_type` (`subdivision` or `country`). Inclusive checkout shows VAT on duty as a separate added amount: 120 goods + 12 duty + 2.40 duty VAT = 134.40, with only 20 goods VAT labelled included. The item's `tax_rate` is the sum of its tax lines' rates (4% state tax + 4.5% county tax is 8.5), on create and edit alike. Tax is calculated at full precision on discounted amounts across the order; `tax_total` is rounded once to currency precision (half to even), then allocated across item lines, shipping, COD, duty tax and checkout fees by largest remainder, so line amounts always add up. Cart and checkout use each line's allocated tax for display. Thus 100 separate exclusive 0.25 lines at 19% have 4.75 tax: 75 lines receive 0.05 and 25 receive 0.04, displaying 75 times 0.30 plus 25 times 0.29 = 29.75, exactly the amount charged, with zero savings. A single 100-unit line also has 4.75 tax and 29.75 payable. When an exempt order is placed in a tax-inclusive market, every amount is charged without its included tax: `tax_exempt` is `true`, `is_tax_included` stays `true` and `tax_total` is 0. An item's `duty_customs_value` is its value after discounts without the tax its price includes, plus its share of shipping (when the country rule includes shipping) and of checkout fees that count toward customs value. When duty is collected at checkout, the import VAT on it is part of `tax_total` and listed in `pricing_snapshot.tax.duty_tax_lines`. `duty_collection_mode` records who pays import duties on an international shipment and is empty for domestic orders. When it is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`. When it is `pay_on_delivery`, `duty_total` plus `duty_tax_estimate` is the customer's estimate, outside `grand_total`. When it is `included_in_price`, they are the merchant's estimated duty cost, outside `grand_total` and not revenue. Estimates come from the merchant's rules; carriers and customs may charge differently. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token\u2019s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Each entry in `discounts` lists its `allocations`: the part of that discount that reduced each order item (`order_item_id`, the `quantity` of units it reduced, `amount`, and `is_free` when it made those units free). A discount's allocations sum to its amount and an item's allocations sum to its `discount_amount`; an order-level manual discount is split in proportion to what each item has left after the other discounts. Quantity edits preserve discount shares consumed or reserved by refunds and prorate only the remaining aggregate discount over the remaining units; the saved allocations and pricing totals reconcile to those shares. Orders saved without pricing evidence have none. Each refund item reports `amount`, the refunded units at the item's unit price less their share of its discounts, and `discount_allocations`, each discount's share: the remaining aggregate line discount is prorated over the remaining units and rounded once, then distributed between discounts with each share capped at its remaining allocation. Successful and pending refunds consume shares; failed provider refunds release them. The final available units receive the unconsumed discount. Item amounts always subtract the authoritative line discount, even if historical per-discount allocations are unavailable. Historical refund breakdowns are reconstructed deterministically from the saved line allocations. The refund's own amount is what was returned and can differ from its items. An item that does not require shipping has no fulfillment: its `fulfillment_status` becomes `fulfilled` and `fulfilled_quantity` equals its quantity when captured payments cover the order total plus any returned surplus and the order is not cancelled. Refund status alone never fulfills a line. The order's `fulfillment_status` counts every item, so an unpaid order of only such items is `unfulfilled`. A pickup order carries `pickup_location`: the store location the customer collects it from, as chosen at checkout (`id`, `name`, address fields, `phone`, `ready_in`, `instructions`, `hours`); it is null for a delivery order. A pickup order's fulfillments move `pending` \u2192 `ready_for_pickup` \u2192 `picked_up` (or `cancelled`), with `ready_for_pickup_at` and `picked_up_at`; `picked_up` counts as delivered. A delivery order never takes a pickup status, and a pickup order never a delivery one. `checkout_answers` lists the shopper's answers to the store's checkout questions in the order they were asked, frozen when the order was placed: `block_id`, `kind` (`text`, `textarea`, `checkbox`, `choice` or `date`), `label` (the question in the store's default language), `value` (what the shopper entered: `yes` for a ticked checkbox, the option's label for a choice, the day as `YYYY-MM-DD` for a date), `slot` (a date's time slot label, present only when the question offers time slots), `locale` (the shopper's checkout language) and `value_display` (the answer as people read it in English: a date with its weekday and slot, a ticked checkbox as Yes); it is empty when checkout asked nothing. Nobody can change answers after the order exists. Each entry in `payments` carries `label`, the payment method's name in English: a payment app's payment is named by the app that collected it, the platform's own methods by their name (for example Gift card or Cash on Delivery), and any other recorded method reads Other payment method. Show `label`; `method` stays the recorded identifier. While `can_create_refund` is true, `refund_destinations` lists where a refund can go back to: `method` (`original_payment` when a payment app collected money, `gift_card` once per Gift Card that paid, with the tender's id as `reference_id`, `store_credit` and `manual`), `label` in English (a Gift Card's shows its masked code, such as Original Gift Card **** 7K9P), `available`, `available_amount` (the most that destination can take now) and, when `available` is false, `unavailable_reason` saying why (for example, a guest checkout can't take Store Credit). An order paid more than one way (payment apps and Gift Cards) also lists `original_payment_methods` first: the refund goes back to every payment, each getting a share in proportion to what it still holds and never more than it paid, as one refund per payment. Its `sources` list each payment with `source`, `method`, `reference_id`, `label`, `available`, `available_amount` and, when it can't take money back, `unavailable_reason`; that share then goes to Store Credit or Manual, as the merchant chooses. Destinations are listed in the order Store Admin suggests them: the original payment methods, the original payment, then each Gift Card that paid, then Store Credit and Manual. A fulfillment order an app turned down (Reject a fulfillment order) has `rejected_at`, `rejection_reason` (out_of_stock, incorrect_address, undeliverable_destination, ineligible_product or other), `rejection_reason_display` in English, `rejection_message` (the app's note, or null) and `rejected_by_app_id`/`rejected_by_app_name`; it is no longer assigned to any app (`provider_app_id` is absent) and waits for the merchant. Those fields are absent on a fulfillment order that was never rejected. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
+    "description": "Fetch one order with fulfillment plans. `base_currency_rate` and each payment and refund `exchange_rate` are exact; `base_currency_rate_display` and `exchange_rate_display` are the same rates for showing to people, rounded to six significant digits like currency `conversion_rate_display`. Never calculate with the display values. Each payment's `transaction_id` is the payment provider's ID of the transaction that took it (the Transaction ID the customer sees on their order), null for gift cards, Store Credit, cash on delivery and manual payments; each refund's `provider_refund_id` is the Refund ID the customer sees. Order numbers are assigned using the merchant\u2019s numbering settings and store timezone. They are immutable identifiers, not money-formatted values. Do not assume a gapless sequence or predict the next identifier. Period resets use the configured starting number; random mode does not consume the sequential counter. Tax is split across `items[].tax_lines`, `shipping_tax_lines`, `cod_fee_tax_lines`, `duty_tax_lines` and `checkout_fee_lines[].tax_lines`; these amounts sum to `tax_total`. Each `checkout_fee_lines` entry carries `calculation` when checkout showed how the fee was worked out: `kind` (`per_item` or `percent`), `unit_amount` and `quantity` or `rate` and `base`, and `text`, the line the shopper read in the order's language; it is absent for a fixed per-order fee, a fee set to hide it, and a fee whose amount staff overrode. A percentage fee with a cap adds `cap`, the most it could be, and `capped`, true when the cap set the amount. A fee that asked the shopper for text, such as a gift message, carries `customer_text`, what the shopper wrote, and `text_prompt`, the prompt they answered in the order's language; show them under the fee name as `text_prompt: customer_text`. Both are absent when the fee asked for no text or the shopper left it empty, and an order edit keeps them with the unchanged fee. `status_name` is the order's status for `status_slug` in English (a system status in Tringify's wording, one of the store's own statuses by its translation in that language, else by its own name) and `status_color` its colour from Order Settings. The order names its codes in English beside them: `financial_status_display`, `payment_status_display` (empty while the order has no payment), `channel_type_display` (null without a channel), `tax_exemption_source_display`, and `attribution_status.status_display` with `reason_display`. Each payment carries `status_display`, and `provider_label` with the gateway name an app or import sent when it is not one of Tringify's own; each refund carries `method_display`, and where they apply `provider_status_display`, `gift_card_status_display` and `store_credit_status_display` (the Store Credit progress, with the reason when it failed). Refunds expose `goods_total`, `tax_total` and `components` (actual returned amount, goods_amount, tax_amount, original tax_lines and item or charge identity). Item refunds also expose goods_amount, tax_amount and tax_lines. Components include amount-only allocations; quantities of zero do not return stock. Tax is prorated from the saved tax lines over remaining units or charge amounts, with the final unit taking the remainder, capped at collected tax less active refund reservations. Smaller refund amounts reduce tax proportionally. Money above selected units and charges is allocated across the remaining order without returning additional units. A component key identifies its source and can repeat for selected-unit and additional monetary allocations. Surplus money that was never sale value has no tax. Only completed refunds reduce tax reports. Base refund goods and tax consume each item's or charge's saved base allocations cumulatively, including its final remainder. Fully refunded products have zero net goods revenue. The signed base_rounding_amount reconciles settled cash with base_goods_amount plus base_tax_amount without moving revenue or tax between products. Snapshot items carry an immutable allocation_key, preserved when imports replace database IDs; supplied sale allocations and original refund evidence are validated and retained. Historical order CSV exports preserve refunds (per-refund components and original tax_lines), line_id and base_refunded_total. Imports reject missing or inconsistent refund evidence with ORDER_IMPORT_REFUND_EVIDENCE_INVALID; they never estimate taxable refund history from refunded_total. Returns the order-time pricing, tax, fee, and duty snapshot plus owner-generated fulfillment_orders, their fixed locations and package snapshots, remaining line quantities, and actual fulfillments. `customer_tax_id` and `customer_tax_id_type` record the normalized, offline-validated ID and never prove registration or exemption. `tax_exemption_source` is tax_id (a valid tax ID in a zone with effect exempt) or none, and `tax_id_state_mismatch` flags a GSTIN whose state differs from the Indian tax address. The ID is the one entered for this order; customers keep no saved tax ID. `tax_exempt` and `invoice_only` are server-computed outcomes. `is_tax_included` records whether the order's prices include tax, and `tax_basis_applied` which address taxed it (`shipping` or `billing`). `display_tax_included` records whether the shopper saw prices with tax included: the market's Storefront prices setting when the order was placed, which an edit keeps. When it differs from `is_tax_included`, `pricing_snapshot.display` holds what the shopper saw: `lines` (each item's line before discounts by order item id, as `total`, with `compare_total` when it has a compare-at price), `subtotal`, `discount_total`, `discounts` and `checkout_fees` (in the snapshot's own order), `shipping` and `cod_fee`. Each figure carries its own tax (shown with tax) or leaves it out (shown before tax); tax amounts, duties and `grand_total` are the order's. The order status page, the customer's account and order emails show these figures; every other amount in the order is on the basis prices are entered on. For example, a 100.00 price entered without 18% tax and shown with tax displays as 118.00, with 18.00 tax included and the same 118.00 total. Each item's `tax_lines` list its taxes with `name`, `rate`, `amount`, `base_amount` (the amount in the store's base currency), `jurisdiction` (the ISO 3166-2 subdivision of the matched state zone, such as `IN-UP`, otherwise the tax country, such as `IN`) and `jurisdiction_type` (`subdivision` or `country`). Inclusive checkout shows VAT on duty as a separate added amount: 120 goods + 12 duty + 2.40 duty VAT = 134.40, with only 20 goods VAT labelled included. The item's `tax_rate` is the sum of its tax lines' rates (4% state tax + 4.5% county tax is 8.5), on create and edit alike. Tax is calculated at full precision on discounted amounts across the order; `tax_total` is rounded once to currency precision (half to even), then allocated across item lines, shipping, COD, duty tax and checkout fees by largest remainder, so line amounts always add up. Cart and checkout use each line's allocated tax for display. Thus 100 separate exclusive 0.25 lines at 19% have 4.75 tax: 75 lines receive 0.05 and 25 receive 0.04, displaying 75 times 0.30 plus 25 times 0.29 = 29.75, exactly the amount charged, with zero savings. A single 100-unit line also has 4.75 tax and 29.75 payable. When an exempt order is placed in a tax-inclusive market, every amount is charged without its included tax: `tax_exempt` is `true`, `is_tax_included` stays `true` and `tax_total` is 0. An item's `duty_customs_value` is its value after discounts without the tax its price includes, plus its share of shipping (when the country rule includes shipping) and of checkout fees that count toward customs value. When duty is collected at checkout, the import VAT on it is part of `tax_total` and listed in `pricing_snapshot.tax.duty_tax_lines`. `duty_collection_mode` records who pays import duties on an international shipment and is empty for domestic orders. When it is `collect_at_checkout`, `duty_total` is collected and included in `grand_total`. When it is `pay_on_delivery`, `duty_total` plus `duty_tax_estimate` is the customer's estimate, outside `grand_total`. When it is `included_in_price`, they are the merchant's estimated duty cost, outside `grand_total` and not revenue. Estimates come from the merchant's rules; carriers and customs may charge differently. Apps must fulfill beneath one open plan and cannot choose another location. Item properties are order-time snapshots of cart-line values, filtered by the token\u2019s access to each definition. Declaring an order-item metafield with the same key does not copy an ordinary property into it. Artifact IDs do not grant access to private files. `version` starts at 1 and increases by one every time the merchant or an app edits the order's items; send it as order_version with writes that depend on the order's contents. Each entry in `discounts` lists its `allocations`: the part of that discount that reduced each order item (`order_item_id`, the `quantity` of units it reduced, `amount`, and `is_free` when it made those units free). A discount's allocations sum to its amount and an item's allocations sum to its `discount_amount`; an order-level manual discount is split in proportion to what each item has left after the other discounts. Quantity edits preserve discount shares consumed or reserved by refunds and prorate only the remaining aggregate discount over the remaining units; the saved allocations and pricing totals reconcile to those shares. Orders saved without pricing evidence have none. Each refund item reports `amount`, the refunded units at the item's unit price less their share of its discounts, and `discount_allocations`, each discount's share: the remaining aggregate line discount is prorated over the remaining units and rounded once, then distributed between discounts with each share capped at its remaining allocation. Successful and pending refunds consume shares; failed provider refunds release them. The final available units receive the unconsumed discount. Item amounts always subtract the authoritative line discount, even if historical per-discount allocations are unavailable. Historical refund breakdowns are reconstructed deterministically from the saved line allocations. The refund's own amount is what was returned and can differ from its items. An item that does not require shipping has no fulfillment: its `fulfillment_status` becomes `fulfilled` and `fulfilled_quantity` equals its quantity when captured payments cover the order total plus any returned surplus and the order is not cancelled. Refund status alone never fulfills a line. The order's `fulfillment_status` counts every item, so an unpaid order of only such items is `unfulfilled`. A pickup order carries `pickup_location`: the store location the customer collects it from, as chosen at checkout (`id`, `name`, address fields, `phone`, `ready_in`, `instructions`, `hours`); it is null for a delivery order. A pickup order's fulfillments move `pending` \u2192 `ready_for_pickup` \u2192 `picked_up` (or `cancelled`), with `ready_for_pickup_at` and `picked_up_at`; `picked_up` counts as delivered. When a pickup becomes `ready_for_pickup` it gets a 6-digit pickup code, which only the customer sees (in the Ready for Pickup message and on their order page); the order never returns it. `pickup_code_required` on such a fulfillment is true while marking it collected asks for that code (Order settings `pickup_code_required`). A delivery order never takes a pickup status, and a pickup order never a delivery one. `checkout_answers` lists the shopper's answers to the store's checkout questions in the order they were asked, frozen when the order was placed: `block_id`, `kind` (`text`, `textarea`, `checkbox`, `choice` or `date`), `label` (the question in the store's default language), `value` (what the shopper entered: `yes` for a ticked checkbox, the option's label for a choice, the day as `YYYY-MM-DD` for a date), `slot` (a date's time slot label, present only when the question offers time slots), `locale` (the shopper's checkout language) and `value_display` (the answer as people read it in English: a date with its weekday and slot, a ticked checkbox as Yes); it is empty when checkout asked nothing. Nobody can change answers after the order exists. Each entry in `payments` carries `label`, the payment method's name in English: a payment app's payment is named by the app that collected it, the platform's own methods by their name (for example Gift card or Cash on Delivery), and any other recorded method reads Other payment method. Show `label`; `method` stays the recorded identifier. While `can_create_refund` is true, `refund_destinations` lists where a refund can go back to: `method` (`original_payment` when a payment app collected money, `gift_card` once per Gift Card that paid, with the tender's id as `reference_id`, `store_credit` and `manual`), `label` in English (a Gift Card's shows its masked code, such as Original Gift Card **** 7K9P), `available`, `available_amount` (the most that destination can take now) and, when `available` is false, `unavailable_reason` saying why (for example, a guest checkout can't take Store Credit). An order paid more than one way (payment apps and Gift Cards) also lists `original_payment_methods` first: the refund goes back to every payment, each getting a share in proportion to what it still holds and never more than it paid, as one refund per payment. Its `sources` list each payment with `source`, `method`, `reference_id`, `label`, `available`, `available_amount` and, when it can't take money back, `unavailable_reason`; that share then goes to Store Credit or Manual, as the merchant chooses. Destinations are listed in the order Store Admin suggests them: the original payment methods, the original payment, then each Gift Card that paid, then Store Credit and Manual. A fulfillment order an app turned down (Reject a fulfillment order) has `rejected_at`, `rejection_reason` (out_of_stock, incorrect_address, undeliverable_destination, ineligible_product or other), `rejection_reason_display` in English, `rejection_message` (the app's note, or null) and `rejected_by_app_id`/`rejected_by_app_name`; it is no longer assigned to any app (`provider_app_id` is absent) and waits for the merchant. Those fields are absent on a fulfillment order that was never rejected. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -16901,6 +16908,124 @@
     ]
   },
   {
+    "api_key": "orders.notes.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/orders/{orderId}/notes",
+    "description": "List the staff notes on one order, oldest first. Staff notes are internal: customers never see them, and they are not part of order webhooks. Each note names its author: a staff member (`author.kind` user, `author.label` their email when they wrote it) or an app (`author.kind` app, `author.label` the app's name). `edited_at` is set once the author changes the note. `can_edit` is true on the notes the calling app wrote; only a note's author can edit or delete it. An order holds at most `notes_max_per_order` notes (order limits), each at most `note_max_length` characters. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{orderId}/notes. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "order_id": {
+          "description": "Order ID in the token's store.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "type": "object"
+    },
+    "name": "list_order_notes",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "orders.notes.create",
+    "api_method": "POST",
+    "api_path": "/api/2025-01/orders/{orderId}/notes",
+    "description": "Add a staff note to an order, written by the calling app. The note is saved as written, trimmed of surrounding spaces, and recorded in the store's audit log. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{orderId}/notes. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "description": "The note, at most `note_max_length` characters.",
+          "type": "string"
+        },
+        "order_id": {
+          "description": "Order ID in the token's store.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id",
+        "body"
+      ],
+      "type": "object"
+    },
+    "name": "add_order_note",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "orders.notes.update",
+    "api_method": "PATCH",
+    "api_path": "/api/2025-01/orders/{orderId}/notes/{noteId}",
+    "description": "Change the text of a note the calling app wrote. The note keeps its author and time and gets `edited_at`. The previous text is kept in the store's audit log. Uses the documented Store API fields, validation and permissions for PATCH /api/2025-01/orders/{orderId}/notes/{noteId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "description": "The new text, at most `note_max_length` characters.",
+          "type": "string"
+        },
+        "note_id": {
+          "description": "Note ID on this order.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "order_id": {
+          "description": "Order ID in the token's store.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id",
+        "note_id",
+        "body"
+      ],
+      "type": "object"
+    },
+    "name": "update_order_note",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "orders.notes.delete",
+    "api_method": "DELETE",
+    "api_path": "/api/2025-01/orders/{orderId}/notes/{noteId}",
+    "description": "Delete a note the calling app wrote. The note's text is kept in the store's audit log. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/orders/{orderId}/notes/{noteId}. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "note_id": {
+          "description": "Note ID on this order.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "order_id": {
+          "description": "Order ID in the token's store.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id",
+        "note_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_order_note",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
     "api_key": "orders.metafields.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders/{orderId}/metafields",
@@ -17090,7 +17215,7 @@
     "api_key": "orders.fulfillments.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/orders/{id}/fulfillment-orders/{fulfillment_order_id}/fulfillments",
-    "description": "Fulfill lines from one planned shipment. Creates an actual fulfillment beneath a fulfillment order assigned to the authenticated app. A merchant token can fulfill only a fulfillment order no app is assigned to. Quantities may not exceed that plan's remaining quantities. Location, inventory reservation, package, and shipping selection are owner-controlled and cannot be overridden by the caller. Once an order has been edited (version above 1), an app must send order_version; a stale or missing version is refused so an app never ships contents it hasn't seen. A matching version also acknowledges the edits your app received. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{id}/fulfillment-orders/{fulfillment_order_id}/fulfillments. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Take fulfillment_order_id and each order_item_id from get_order's fulfillment_orders and their remaining quantities. A delivery takes carrier, tracking_number and tracking_url; a pickup order (pickup_location set) takes none.",
+    "description": "Fulfill lines from one planned shipment. Creates an actual fulfillment beneath a fulfillment order assigned to the authenticated app. A merchant token can fulfill only a fulfillment order no app is assigned to. Quantities may not exceed that plan's remaining quantities. Location, inventory reservation, package, and shipping selection are owner-controlled and cannot be overridden by the caller. Once an order has been edited (version above 1), an app must send order_version; a stale or missing version is refused so an app never ships contents it hasn't seen. A matching version also acknowledges the edits your app received. The fulfillment copies what your app's courier takes after a failed delivery attempt from your fulfillment declaration (`delivery_issue_actions`), or the narrower set you send; a merchant's fulfillment takes none, so its customers are offered nothing after a failed attempt. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{id}/fulfillment-orders/{fulfillment_order_id}/fulfillments. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically. Take fulfillment_order_id and each order_item_id from get_order's fulfillment_orders and their remaining quantities. A delivery takes carrier, tracking_number and tracking_url; a pickup order (pickup_location set) takes none.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -17098,6 +17223,13 @@
           "description": "Carrier display name.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "delivery_issue_actions": {
+          "description": "What this shipment's courier takes after a failed delivery attempt, when it is narrower than your app's declaration (providers[].delivery_issue_actions): reattempt {date {max_days_ahead}, phone, address_lines, note} and return. Never wider than the declaration; send {} to take no customer answers for this shipment. Omitted, the shipment keeps what it has (on create: your app's declaration).",
+          "type": [
+            "object",
             "null"
           ]
         },
@@ -17257,7 +17389,7 @@
     "api_key": "orders.fulfillments.tracking.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/orders/{id}/fulfillments/{fulfillment_id}/tracking",
-    "description": "Replace the tracking number, link or carrier of an existing fulfillment. Use this when the courier or tracking number changes after the fulfillment was created, for example when a shipping aggregator reassigns the shipment to another courier with a new AWB, instead of cancelling and recreating the fulfillment. Only the fulfillment's provider app or a store-admin token may call it; another app receives ORDER_FULFILLMENT_PROVIDER_PERMISSION_DENIED. Send at least one of tracking_number, tracking_url and carrier; omitted fields keep their current value and an empty string clears one. The fulfillment's status, items and inventory do not change: status moves only through fulfillment events, and a status field in the body is ignored. The shopper's order status page and tracking link show the new values straight away, fulfillments/update is sent to subscribed apps, and the order timeline records what changed, such as the old and new tracking number and carrier, under your app's name. Sending values identical to the recorded ones changes nothing and returns ORDER_FULFILLMENT_NO_CHANGES, so a retry after a timeout is safe. Fulfillments on cancelled orders cannot be changed. Returns the updated order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/orders/{id}/fulfillments/{fulfillment_id}/tracking. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Replace the tracking number, link or carrier of an existing fulfillment. Use this when the courier or tracking number changes after the fulfillment was created, for example when a shipping aggregator reassigns the shipment to another courier with a new AWB, instead of cancelling and recreating the fulfillment. Only the fulfillment's provider app or a store-admin token may call it; another app receives ORDER_FULFILLMENT_PROVIDER_PERMISSION_DENIED. Send at least one of tracking_number, tracking_url, carrier and delivery_issue_actions (the provider app only); omitted fields keep their current value and an empty string clears one. The fulfillment's status, items and inventory do not change: status moves only through fulfillment events, and a status field in the body is ignored. The shopper's order status page and tracking link show the new values straight away, fulfillments/update is sent to subscribed apps, and the order timeline records what changed, such as the old and new tracking number and carrier, under your app's name. Sending values identical to the recorded ones changes nothing and returns ORDER_FULFILLMENT_NO_CHANGES, so a retry after a timeout is safe. Fulfillments on cancelled orders cannot be changed. Returns the updated order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/orders/{id}/fulfillments/{fulfillment_id}/tracking. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -17265,6 +17397,13 @@
           "description": "Courier name, up to carrier_max_length.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "delivery_issue_actions": {
+          "description": "What this shipment's courier takes after a failed delivery attempt, when it is narrower than your app's declaration (providers[].delivery_issue_actions): reattempt {date {max_days_ahead}, phone, address_lines, note} and return. Never wider than the declaration; send {} to take no customer answers for this shipment. Omitted, the shipment keeps what it has. A delivery problem already open keeps what it opened with.",
+          "type": [
+            "object",
             "null"
           ]
         },
@@ -17308,10 +17447,17 @@
     "api_key": "orders.fulfillments.status.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/orders/{id}/fulfillments/{fulfillment_id}/status",
-    "description": "Move a shipment along: sent, delivered, picked up, returned. For shipments the store tracks itself, the way Store Admin does it: mark a pending shipment in transit or delivered, a pickup ready or collected, a delivery failed, returned or lost. Only moves a shipment can make are accepted (for example, a delivered shipment can only become a return in progress); others are refused with ORDER_FULFILLMENT_STATUS_TRANSITION_INVALID. Delivered sets `delivered_at`, which starts the return window; the first move to a sent status sets `shipped_at` and waits for the shipment's stock deduction (ORDER_FULFILLMENT_INVENTORY_PENDING until it is done). A merchant token can move any fulfillment in the store. An app token can move only fulfillments of fulfillment orders assigned to it; a carrier app should send fulfillment events instead, so the timeline keeps each scan. The customer gets the same shipment emails as when the change is made in Store Admin, and `fulfillments/update` is sent. Cancelling uses Cancel a fulfillment. Returns the updated order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/orders/{id}/fulfillments/{fulfillment_id}/status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Move a shipment along: sent, delivered, picked up, returned. For shipments the store tracks itself, the way Store Admin does it: mark a pending shipment in transit or delivered, a pickup ready or collected, a delivery failed, returned or lost. Only moves a shipment can make are accepted (for example, a delivered shipment can only become a return in progress); others are refused with ORDER_FULFILLMENT_STATUS_TRANSITION_INVALID. Delivered sets `delivered_at`, which starts the return window; the first move to a sent status sets `shipped_at` and waits for the shipment's stock deduction (ORDER_FULFILLMENT_INVENTORY_PENDING until it is done). A merchant token can move any fulfillment in the store. An app token can move only fulfillments of fulfillment orders assigned to it; a carrier app should send fulfillment events instead, so the timeline keeps each scan. The customer gets the same shipment emails as when the change is made in Store Admin, and `fulfillments/update` is sent. Cancelling uses Cancel a fulfillment. Marking a ready pickup `picked_up` while its `pickup_code_required` is true needs the customer's `pickup_code`, or `collected_without_code_reason` when they can't show it (for example, staff checked their ID); the reason goes on the order's timeline. Five wrong codes lock the pickup for 15 minutes. A pickup collected straight from `pending` never had a code and needs none. Returns the updated order. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/orders/{id}/fulfillments/{fulfillment_id}/status. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "collected_without_code_reason": {
+          "description": "With `picked_up`, instead of `pickup_code`: why the pickup was handed over without the code, up to 500 characters.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "fulfillment_id": {
           "description": "Actual fulfillment id.",
           "minLength": 1,
@@ -17321,6 +17467,13 @@
           "description": "Order id.",
           "minLength": 1,
           "type": "string"
+        },
+        "pickup_code": {
+          "description": "With `picked_up`: the 6-digit code the customer shows.",
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "status": {
           "description": "The new status.",
@@ -17525,7 +17678,7 @@
     "api_key": "orders.settings.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders/settings",
-    "description": "Read the store's order settings. Returns how order numbers are built: `#`, then `order_number_prefix`, the number and `order_number_suffix`, with `order_number_preview`, the next number as it will look, and `next_order_number`; the automatic archive windows; `cod_paid_on_delivered` (a cash-on-delivery order is marked paid when its delivery is recorded); the unpaid auto-cancel window, store-wide and per payment app; the cash-on-delivery confirmation (`cod_confirmation_enabled`, `cod_confirmation_hours`, `cod_confirmation_timeout_action`); and `checkout_inventory_hold_minutes` (how long checkout holds stock for a shopper). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/settings. Only the connected store is accessible.",
+    "description": "Read the store's order settings. Returns how order numbers are built: `#`, then `order_number_prefix`, the number and `order_number_suffix`, with `order_number_preview`, the next number as it will look, and `next_order_number`; the automatic archive windows; `cod_paid_on_delivered` (a cash-on-delivery order is marked paid when its delivery is recorded); `pickup_code_required` (marking a pickup collected asks for the customer's pickup code); the unpaid auto-cancel window, store-wide and per payment app; the cash-on-delivery confirmation (`cod_confirmation_enabled`, `cod_confirmation_hours`, `cod_confirmation_timeout_action`); and `checkout_inventory_hold_minutes` (how long checkout holds stock for a shopper). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -17611,6 +17764,13 @@
           "description": "Letters, numbers and hyphens after the number; empty for none.",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "pickup_code_required": {
+          "description": "Ask for the customer's pickup code when a pickup is marked collected. Each pickup gets a 6-digit code when it is ready for pickup, sent in the Ready for Pickup message and shown on the customer's order page. On by default.",
+          "type": [
+            "boolean",
             "null"
           ]
         },
@@ -17738,7 +17898,7 @@
       "additionalProperties": false,
       "properties": {
         "market_id": {
-          "description": "A market: its own rules, or the store's rules it follows (`custom` false). Omit for the store's rules.",
+          "description": "A market: the store's rules with what the market decides itself (`enabled`, `window_hours`, `fulfillment_cutoff`, `refund_to` and the fee), or the store's rules unchanged when it decides nothing (`custom` false). Omit for the store's rules.",
           "type": "string"
         }
       },
@@ -18722,512 +18882,6 @@
     ]
   },
   {
-    "api_key": "returns.list",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/returns",
-    "description": "List the store's returns, newest first. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/returns. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "cursor": {
-          "description": "next_cursor from the previous page, with the same filters.",
-          "type": "string"
-        },
-        "limit": {
-          "description": "Returns per page, 1 to 100.",
-          "type": "integer"
-        },
-        "order_id": {
-          "description": "Only this order's returns.",
-          "type": "string"
-        },
-        "status": {
-          "description": "Only returns in this status.",
-          "enum": [
-            "requested",
-            "approved",
-            "declined",
-            "closed",
-            "cancelled",
-            "expired"
-          ],
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "name": "list_returns",
-    "scopes": [
-      "store:orders:read"
-    ]
-  },
-  {
-    "api_key": "returns.get",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/returns/{id}",
-    "description": "Fetch one return with its items. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/returns/{id}. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "Return id.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "get_return",
-    "scopes": [
-      "store:orders:read"
-    ]
-  },
-  {
-    "api_key": "returns.options",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/orders/{id}/return-options",
-    "description": "What can be returned from an order, line by line. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}/return-options. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "Order id.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "get_return_options",
-    "scopes": [
-      "store:orders:read"
-    ]
-  },
-  {
-    "api_key": "returns.create",
-    "api_method": "POST",
-    "api_path": "/api/2025-01/orders/{id}/returns",
-    "description": "Record a return for an order, already approved. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{id}/returns. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "Order id.",
-          "minLength": 1,
-          "type": "string"
-        },
-        "items": {
-          "description": "One object per line: order_item_id, quantity, reason (size_too_small, size_too_large, not_as_described, defective, wrong_item, changed_mind or other), optional note (at most 500 characters), preference (refund or exchange, default refund) and, for an exchange, exchange_variant_id (another variant of the same product) or, when exchange_rules.products is any_product, exchange_product_id for another active product, with exchange_variant_id when that product has variants.",
-          "items": {
-            "type": "object"
-          },
-          "type": "array"
-        }
-      },
-      "required": [
-        "id",
-        "items"
-      ],
-      "type": "object"
-    },
-    "name": "create_return",
-    "scopes": [
-      "store:orders:write"
-    ]
-  },
-  {
-    "api_key": "returns.approve",
-    "api_method": "POST",
-    "api_path": "/api/2025-01/returns/{id}/approve",
-    "description": "Approve a requested return. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/returns/{id}/approve. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "Return id.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "approve_return",
-    "scopes": [
-      "store:orders:write"
-    ]
-  },
-  {
-    "api_key": "returns.decline",
-    "api_method": "POST",
-    "api_path": "/api/2025-01/returns/{id}/decline",
-    "description": "Decline a requested return with a reason. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/returns/{id}/decline. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "Return id.",
-          "minLength": 1,
-          "type": "string"
-        },
-        "reason": {
-          "description": "What the customer is told, at most 500 characters.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "id",
-        "reason"
-      ],
-      "type": "object"
-    },
-    "name": "decline_return",
-    "scopes": [
-      "store:orders:write"
-    ]
-  },
-  {
-    "api_key": "returns.cancel",
-    "api_method": "POST",
-    "api_path": "/api/2025-01/returns/{id}/cancel",
-    "description": "Cancel a requested or approved return. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/returns/{id}/cancel. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "Return id.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "cancel_return",
-    "scopes": [
-      "store:orders:write"
-    ]
-  },
-  {
-    "api_key": "returns.receive",
-    "api_method": "POST",
-    "api_path": "/api/2025-01/returns/{id}/receive",
-    "description": "Record that an approved return's items reached the store. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/returns/{id}/receive. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "Return id.",
-          "minLength": 1,
-          "type": "string"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "type": "object"
-    },
-    "name": "receive_return",
-    "scopes": [
-      "store:orders:write"
-    ]
-  },
-  {
-    "api_key": "returns.shipment.set",
-    "api_method": "PUT",
-    "api_path": "/api/2025-01/returns/{id}/shipment",
-    "description": "Record or update an approved return's shipment back to the store. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/returns/{id}/shipment. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "carrier": {
-          "description": "Carrier name, at most 100 characters.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "id": {
-          "description": "Return id.",
-          "minLength": 1,
-          "type": "string"
-        },
-        "status": {
-          "description": "label_created, in_transit, delivered, failed or cancelled.",
-          "type": "string"
-        },
-        "tracking_number": {
-          "description": "Tracking number, at most 100 characters.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "tracking_url": {
-          "description": "https tracking page, at most 2000 characters.",
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      },
-      "required": [
-        "id",
-        "status"
-      ],
-      "type": "object"
-    },
-    "name": "set_return_shipment",
-    "scopes": [
-      "store:orders:write"
-    ]
-  },
-  {
-    "api_key": "returns.refund",
-    "api_method": "POST",
-    "api_path": "/api/2025-01/returns/{id}/refund",
-    "description": "Refund an approved return's items and complete it. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/returns/{id}/refund. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "amount": {
-          "description": "The amount to refund, at most what the order can refund.",
-          "type": "string"
-        },
-        "id": {
-          "description": "Return id.",
-          "minLength": 1,
-          "type": "string"
-        },
-        "items": {
-          "description": "Restock choices by line: order_item_id, restock (default true) and optional restock_location_id.",
-          "items": {
-            "type": "object"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        },
-        "method": {
-          "description": "original_payment, store_credit or manual, as in Create a refund.",
-          "type": "string"
-        },
-        "notify_customer": {
-          "description": "false keeps the refund email from being sent.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "payment_id": {
-          "description": "The payment to refund, for original_payment.",
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      },
-      "required": [
-        "id",
-        "method",
-        "amount"
-      ],
-      "type": "object"
-    },
-    "name": "refund_return",
-    "scopes": [
-      "store:orders:write"
-    ]
-  },
-  {
-    "api_key": "returns.exchange",
-    "api_method": "POST",
-    "api_path": "/api/2025-01/returns/{id}/exchange",
-    "description": "Exchange an approved return's items for other variants of the same products. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/returns/{id}/exchange. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "description": "Return id.",
-          "minLength": 1,
-          "type": "string"
-        },
-        "items": {
-          "description": "One object per returned line: order_item_id, optional variant_id (another variant of the same product, replacing the one the return asked for; omitted, the return's own exchange_variant_id or exchange_product_id is used), restock (default true) and optional restock_location_id.",
-          "items": {
-            "type": "object"
-          },
-          "type": "array"
-        }
-      },
-      "required": [
-        "id",
-        "items"
-      ],
-      "type": "object"
-    },
-    "name": "exchange_return",
-    "scopes": [
-      "store:orders:write"
-    ]
-  },
-  {
-    "api_key": "returns.settings.get",
-    "api_method": "GET",
-    "api_path": "/api/2025-01/returns/settings",
-    "description": "Read whether customers can request returns, and the rules. With `auto_approve` enabled, a customer's request that passes the return limits is approved at once by the first of `rules`, in order, whose conditions all hold: every item's reason in `reasons` (empty: any), the order total at most `max_order_value` (store currency), every item delivered at most `max_days_since_delivery` days ago, and the customer in one of `customer_group_ids` (empty: anyone; guest orders never match a rule that names groups). The customer gets the Return Approved email and the return's `auto_approved_rule` names the rule; nothing matching leaves the request for you. With `reminders` enabled, a return the customer asked for that is approved but not sent back gets a Return Reminder `first_after_days` after approval and a last one `last_after_days` after approval; at `expire_after_days` it closes as expired (`returns/expired`, Return Expired email). Any recorded or tracked return shipment, or receiving the return, stops the reminders. Returns you record yourself never get reminders. `exchange_fallback` decides what happens when an exchange's replacement is out of stock: the customer may choose among Store Credit and the options turned on (`wait`, `other_variant`, `refund`) for `answer_days`, after which `default` applies; a wait for restock lasts up to `wait_days` and then ends in Store Credit. `exchange_rules` decide which replacements customers may choose (`products`: same_product or any_product) and what happens to a price difference: `costs_more` customer_pays (the exchange order carries the difference) or not_offered (a customer's request whose replacement costs more is refused with RETURN_EXCHANGE_COSTS_MORE), and `costs_less` store_credit, original_payment or store_keeps. With `instant_exchange` enabled, an approved exchange the customer asked for (every item an exchange, a customer account and, when `customer_group_ids` are set, in one of those groups) ships its replacement at once, before the items come back: with `protection` none the exchange credit is issued and pays the exchange order straight away, and the return completes when the items are received; with pay_first the customer pays for the replacement on the exchange order and the returned items are refunded to the original payment when received. The items are due within `return_days` (the return's `instant_due_at`): a none exchange that passes it is flagged to you on the order, a pay_first one expires with no refund. Returned items go back into stock when received. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/returns/settings. Only the connected store is accessible.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {},
-      "type": "object"
-    },
-    "name": "get_return_settings",
-    "scopes": [
-      "store:orders:read"
-    ]
-  },
-  {
-    "api_key": "returns.settings.update",
-    "api_method": "PUT",
-    "api_path": "/api/2025-01/returns/settings",
-    "description": "Change the return rules. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/returns/settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
-    "input_schema": {
-      "additionalProperties": false,
-      "properties": {
-        "auto_approve": {
-          "description": "Auto-approve rules, sent whole: enabled and rules, in order. Each rule has a name and optional conditions: reasons (every requested item's reason is one of them; empty for any), max_order_value (order total in the store's currency), max_days_since_delivery (every item delivered at most this many days ago) and customer_group_ids (the customer is in one of them; empty for anyone). Bounds are in limits.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "auto_refund_method": {
-          "description": "Where automatic refunds go: original_payment or store_credit.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "auto_refund_on_receipt": {
-          "description": "Refund a return automatically once it is received, when every item asked for a refund.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "enabled": {
-          "description": "Customers can request returns on the store's Returns portal.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "enabled_reasons": {
-          "description": "Reasons customers can choose on the Returns portal: size_too_small, size_too_large, not_as_described, defective, wrong_item, changed_mind, other. At least one.",
-          "items": {
-            "type": "string"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        },
-        "exchange_fallback": {
-          "description": "What happens when an exchange's replacement is out of stock, sent whole: wait, other_variant and refund (options the customer may choose besides Store Credit), answer_days (time to choose), default (store_credit, refund or wait; applied when the customer doesn't choose) and wait_days (longest wait for restock, then Store Credit).",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "exchange_rules": {
-          "description": "Exchange rules, sent whole: products (same_product or any_product), costs_more (customer_pays or not_offered) and costs_less (store_credit, original_payment or store_keeps).",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "exchanges_enabled": {
-          "description": "Customers can ask for another variant instead of a refund.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "final_sale_tag_ids": {
-          "description": "Product tags whose products are final sale: customers can't return them on the Returns portal. Replaces the list; at most limits.final_sale_tags_max.",
-          "items": {
-            "type": "integer"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        },
-        "instant_exchange": {
-          "description": "Instant exchange, sent whole: enabled, customer_group_ids (empty for every customer with an account), protection (none or pay_first) and return_days (1 to 60).",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "instructions": {
-          "description": "Where and how to send items back, emailed when a return is approved; at most limits.instructions_max_length characters.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "note_required_reasons": {
-          "description": "Reasons for which a customer must add a note.",
-          "items": {
-            "type": "string"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        },
-        "reminders": {
-          "description": "Return reminders, sent whole: enabled, first_after_days, last_after_days and expire_after_days, counted from approval; each later than the one before, at most limits.reminder_days_max.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "return_limits": {
-          "description": "Return limits, sent whole: enabled, max_returns (null for no count limit), max_return_rate (percent, null for no rate limit), min_orders, window_days, action (review or decline), decline_reason (needed for decline, at most limits.decline_reason_max_length characters) and exempt_customer_group_ids. Bounds are in limits.",
-          "type": [
-            "object",
-            "null"
-          ]
-        },
-        "window_days": {
-          "description": "Days after delivery a customer can request a return, from limits.window_days_min to limits.window_days_max.",
-          "type": [
-            "integer",
-            "null"
-          ]
-        }
-      },
-      "type": "object"
-    },
-    "name": "update_return_settings",
-    "scopes": [
-      "store:orders:write"
-    ]
-  },
-  {
     "api_key": "rtos.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/rtos",
@@ -19236,7 +18890,7 @@
       "additionalProperties": false,
       "properties": {
         "cursor": {
-          "description": "next_cursor from the previous page, with the same filters.",
+          "description": "next_cursor or previous_cursor from a page with the same filters. Omit for the first page.",
           "type": "string"
         },
         "limit": {
@@ -19255,9 +18909,18 @@
           ],
           "type": "string"
         },
+        "reason": {
+          "description": "returned: shipments that come back to the store; undelivered: lost, damaged or destroyed ones.",
+          "enum": [
+            "returned",
+            "undelivered"
+          ],
+          "type": "string"
+        },
         "status": {
           "description": "Only returned shipments in this status.",
           "enum": [
+            "returning",
             "awaiting_decision",
             "resolved"
           ],
@@ -19471,7 +19134,7 @@
       "additionalProperties": false,
       "properties": {
         "allow_cancel": {
-          "description": "Customers may cancel the delivery (the parcel comes back).",
+          "description": "Customers may send the parcel back, where the shipment's courier takes it.",
           "type": [
             "boolean",
             "null"
@@ -19628,12 +19291,12 @@
     "api_key": "orders.delivery-issues.answer",
     "api_method": "POST",
     "api_path": "/api/2025-01/orders/{id}/delivery-issues/{issueId}/answer",
-    "description": "Record the customer's answer to a failed delivery attempt that they gave your app. For a messaging, calling or support app that asked the customer itself. The answer is the customer's, exactly as if they had given it on the Delivery portal: the same choices and limits apply (Returned shipments settings decide whether they may correct details and cancel), the order's timeline says how they answered and through which app, and `delivery_issues/answered` is sent to the shipment's app. An answer can be changed while the shipment waits. Refused once the shipment moved on. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{id}/delivery-issues/{issueId}/answer. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Record the customer's answer to a failed delivery attempt that they gave your app. For a messaging, calling or support app that asked the customer itself. The answer is the customer's, exactly as if they had given it on the Delivery portal: only what the shipment's courier takes (`actions`) within Delivery issues settings is accepted, the order's timeline says how they answered and through which app, and `delivery_issues/answered` is sent to the shipment's app, which passes it to its courier (`forwarding` becomes sending). An answer is a request: the courier may still refuse it. It can be changed while the shipment waits. Refused once the shipment moved on, and for a delivery problem handled with the courier (`handle_with_courier`). Uses the documented Store API fields, validation and permissions for POST /api/2025-01/orders/{id}/delivery-issues/{issueId}/answer. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
         "address1": {
-          "description": "A corrected first address line.",
+          "description": "A corrected first address line, when the courier takes address lines and the store lets customers correct details.",
           "type": [
             "string",
             "null"
@@ -19651,7 +19314,7 @@
           "type": "string"
         },
         "choice": {
-          "description": "reattempt or cancel.",
+          "description": "reattempt or return, as the shipment's `actions` allow.",
           "type": "string"
         },
         "id": {
@@ -19665,21 +19328,21 @@
           "type": "string"
         },
         "note": {
-          "description": "A note for the courier, at most 500 characters.",
+          "description": "A note for the courier, at most 500 characters, when the courier takes one.",
           "type": [
             "string",
             "null"
           ]
         },
         "phone": {
-          "description": "A corrected phone number, when the store lets customers correct details.",
+          "description": "A corrected phone number, when the courier takes one and the store lets customers correct details.",
           "type": [
             "string",
             "null"
           ]
         },
         "reattempt_on": {
-          "description": "With reattempt: the day to deliver again, one of the next five days in the store's time zone (YYYY-MM-DD).",
+          "description": "With reattempt, when the courier takes a day: the day to deliver again, from tomorrow to `actions.reattempt.date.max_days_ahead` days ahead in the store's time zone (YYYY-MM-DD).",
           "type": [
             "string",
             "null"
@@ -19744,7 +19407,7 @@
     "api_key": "orders.delivery-issues.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/orders/{id}/delivery-issues",
-    "description": "A failed delivery attempt and the customer's answer, per shipment. One per shipment that reached a failed delivery attempt; a later failed attempt opens it again (`attempts`). `status` is open (waiting for the customer), answered or closed (the shipment moved on). `choice` is reattempt (on `reattempt_on`, a date in the store's time zone; `reattempt_on_display` is that day in English) or cancel; `phone`, `address1` and `address2` are corrections the customer made (null when unchanged) and `note` is for the courier. The answer is also sent as `delivery_issues/answered`. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}/delivery-issues. Only the connected store is accessible.",
+    "description": "A failed delivery attempt and the customer's answer, per shipment. One per shipment that reached a failed delivery attempt; a later failed attempt opens it again (`attempts`). `actions` are what the shipment's courier takes, copied from its fulfillment app's declaration when the app took on the shipment: `reattempt` (with `date.max_days_ahead`, `phone`, `address_lines` and `note` when the courier takes them) and `return`. `status` is open (waiting for the customer, until `answer_by`), answered, handle_with_courier (the courier takes nothing: the customer is offered nothing, `answer_by` is null, and you handle it with the courier) or closed (the shipment moved on). `choice` is reattempt (on `reattempt_on`, a date in the store's time zone, when the courier takes a day; `reattempt_on_display` is that day in English) or return; `phone`, `address1` and `address2` are corrections the customer made (null when unchanged) and `note` is for the courier. The answer is sent as `delivery_issues/answered`; `forwarding` is where it stands with the courier: sending, accepted, rejected (`forwarding_message` is the courier's message) or unconfirmed (no report from the app an hour after it was sent). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/orders/{id}/delivery-issues. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -19760,6 +19423,40 @@
       "type": "object"
     },
     "name": "list_order_delivery_issues",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "delivery-issues.list",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/delivery-issues",
+    "description": "Every failed delivery attempt in the store, newest first. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/delivery-issues. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "description": "next_cursor or previous_cursor from a page with the same filter. Omit for the first page.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Delivery problems per page, 1 to 100.",
+          "type": "integer"
+        },
+        "status": {
+          "description": "Only delivery problems in this status.",
+          "enum": [
+            "open",
+            "answered",
+            "handle_with_courier",
+            "closed"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "list_delivery_issues",
     "scopes": [
       "store:orders:read"
     ]
@@ -25895,10 +25592,27 @@
     ]
   },
   {
+    "api_key": "markets.orderable-countries",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/markets/orderable-countries",
+    "description": "List the countries an order can be placed for. Returns every country an active market serves, with that market's `market_id` and `market_name` and the `currency_code` an order for the country is placed in, sorted by country name in the request language. An order's shipping country (or billing country, when it has no shipping address) must be one of them: any other country is refused with `MARKET_COUNTRY_NO_ACTIVE_MARKET`. Read it before creating an order, for example to offer the countries a customer can order to. Customer addresses are not limited to these countries. A token with either `read_markets` or `write_orders` can read it. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/orderable-countries. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "list_orderable_countries",
+    "scopes": [
+      "store:markets:read",
+      "store:orders:write"
+    ],
+    "scopes_any_of": true
+  },
+  {
     "api_key": "markets.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets",
-    "description": "Retrieve the store's markets. Returns a paginated list of markets with their countries and assigned currencies. Search matches a market's name or slug, the code or name of a country it serves, or the code of a currency assigned to it. Use `is_active` to show active or inactive markets; omit it to return both. Sort by `name`, `created_at` or `updated_at`; results are sorted by `name` in ascending order by default. The primary market always appears first; the remaining markets follow the requested sort order. Each market carries a `revision` number that increases with every change. `status_counts` gives how many of the store's markets are active and inactive. `duty_health_available` is true when a market with duties turned on has an enabled duty rule for a destination that at least one shippable item comes into from another country; only then does Check duty health (`GET /markets/duty-health`) have anything to report. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets. Only the connected store is accessible.",
+    "description": "Retrieve the store's markets. Returns a paginated list of markets with their countries and assigned currencies. Search matches a market's name or slug, the code or name of a country it serves, or the code of a currency assigned to it. Use `is_active` to show active or inactive markets; omit it to return both. Sort by `name`, `created_at` or `updated_at`; results are sorted by `name` in ascending order by default. The primary market always appears first; the remaining markets follow the requested sort order. Each market carries a `revision` number that increases with every change. `status_counts` gives how many of the markets matching `search` are active and inactive, whatever `is_active` asks for, so both tabs keep their counts. `duty_health_available` is true when a market has an enabled duty rule for a destination that at least one shippable item comes into from another country; only then does Check duty health (`GET /markets/duty-health`) have anything to report. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -25938,7 +25652,7 @@
     "api_key": "markets.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets",
-    "description": "Create a market for one or more countries. Provide a name and at least one country. Every store starts with a primary market, created with the store and named after its base currency, that serves every country. Each country can belong to only one market. Countries another market serves move to the new market: the first request returns `CONFIRMATION_REQUIRED`, whose warnings name each country and the market it leaves; repeat it with `confirmed: true` and the `confirmation_token` to create the market and move them in one transaction, so they are never left without a market. A market that would be left with no countries refuses the move with `MARKET_COUNTRY_MOVE_EMPTIES_MARKET`, and a country still used by one of its tax, shipping, or cash-on-delivery zones cannot leave it. You may provide a URL-safe slug or let Tringify generate one from the name, adding `-2`, `-3` and so on when that slug is taken. New markets begin with the store's base currency. They are active by default, calculate tax from the shipping address using tax-exclusive catalog prices, use the default tax class, and leave duties disabled. A successful request returns the created market and publishes `markets/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a market for one or more countries. Provide a name and at least one country. Every store starts with a primary market, created with the store and named after its base currency, that serves every country. Each country can belong to only one market. Countries another market serves move to the new market: the first request returns `CONFIRMATION_REQUIRED`, whose warnings name each country and the market it leaves; repeat it with `confirmed: true` and the `confirmation_token` to create the market and move them in one transaction, so they are never left without a market. A market that would be left with no countries refuses the move with `MARKET_COUNTRY_MOVE_EMPTIES_MARKET`, and a country still used by one of its tax, shipping, or cash-on-delivery zones cannot leave it. You may provide a URL-safe slug or let Tringify generate one from the name, adding `-2`, `-3` and so on when that slug is taken. New markets begin with the store's base currency. They are active by default, collect tax using tax-exclusive catalog prices shown without tax (`tax_enabled` true, `tax_included` false, `tax_display_mode` `exclusive`; change them with Update a market, since create does not take them), use the default tax class, and have no duty rules, with `duty_collection_mode` `pay_on_delivery`. A successful request returns the created market and publishes `markets/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -26060,7 +25774,7 @@
           ]
         },
         "duty_collection_mode": {
-          "description": "Who pays import duties on international shipments (an item ships from one of your locations in another country; its country of origin only rates the duty). `pay_on_delivery`: the customer pays on delivery; checkout, order pages and emails say import duties and taxes may be due on delivery, with the estimate, when a rule prices one, shown below the total and never added to it. `collect_at_checkout`: the customer pays at checkout; the estimated duty and the import tax on it (at each item's tax rates) are added to the total, and shoppers are told nothing is due on delivery. `included_in_price`: you pay, and your prices already cover it; nothing is added to the total, shoppers are told duties and taxes are included, and an estimate a rule prices is recorded on the order as your estimated duty cost. Your enabled duty rules price the estimate for each destination; a destination without one gets the statement without an amount. Domestic orders show none. You are responsible for this choice.",
+          "description": "Who pays import duties on international shipments (an item ships from one of your locations in another country; its country of origin only rates the duty). `pay_on_delivery`: the customer pays on delivery; checkout, order pages and emails say import duties and taxes may be due on delivery, with the estimate, when a rule prices one, shown below the total and never added to it. `collect_at_checkout`: the customer pays at checkout where a duty rule prices the destination; the estimated duty and the import tax on it (at each item's tax rates) are added to the total, and shoppers are told nothing is due on delivery. A destination with no enabled duty rule in the shopper's currency is told import duties and taxes may be due on delivery instead, and its order has `duty_incomplete` true. `included_in_price`: you pay, and your prices already cover it; nothing is added to the total, shoppers are told duties and taxes are included, and an estimate a rule prices is recorded on the order as your estimated duty cost. Your enabled duty rules price the estimate for each destination; under `pay_on_delivery` and `included_in_price` a destination without one gets the statement without an amount. Domestic orders show none. You are responsible for this choice.",
           "type": [
             "string",
             "null"
@@ -26328,14 +26042,10 @@
     "api_key": "markets.country-currencies.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/country-currencies",
-    "description": "Retrieve the currency selected for each country in a market. Returns every country in the market with its selected currency, the currencies available for assignment, and the market `revision` the list was read at. Every country always has a currency: new countries start on the store's base currency and can then be changed to another currency assigned to the market. Search by country name or code. `filter` defaults to `all`; because every country has a currency, `assigned` returns the same countries. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/country-currencies. Only the connected store is accessible.",
+    "description": "Retrieve the currency selected for each country in a market. Returns every country in the market with its selected currency, the currencies available for assignment, and the market `revision` the list was read at. Every country always has a currency: new countries start on the store's base currency and can then be changed to another currency assigned to the market. Search by country name or code. Each entry in `currencies` carries `countries`, how many of the market's countries use it. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/country-currencies. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
-        "filter": {
-          "description": "Use `assigned` or `all`. Every market country always has an assigned currency.",
-          "type": "string"
-        },
         "market_id": {
           "description": "Market id.",
           "minLength": 1,
@@ -26508,7 +26218,7 @@
     "api_key": "markets.payment-providers.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/payment-providers",
-    "description": "Read availability and currency coverage of connected providers. Connect providers in store settings first. This endpoint returns market enablement, ordering, readiness and supported currencies without provider credentials. A provider appears here once a payment app is installed on the store: installing it creates a binding (`binding_id`) in `pending_configuration`, listed in every market with `status` `setup_required`. A store can have up to 25 payment provider apps installed; installing another is refused with PAYMENT_PROVIDERS_LIMIT_REACHED. The merchant then connects their account inside the app, and the app reports it through `POST /service-bindings/{id}/configuration-changed`. Tringify asks the app to attest the connection (mode, account country, operations, presentment currencies); a successful attestation makes the binding `ready`. A ready provider is `eligible` in a market when it supports at least one of the market's currencies (otherwise `currency_unavailable`). Enable it per market with Update market payment provider; enabled, ready providers are offered at checkout in `sort_order`. On development and transfer stores only test-mode connections can be enabled, and the platform test gateway is enabled in the primary market the first time it attests. `status` is `setup_required`, `currency_unavailable` (the provider supports none of the market's currencies), `ready` or `active`; `eligible` says whether it can be enabled; `currency_coverage` is `none`, `partial` or `full`, with the market currencies it does and does not support listed. Once attested, a provider also carries `health` (`healthy` or `degraded`, as the app reports it), `account_country`, `attestation_checked_at` (when Tringify last checked the connection), `attestation_error_code` when that check failed, and `snapshot_id` (the attestation it was checked against). Enabled providers come first, ordered by `sort_order`; the rest follow by app name. A market can have up to 5 providers enabled at once; `limits.max_enabled` is that limit and `limits.enabled_count` how many are enabled now. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-providers. Only the connected store is accessible.",
+    "description": "Read availability and currency coverage of connected providers. Connect providers in store settings first. This endpoint returns market enablement, ordering, readiness and supported currencies without provider credentials. A provider appears here once a payment app is installed on the store: installing it creates a binding (`binding_id`) in `pending_configuration`, listed in every market with `status` `setup_required`. A store can have up to 25 payment provider apps installed; installing another is refused with PAYMENT_PROVIDERS_LIMIT_REACHED. The merchant then connects their account inside the app, and the app reports it through `POST /service-bindings/{id}/configuration-changed`. Tringify asks the app to attest the connection (mode, account country, operations, presentment currencies); a successful attestation makes the binding `ready`. A ready provider is `eligible` in a market when it supports at least one of the market's currencies (otherwise `currency_unavailable`). Enable it per market with Update market payment provider; enabled, ready providers are offered at checkout in `sort_order`. On development and transfer stores only test-mode connections can be enabled, and the platform test gateway is switched on in every market (a market where it was switched off stays off). `status` is `setup_required`, `currency_unavailable` (the provider supports none of the market's currencies), `ready` or `active`; `eligible` says whether it can be enabled; `currency_coverage` is `none`, `partial` or `full`, with the market currencies it does and does not support listed. Once attested, a provider also carries `health` (`healthy` or `degraded`, as the app reports it), `account_country`, `attestation_checked_at` (when Tringify last checked the connection), `attestation_error_code` when that check failed, and `snapshot_id` (the attestation it was checked against). Enabled providers come first, ordered by `sort_order`; the rest follow by app name. A market can have up to 5 providers enabled at once; `limits.max_enabled` is that limit and `limits.enabled_count` how many are enabled now. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/payment-providers. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -26561,7 +26271,7 @@
           "type": "string"
         },
         "show_when": {
-          "description": "Offer it only to the shoppers and carts every set condition matches: countries (delivery country), min_subtotal/max_subtotal (amount per currency; a checkout in another currency doesn't match), customer_groups and customer_tags (ids; guests never match), products (product ids in the cart) and collections (collection ids with a product in the cart). null or an empty object offers it to everyone. Checkout applies it when it lists methods and again when the order is placed; a provider with a rule is never offered as an express button outside checkout. Omit to keep the current rule.",
+          "description": "Offer it only to the shoppers and carts every set condition matches: countries (delivery countries this market serves), min_subtotal/max_subtotal (amount per currency; a checkout in another currency doesn't match), customer_groups and customer_tags (ids; guests never match), products (product ids in the cart) and collections (collection ids with a product in the cart). null or an empty object offers it to everyone. Checkout applies it when it lists methods and again when the order is placed; a provider with a rule is never offered as an express button outside checkout. Omit to keep the current rule. Reads list every condition, an unset one as an empty list or object.",
           "type": [
             "object",
             "null"
@@ -27239,7 +26949,7 @@
     "api_key": "tax-classes.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/markets/{marketId}/tax-classes/{taxClassId}",
-    "description": "Delete one tax class. Use the bulk-delete endpoint for a selection. Each successful deletion records the class and market names in its audit entry. Deletes the tax class together with its rates, product and variant assignments, and price rules. The default class can't be deleted \u2014 promote another class first. Shipping settings and shipping methods must be reassigned before deleting their tax class (`TAX_CLASS_SHIPPING_ASSIGNED`), and so must checkout fees, cash-on-delivery settings and payment adjustments (`TAX_CLASS_CHARGES_ASSIGNED`). When the class still has dependents, the first call returns a confirmation response listing what will be removed; retry with `confirmed` and the returned `confirmation_token` to proceed. Products left without a class are taxed by the market's default class. Fires `tax_classes/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/tax-classes/{taxClassId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete one tax class. Use the bulk-delete endpoint for a selection. Each successful deletion records the class and market names in its audit entry. Deletes the tax class together with its rates, product and variant assignments, and price rules. Only `tax_classes/delete` is published: the rates and price rules deleted with it send no `tax_rates/delete` or `tax_price_rules/delete`, so re-sync them from the class id. The default class can't be deleted \u2014 promote another class first. Shipping settings and shipping methods must be reassigned before deleting their tax class (`TAX_CLASS_SHIPPING_ASSIGNED`), and so must checkout fees, cash-on-delivery settings and payment adjustments (`TAX_CLASS_CHARGES_ASSIGNED`). When the class still has dependents, the first call returns a confirmation response listing what will be removed; retry with `confirmed` and the returned `confirmation_token` to proceed. Products left without a class are taxed by the market's default class. Fires `tax_classes/delete`. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/tax-classes/{taxClassId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -27406,7 +27116,7 @@
           ]
         },
         "tax_exemption": {
-          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, translations}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst` and `ein`; there are no merchant-defined types. `effect` is `exempt` (charge no tax when the buyer enters a valid tax ID; with inclusive prices, discounts, fees and thresholds settle once on the commercial amounts, then included tax is removed from items, shipping, COD and checkout fees. For example, 120 including 20% less a fixed 12 discount becomes 90. The order keeps `is_tax_included: true` with `tax_exempt: true` and zero `tax_total`) or `invoice_only` (keep tax and mark the order for a business invoice when the buyer enters a tax ID at checkout). Tringify performs offline format and check-digit checks only, with no live registration or exemption verification; merchants are responsible for their tax settings. Types must fit at least one zone country (market country for a default zone): eu_vat in EU countries, uk_vat in GB, gstin in IN, abn in AU, gst_hst in CA, ein in US. A zone whose countries fit none of them can't collect tax IDs. Existing mismatches are returned as tax_exemption.type_mismatch=true without modifying stored settings; saving such a zone is refused. To turn the treatment off, send `{\"enabled\": false}`; leaving `tax_exemption` out keeps the saved treatment. `checkout_text` is limited to 100 characters; translations maps en/de/es/fr/it to an object holding checkout_text, for example `{\"fr\": {\"checkout_text\": \"Entreprises : saisissez votre ABN\"}}`, with the same limit. The checkout field's label and placeholder come from the type, in the checkout language. Values are uppercased and spaces, dots and dashes removed before storing. EU VAT requires an EU country prefix (EL for Greece), national format and published check-digit rules (structural checks only for Czech nine-digit birth numbers and Latvian personal numbers); UK VAT uses GB with 9 or 12 digits and mod-97/9755 checks; GSTIN checks 15 characters, state 01-38/97/99, PAN shape and base-36 checksum; ABN checks 11 digits with weighted modulus 89; GST/HST requires a 9-digit BN with MOD10 checksum plus RT and a nonzero four-digit account number; EIN accepts NN-NNNNNNN. A valid GSTIN with a different Indian tax-address state is accepted and records tax_id_state_mismatch=true on the order.",
+          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, translations}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst` and `ein`; there are no merchant-defined types. `effect` is `exempt` (charge no tax when the buyer enters a valid tax ID; with inclusive prices, discounts, fees and thresholds settle once on the commercial amounts, then included tax is removed from items, shipping, COD and checkout fees. For example, 120 including 20% less a fixed 12 discount becomes 90. The order keeps `is_tax_included: true` with `tax_exempt: true` and zero `tax_total`) or `invoice_only` (keep tax and mark the order for a business invoice when the buyer enters a tax ID at checkout). Tringify performs offline format and check-digit checks only, with no live registration or exemption verification; merchants are responsible for their tax settings. Types must fit at least one zone country (market country for a default zone): eu_vat in EU countries, uk_vat in GB, gstin in IN, abn in AU, gst_hst in CA, ein in US. A zone whose countries fit none of them can't collect tax IDs. Existing mismatches are returned as tax_exemption.type_mismatch=true without modifying stored settings; saving such a zone is refused. To turn the treatment off, send `{\"enabled\": false}`; leaving `tax_exemption` out keeps the saved treatment. Inside it, leaving `translations` out keeps the saved translations; send `{}` to remove them. `checkout_text` is limited to 100 characters; translations maps a storefront language's locale (for example `fr` or `pt-BR`) to an object holding checkout_text; checkout uses the shopper's exact locale, then its language, then checkout_text, for example `{\"fr\": {\"checkout_text\": \"Entreprises : saisissez votre ABN\"}}`, with the same limit. The checkout field's label and placeholder come from the type, in the checkout language. Values are uppercased and spaces, dots and dashes removed before storing. EU VAT requires an EU country prefix (EL for Greece), national format and published check-digit rules (structural checks only for Czech nine-digit birth numbers and Latvian personal numbers); UK VAT uses GB with 9 or 12 digits and mod-97/9755 checks; GSTIN checks 15 characters, state 01-38/97/99, PAN shape and base-36 checksum; ABN checks 11 digits with weighted modulus 89; GST/HST requires a 9-digit BN with MOD10 checksum plus RT and a nonzero four-digit account number; EIN accepts NN-NNNNNNN. A valid GSTIN with a different Indian tax-address state is accepted and records tax_id_state_mismatch=true on the order.",
           "type": [
             "object",
             "null"
@@ -27505,7 +27215,7 @@
           ]
         },
         "tax_exemption": {
-          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, translations}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst` and `ein`; there are no merchant-defined types. `effect` is `exempt` (charge no tax when the buyer enters a valid tax ID; with inclusive prices, discounts, fees and thresholds settle once on the commercial amounts, then included tax is removed from items, shipping, COD and checkout fees. For example, 120 including 20% less a fixed 12 discount becomes 90. The order keeps `is_tax_included: true` with `tax_exempt: true` and zero `tax_total`) or `invoice_only` (keep tax and mark the order for a business invoice when the buyer enters a tax ID at checkout). Tringify performs offline format and check-digit checks only, with no live registration or exemption verification; merchants are responsible for their tax settings. Types must fit at least one zone country (market country for a default zone): eu_vat in EU countries, uk_vat in GB, gstin in IN, abn in AU, gst_hst in CA, ein in US. A zone whose countries fit none of them can't collect tax IDs. Existing mismatches are returned as tax_exemption.type_mismatch=true without modifying stored settings; saving such a zone is refused. To turn the treatment off, send `{\"enabled\": false}`; leaving `tax_exemption` out keeps the saved treatment. `checkout_text` is limited to 100 characters; translations maps en/de/es/fr/it to an object holding checkout_text, for example `{\"fr\": {\"checkout_text\": \"Entreprises : saisissez votre ABN\"}}`, with the same limit. The checkout field's label and placeholder come from the type, in the checkout language. Values are uppercased and spaces, dots and dashes removed before storing. EU VAT requires an EU country prefix (EL for Greece), national format and published check-digit rules (structural checks only for Czech nine-digit birth numbers and Latvian personal numbers); UK VAT uses GB with 9 or 12 digits and mod-97/9755 checks; GSTIN checks 15 characters, state 01-38/97/99, PAN shape and base-36 checksum; ABN checks 11 digits with weighted modulus 89; GST/HST requires a 9-digit BN with MOD10 checksum plus RT and a nonzero four-digit account number; EIN accepts NN-NNNNNNN. A valid GSTIN with a different Indian tax-address state is accepted and records tax_id_state_mismatch=true on the order.",
+          "description": "Business tax exemption for this zone: `{enabled, type, effect, checkout_text, translations}`. Supported `type` values are `eu_vat`, `uk_vat`, `gstin`, `abn`, `gst_hst` and `ein`; there are no merchant-defined types. `effect` is `exempt` (charge no tax when the buyer enters a valid tax ID; with inclusive prices, discounts, fees and thresholds settle once on the commercial amounts, then included tax is removed from items, shipping, COD and checkout fees. For example, 120 including 20% less a fixed 12 discount becomes 90. The order keeps `is_tax_included: true` with `tax_exempt: true` and zero `tax_total`) or `invoice_only` (keep tax and mark the order for a business invoice when the buyer enters a tax ID at checkout). Tringify performs offline format and check-digit checks only, with no live registration or exemption verification; merchants are responsible for their tax settings. Types must fit at least one zone country (market country for a default zone): eu_vat in EU countries, uk_vat in GB, gstin in IN, abn in AU, gst_hst in CA, ein in US. A zone whose countries fit none of them can't collect tax IDs. Existing mismatches are returned as tax_exemption.type_mismatch=true without modifying stored settings; saving such a zone is refused. To turn the treatment off, send `{\"enabled\": false}`; leaving `tax_exemption` out keeps the saved treatment. Inside it, leaving `translations` out keeps the saved translations; send `{}` to remove them. `checkout_text` is limited to 100 characters; translations maps a storefront language's locale (for example `fr` or `pt-BR`) to an object holding checkout_text; checkout uses the shopper's exact locale, then its language, then checkout_text, for example `{\"fr\": {\"checkout_text\": \"Entreprises : saisissez votre ABN\"}}`, with the same limit. The checkout field's label and placeholder come from the type, in the checkout language. Values are uppercased and spaces, dots and dashes removed before storing. EU VAT requires an EU country prefix (EL for Greece), national format and published check-digit rules (structural checks only for Czech nine-digit birth numbers and Latvian personal numbers); UK VAT uses GB with 9 or 12 digits and mod-97/9755 checks; GSTIN checks 15 characters, state 01-38/97/99, PAN shape and base-36 checksum; ABN checks 11 digits with weighted modulus 89; GST/HST requires a 9-digit BN with MOD10 checksum plus RT and a nonzero four-digit account number; EIN accepts NN-NNNNNNN. A valid GSTIN with a different Indian tax-address state is accepted and records tax_id_state_mismatch=true on the order.",
           "type": [
             "object",
             "null"
@@ -27692,7 +27402,7 @@
     "api_key": "tax-rates.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/tax-rates",
-    "description": "Create a rate line at a (zone, class) coordinate. Creates a rate line. `name`, `display_name` (what the customer sees on orders and invoices), `rate` (a decimal string, 0\u2013100), `tax_zone_id`, and `tax_class_id` are required; `compound_mode` defaults to `added_to`. A coordinate may hold multiple lines (state tax + county tax), but each line name must be unique within its coordinate \u2014 a duplicate is rejected, never silently stacked. Fires `tax_rates/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/tax-rates. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a rate line at a (zone, class) coordinate. Creates a rate line. `name`, `display_name` (what the customer sees on orders and invoices), `rate` (a decimal string, 0\u2013100), `tax_zone_id`, and `tax_class_id` are required; `compound_mode` defaults to `added_to`. A coordinate may hold multiple lines (state tax + county tax), but each line name must be unique within its coordinate, ignoring case \u2014 a duplicate is rejected, never silently stacked. Fires `tax_rates/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/tax-rates. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -27713,7 +27423,7 @@
           "type": "string"
         },
         "name": {
-          "description": "Line name \u2014 unique within its (zone, class) coordinate.",
+          "description": "Line name \u2014 unique within its (zone, class) coordinate, ignoring case.",
           "type": "string"
         },
         "rate": {
@@ -27825,7 +27535,7 @@
       "additionalProperties": false,
       "properties": {
         "compound_mode": {
-          "description": "added_to or compounded. Defaults to added_to.",
+          "description": "added_to or compounded. Leave it out to keep the line's saved mode.",
           "type": [
             "string",
             "null"
@@ -27841,7 +27551,7 @@
           "type": "string"
         },
         "name": {
-          "description": "Line name \u2014 unique within its (zone, class) coordinate.",
+          "description": "Line name \u2014 unique within its (zone, class) coordinate, ignoring case.",
           "type": "string"
         },
         "rate": {
@@ -28130,7 +27840,7 @@
     "api_key": "discounts.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discounts",
-    "description": "Browse the discounts configured for a market. Use this endpoint for a paginated discount list. You can filter by current status, discount type, or activation method, and search by name or coupon code. Search matches any part of the name or code, ignoring case. List records carry the discount definition plus worded labels (`status_label`, `type_label`, `value_label`, `usage_summary` and others); their targeting, eligibility, Buy X Get Y, together and gift arrays are always empty and `can_view_products`/`can_view_customers` are false. Read one discount to get those. Scheduled and expired statuses are calculated from the discount's dates when you read it. A `per_page` above list_max_limit is rejected with `VALIDATION_LIST_INVALID_LIMIT`, and sorting by `ends_at` lists discounts without an end date last. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible.",
+    "description": "Browse the discounts configured for a market. Use this endpoint for a paginated discount list. You can filter by current status, discount type, or activation method, and search by name or coupon code. Search matches any part of the name or code, ignoring case. List records carry the discount definition plus worded labels (`status_label`, `type_label`, `value_label`, `usage_summary` and others); their targeting, eligibility, Buy X Get Y, together and gift arrays are always empty and they have no `can_view_products`/`can_view_customers`. Read one discount to get those. Scheduled and expired statuses are calculated from the discount's dates when you read it. A `per_page` above list_max_limit is rejected with `VALIDATION_LIST_INVALID_LIMIT`, and sorting by `ends_at` lists discounts without an end date last. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -28353,7 +28063,7 @@
           ]
         },
         "first_order_only": {
-          "description": "Restrict to a customer's first order. Earlier paid, cash-on-delivery or refunded orders under the same account or the same email address (ignoring case) disqualify; test and cancelled orders do not. Guests are recognised by email. An order with neither an account nor an email does not qualify.",
+          "description": "Restrict to a customer's first order. Earlier paid, cash-on-delivery or refunded orders under the same account, the same email address (ignoring case) or the same phone number disqualify; test and cancelled orders and checkouts never paid do not. Guests are recognised by email or phone. An order with no account, email or phone does not qualify.",
           "type": [
             "boolean",
             "null"
@@ -28443,7 +28153,7 @@
           "type": "string"
         },
         "per_customer_limit": {
-          "description": "The number of uses allowed for each customer. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_per_customer_limit in the limits response; an unlimited discount is returned as null. A customer is recognised by account or by email address, ignoring case, so guest orders count toward that email's limit; an order with neither is not checked. Orders over the limit are refused with DISCOUNT_CUSTOMER_LIMIT_REACHED.",
+          "description": "The number of uses allowed for each customer. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_per_customer_limit in the limits response; an unlimited discount is returned as null. A customer is recognised by account, by email address (ignoring case) or by phone number, so guest orders count toward that email's or phone's limit; an order with none of them is refused. Orders over the limit are refused with DISCOUNT_CUSTOMER_LIMIT_REACHED.",
           "type": [
             "integer",
             "null"
@@ -28467,7 +28177,7 @@
           ]
         },
         "show_to_shoppers": {
-          "description": "Show this discount to shoppers among the offers, worded by Tringify in the shopper's language and currency: on the product pages and product cards it applies to (themes read product.offers, at most product_page_max_shown per page, and card.offers, at most product_cards_max_shown per card) while it is for everyone (customer_eligibility everyone), and for a code, suggested in the cart and at checkout (at most cart_max_shown) to shoppers it can apply to. A shown code is public. Offers are listed by priority. Not for unique codes (DISCOUNT_TARGETS_FORBIDDEN). At most shown_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_SHOWN_LIMIT.",
+          "description": "Show this discount to shoppers among the offers, worded by Tringify in the shopper's language and currency: on the product pages and product cards it applies to (themes read product.offers, at most product_page_max_shown per page, and card.offers, at most product_cards_max_shown per card) while it is for everyone (customer_eligibility everyone), and for a code, suggested in the cart and at checkout (at most cart_max_shown) to shoppers it can apply to. A shown code is public. Offers are listed by priority. Not for unique codes (DISCOUNT_UNIQUE_CODE_AUDIENCE). At most shown_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_SHOWN_LIMIT.",
           "type": [
             "boolean",
             "null"
@@ -28536,7 +28246,7 @@
           ]
         },
         "usage_limit": {
-          "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit. A discount with no usage_limit and no per_customer_limit counts no uses.",
+          "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit.",
           "type": [
             "integer",
             "null"
@@ -28580,7 +28290,7 @@
     "api_key": "discounts.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}",
-    "description": "Read one discount and its targeting choices. The response includes the complete discount definition and the ids it targets. Product-facing labels (products, variants, collections, categories, Buy X Get Y, together and gift items) are included when your token has `read_products`; customer names and group labels are included with `read_customers`. The ids remain available without those additional scopes, and `can_view_products` and `can_view_customers` tell you whether labels were included. Each Buy X Get Y, together and gift item read back also carries its own `id` (the saved entry) and `label` (the target's name, empty without `read_products`); a together `variant` item adds `parent_id`, its product. Writes take neither, and webhooks leave them out. The returned status reflects the discount's current schedule. `usage_count` includes uses held by unpaid checkouts; `usage_held_count` says how many of them are held, and `usage_summary` words both. Every discount counts its uses, with or without a limit. Deleting an order does not lower `usage_count`; a fully refunded order (every item the discount reduced, or the whole order) gives its use back, and so does a cancelled order or an expired checkout. `starts_at`, `ends_at`, `created_at` and `updated_at` are RFC 3339 in the store's time zone, with its offset; `starts_at_iso` and `ends_at_iso` give the start and end as local store time in the `YYYY-MM-DDTHH:mm:ss` form that create and update accept. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible.",
+    "description": "Read one discount and its targeting choices. The response includes the complete discount definition and the ids it targets. Product-facing labels (products, variants, collections, categories, Buy X Get Y, together and gift items) are included when your token has `read_products`; customer names and group labels are included with `read_customers`. The ids remain available without those additional scopes, and `can_view_products` and `can_view_customers` tell you whether labels were included. Each Buy X Get Y, together and gift item read back also carries its own `id` (the saved entry) and `label` (the target's name, empty without `read_products`); a together `variant` item adds `parent_id`, its product. Writes take neither, and webhooks leave them out. `product_page_preview` shows how the offer reads to shoppers, worded in the store's base currency: `title` (the `offer_label`), `savings_text`, `condition_text`, `apply_text`, `code` (coupons only), `auto_applied`, `currency_code` and `card_text`, the line product cards show; it is null when the offer cannot be worded. The returned status reflects the discount's current schedule. `usage_count` includes uses held by unpaid checkouts; `usage_held_count` says how many of them are held, and `usage_summary` words both. Every discount counts its uses, with or without a limit. Deleting an order does not lower `usage_count`; a fully refunded order (every item the discount reduced, or the whole order) gives its use back, and so does a cancelled order or an expired checkout. `starts_at`, `ends_at`, `created_at` and `updated_at` are RFC 3339 in the store's time zone, with its offset; `starts_at_iso` and `ends_at_iso` give the start and end as local store time in the `YYYY-MM-DDTHH:mm:ss` form that create and update accept. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/discounts/{discountId}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -28865,7 +28575,7 @@
           ]
         },
         "first_order_only": {
-          "description": "Restrict to a customer's first order. Earlier paid, cash-on-delivery or refunded orders under the same account or the same email address (ignoring case) disqualify; test and cancelled orders do not. Guests are recognised by email. An order with neither an account nor an email does not qualify.",
+          "description": "Restrict to a customer's first order. Earlier paid, cash-on-delivery or refunded orders under the same account, the same email address (ignoring case) or the same phone number disqualify; test and cancelled orders and checkouts never paid do not. Guests are recognised by email or phone. An order with no account, email or phone does not qualify.",
           "type": [
             "boolean",
             "null"
@@ -28955,7 +28665,7 @@
           "type": "string"
         },
         "per_customer_limit": {
-          "description": "The number of uses allowed for each customer. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_per_customer_limit in the limits response; an unlimited discount is returned as null. A customer is recognised by account or by email address, ignoring case, so guest orders count toward that email's limit; an order with neither is not checked. Orders over the limit are refused with DISCOUNT_CUSTOMER_LIMIT_REACHED.",
+          "description": "The number of uses allowed for each customer. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_per_customer_limit in the limits response; an unlimited discount is returned as null. A customer is recognised by account, by email address (ignoring case) or by phone number, so guest orders count toward that email's or phone's limit; an order with none of them is refused. Orders over the limit are refused with DISCOUNT_CUSTOMER_LIMIT_REACHED.",
           "type": [
             "integer",
             "null"
@@ -28979,7 +28689,7 @@
           ]
         },
         "show_to_shoppers": {
-          "description": "Show this discount to shoppers among the offers, worded by Tringify in the shopper's language and currency: on the product pages and product cards it applies to (themes read product.offers, at most product_page_max_shown per page, and card.offers, at most product_cards_max_shown per card) while it is for everyone (customer_eligibility everyone), and for a code, suggested in the cart and at checkout (at most cart_max_shown) to shoppers it can apply to. A shown code is public. Offers are listed by priority. Not for unique codes (DISCOUNT_TARGETS_FORBIDDEN). At most shown_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_SHOWN_LIMIT.",
+          "description": "Show this discount to shoppers among the offers, worded by Tringify in the shopper's language and currency: on the product pages and product cards it applies to (themes read product.offers, at most product_page_max_shown per page, and card.offers, at most product_cards_max_shown per card) while it is for everyone (customer_eligibility everyone), and for a code, suggested in the cart and at checkout (at most cart_max_shown) to shoppers it can apply to. A shown code is public. Offers are listed by priority. Not for unique codes (DISCOUNT_UNIQUE_CODE_AUDIENCE). At most shown_max_per_market discounts per market (read discounts/limits): otherwise DISCOUNT_SHOWN_LIMIT.",
           "type": [
             "boolean",
             "null"
@@ -29048,7 +28758,7 @@
           ]
         },
         "usage_limit": {
-          "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit. A discount with no usage_limit and no per_customer_limit counts no uses.",
+          "description": "The total number of uses allowed. Send unlimited_sentinel (-1) or null for no limit, or a whole number from quantity_min through max_usage_limit in the limits response; an unlimited discount is returned as null. A use is held when an order is placed and counts toward the limit while the checkout is unpaid, so new orders are refused with DISCOUNT_USAGE_EXHAUSTED once the limit is reached. The use is given back if the checkout expires unpaid or the order is cancelled. A payment that arrives after its checkout expired still keeps its use, which can take the count past the limit.",
           "type": [
             "integer",
             "null"
@@ -29220,7 +28930,7 @@
     "api_key": "discounts.codes.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/discounts/{discountId}/codes",
-    "description": "Mint a unique-code discount's code for one customer email. Only for a discount with `code_mode` `unique` (otherwise DISCOUNT_NOT_UNIQUE_CODES). The code applies only to a checkout whose email matches, ignoring case, guests included, and only once; a shopper using it with another email, or before entering one, sees that the code works only with the email it was sent to. Minting is idempotent per email: if the email already has a code for this discount, that code is returned with `created` false, and an expired code that was never used is replaced by a new code with a new validity (`created` true). Without `code`, a code is generated from `unique_code_prefix` plus 8 characters; send `code` to use your own, for example to give a customer the same code in every market (each market's discount mints it separately). A code that exists in the market, as a shared or minted code, is refused with MARKET_DISCOUNT_CODE_DUPLICATE. `expires_at` is `unique_code_valid_days` after minting, or null. `status` is `active`, `held` (an order waiting for payment holds it), `used` (with `order_id` and `used_at`) or `expired`, with `status_label` worded in English. Minting publishes no webhook; the order that uses the code records it in its discounts. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts/{discountId}/codes. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Mint a unique-code discount's code for one customer email. Only for a discount with `code_mode` `unique` (otherwise DISCOUNT_NOT_UNIQUE_CODES). The code applies only to a checkout whose email matches, ignoring case, guests included, and only once; a shopper using it with another email, or before entering one, sees that the code works only with the email it was sent to. Minting is idempotent per email: if the email already has a code for this discount, that code is returned with `created` false and the message code DISCOUNT_CODE_EXISTING (DISCOUNT_CODE_CREATED when a code is made), and an expired code that was never used is replaced by a new code with a new validity (`created` true). Without `code`, a code is generated from `unique_code_prefix` plus 8 characters; send `code` to use your own, for example to give a customer the same code in every market (each market's discount mints it separately). A code that exists in the market, as a shared or minted code, is refused with MARKET_DISCOUNT_CODE_DUPLICATE. `expires_at` is `unique_code_valid_days` after minting, or null. `status` is `active`, `held` (an order waiting for payment holds it), `used` (with `order_id` and `used_at`) or `expired`, with `status_label` worded in English. Minting publishes no webhook; the order that uses the code records it in its discounts. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/discounts/{discountId}/codes. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -29512,7 +29222,7 @@
     "api_key": "shipping.zones.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/shipping-zones",
-    "description": "Create a shipping zone. Creates a non-default country/subdivision claim. For each country, no selected subdivisions means its fallback coverage. A separate California zone may coexist with United States and no subdivisions, in either creation order; United States then covers the remaining states. Duplicate country fallbacks or explicit subdivisions are rejected. The default zone is created only by the advanced-mode transition. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/shipping-zones. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Create a shipping zone. Creates a non-default country/subdivision claim. For each country, no selected subdivisions means its fallback coverage. A separate California zone may coexist with United States and no subdivisions, in either creation order; United States then covers the remaining states. Duplicate country fallbacks or explicit subdivisions are rejected. The default zone, Everywhere, exists in every market from the start; another can't be created. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/shipping-zones. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -29591,7 +29301,7 @@
     "api_key": "shipping.zones.update",
     "api_method": "PUT",
     "api_path": "/api/2025-01/markets/{marketId}/shipping-zones/{zoneId}",
-    "description": "Update a shipping zone. Replaces a zone definition. The default flag cannot be moved or cleared; the default zone cannot contain explicit regions. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Update a shipping zone. Replaces a zone definition. The default flag cannot be moved or cleared. The Everywhere zone keeps no countries or subdivisions: it covers every address no other zone claims, so only its name and description change. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -29646,7 +29356,7 @@
     "api_key": "shipping.zones.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/markets/{marketId}/shipping-zones/{zoneId}",
-    "description": "Delete a shipping zone. Deletes a non-default zone and cascades its methods and rates. If the zone has methods, retry with the confirmation token returned by CONFIRMATION_REQUIRED. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete a shipping zone. Deletes a non-default zone and cascades its methods and rates. A zone with methods first returns CONFIRMATION_REQUIRED naming how many are deleted; retry with its confirmation token. A zone with no methods is deleted at once. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -29779,7 +29489,7 @@
           "type": "string"
         },
         "rates": {
-          "description": "Exact-decimal tier rows. prices requires the base currency and may include exact overrides for other enabled currencies; absent overrides are converted. For weight and price tiers, prices is the complete shipping charge; for item tiers it is the charge per item, multiplied by total shippable quantity before FX rounding. Weight and item tiers use scalar min_value/max_value; weight bounds use the method's saved weight_unit and item bounds are quantities. Price tiers require base-currency min_values/max_values and may provide complete per-currency boundary overrides. All bounds use [min,max), begin at zero, and must be contiguous.",
+          "description": "Exact-decimal tier rows. prices requires the base currency and may include exact overrides for other enabled currencies; absent overrides are converted. For weight and price tiers, prices is the complete shipping charge; for item tiers it is the charge per item, multiplied by total shippable quantity before FX rounding. Weight and item tiers use scalar min_value/max_value; weight bounds use the method's saved weight_unit and item bounds are quantities. Price tiers require base-currency min_values/max_values and may provide complete per-currency boundary overrides. All bounds use [min,max), begin at zero, and must be contiguous. A flat method sends one row with only prices; its bounds are always 0 with no maximum. Reads always carry min_values and max_values, empty outside price tiers and max_values empty for an open-ended top tier.",
           "items": {},
           "type": [
             "array",
@@ -29908,7 +29618,7 @@
           "type": "string"
         },
         "rates": {
-          "description": "Exact-decimal tier rows. prices requires the base currency and may include exact overrides for other enabled currencies; absent overrides are converted. For weight and price tiers, prices is the complete shipping charge; for item tiers it is the charge per item, multiplied by total shippable quantity before FX rounding. Weight and item tiers use scalar min_value/max_value; weight bounds use the method's saved weight_unit and item bounds are quantities. Price tiers require base-currency min_values/max_values and may provide complete per-currency boundary overrides. All bounds use [min,max), begin at zero, and must be contiguous.",
+          "description": "Exact-decimal tier rows. prices requires the base currency and may include exact overrides for other enabled currencies; absent overrides are converted. For weight and price tiers, prices is the complete shipping charge; for item tiers it is the charge per item, multiplied by total shippable quantity before FX rounding. Weight and item tiers use scalar min_value/max_value; weight bounds use the method's saved weight_unit and item bounds are quantities. Price tiers require base-currency min_values/max_values and may provide complete per-currency boundary overrides. All bounds use [min,max), begin at zero, and must be contiguous. A flat method sends one row with only prices; its bounds are always 0 with no maximum. Reads always carry min_values and max_values, empty outside price tiers and max_values empty for an open-ended top tier.",
           "items": {},
           "type": [
             "array",
@@ -29968,7 +29678,7 @@
     "api_key": "shipping.methods.delete",
     "api_method": "DELETE",
     "api_path": "/api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}",
-    "description": "Delete a shipping method. Deletes a method and all of its rates. If rates exist, retry with the confirmation token returned by CONFIRMATION_REQUIRED. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Delete a shipping method. Deletes a method and all of its rates. A method with rates first returns CONFIRMATION_REQUIRED; retry with its confirmation token. A free method has no rates and is deleted at once. Uses the documented Store API fields, validation and permissions for DELETE /api/2025-01/markets/{marketId}/shipping-zones/{zoneId}/methods/{methodId}. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -30218,7 +29928,7 @@
           "type": "string"
         },
         "de_minimis_value": {
-          "description": "Non-negative threshold for the customs value of imported merchandise (after discounts, without the tax prices include), in the currency assigned to this country. Domestic goods are excluded. Duty is not charged when that value is at or below the threshold. Precision follows the currency (zero decimals for JPY/KRW, three for KWD); maximum 99999999.9999. Send a decimal point without grouping or currency symbols.",
+          "description": "Non-negative threshold for the customs value of imported merchandise (after discounts, without the tax prices include), in the currency assigned to this country. Domestic goods are excluded. Duty is not charged when that value is at or below the threshold; 0 means no threshold. Precision follows the currency (zero decimals for JPY/KRW, three for KWD); maximum 99999999.9999. Send a decimal point without grouping or currency symbols.",
           "type": [
             "string",
             "null"
@@ -30468,7 +30178,7 @@
     "api_key": "duties.health",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/duty-health",
-    "description": "Find catalog items checkout cannot charge duty on. Checks every enabled duty rule in markets with duties turned on against the shippable items of active products, the same way checkout rates them. Items whose origin is the rule's destination pay no duty and are skipped. For each rule it returns counts and up to 20 example items for: `missing_hs_code`, `missing_origin`, `missing_weight` (only where the matching rate is charged per kg) and `missing_rate` (no rate for the item's origin and HS code, and no `*` default), plus `unrated_origins`, the origin countries with no matching rate and how many items each covers. `currency_mismatch` is true when the rule's currency differs from the serving currency of its destination country: checkout then charges no duty to that country at all. Each example's `product_id`, and `variant_id` for a variant, identify the item to fix. `status` is `ok` when a rule has nothing to fix and `issues` otherwise; the top-level `status` is `issues` when any rule has one. At checkout, an item that cannot be rated pays no duty and the order goes ahead; staff and API orders containing one are refused with an `ORDER_DUTY_*` error. The report is computed for the whole catalog and may be up to 60 seconds old; `generated_at` says when it was computed. Markets list responses include `duty_health_available`, which is false when there is nothing to check. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/duty-health. Only the connected store is accessible.",
+    "description": "Find catalog items checkout cannot charge duty on. Checks every enabled duty rule against the shippable items of active products, the same way checkout rates them. A destination is checked only when one of your locations in another country sells online and ships there: checkout treats an item as imported only when it ships from such a location, so with none every item is domestic and the rule has nothing to fix. Items whose origin is the destination are skipped too. For each rule it returns counts and up to 20 example items for: `missing_hs_code`, `missing_origin`, `missing_weight` (only where the matching rate is charged per kg) and `missing_rate` (no rate for the item's origin and HS code, and no `*` default), plus `unrated_origins`, the origin countries with no matching rate and how many items each covers. `currency_mismatch` is true when the rule's currency differs from the serving currency of its destination country: checkout then charges no duty to that country at all. Each example's `product_id`, and `variant_id` for a variant, identify the item to fix. `status` is `ok` when a rule has nothing to fix and `issues` otherwise; the top-level `status` is `issues` when any rule has one. At checkout, an item that cannot be rated pays no duty and the order goes ahead; staff and API orders containing one are refused with an `ORDER_DUTY_*` error. The report is computed for the whole catalog and may be up to 60 seconds old; `generated_at` says when it was computed. Markets list responses include `duty_health_available`, which is false when there is nothing to check. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/duty-health. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -30536,7 +30246,7 @@
           ]
         },
         "waiver_notice_remaining": {
-          "description": "Your text for the message shown while the order is below the waiver amount, keyed by store language code (the default language included). `{{.amount}}` prints how much more the order needs: the waiver amount minus the discounted merchandise subtotal, in the checkout currency. A language without a text shows Tringify's default in the shopper's language (`waiver_notice_defaults.remaining`). Same rules as `waiver_notice_waived`, except that `{{.amount}}` is accepted; no other placeholder is.",
+          "description": "Your text for the message shown while the order is below the waiver amount, keyed by store language code (the default language included). `{{.amount}}` prints how much more the order needs: the waiver amount minus the discounted merchandise subtotal, in the checkout currency. A language without a text shows Tringify's default in the shopper's language (`waiver_notice_defaults.remaining`). Same rules as `waiver_notice_waived`, except that `{{.amount}}` is accepted (written with spaces, such as `{{ .amount }}`, it is saved as `{{.amount}}`); no other placeholder is.",
           "type": [
             "object",
             "null"
@@ -30613,7 +30323,7 @@
     "api_key": "cod.zones.create",
     "api_method": "POST",
     "api_path": "/api/2025-01/markets/{marketId}/cod-zones",
-    "description": "Add a zone with its own cash-on-delivery fee and limits. Choose a country, subdivision or postcode scope. Every zone has its own availability, fee, minimum, maximum, fee waiver amount and fee-tax configuration; an empty amount map means no such rule. Countries must belong to the market, subdivisions must belong to a selected country, and zone names must be unique within the market. A successful create publishes `cod_zones/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/cod-zones. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "description": "Add a zone with its own cash-on-delivery fee and limits. Choose a country, subdivision or postcode scope. Every zone has its own availability, fee, minimum, maximum, fee waiver amount and fee-tax configuration; an empty amount map means no such rule. Countries must belong to the market, subdivisions must belong to a selected country, and zone names must be unique within the market. Zones never cover the same place: one zone per subdivision, one zone per whole country, and no postcode in two zones of a country. A narrower zone still sits inside a wider one, so a postcode zone wins over a subdivision zone, and a subdivision zone over a whole-country zone. A successful create publishes `cod_zones/create`. Uses the documented Store API fields, validation and permissions for POST /api/2025-01/markets/{marketId}/cod-zones. Only the connected store is accessible. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31372,7 +31082,7 @@
     "api_key": "checkout.fees.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/checkout-fees",
-    "description": "List the required charges and optional services configured for a market. Fees are returned in checkout order together with the live authoring contract. Required fees are applied automatically. Optional fees are available for the customer or an admin to select. Percentage fees use merchandise after product and order discounts; fixed per-item fees multiply by the total merchandise quantity. Per-item and percentage fees show a calculation line under the fee name at checkout (for example `\u20b9100.00 per item \u00d7 3` or `5% of \u20b91,000.00`); its wording is the store's Storefront Messages text in the shopper's language. `checkout_fee_catalog.calculation_kinds` says which fees have one, and `calculation_defaults` gives that wording in each of the store's storefront languages, with the language's name in English as `label` and the platform label of a fee's text field as `text_prompt`. A fee may apply only to carts holding chosen products or products of chosen collections (`applies_to_options`, at most `max_targets_per_fee` targets), only from or below a discounted merchandise subtotal, and a percentage fee may be capped (`condition_types`). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/checkout-fees. Only the connected store is accessible.",
+    "description": "List the required charges and optional services configured for a market. Fees are returned in checkout order together with the live authoring contract. Required fees are applied automatically. Optional fees are available for the customer or an admin to select. Percentage fees use merchandise after product and order discounts; fixed per-item fees multiply by the quantity of the items they apply to. Per-item and percentage fees show a calculation line under the fee name at checkout (for example `\u20b9100.00 per item \u00d7 3` or `5% of \u20b91,000.00`); its wording is the store's Storefront Messages text in the shopper's language. `checkout_fee_catalog.calculation_kinds` says which fees have one, and `calculation_defaults` gives that wording in each of the store's storefront languages, with the language's name in English as `label` and the platform label of a fee's text field as `text_prompt`. A fee may apply only to carts holding chosen products or products of chosen collections (`applies_to_options`, at most `max_targets_per_fee` targets), only from or below a discounted merchandise subtotal, and a percentage fee may be capped (`condition_types`). Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/checkout-fees. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -31438,7 +31148,7 @@
           ]
         },
         "apply_per": {
-          "description": "Use `order` to charge once or `item` to multiply a fixed fee by total merchandise quantity. Percentage fees use `order`.",
+          "description": "Use `order` to charge once or `item` to multiply a fixed fee by the quantity of the items it applies to. Percentage fees use `order`.",
           "type": "string"
         },
         "collect_text": {
@@ -31619,7 +31329,7 @@
           ]
         },
         "apply_per": {
-          "description": "Use `order` to charge once or `item` to multiply a fixed fee by total merchandise quantity. Percentage fees use `order`.",
+          "description": "Use `order` to charge once or `item` to multiply a fixed fee by the quantity of the items it applies to. Percentage fees use `order`.",
           "type": "string"
         },
         "collect_text": {
