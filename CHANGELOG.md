@@ -1,5 +1,10 @@
 # Changelog
 
+## No cancellation fee — 29 November 2026
+
+- `get_order_cancellation_settings` and `update_order_cancellation_settings` no longer carry a cancellation fee (`fee_type`, `fee_amount`, `fee_percent`, `fee_free_hours`, `clear_fee_free_hours`) or a channel choice (`channels`, `channel_options`). Customers can cancel only orders placed on the Online Store, a headless storefront or through an AI agent.
+- Cancellation requests no longer carry `fee_amount` or `currency`.
+
 ## Failed deliveries offer only what the courier takes — 28 November 2026
 
 - Delivery issues carry `actions`: what the shipment's courier takes after a failed delivery attempt, as its fulfillment app declares it (`reattempt` with `date.max_days_ahead`, `phone`, `address_lines` and `note`, and `return`). `answer_order_delivery_issues` accepts only those, within the store's Delivery issues settings; anything else is refused with `RTO_CHOICE_UNAVAILABLE` and `error.details.field`.
