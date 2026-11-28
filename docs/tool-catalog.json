@@ -30068,7 +30068,7 @@
     "api_key": "duties.available-countries",
     "api_method": "GET",
     "api_path": "/api/2025-01/markets/{marketId}/duty-country-rules/available-countries",
-    "description": "Find the market countries that can receive a duty rule. Returns a paginated list of the market's countries, and whether each already has a rule. The readiness counts identify shippable catalog items missing weight, HS code, or country of origin. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/duty-country-rules/available-countries. Only the connected store is accessible.",
+    "description": "Find the market countries that can receive a duty rule. Returns a paginated list of the market's countries: `has_rule` says whether the country has a duty rule and `is_enabled` whether that rule is on. `enabled` counts the market's enabled rules. To find catalog items checkout cannot charge duty on, use Check duty health. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/markets/{marketId}/duty-country-rules/available-countries. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
