@@ -1,5 +1,12 @@
 # Changelog
 
+## Three shipment settings — 28 November 2026
+
+- Returned shipment settings are now three settings, each with its own tools: `get_delivery_issue_settings` and `update_delivery_issue_settings` (`/delivery-issues/settings`: `customer_answers`, `answer_hours`, `allow_details`, `allow_cancel`), `get_returned_shipment_settings` and `update_returned_shipment_settings` (`/returned-shipments/settings`: `customer_answers`, `decision_hours`, `default_action`, `refund_method`, `reship_enabled`, `keep_shipping`, `restock`), and `get_undelivered_shipment_settings` and `update_undelivered_shipment_settings` (`/undelivered-shipments/settings`: `restock`). `get_rto_settings` and `update_rto_settings` are gone.
+- Returned shipments have their own `customer_answers`: whether a prepaid order's customer chooses on the Returned shipment and Undelivered portals. Failed deliveries follow the Delivery issues `customer_answers`.
+- Closing an order as undelivered restocks by the Undelivered shipments `restock`; refunding or closing a returned shipment by the Returned shipments `restock`.
+- `message_answers` is gone: the Delivery Attempt Failed and Shipment Returned messages no longer carry answer buttons. The Cash on Delivery Order Confirmation keeps its buttons.
+
 ## Trim transparent edges — 27 November 2026
 
 - `crop_image` takes `trim` `true` without a rectangle: the image is cropped to the smallest rectangle that holds every visible pixel, cutting away transparent edges (a logo, a cut-out). It costs no AI credits and keeps the transparency. `image_actions` lists `trim` for PNG, WebP and GIF images; a JPEG has none.

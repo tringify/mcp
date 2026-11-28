@@ -19448,28 +19448,94 @@
     ]
   },
   {
-    "api_key": "rtos.settings.get",
+    "api_key": "delivery-issues.settings.get",
     "api_method": "GET",
-    "api_path": "/api/2025-01/rtos/settings",
-    "description": "Read how returned shipments are handled. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/rtos/settings. Only the connected store is accessible.",
+    "api_path": "/api/2025-01/delivery-issues/settings",
+    "description": "Read how customers answer a failed delivery attempt. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/delivery-issues/settings. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
       "type": "object"
     },
-    "name": "get_rto_settings",
+    "name": "get_delivery_issue_settings",
     "scopes": [
       "store:orders:read"
     ]
   },
   {
-    "api_key": "rtos.settings.update",
+    "api_key": "delivery-issues.settings.update",
     "api_method": "PUT",
-    "api_path": "/api/2025-01/rtos/settings",
-    "description": "Change how returned shipments are handled. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/rtos/settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "api_path": "/api/2025-01/delivery-issues/settings",
+    "description": "Change how customers answer a failed delivery attempt. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/delivery-issues/settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
+        "allow_cancel": {
+          "description": "Customers may cancel the delivery (the parcel comes back).",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "allow_details": {
+          "description": "Customers may correct their phone and address lines when they answer.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "answer_hours": {
+          "description": "Hours a customer has to answer a failed delivery, from limits.answer_hours_min to limits.answer_hours_max.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "customer_answers": {
+          "description": "Customers can answer a failed delivery on the Delivery portal (/delivery).",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "update_delivery_issue_settings",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "returned-shipments.settings.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/returned-shipments/settings",
+    "description": "Read how returned, lost, damaged and destroyed shipments are decided. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/returned-shipments/settings. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_returned_shipment_settings",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "returned-shipments.settings.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/returned-shipments/settings",
+    "description": "Change how returned, lost, damaged and destroyed shipments are decided. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/returned-shipments/settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_answers": {
+          "description": "The customer of a prepaid order can choose on the Returned shipment and Undelivered portals.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "decision_hours": {
           "description": "Hours a prepaid order's customer has to choose, from limits.decision_hours_min to limits.decision_hours_max.",
           "type": [
@@ -19484,43 +19550,8 @@
             "null"
           ]
         },
-        "delivery_allow_cancel": {
-          "description": "Customers may cancel the delivery (the parcel comes back).",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "delivery_allow_details": {
-          "description": "Customers may correct their phone and address lines when they answer.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "delivery_answer_hours": {
-          "description": "Hours a customer has to answer a failed delivery, from limits.delivery_answer_hours_min to limits.delivery_answer_hours_max.",
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "delivery_portal_enabled": {
-          "description": "Customers can answer a failed delivery on the Delivery portal (/delivery).",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
         "keep_shipping": {
           "description": "Keep the order's shipping charge out of a refund.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "message_answers": {
-          "description": "The Delivery Attempt Failed and Shipment Returned WhatsApp messages carry buttons the customer can answer with, when the store's WhatsApp provider app shows them.",
           "type": [
             "boolean",
             "null"
@@ -19541,7 +19572,7 @@
           ]
         },
         "restock": {
-          "description": "Put returned units back on hand when a shipment is resolved.",
+          "description": "Put returned units back on hand when a returned shipment is refunded or closed.",
           "type": [
             "boolean",
             "null"
@@ -19550,7 +19581,45 @@
       },
       "type": "object"
     },
-    "name": "update_rto_settings",
+    "name": "update_returned_shipment_settings",
+    "scopes": [
+      "store:orders:write"
+    ]
+  },
+  {
+    "api_key": "undelivered-shipments.settings.get",
+    "api_method": "GET",
+    "api_path": "/api/2025-01/undelivered-shipments/settings",
+    "description": "Read what happens when an order is closed as undelivered. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/undelivered-shipments/settings. Only the connected store is accessible.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "get_undelivered_shipment_settings",
+    "scopes": [
+      "store:orders:read"
+    ]
+  },
+  {
+    "api_key": "undelivered-shipments.settings.update",
+    "api_method": "PUT",
+    "api_path": "/api/2025-01/undelivered-shipments/settings",
+    "description": "Change what happens when an order is closed as undelivered. Uses the documented Store API fields, validation and permissions for PUT /api/2025-01/undelivered-shipments/settings. Only the connected store is accessible. Preserve omitted fields. Present confirmation impact before resubmitting with confirmation; inspect bulk success and failure results. Do not retry an uncertain write automatically.",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "restock": {
+          "description": "Put the returned units back on hand when an order is closed as undelivered.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "update_undelivered_shipment_settings",
     "scopes": [
       "store:orders:write"
     ]
@@ -42304,7 +42373,7 @@
     "api_key": "message-templates.list",
     "api_method": "GET",
     "api_path": "/api/2025-01/message-templates",
-    "description": "List SMS and WhatsApp templates. Returns a separate template row for each message type and channel. SMS and WhatsApp content is never shared implicitly. Each row carries `type_info` for its message type. `type_info` is the notification type worded in English: `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its code places `{% render 'tax_details' %}`, and at the end of the email when it doesn't; no other email shows it). Each row has its `id` (the ID its translations use), `default_locale` and `default_label` (the language of `content`), `translations`: its state in every other store language (`translated`, `outdated` or `not_translated`, with `updated_at` of the translation), and `translations_updated_at`. Read and write the other languages with the message template translation endpoints. A WhatsApp row of a type whose message carries buttons (Confirm Cash on Delivery Order, Delivery Attempt Failed, Shipment Returned) has `buttons`, in the order sends use them: each `key`, `kind` (`reply`: the tap answers the store; `url`: it opens a page) and `labels`, the store's wording in its default and each other language (`locale`, `label`). The wording is the store's Storefront Messages for those buttons; which buttons a send carries follows the store's order settings. A WhatsApp template made from the row (for example by a WhatsApp app) puts its buttons in the same order. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates. Only the connected store is accessible.",
+    "description": "List SMS and WhatsApp templates. Returns a separate template row for each message type and channel. SMS and WhatsApp content is never shared implicitly. Each row carries `type_info` for its message type. `type_info` is the notification type worded in English: `name`, a one-line `description`, `sent_when` (what triggers it, its delays, and when it is skipped or never sent), `category` (the platform's fixed category of the type: `key` `authentication` for sign-in, contact confirmation and order tracking codes, `transactional` for messages about something the customer did or asked for, or `promotional` for messages inviting the customer back, whose texts need marketing consent and print their opt-out link; with its `label` and one-line `description`), `channels` (`email`, `sms`, `whatsapp`), `required` (true when the merchant cannot switch it off), `related_settings`, the settings that control it, each a fixed `key` with a `label`, and `tax_details` (true for the emails that are financial documents: Order Placed, Order Updated and the four refund emails; such an email always shows the order's or the refund's tax breakdown where its code places `{% render 'tax_details' %}`, and at the end of the email when it doesn't; no other email shows it). Each row has its `id` (the ID its translations use), `default_locale` and `default_label` (the language of `content`), `translations`: its state in every other store language (`translated`, `outdated` or `not_translated`, with `updated_at` of the translation), and `translations_updated_at`. Read and write the other languages with the message template translation endpoints. A WhatsApp row of a type whose message carries buttons (Confirm Cash on Delivery Order) has `buttons`, in the order sends use them: each `key`, `kind` (`reply`: the tap answers the store; `url`: it opens a page) and `labels`, the store's wording in its default and each other language (`locale`, `label`). The wording is the store's Storefront Messages for those buttons. A WhatsApp template made from the row (for example by a WhatsApp app) puts its buttons in the same order. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {},
@@ -42319,7 +42388,7 @@
     "api_key": "message-templates.get",
     "api_method": "GET",
     "api_path": "/api/2025-01/message-templates/{type}",
-    "description": "Fetch one channel-specific message template. `channel` is required: pass `channel=sms` or `channel=whatsapp`. A request without it is refused with MESSAGE_TEMPLATE_CHANNEL_REQUIRED. Each row has its `id` (the ID its translations use), `default_locale` and `default_label` (the language of `content`), `translations`: its state in every other store language (`translated`, `outdated` or `not_translated`, with `updated_at` of the translation), and `translations_updated_at`. Read and write the other languages with the message template translation endpoints. A WhatsApp row of a type whose message carries buttons (Confirm Cash on Delivery Order, Delivery Attempt Failed, Shipment Returned) has `buttons`, in the order sends use them: each `key`, `kind` (`reply`: the tap answers the store; `url`: it opens a page) and `labels`, the store's wording in its default and each other language (`locale`, `label`). The wording is the store's Storefront Messages for those buttons; which buttons a send carries follows the store's order settings. A WhatsApp template made from the row (for example by a WhatsApp app) puts its buttons in the same order. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates/{type}. Only the connected store is accessible.",
+    "description": "Fetch one channel-specific message template. `channel` is required: pass `channel=sms` or `channel=whatsapp`. A request without it is refused with MESSAGE_TEMPLATE_CHANNEL_REQUIRED. Each row has its `id` (the ID its translations use), `default_locale` and `default_label` (the language of `content`), `translations`: its state in every other store language (`translated`, `outdated` or `not_translated`, with `updated_at` of the translation), and `translations_updated_at`. Read and write the other languages with the message template translation endpoints. A WhatsApp row of a type whose message carries buttons (Confirm Cash on Delivery Order) has `buttons`, in the order sends use them: each `key`, `kind` (`reply`: the tap answers the store; `url`: it opens a page) and `labels`, the store's wording in its default and each other language (`locale`, `label`). The wording is the store's Storefront Messages for those buttons. A WhatsApp template made from the row (for example by a WhatsApp app) puts its buttons in the same order. Uses the documented Store API fields, validation and permissions for GET /api/2025-01/message-templates/{type}. Only the connected store is accessible.",
     "input_schema": {
       "additionalProperties": false,
       "properties": {

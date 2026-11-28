@@ -1177,8 +1177,12 @@ A returned shipment (RTO) is a shipment that came back to the store undelivered.
 
 | Tool | Store API operation | Required access |
 | --- | --- | --- |
-| `get_rto_settings` | `GET /api/2025-01/rtos/settings` | store:orders:read |
-| `update_rto_settings` | `PUT /api/2025-01/rtos/settings` | store:orders:write |
+| `get_delivery_issue_settings` | `GET /api/2025-01/delivery-issues/settings` | store:orders:read |
+| `update_delivery_issue_settings` | `PUT /api/2025-01/delivery-issues/settings` | store:orders:write |
+| `get_returned_shipment_settings` | `GET /api/2025-01/returned-shipments/settings` | store:orders:read |
+| `update_returned_shipment_settings` | `PUT /api/2025-01/returned-shipments/settings` | store:orders:write |
+| `get_undelivered_shipment_settings` | `GET /api/2025-01/undelivered-shipments/settings` | store:orders:read |
+| `update_undelivered_shipment_settings` | `PUT /api/2025-01/undelivered-shipments/settings` | store:orders:write |
 | `list_rtos` | `GET /api/2025-01/rtos` | store:orders:read |
 | `get_rto` | `GET /api/2025-01/rtos/{id}` | store:orders:read |
 | `get_rto_report` | `GET /api/2025-01/rtos/report` | store:orders:read |
